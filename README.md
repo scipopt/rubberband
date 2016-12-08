@@ -1,4 +1,4 @@
-# [rubberband](https://rubberband.zib.de/)
+# Rubberband
 
 A flexible LP solver log file web view and analysis tool, backed by Elasticsearch.
 
