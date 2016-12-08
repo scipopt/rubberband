@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="row">
+<form method="POST" name="fileUpload" enctype="multipart/form-data">
+    <p>Please select at least 3 files for upload: <code>*.out</code>, <code>*.err</code> and <code>*.set.</code></p>
+  <div class="form-group">
+    <input type="file" id="uploadFiles" name="resultFiles" multiple>
+  </div>
+  <div class="form-group">
+    <p>Optional: Specify a comma separated list of tags to more easily find this run in the future.</p>
+    <input type="text" class="form-control" name="tags" id="tagsInput" placeholder="enforelax, repairheuristics, SAP, etc">
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+</div>
+{% if msgs %}
+<div class="row row-buffered">
+  <div class="panel panel-default">
+    <div class="panel-body">
+    {% for m in msgs %}
+    <p>Processing {{ m }}</p>
+    {% for i in msgs[m] %}
+    <p>{{ i }}</p>
+    {% end %}
+    {% end %}
+    {% if resulturl %}
+    <p><a href="{{ resulturl }}">{{ resulturl }}</a></p>
+    {% end %}
+    </div>
+  </div>
+</div>
+{% end %}
+{% end %}

@@ -1,0 +1,23 @@
+  <div role="tabpanel" class="tab-pane" id="stats">
+  <div class="row">
+    <h3 class="tab-title">Statistics</h3>
+    <div class="tab-buttons">
+        <a href="/statistics?base={{file.meta.id}}" class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="custom statistics">
+        <span class="glyphicon glyphicon-filter"></span>
+      </a>
+    </div>
+  </div>
+  <h4>Testruns</h4>
+  <ol>
+  {% for f in [file] + compare %}
+  <li>{{f.filename}} by {{ format_attr(f, "run_initiator") }} on {{ format_attr(f, "git_commit_timestamp") }}</li>
+  {% end %}
+  </ol>
+  {% if sets.get("difference") %}
+  <h4>Exclusions</h4>
+  <p>The following {{ len(sets["difference"]) }} instances are not present in all of the compared test sets, and have therefore been ommitted from the table below: {{", ".join(sets['difference'])}}</p>
+  {% end %}
+  <div class="row">
+  {% include "stats_table.html" %}
+  </div>
+</div>

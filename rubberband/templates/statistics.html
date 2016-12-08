@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block extra_css%}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://dc-js.github.io/dc.js/css/dc.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
+{% end %}
+{% block extra_js %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.1/bootstrap3-typeahead.min.js"></script>
+<script type="text/javascript" src="/static/js/statistics.js"></script>
+{% end %}
+{% block body %}
+<div class="row">
+<h3 class="tab-title">{{ file.test_set }}</h3>
+<div class="tab-buttons">
+<a class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="back to test run" href="/result/{{ file.meta.id }}"><span class="glyphicon glyphicon-share-alt h3-icon-leftalign"></span></a>
+</div>
+</div>
+  <h4>Testruns</h4>
+  <ol>
+  {% for f in [file] + compare %}
+  <li>{{f.filename}} by {{ format_attr(f, "run_initiator") }} on {{ format_attr(f, "git_commit_timestamp") }}</li>
+  {% end %}
+  </ol>
+<p>Input your desired search query below.</p>
+<form id="statistics" name="statisticsform" class="form-inline">
+  <div class="statsFormFields">
+    <input type="text" name="base" value="{{file.meta.id}}" hidden required>
+    <div class="row" id="group1">
+      <input autocomplete="off" type="text" class="form-control fieldKey" name="field1" placeholder="Instance Feature" required>
+      <select class="form-control comparator" name="comparator1" required>
+        <option value="==">=</option>
+        <option value="!=" >!=</option>
+        <option value="<">&lt;</option>
+        <option value="<=">&lt;=</option>
+        <option value=">">&gt;</option>
+        <option value=">=">&gt;=</option>
+      </select>
+      <input autocomplete="off" type="text" class="form-control fieldValue" name="value1" required>
+    </div>
+    </div>
+    <button type="submit" class="btn btn-success" id="startStatsQuery">Go!</button>
+</form>
+<div class="row top-buffer">
+{% if hasattr(file, "stats") %}
+<h4>Matched Instances</h4>
+<p>{{ ", ".join(file.matched) }}</p>
+{% include "results/stats_table.html" %}
+{% else %}
+<p>Nothing to see here.</p>
+{% end %}
+</div>
+{% end %}

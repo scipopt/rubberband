@@ -1,0 +1,67 @@
+<div role="tabpanel" class="tab-pane" id="settings">
+  <div class="row">
+    <h3 class="tab-title">Settings</h3>
+    {% if file.settings %}
+    <div class="tab-buttons">
+    <a href="/file/{{file.meta.id}}?ftype=.set" class="bs-tooltip" data-placement="top" data-toggle="tooltip" title="view settings file">
+      <span class="glyphicon glyphicon-info-sign"></span>
+      </a>
+      <a class="bs-tooltip" type="button" data-toggle="modal" data-target="#downloadSettingsOptions" title="download settings" id="download-settings-file" data-placement="top" data-toggle="tooltip">
+        <span class="glyphicon glyphicon-download"></span>
+       </a>
+    </div>
+  </div>
+  <div class="row">
+    <table class="settings-table table table-bordered">
+    <thead>
+    <tr>
+      <th>Setting name</th>
+      <th>Run value</th>
+      {% for c in compare %}
+      <th>Compare</th>
+      {% end %}
+      <th>Default value</th>
+    </tr>
+    </thead>
+    <tbody>
+        {% for i in file.settings %}
+	<tr>
+	  <td>{{ i }}</td>
+	  <td>{{ format_attr(file.settings, i) }}</td>
+	  {% for c in compare %}
+	  <td>{{ format_attr(c.settings, i) }}</td>
+	  {% end %}
+	  <td>{{ format_attr(file.settings_default, i) }}</td>
+	</tr>
+	{% end %}
+    </tbody>
+    </table>
+  </div>
+
+<!-- Modal -->
+<div class="modal fade" id="downloadSettingsOptions" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Download Formats</h4>
+      </div>
+      <div class="modal-body">
+      <ul>
+        <li><a href="/file/{{file.meta.id}}?download=true&ftype=.set&format=raw" download="{{ file.get_filename(ending='.set') }}">plaintext</a></li>
+        <li><a href="/file/{{file.meta.id}}?download=true&ftype=.set&format=gzip" download="{{ file.get_filename(ending='.set') }}.gz">gzip</a></li>
+        <li><a href="/file/{{file.meta.id}}?download=true&ftype=.set&format=json" download="{{ file.get_filename(ending='.set') }}.json">json</a></li>
+        <li>csv (coming soon!)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% else %}
+  </div>
+  <div class="row">
+    <p>No settings :(</p>
+  </div>
+</div>
+{% end %}

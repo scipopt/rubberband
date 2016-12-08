@@ -1,0 +1,30 @@
+    <thead>
+      <tr>
+      <th>Instance Name</th>
+      <th>Type</th>
+      <th>Original Cons</th>
+      <th>Original Vars</th>
+      <th>Presolved Cons</th>
+      <th>Presolved Vars</th>
+      <th>Dual Bound</th>
+      <th>Primal Bound</th>
+      <th>Gap %</th>
+      <th>Iterations</th>
+      <th>Nodes</th>
+      <th>Solving Time</th>
+      <th>Total Time</th>
+      <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for name, r in file.children.to_dict().items() %}
+      {% if name in sets["intersection"] %}
+      <tr>
+        <td><a href="/result/{{ file.meta.id }}/instance/{{ r.meta.id }}?compare={{ ",".join([c.meta.id for c in compare]) }}">{{ r.instance_name }}</td>
+	      {% for i in ["instance_type", "OriginalProblem_InitialNCons", "OriginalProblem_Vars", "PresolvedProblem_InitialNCons", "PresolvedProblem_Vars", "DualBound", "PrimalBound", "Gap", "Iterations", "Nodes", "TotalTime_solving", "SolvingTime", "Status"]%}
+	      <td title="{{ format_attrs(compare, i, name) }}">{{ format_attr(r, i) }}</td>
+	      {% end %}
+       </tr>
+    {% end %}
+    {% end %}
+  </tbody>

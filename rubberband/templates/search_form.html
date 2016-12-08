@@ -1,0 +1,99 @@
+{% extends "table_view.html" %}
+{% block search %}
+<form method="GET" name="search">
+    <p class="text-muted">
+    Currently only testset search is supported. A maximum of 100 results will be returned at a time.
+    </p>
+    <br>
+    <fieldset>
+    <div class="row">
+    <div class="form-group col-md-4">
+	<label for="testset-select">Test Set</label>
+	<select class="form-control" name="test_set" id="testset-select">
+	<option></option>
+	{% for i in search_options["test_set"] %}
+	<option value="{{i}}">{{ i }}</option>
+	{% end %}
+	</select>
+    </div>
+  <div class="form-group col-md-4">
+	<label for="runmode-select">Run Mode</label>
+	<select class="form-control" name="mode" id="runmode-select">
+	<option></option>
+	{% for i in search_options["mode"] %}
+	<option value="{{i}}">{{ i }}</option>
+	{% end %}
+	</select>
+  </div>
+  <div class="form-group col-md-4">
+	<label for="uploadername-select">Uploader Name</label>
+	<select class="form-control" name="run_initiator" id="uploadername-select">
+	<option></option>
+	{% for i in search_options["run_initiator"] %}
+	<option value="{{i}}">{{ i }}</option>
+	{% end %}
+	</select>
+  </div>
+  <div class="form-group col-md-4">
+	<label for="settingsname-select">Settings Name</label>
+	<select class="form-control" name="settings_short_name" id="settingsname-select">
+	<option></option>
+	{% for i in search_options["settings_short_name"] %}
+	  <option value="{{i}}">{{ i }}</option>
+	{% end %}
+	</select>
+  </div>
+  <div class="form-group col-md-4">
+	<label for="solver-select">Solver</label>
+	<select class="form-control" name="solver" id="solver-select">
+	<option></option>
+	{% for i in search_options["solver"] %}
+	  <option value="{{i}}">{{ i }}</option>
+	{% end %}
+	</select>
+	</select>
+  </div>
+  <div class="form-group col-md-4">
+	<label for="solverversion-select">Solver Version</label>
+	<select class="form-control" name="solver_version" id="solverversion-select">
+	<option></option>
+	{% for i in search_options["solver_version"] %}
+	 <option value="{{i}}">{{ i }}</option>
+	{% end %}
+	</select>
+  </div>
+  <div class="form-group col-md-4">
+	<label for="commithash-input">Solver Commit Hash</label>
+	<input class="form-control" name="git_hash" id="commithash-input">
+  </div>
+  <div class="form-group col-md-4">
+	<label for="lpsolver-select">LP Solver</label>
+	<select class="form-control" name="lp_solver" id="lpsolver-select">
+	<option></option>
+	{% for i in search_options["lp_solver"] %}
+	<option value="{{i}}">{{ i }}</option>
+	{% end %}
+	</select>
+  </div>
+  <div class="form-group col-md-4">
+	<label for="lpsolverversion-select">LP Solver Version</label>
+	<select class="form-control" name="lp_solver_version" id="lpsolverversion-select">
+	<option></option>
+	{% for i in search_options["lp_solver_version"] %}
+	<option value="{{i}}">{{ i }}</option>
+	{% end %}
+	</select>
+  </div>
+  <div class="form-group col-md-4">
+	<label for="tags">Tag(s)</label>
+	<input class="form-control" name="tags" id="tags">
+  </div>
+  </div>
+  <br>
+  <div class="row">
+  <button type="submit" class="btn btn-primary pull-right">Submit</button>
+  </div>
+  </fieldset>
+</form>
+<br>
+{% end %}

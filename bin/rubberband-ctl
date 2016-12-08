@@ -1,0 +1,73 @@
+#!/usr/bin/env python
+
+import click
+from elasticsearch import Elasticsearch
+from elasticsearch_dsl.connections import connections
+import glob
+import os.path
+
+from rubberband.models import Result, File, TestSet
+from rubberband.utils import ResultClient
+from rubberband.version import __version__
+from rubberband.constants import ELASTICSEARCH_INDEX
+from rubberband.boilerplate import make_app                                                         
+
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+APP_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))                           
+PACKAGE_ROOT = os.path.join(APP_ROOT, "rubberband")                                                 
+                                                                                                    
+make_app(PACKAGE_ROOT) 
+
+@click.group(context_settings=CONTEXT_SETTINGS)
+@click.version_option(version=__version__)
+def main():
+    pass
+
+
+@main.command()
+def delete_index():
+    '''
+    Delete the current index.
+    '''
+    conn = connections.get_connection()
+    conn.indices.delete(index=ELASTICSEARCH_INDEX)
+
+
+@main.command()
+def create_index():
+    '''
+    Create an index with the the required mappings (Result, File, TestSet).
+    '''
+    Result.init()
+    File.init()
+    TestSet.init()
+
+
+@main.command()
+def seed_database():
+    '''
+    Seed Elasticsearch with results from the tests/data directory.
+    '''
+    filepath = os.path.join(APP_ROOT, "tests", "data")
+    out_files = glob.glob(os.path.join(filepath, "*.out"))
+    set_files = glob.glob(os.path.join(filepath, "*.set"))
+    err_files = glob.glob(os.path.join(filepath, "*.err"))
+    solu_files = glob.glob(os.path.join(filepath, "*.solu"))
+
+    for f in out_files:
+        paths = [f]
+        # remove the .out
+        base = f[:-4]
+        solu_file = os.path.join(APP_ROOT, "tests", "data", base.split(".")[1] + ".solu")
+        if base + ".set" in set_files:
+            paths.append(base + ".set")
+        if base + ".err" in err_files:
+            paths.append(base + ".err")
+        if solu_file in solu_files:
+            paths.append(solu_file)
+        c = ResultClient(user="debug")
+        c.process_files(paths)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,42 @@
+    <thead>
+      <tr>
+      <th>Instance Name</th>
+      <th>Type</th>
+      <th>Original Cons</th>
+      <th>Original Vars</th>
+      <th>Presolved Cons</th>
+      <th>Presolved Vars</th>
+      <th>Dual Bound</th>
+      <th>Primal Bound</th>
+      <th>Gap %</th>
+      <th>Iterations</th>
+      <th>Nodes</th>
+      <th>Solving Time</th>
+      <th>Total Time</th>
+      <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for name, r in file.children.to_dict().items() %}
+    <tr>
+      <td><a href="/result/{{ file.meta.id }}/instance/{{ r.meta.id }}">{{ r.instance_name }}</td>
+      <td>{{ format_attr(r, "instance_type") }}</td>
+      <td>{{ format_attr(r, "OriginalProblem_InitialNCons") }}</td>
+      <td>{{ format_attr(r, "OriginalProblem_Vars") }}</td>
+      <td>{{ format_attr(r, "PresolvedProblem_InitialNCons") }}</td>
+      <td>{{ format_attr(r, "PresolvedProblem_Vars") }}</td>
+      {% if format_attr(r, "SoluFileStatus") == "inf" %}
+      <td>&infin;</td>
+      {% else %}
+      <td>{{ format_attr(r, "DualBound") }}</td>
+      {% end %}
+      <td>{{ format_attr(r, "PrimalBound") }}</td>
+      <td>{{ format_attr(r, "Gap") }}</td>
+      <td>{{ format_attr(r, "Iterations") }}</td>
+      <td>{{ format_attr(r, "Nodes") }}</td>
+      <td>{{ format_attr(r, "TotalTime_solving") }}</td>
+      <td>{{ format_attr(r, "SolvingTime") }}</td>
+      <td>{{ format_attr(r, "Status") }}</td>
+    </tr>
+    {% end %}
+  </tbody>

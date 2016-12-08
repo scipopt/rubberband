@@ -1,0 +1,17 @@
+language: python
+services:
+      - elasticsearch
+python:
+  - "3.3"
+  - "3.4"
+  - "3.5"
+install:
+  - pip install --only-binary=numpy,scipy
+  - pip install -r requirements-dev.txt
+  - python setup.py install
+  - pip install -e .
+before_script:
+  - "flake8 rubberband/"
+  - "flake8 tests/"
+  - sleep 10
+script: py.test tests/ 

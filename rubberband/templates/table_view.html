@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/u/dt/dt-1.10.12/datatables.min.css"/>
+{% end %}
+{% block extra_js %}
+<script type="text/javascript" src="/static/js/clickableRow.js"></script>
+{% end %}
+{% block body %}
+{% block search %}
+{% end %}
+{% if results %}
+<form action="/compare" method="post">
+<button type="submit">Compare Selected Runs</button>
+<table class="table table-hover table-bordered">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Who</th>
+      <th>Filename</th>
+      <th>Commit Timestamp</th>
+      <th>Date Added</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for r in results %}
+  <tr data-url='result/{{ r.meta.id }}'>
+      <td><input type="checkbox" name="{{ r.meta.id }}"></td>
+      <td>{{ r.run_initiator }}</a></td>
+      <td class="col-md-6"><a href="/result/{{ r.meta.id }}">{{ r.filename }}</a></td>
+      <td>{{ format_attr(r, "git_commit_timestamp") }}</td>
+      <td>{{ format_attr(r, "index_timestamp") }}</td>
+    </tr>
+  {% end %}
+  </tbody>
+</table>
+</form>
+{% else %}
+<b>No results found for given query.</b>
+{% end %}
+{% end %}

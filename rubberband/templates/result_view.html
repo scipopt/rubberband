@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.12/sc-1.4.2/datatables.min.css"/>
+{% end %}
+
+{% block extra_js %}
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.12/sc-1.4.2/datatables.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery.stickytabs.js"></script>
+<script type="text/javascript" src="/static/js/results-detail.js"></script>
+{% end %}
+
+{% block title %}
+  <div class='page-header-wrapper results'>
+    <h1 class="page-header">{{ page_title }}</h1>
+    <ul id="resultNavTabs" role="tablist" class="nav nav-tabs nav-justified">
+      <li role="presentation" class="active"><a data-toggle="tab" aria-controls="results" role="tab" href="#results">Summary</a></li>
+      <li role="presentation" class=""><a data-toggle="tab" aria-controls="stats" role="tab" href="#stats">Statistics</a></li>
+      <li role="presentation" class=""><a data-toggle="tab" aria-controls="meta" role="tab" href="#meta">Meta</a></li>
+      <li role="presentation" class=""><a data-toggle="tab" aria-controls="settings" role="tab" href="#settings">Settings</a></li>
+    </ul>
+  </div>
+{% end %}
+
+{% block body %}
+<div>
+  <br>
+  <div class="tab-content">
+    {% include "results/instance_results.html" %}
+    {% include "results/statistics.html" %}
+    {% include "results/meta.html" %}
+    {% include "results/settings.html" %}
+  </div>
+</div>
+{% end %}
