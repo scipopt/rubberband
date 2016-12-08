@@ -1,4 +1,4 @@
--e git+git@github.com:xmunoz/ipet-reader.git#egg=ipet-reader
+ipet_reader==0.0.7
 backports-abc==0.4
 elasticsearch==2.3.0
 elasticsearch-dsl==2.0.0
