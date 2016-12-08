@@ -9,9 +9,8 @@ install:
   - pip install --only-binary=numpy,scipy
   - pip install -r requirements-dev.txt
   - python setup.py install
-  - pip install -e .
 before_script:
   - "flake8 rubberband/"
   - "flake8 tests/"
   - sleep 10
-script: py.test tests/ 
+script: ./runtests tests/
