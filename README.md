@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/xmunoz/rubberband.svg?branch=master)](https://travis-ci.org/xmunoz/rubberband)
+
 # Rubberband
 
 A flexible LP solver log file web view and analysis tool, backed by Elasticsearch.
