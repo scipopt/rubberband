@@ -66,7 +66,7 @@ def seed_database():
         if solu_file in solu_files:
             paths.append(solu_file)
         c = ResultClient(user="debug")
-        c.process_files(paths)
+        c.process_files(paths, remove=False)
 
 
 if __name__ == "__main__":

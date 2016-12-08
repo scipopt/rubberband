@@ -1,4 +1,3 @@
-curl 'localhost:9200/'
 bin/rubberband-ctl create_index
 bin/rubberband-ctl seed_database
 py.test tests/

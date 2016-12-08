@@ -35,13 +35,14 @@ class ResultClient(object):
                          .format(self.current_user, type(self).__name__))
         self.tags = []
 
-    def process_files(self, paths, tags=[]):
+    def process_files(self, paths, tags=[], remove=True):
         '''
         Process files, one at a time. Accepts a list.
         '''
         self.metadata = ImportStats("results")
         total_files = len(paths)
         self.tags = tags
+        self.remove_files = remove
         self.logger.info("Found {} files. Beginning to parse.".format(total_files))
         try:
             self.parse_file_bundle(paths)
@@ -89,10 +90,11 @@ class ResultClient(object):
         self.save_structured_data(file_data, results)
         self.backup_files()
 
-        # clean up filesystem
-        for t, f in self.files.items():
-            if f:
-                os.remove(f)
+        # clean up filesystem if remove flag set
+        if self.remove_files:
+            for t, f in self.files.items():
+                if f:
+                    os.remove(f)
 
         self._log_info("Finished!")
 
