@@ -40,7 +40,7 @@ class SearchAPITest(TestHandlerBase):
         '''
         Test that the api can gracefully handle exceptions.
         '''
-        response = self.fetch("/api/search?git_hash=115bb29d49a331442424101b01be4070dd735a70",
+        response = self.fetch("/api/search?test_set=MMM",
                               method="GET")
         self.assertEqual(response.code, 200)
         data = json.loads(response.body.decode("utf-8"))
