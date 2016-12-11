@@ -33,3 +33,16 @@ class UploadAPITest(TestHandlerBase):
         self.assertIn("errors", data)
         self.assertIn("url", data)
         self.assertIn("Missing required files:", data["errors"]["_"][0])
+
+
+class SearchAPITest(TestHandlerBase):
+    def test_search(self):
+        '''
+        Test that the api can gracefully handle exceptions.
+        '''
+        response = self.fetch("/api/search?git_hash=115bb29d49a331442424101b01be4070dd735a70",
+                              method="GET")
+        self.assertEqual(response.code, 200)
+        data = json.loads(response.body.decode("utf-8"))
+        self.assertTrue(isinstance(data, list))
+        self.assertTrue(len(data), 1)

@@ -1,5 +1,6 @@
 from rubberband.models import TestSet
 from rubberband.utils import get_uniques
+from rubberband.handlers.common import search
 from .base import BaseHandler
 
 
@@ -28,27 +29,14 @@ class SearchView(BaseHandler):
             if value:
                 query[f] = value
         options = get_options(query_fields)
-        # if no search params, simply render search form
-        if not query:
-            self.render("search_form.html", page_title="Search", search_options=options, results=[])
-        # otherwise inject query params into search, and return results
-        else:
-            s = TestSet.search()
 
-            if "tags" in query:
-                tags = query["tags"]
-                tags = tags.split(",")
-                tags = list(map(str.strip, tags))
-                s = s.filter("terms", tags=tags)
-                del(query["tags"])
-
-            for field, value in query.items():
-                filter_dict = {field: value}
-                s = s.filter("term", **filter_dict)
-
-            results = s.sort("-index_timestamp")[:100].execute()
+        if query:
+            results = search(query)
             self.render("search_form.html", page_title="Search", search_options=options,
                         results=results)
+        # if no search params, simply render search form
+        else:
+            self.render("search_form.html", page_title="Search", search_options=options, results=[])
 
 
 def get_options(fields):
