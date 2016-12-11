@@ -1,4 +1,3 @@
-from tornado.escape import json_encode
 import json
 
 from rubberband.handlers.common import search
