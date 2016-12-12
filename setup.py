@@ -1,8 +1,5 @@
 #!/usr/bin/env python
-
-import os
 import setuptools
-
 from distutils.core import setup
 
 
@@ -16,16 +13,16 @@ kwargs = {
     "name": "rubberband",
     "version": str(__version__),  # noqa
     "packages": setuptools.find_packages(),
-    "description": "An elasticsearch front-end for experiment run log viewing and analysis.",
+    "description": "A flexible archiving platform for optimization benchmarks",
     "long_description": open("README.md").read(),
-    "author": "Cristina Munoz",
-    "maintainer": "Cristina Munoz",
-    "author_email": "munoz@zib.de",
-    "maintainer_email": "munoz@zib.de",
+    "author": "Cristina Muñoz",
+    "maintainer": "Cristina Muñoz",
+    "author_email": "hi@xmunoz.com",
+    "maintainer_email": "hi@xmunoz.com",
     "license": "MIT",
     "install_requires": required,
-    "url": "https://git.zib.de/optimizaiton/rubberband",
-    "download_url": "https://git.zib.de/optimization/rubberband/archive/master.tar.gz",
+    "url": "https://github.com/xmunoz/rubberband",
+    "download_url": "https://github.com/xmunoz/rubberband/archive/master.zip",
     "classifiers": [
         "Programming Language :: Python",
         "Topic :: Software Development",
