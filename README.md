@@ -110,7 +110,7 @@ Cross your fingers and run the following command.
 python server.py
 ```
 
-If everything went well, you should be able to open [http:/127.0.0.1:8888/]() in your browser and see something that looks like this.
+If everything went well, you should be able to open [http://127.0.0.1:8888/](http://127.0.0.1:8888/) in your browser and see something that looks like this.
 
 ![rubberband screenshot](https://raw.githubusercontent.com/xmunoz/rubberband/master/rubberband-screenshot.png)
 
