@@ -4,16 +4,17 @@
 
 A flexible LP solver log file web view and analysis tool, backed by Elasticsearch.
 
-- [Development](#Development)
-  - [Installing Elasticsearch](#Installing-Elasticsearch)
-  - [Setting up Rubberband](#Setting-up-Rubberband)
-  - [Populating Elasticsearch](#Populating-Elasticsearch)
-- [Testing](#Testing)
-- [Deployment](#Deployment)
-  - [Authentication](#Authentication)
-  - [Web Server](#Web-Server)
-  - [Process Management](#Process-Management)
-- [Contributing](#Contributing)
+- [Development](#development)
+  - [Install Elasticsearch](#install-elasticsearch)
+  - [Set up Rubberband](#set-up-rubberband)
+  - [Populate Elasticsearch](#populate-elasticsearch)
+  - [Start the server](#start-the-server)
+- [Testing](#testing)
+- [Deployment](#deployment)
+  - [Authentication](#authentication)
+  - [Web Server](#web-server)
+  - [Process Management](#process-management)
+- [Contributing](#contributing)
 
 ## Development
 
@@ -21,7 +22,7 @@ This is a detailed description of how to set up Rubberband. If you're running Ub
 
 ### Installing Elasticsearch
 
-Java 8 is [required](https://www.elastic.co/guide/en/elasticsearch/reference/2.4/setup.html#jvm-version) to run Elasticsearch.
+Java 8 is [required](https://www.elastic.co/guide/en/elasticsearch/reference/2.4/setup.html#jvm-version) to run Elasticsearch. For Ubuntu, you can install Java 8 this way.
 ```
 sudo apt-get install python-software-properties
 sudo add-apt-repository ppa:webupd8team/java
@@ -37,13 +38,15 @@ Java(TM) SE Runtime Environment (build 1.8.0_101-b13)
 Java HotSpot(TM) 64-Bit Server VM (build 25.101-b13, mixed mode)
 ```
 
-Now you're ready to install Elasticsearch. NOTE: Elasticsearch is rapidly developing software. Only 2.x versions of Elasticsearch are supported by Rubberband. Sadly, Elasticsearch is neither backwards- nor forwards-compatible.
+Now you're ready to install Elasticsearch. NOTE: Elasticsearch is rapidly developing software. Only 2.x versions of Elasticsearch are supported by Rubberband. Sadly, Elasticsearch is neither backwards- nor forwards-compatible. Here are the most current instructions for installing Elasticsearch with `apt` on Ubuntu.
 
 ```
 wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
 echo "deb http://packages.elastic.co/elasticsearch/2.x/debian stable main" | sudo tee -a /etc/apt/sources.list.d/elasticsearch-2.x.list
 sudo apt-get update && sudo apt-get install elasticsearch
 ```
+
+General instructions for installing Elasticsearch can be found in the [offical Elasticsearch documentation](https://www.elastic.co/guide/en/elasticsearch/reference/2.4/_installation.html).
 
 More information about running Elasticsearch as a service can be found [here](https://www.elastic.co/guide/en/elasticsearch/reference/2.4/setup-repositories.html), though this shouldn't be required for a development setup.
 
@@ -63,28 +66,64 @@ source venv/bin/activate
 pip install -r requirements-dev.txt
 ```
 
-Copy the configuration file in [config/app.cfg](config/app.cfg) into `/etc/rubberband/`, and edit the required variables.
+Copy the configuration file in [config/app.cfg](config/app.cfg) into `/etc/rubberband/`, and edit the required variables. Rubberband has some sane defaults already configured, so this step isn't strickly required. However, if you want to connect Rubberband to a Gitlab instance, or to an SMTP server to send email, you will need to edit `app.cfg`.
 
 ### Populating Elasticsearch
 
-Take a look at the control script in `bin/rubberband-ctl`. Running just that with no options will show the help. The main things you need to do for the first setup are create the index, and populate that index with data. This can be accomplished with the following two commands.
+To populate the database or run unit tests, first install Rubberband inside the virtualenv.
+
+```
+pip install -e .
+```
+
+Now take a look at the control script in `bin/rubberband-ctl`. Running the control script with no options will show the help. For first-time, create the index, and populate that index with data. This can be accomplished with the following two commands.
 
 ```
 bin/rubberband-ctl create_index
-bin/rubberband-ctl seed_database
+bin/rubberband-ctl populate_index
 ```
+
+The second command will need a few minutes to finish. If the commands complete sucessfully, stdout should look something like this:
+
+```
+WARNING:elasticsearch:HEAD /solver-results [status:404 request:0.005s]
+INFO:elasticsearch:PUT http://127.0.01:9200/solver-results [status:200 request:0.107s]
+INFO:elasticsearch:HEAD http://127.0.01:9200/solver-results [status:200 request:0.002s]
+INFO:elasticsearch:PUT http://127.0.01:9200/solver-results/_mapping/file [status:200 request:0.041s]
+INFO:elasticsearch:HEAD http://127.0.01:9200/solver-results [status:200 request:0.002s]
+INFO:elasticsearch:PUT http://127.0.01:9200/solver-results/_mapping/testset [status:200 request:0.019s]
+INFO:root:Loading additional configuration from /etc/rubberband/app.cfg
+INFO:root:Setting up Elasticsearch connection.
+INFO:rubberband.utils.importer:debug opened a connection to elasticsearch with the ResultClient
+INFO:rubberband.utils.importer:Found 4 files. Beginning to parse.
+INFO:urllib3.connectionpool:Starting new HTTP connection (1): 127.0.01
+INFO:elasticsearch:GET http://127.0.01:9200/solver-results/testset/_search [status:200 request:0.057s]
+INFO:rubberband.utils.importer:Adding SoluFile.
+...
+```
+
+### Start the server
+
+Cross your fingers and run the following command.
+
+```
+python server.py
+```
+
+If everything went well, you should be able to open [http:/127.0.0.1:8888/]() in your browser and see something that looks like this.
+
+![rubberband screenshot](https://raw.githubusercontent.com/xmunoz/rubberband/master/rubberband-screenshot.png)
+
 
 ## Testing
 
-Install Rubberband in the virtual environment and run the test suite.
+Run the test suite.
 
 ```
-source venv/bin/activate
-pip install -e .
 py.test -v tests/
 ```
 
-Tests will fail if elasticsearch is not running, or if the index is empty.
+Tests will fail if Elasticsearch is not running, or if the index is empty.
 
 ## Deployment
 
@@ -96,7 +135,7 @@ There is no authentication built into Rubberband, though rubberband will authori
 
 ### Web Server
 
-Rubberband is meant to be deployed behind a production webserver, such as a [nginx](https://www.nginx.com/) or [apache](https://httpd.apache.org/).
+Rubberband is meant to be deployed behind a production webserver, such as a [nginx](https://www.nginx.com/) or [apache](https://httpd.apache.org/). See [config/rubberband-oauth](config/rubberband-oauth) for a sample nginx configuration. This example shows an HTTPS deployment configured with [Let's Encrypt](and://letsencrypt.org/).
 
 ### Process Management
 
