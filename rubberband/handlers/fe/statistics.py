@@ -5,16 +5,18 @@ from rubberband.models import TestSet
 
 
 class StatisticsView(BaseHandler):
-    def get(self):
-        base = self.get_query_argument("base", default=None)
-        compare = self.get_query_argument("compare", default=[])
+    def get(self, parent_id):
+        compare = self.get_query_argument("compare", default="")
+        print(compare)
 
-        if base is None:
-            raise HTTPError(404)
-
-        data = TestSet.get(id=base)
+        data = TestSet.get(id=parent_id)
         if not data:
             raise HTTPError(404)
+
+        compare_values = compare.split(",")
+        compare = []
+        for c in compare_values:
+            compare.append(TestSet.get(id=c))
 
         # get statistics if query params present
         if self.get_query_argument("field1", default=None) is not None:

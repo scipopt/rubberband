@@ -2,7 +2,7 @@
   <div class="row">
     <h3 class="tab-title">Statistics</h3>
     <div class="tab-buttons">
-        <a href="/statistics?base={{file.meta.id}}" class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="custom statistics">
+        <a href="/statistics/{{file.meta.id}}{% if compare %}?compare={{ ",".join([c.meta.id for c in compare]) }}{% end %}" class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="custom statistics">
         <span class="glyphicon glyphicon-filter"></span>
       </a>
     </div>

@@ -55,6 +55,10 @@ function addNewField(count) {
         <option value=">=">&gt;=</option>
       </select>
       <input autocomplete="off" type="text" class="form-control fieldValue" name="value${count}" required>
+      <select class="form-control one-or-all" name="oneorall${count}" required>
+        <option value="all">For all testsets</option>
+        <option value="one">For one testset</option>
+      </select>
       </div>
       `
     $(".statsFormFields").append(html);
@@ -63,8 +67,8 @@ function addNewField(count) {
 
 
 function initializeTypeahead(count) {
-    var query = getParts(window.location.search);
-    $.get('/instances/' + query["base"], function(data){
+    var testset_id = window.location.pathname.split("/")[2];
+    $.get('/instances/' + testset_id, function(data){
         var test_set = Object.keys(data)[0];
         var instances = Object.keys(data[test_set]);
         var availableKeys = Object.keys(data[test_set][instances[0]]);
@@ -90,8 +94,8 @@ function getParts(query_string) {
 
 function prefillFields() {
   var params = getParts(document.location.search);
-  // don't need base to build the form
-  delete params["base"];
+  // don't need compare to build the form
+  delete params["compare"];
   var numFields = Object.keys(params).length;
   if (numFields == 0) {
       $("#group1").append(addButton);

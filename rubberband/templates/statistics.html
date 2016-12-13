@@ -24,7 +24,9 @@
 <p>Input your desired search query below.</p>
 <form id="statistics" name="statisticsform" class="form-inline">
   <div class="statsFormFields">
-    <input type="text" name="base" value="{{file.meta.id}}" hidden required>
+    {% if compare %}
+    <input type="text" name="compare" value="{{ ",".join([c.meta.id for c in compare]) }}" hidden required>
+    {% end %}
     <div class="row" id="group1">
       <input autocomplete="off" type="text" class="form-control fieldKey" name="field1" placeholder="Instance Feature" required>
       <select class="form-control comparator" name="comparator1" required>
@@ -36,6 +38,10 @@
         <option value=">=">&gt;=</option>
       </select>
       <input autocomplete="off" type="text" class="form-control fieldValue" name="value1" required>
+      <select class="form-control one-or-all" name="oneorall1" required>
+        <option value="all">For all testsets</option>
+        <option value="one">For one testset</option>
+      </select>
     </div>
     </div>
     <button type="submit" class="btn btn-success" id="startStatsQuery">Go!</button>
