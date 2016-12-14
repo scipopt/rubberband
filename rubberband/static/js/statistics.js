@@ -10,7 +10,6 @@ bindLessFieldsClickHandler();
 function bindMoreFieldsClickHandler() {
     // add new filter fields, move buttons down
     $(".moreFields").click(function() {
-        console.log("on click moreFields");
         // TODO: refactor to permit more than 10 filters
         var lessButton = $(".lessFields");
         if (lessButton) {
@@ -29,7 +28,6 @@ function bindMoreFieldsClickHandler() {
 function bindLessFieldsClickHandler() {
 // remove last filter, move buttons up
     $(".lessFields").click(function() {
-        console.log("called Less");
         var step = parseInt($(".lessFields").parent().get(0).id.slice(-1)[0]) - 1;
         $(".lessFields").parent().remove();
         if (step == 1) {
@@ -55,10 +53,6 @@ function addNewField(count) {
         <option value=">=">&gt;=</option>
       </select>
       <input autocomplete="off" type="text" class="form-control fieldValue" name="value${count}" required>
-      <select class="form-control one-or-all" name="oneorall${count}" required>
-        <option value="all">For all testsets</option>
-        <option value="one">For one testset</option>
-      </select>
       </div>
       `
     $(".statsFormFields").append(html);
