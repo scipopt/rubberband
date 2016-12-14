@@ -1,5 +1,3 @@
-from tornado.web import HTTPError
-
 from .base import BaseHandler
 from .result import load_testsets, get_same_status
 from rubberband.models import TestSet

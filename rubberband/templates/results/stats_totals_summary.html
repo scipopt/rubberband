@@ -1,0 +1,20 @@
+<table class="stats-table table table-bordered">
+  <thead>
+    <tr>
+      {% for status in ["all", "ok", "better", "solved not verified", "timelimit", "memorylimit", "unknown", "fail"] %}
+      <th>{{ status }}</th>
+      {% end %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for f in [file] + compare %}
+    <tr>
+      <td>{{ len([x for x in f.children]) }}</td>
+      {% for status in ["ok", "better", "solved not verified", "timelimit", "memorylimit", "unknown"] %}
+      <td>{{ len([f.children[x] for x in f.children if f.children[x].Status == status ]) }}</td>
+      {% end %}
+      <td>{{ len([x for x in f.children if f.children[x].Status.startswith("fail")]) }}</td>
+    </tr>
+    {% end %}
+  </tbody>
+</table>

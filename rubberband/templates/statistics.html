@@ -53,7 +53,9 @@
 {% if hasattr(file, "stats") %}
 <h4>Matched Instances</h4>
 <p>{{ ", ".join(file.matched) }}</p>
-{% include "results/stats_table.html" %}
+<h4>Filtered Solving Status</h4>
+{% include "results/stats_status_summary.html" %}
+{% include "results/stats_by_status.html" %}
 {% else %}
 <p>Nothing to see here.</p>
 {% end %}
