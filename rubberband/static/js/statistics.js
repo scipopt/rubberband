@@ -110,7 +110,12 @@ function prefillFields() {
           }
         }
       });
-      numFields = numFields/3;
+      if ("oneorall" in params) { // remove extra field from calculation
+          numFields = (numFields - 1)/3;
+      } else {
+          numFields = (numFields)/3;
+      }
+
       if (numFields == 1) {
           $("#group1").append(addButton);
       } else {
