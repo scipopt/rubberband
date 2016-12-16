@@ -1,0 +1,23 @@
+<table class="stats-table table table-bordered">
+  <thead>
+    <tr>
+      {% for status in ["all", "ok", "better", "solved not verified", "timelimit", "memorylimit", "unknown", "fail"] %}
+      <th>{{ status }}</th>
+      {% end %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for f in [file] + compare %}
+    <tr>
+      <td>{{ len(f.matched) }}</td>
+      {% for status in ["ok", "better", "solved not verified", "timelimit", "memorylimit", "unknown", "fail"] %}
+      {% if status in f.stats %}
+      <td>{{ f.stats[status].to_dict().get("count", 0) }}</td>
+      {% else %}
+      <td>0</td>
+      {% end %}
+      {% end %}
+    </tr>
+    {% end %}
+  </tbody>
+</table>

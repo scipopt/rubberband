@@ -24,7 +24,6 @@
 <p>Input your desired search query below.</p>
 <form id="statistics" name="statisticsform" class="form-inline">
   <div class="statsFormFields">
-    <input type="text" name="base" value="{{file.meta.id}}" hidden required>
     <div class="row" id="group1">
       <input autocomplete="off" type="text" class="form-control fieldKey" name="field1" placeholder="Instance Feature" required>
       <select class="form-control comparator" name="comparator1" required>
@@ -38,13 +37,25 @@
       <input autocomplete="off" type="text" class="form-control fieldValue" name="value1" required>
     </div>
     </div>
+    {% if compare %}
+    <div class="row-buffered">
+      <p>Should the input query apply to instances in all test runs, or instances in at least one test run?</p>
+      <select class="form-control one-or-all" name="oneorall" required>
+        <option value="all">All test runs</option>
+        <option value="one">One test run</option>
+      </select>
+    </div>
+    <input type="text" name="compare" value="{{ ",".join([c.meta.id for c in compare]) }}" hidden required>
+    {% end %}
     <button type="submit" class="btn btn-success" id="startStatsQuery">Go!</button>
 </form>
 <div class="row top-buffer">
 {% if hasattr(file, "stats") %}
 <h4>Matched Instances</h4>
 <p>{{ ", ".join(file.matched) }}</p>
-{% include "results/stats_table.html" %}
+<h4>Filtered Solving Status</h4>
+{% include "results/stats_status_summary.html" %}
+{% include "results/stats_by_status.html" %}
 {% else %}
 <p>Nothing to see here.</p>
 {% end %}

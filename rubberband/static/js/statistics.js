@@ -10,7 +10,6 @@ bindLessFieldsClickHandler();
 function bindMoreFieldsClickHandler() {
     // add new filter fields, move buttons down
     $(".moreFields").click(function() {
-        console.log("on click moreFields");
         // TODO: refactor to permit more than 10 filters
         var lessButton = $(".lessFields");
         if (lessButton) {
@@ -29,7 +28,6 @@ function bindMoreFieldsClickHandler() {
 function bindLessFieldsClickHandler() {
 // remove last filter, move buttons up
     $(".lessFields").click(function() {
-        console.log("called Less");
         var step = parseInt($(".lessFields").parent().get(0).id.slice(-1)[0]) - 1;
         $(".lessFields").parent().remove();
         if (step == 1) {
@@ -63,8 +61,8 @@ function addNewField(count) {
 
 
 function initializeTypeahead(count) {
-    var query = getParts(window.location.search);
-    $.get('/instances/' + query["base"], function(data){
+    var testset_id = window.location.pathname.split("/")[2];
+    $.get('/instances/' + testset_id, function(data){
         var test_set = Object.keys(data)[0];
         var instances = Object.keys(data[test_set]);
         var availableKeys = Object.keys(data[test_set][instances[0]]);
@@ -90,8 +88,8 @@ function getParts(query_string) {
 
 function prefillFields() {
   var params = getParts(document.location.search);
-  // don't need base to build the form
-  delete params["base"];
+  // don't need compare to build the form
+  delete params["compare"];
   var numFields = Object.keys(params).length;
   if (numFields == 0) {
       $("#group1").append(addButton);
@@ -112,7 +110,12 @@ function prefillFields() {
           }
         }
       });
-      numFields = numFields/3;
+      if ("oneorall" in params) { // remove extra field from calculation
+          numFields = (numFields - 1)/3;
+      } else {
+          numFields = (numFields)/3;
+      }
+
       if (numFields == 1) {
           $("#group1").append(addButton);
       } else {
