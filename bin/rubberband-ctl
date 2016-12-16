@@ -44,7 +44,7 @@ def create_index():
 
 
 @main.command()
-def seed_database():
+def populate_index():
     '''
     Seed Elasticsearch with results from the tests/data directory.
     '''

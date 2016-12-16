@@ -49,7 +49,7 @@ echo "Importing schema..."
 $root_dir/rubberband-ctl create_index
 
 echo "Populating elasticsearch..."
-$root_dir/rubberband-ctl seed_database
+$root_dir/rubberband-ctl populate_index
 
 git checkout $root_dir/tests/data
 
