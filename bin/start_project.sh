@@ -42,6 +42,7 @@ echo "Installing python project requirements..."
 root_dir="${PWD%/bin}"
 virtualenv -p python3 "$root_dir/venv"
 source "$root_dir/venv/bin/activate"
+pip install -r "$root_dir/requirements.txt"
 pip install -r "$root_dir/requirements-dev.txt"
 pip install -e .
 
