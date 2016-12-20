@@ -52,7 +52,7 @@ More information about running Elasticsearch as a service can be found [here](ht
 
 ### Setting up Rubberband
 
-Rubberband is built on [tornado](http://www.tornadoweb.org/en/stable/) and [ipet-reader](https://github.com/xmunoz/ipet-reader), a python3 compatible fork of [ipet](https://git.zib.de/integer/ipet). To get Rubberband running locally, make sure you first have Elasticsearch installed and running.
+Rubberband is built on [tornado](http://www.tornadoweb.org/en/stable/) and [IPET](https://github.com/gregorCH/ipet), an interactive performance evaluation tool that comes with a parsing library for benchmark files. To get Rubberband running locally, make sure you first have Elasticsearch installed and running.
 
 ```
 sudo service elasticsearch start
@@ -63,10 +63,13 @@ Now clone this repository and set up a virtual environment.
 ```
 virtualenv -p python3 --no-site-packages venv
 source venv/bin/activate
+pip install -r requirements.txt
 pip install -r requirements-dev.txt
 ```
 
-Copy the configuration file in [config/app.cfg](config/app.cfg) into `/etc/rubberband/`, and edit the required variables. Rubberband has some sane defaults already configured, so this step isn't strickly required. However, if you want to connect Rubberband to a Gitlab instance, or to an SMTP server to send email, you will need to edit `app.cfg`.
+The first install command will clone and install IPET from github. This step is not necessary if you happen to run in a virtual environment with IPET already installed.
+
+Copy the configuration file in [config/app.cfg](config/app.cfg) into `/etc/rubberband/`, and edit the required variables. Rubberband has some sane defaults already configured, so this step isn't strictly required. However, if you want to connect Rubberband to a Gitlab instance, or to an SMTP server to send email, you will need to edit `app.cfg`.
 
 ### Populating Elasticsearch
 

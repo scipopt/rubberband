@@ -8,7 +8,7 @@ This project adheres to the [Contributor Covenant Code of Conduct][code-of-condu
 The best way to start developing this project is to set up a virtualenv and install the requirements. This can also be done with [conda](http://conda.pydata.org/docs/).
 
     git clone <my remote url/rubberband.git>
-    cd sodapy
+    cd rubberband
     virtualenv -p python3 venv
     source venv/bin/activate
     pip install -r requirements-dev.txt

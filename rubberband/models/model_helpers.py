@@ -1,4 +1,5 @@
-from ipet_reader.misc import shmean, gemean
+from ipet.misc import listGetShiftedGeometricMean as shmean
+from ipet.misc import listGetGeomMean as gemean
 from rubberband.constants import NONE_DISPLAY
 
 from collections import OrderedDict

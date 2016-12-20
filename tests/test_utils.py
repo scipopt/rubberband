@@ -2,7 +2,7 @@ import os.path
 import yaml
 import json
 
-from ipet_reader import Experiment
+from ipet import Experiment
 from rubberband.utils import generate_sha256_hash
 from rubberband.utils.importer import _determine_type
 
