@@ -1,6 +1,5 @@
 from collections import defaultdict
 
-
 class ImportStats(object):
     def __init__(self, collection):
         self.collection = collection

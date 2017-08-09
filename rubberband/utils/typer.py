@@ -1,11 +1,13 @@
 
 def boolify(value):
+    '''
+    Convert a string to a bool, if not possible, raise a ValueError.
+    '''
     if value.lower() == "true":
         return True
     elif value.lower() == "false":
         return False
     raise ValueError("{} is not a bool".format(value))
-
 
 def estimate_type(var):
     '''

@@ -30,6 +30,7 @@ class ResultClient(object):
             raise Exception("Missing user when initiliazing client.")
 
         self.current_user = user
+        # here, usually __name__ is "ResultClient" opposed to "__main__"
         self.logger = logging.getLogger(__name__)
         self.logger.info("{} opened a connection to elasticsearch with the {}"
                          .format(self.current_user, type(self).__name__))
@@ -45,6 +46,7 @@ class ResultClient(object):
         self.remove_files = remove
         self.logger.info("Found {} files. Beginning to parse.".format(total_files))
         try:
+            # parsing all locally saved files
             self.parse_file_bundle(paths)
         except:
             self.metadata.status = "fail"
@@ -87,6 +89,7 @@ class ResultClient(object):
         results = self.get_results_data(data)
 
         # save the structured data in elasticsearch and in gitlab
+        # TODO: not in gitlab but in elasticsearch?!
         self.save_structured_data(file_data, results)
         self.backup_files()
 
@@ -104,6 +107,7 @@ class ResultClient(object):
         '''
 
         results = {}
+        # TODO This won't work like this anymore with new version of IPET
         instances = data["SolvingTime"].keys()
 
         for i in instances:
@@ -377,7 +381,10 @@ class ResultClient(object):
     def file_lookup(self):
         '''
         Uses the file_id (sha256 hash) to determine if a file is already existing in elasticsearch.
+
+        Return None if not found.
         '''
+        # this should not happen
         if hasattr(self, "testset_meta_id"):
             f = TestSet.get(id=self.testset_meta_id)
             return f
@@ -388,6 +395,9 @@ class ResultClient(object):
             found = list(s.execute())
             if len(found) >= 1:
                 return found[0]
+            return None
+
+        # this should not happen
         else:
             raise Exception('file_id not yet set. Lookup failed.')
 

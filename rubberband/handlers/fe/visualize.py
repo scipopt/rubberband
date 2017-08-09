@@ -7,15 +7,22 @@ from rubberband.models import TestSet, Result
 
 
 class VisualizeView(BaseHandler):
+
     def get(self):
+        '''
+        Show the form for the user to enter data that they want to visualize.
+        '''
+        # by default show results from the last year
         start_date = (datetime.datetime.now() - datetime.timedelta(days=365)).strftime("%Y-%m-%d")
         end_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        # show the form to enter data
         self.render("visualize.html", page_title="Visualize", default_start_date=start_date,
                     default_end_date=end_date)
 
     def post(self):
         '''
         AJAX endpoint from frontend.
+        Invoked after the user clicked on 'submit' in visualize-view
         '''
         query_type = self.get_argument('data-type', None)
         query = self.get_argument('data-name', None)
@@ -36,6 +43,7 @@ class VisualizeView(BaseHandler):
 
         if query_type == "Instance":
             s = Result.search()
+            # Q is for Query
             s = s.filter(Q("has_parent", type="testset", query=Q("range", **range_params)))
             s = s.filter(Q("term", instance_name=query))
 

@@ -13,6 +13,7 @@ class BaseHandler(RequestHandler):
     '''
     def get_current_user(self):
         if not self.settings["debug"]:
+            # self.request is a single HTTP request object of type 'tornado.httputil.HTTPServerRequest'
             headers = dict(self.request.headers.get_all())
             return headers.get("X-Forwarded-Email")
         else:
@@ -27,6 +28,7 @@ class BaseHandler(RequestHandler):
 
     def write_error(self, status_code, **kwargs):
         if status_code == 404:
+            #  'Simply render the template to a string and pass it to self.write'
             self.render("404.html")
         else:
             msg = "\n".join(traceback.format_exception(*kwargs["exc_info"]))
@@ -57,13 +59,18 @@ class BaseHandler(RequestHandler):
             options=options,
         )
 
+        # additional ui modules
         namespace.update(self.ui)
 
         return namespace
 
     def format_attr(self, obj, attr):
         '''
-        Format null values.
+        Format (null) values (attributes attr of obj).
+        Value gets properly formatted if attr is a single attribute.
+        If attr is a list, the keys are concatenated with " ".
+
+        attr: key or list of keys
         '''
         if isinstance(attr, list):
             value = []
@@ -90,7 +97,12 @@ class BaseHandler(RequestHandler):
 
     def format_attrs(self, objs, attr, inst_name):
         '''
-        Sorted compare values as a formatted string.
+        Return sorted attribute (attr) of an instance (inst_name)
+        from multiple TestSets (objs) as a formatted string separated by newlines.
+
+        objs: set/list of TestSets
+        attr: attribute
+        inst_name: instance/problem name
         '''
         attr_str = []
         for o in objs:
@@ -101,6 +113,9 @@ class BaseHandler(RequestHandler):
         return "\n".join(map(str, partial_list))
 
     def are_equivalent(self, one, two, attr):
+        '''
+        Decide if the data in attr is the same in both TestSets one and two.
+        '''
         a = self.format_attr(one, attr)
         b = self.format_attr(two, attr)
         return a == b

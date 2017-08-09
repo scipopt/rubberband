@@ -2,13 +2,16 @@ import rubberband.handlers.fe as fe
 import rubberband.handlers.api as api
 
 routes = [
+    # The following Views all inherit from BaseHandler (in base.py)
     # Frontend views
     (r"/", fe.MainView),
     (r"/newest", fe.NewestView),
     (r"/visualize", fe.VisualizeView),
     (r"/compare", fe.CompareView),
     (r"/faq", fe.FAQView),
+    # for typeahead in visualize.js
     (r"/instances/names", fe.InstanceNamesEndpoint),
+    # for typeahead in statistic.js
     (r"/instances/?(?P<parent_id>[^\/]+)", fe.InstanceEndpoint),
     (r"/result/(?P<parent_id>[^\/]+)", fe.ResultView),
     (r"/result/(?P<parent_id>[^\/]+)/instance/?(?P<child_id>[^\/]+)?", fe.InstanceView),

@@ -9,6 +9,7 @@ from elasticsearch_dsl.connections import connections
 from rubberband.routes import routes
 from rubberband.handlers.fe import FourOhFourView
 
+# define options that server.py can read from
 define("port", default=8888, help="Port to run tornado on.")
 define("num_processes", default=1, help="Number of processes to run app in.")
 define("prod_url", default="https://rubberband.example.com",
@@ -36,11 +37,12 @@ define("smtp_from_address", default="",
 define("smtp_username", default="", help="The username for SMTP authentication.")
 define("smtp_password", default="", help="The password for SMTP authentication.")
 
-
+# this is being called from server.py, also from bin/rubberband-ctl
 def make_app(project_root):
-    # Load options from environment
+    # init logger
     loggr = logging.getLogger()
     loggr.setLevel(level=20)
+    # Load options from environment
     config = "/etc/rubberband/app.cfg"
     if os.path.isfile(config):
         logging.info("Loading additional configuration from /etc/rubberband/app.cfg")
@@ -48,6 +50,7 @@ def make_app(project_root):
     else:
         logging.info("Using default config.")
 
+    # settings for tornado
     settings = {
         "debug": True if options.num_processes == 1 else False,
         "static_path": os.path.join(project_root, "static"),
@@ -57,15 +60,23 @@ def make_app(project_root):
         "logger": loggr,
     }
 
-    # Set up application
+    # set up tornado application
+    # From the doc: "A Tornado web application maps URLs or URL patterns to subclasses
+    # of tornado.web.RequestHandler. Those classes define get() or post() methods
+    # to handle HTTP GET or POST requests to that URL."
+    # these patterns are defined in routes.py
     app = Application(routes, **settings)
 
     logging.info("Setting up Elasticsearch connection.")
+    # set up elasticsearch
+    # create connection instance
     conn = Elasticsearch([options.elasticsearch_url], use_ssl=options.elasticsearch_use_ssl,
                          verify_certs=options.elasticsearch_verify_certs,
                          ca_certs=options.elasticsearch_ca_certs)
+    # connect connection to pool
     connections.add_connection("default", conn)
 
+    # settings of tornado app
     if app.settings["debug"]:
         app.base_url = "http://127.0.0.1:{}".format(options.port)
     else:

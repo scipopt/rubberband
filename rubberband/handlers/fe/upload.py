@@ -18,11 +18,13 @@ class UploadView(BaseHandler):
             tags = tags.split(",")
             tags = list(map(str.strip, tags))
 
+        # write all files to local directory
         for f in files:
             paths.append(write_file(f["filename"], f["body"]))
 
         paths = tuple(paths)
 
+        # ResultClient helps us process the uploaded files
         c = ResultClient(user=self.get_current_user())
         results = c.process_files(paths, tags=tags)
         msgs = results.getMessages()

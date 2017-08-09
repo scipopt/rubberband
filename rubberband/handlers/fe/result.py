@@ -10,14 +10,15 @@ class ResultView(BaseHandler):
     Results view
     '''
     def get(self, parent_id):
+        # parent id is the first argument: meta id of TestSet
         if not parent_id:
             raise HTTPError(404)
-
         parent = TestSet.get(id=parent_id, ignore=404)
 
         if not parent:
             raise HTTPError(404)
 
+        # get data associated with TestSet, save in parent.children[]
         parent.load_children()
 
         compare = self.get_argument("compare", default=[])
@@ -33,9 +34,11 @@ class ResultView(BaseHandler):
             parent.load_stats(same_status)
             for c in compare:
                 c.load_stats(same_status)
+            # save intersection results and difference results
             sets = get_intersection_difference([c.children.to_dict().keys() for c in all_runs])
         else:
             sets = {}
+            # save stats in parent.stats
             parent.load_stats()
 
         self.render("result_view.html", file=parent, page_title="Result", compare=compare,

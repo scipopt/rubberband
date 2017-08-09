@@ -15,19 +15,8 @@ The following two things happen when a file is uploaded:
     <li>the raw files are gzipped and sent to <a href="https://git.zib.de/integer/runlogs">integer/runlogs</a></li>
 </ol>
 <p>
-If the first part fails, then the entire operation is aborted. If the first part succeeds however, and the second part fails, the operation from the first part is not rolled back. This results in a situation where you can see the parsed results, but the raw log files are not available, because the gitlab api rejected them at upload time. Usually, part 2 fails because the files violate Gitlab's filename restrictions. Here is a sample error message from Gitlab.
-</p>
-<pre>
-Your changes could not be committed, because the file name can contain only letters, digits, '_', '-', '@' and '.'. Separate directories with a '/'.
-</pre>
-<p>A fix for this problem would be to simply change the filename to conform to Gitlab's requirements. Other potential reasons for this is behavior:
-</p>
-<ul>
-    <li>HTTP timeouts for really large files</li>
-    <li>Changes to the <a href="https://docs.gitlab.com/ce/api/">Gitlab API</a></li>
-    <li>Our <a href="https://git.zib.de">Gitlab</a> instance is down or under maintenance</li>
-</ul>
-<p>Either way, a quick look at the application log (instuser@rubberband.zib.de:/var/log/supervisor/rubberband-stderr---supervisor-*.log) could help debug these kinds of problems.</p>
+If the first part fails, then the entire operation is aborted. If the first part succeeds however, and the second part fails, the operation from the first part is not rolled back. This results in a situation where you can see the parsed results, but the raw log files are not available.
+Either way, a quick look at the application log (instuser@rubberband.zib.de:/var/log/supervisor/rubberband-stderr---supervisor-*.log) could help debug these kinds of problems.</p>
 <br>
 <h4>Something is broken. Where do I report it?</h4>
 <p>

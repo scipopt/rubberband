@@ -38,7 +38,9 @@ class CompareView(BaseHandler):
                     choices=choices)
 
     def post(self):
+        # compares contains the meta ids (the hashes?) of all but one comparison TestSet
         compares = list(self.request.arguments.keys())
+        # base identifies via meta id (via hash?) one of the comparison TestSet
         base = self.get_argument("base", None)
         if base:
             compares.remove("base")
