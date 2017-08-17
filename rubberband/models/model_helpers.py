@@ -9,12 +9,14 @@ def compute_stat(instances):
     '''
     Computes statistical information about a list of instances.
         instances (list)
+    # TODO this whole method is going to be replaced by ipet?
     '''
     stats = {}
     stats["all"] = OrderedDict()
     stats["all"]["instances"] = instances
     # group instances into status buckets
     for i in instances:
+        # TODO this is probably not going to work with the new ipet
         status = i.Status.lower()
         if status.startswith("fail"):
             if "fail" not in stats:
@@ -22,12 +24,14 @@ def compute_stat(instances):
                 stats["fail"]["instances"] = []
             stats["fail"]["instances"].append(i)
         elif status not in stats:
+            # TODO isn't this overwriting the existing stats[status]?
             stats[status] = OrderedDict()
             stats[status]["instances"] = [i]
         else:
             stats[status]["instances"].append(i)
 
     keys = [
+        # TODO update to new ipet
         "Nodes",
         "TotalTime_solving",
     ]

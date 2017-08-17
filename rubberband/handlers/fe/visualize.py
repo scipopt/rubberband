@@ -48,9 +48,11 @@ class VisualizeView(BaseHandler):
             s = s.filter(Q("term", instance_name=query))
 
             res = []
+            # this uses pagination/scroll
             for hit in s.scan():
                 res.append(hit)
 
+            # TODO Is thIs the slow part? Have a look at it
             for r in res:
                 parent_data = TestSet.get(id=r.meta.parent)
                 components = r.to_dict()
@@ -64,6 +66,7 @@ class VisualizeView(BaseHandler):
             s = s.filter(Q("term", test_set=query))
 
             res = []
+            # this uses pagination/scroll
             for hit in s.scan():
                 res.append(hit)
 

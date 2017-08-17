@@ -17,6 +17,7 @@ from .stats import ImportStats
 from .hasher import generate_sha256_hash
 
 REQUIRED_FILES = set([".out", ".err"])
+# TODO may add files here?
 OPTIONAL_FILES = set([".solu", ".set"])
 
 
@@ -40,6 +41,7 @@ class ResultClient(object):
         '''
         Process files, one at a time. Accepts a list.
         '''
+        # This gets called by both the apiupload and the webupload
         self.metadata = ImportStats("results")
         total_files = len(paths)
         self.tags = tags
@@ -82,14 +84,14 @@ class ResultClient(object):
         # parse files with ipet
         manageables = self.get_data_from_ipet()
         data = json.loads(manageables.data.to_json())
+        # TODO does ipet still provide this? what did it do?
         settings = manageables.getParameterData()
 
         # organize data into file_data and results
         file_data = self.get_file_data(data, settings=settings)
         results = self.get_results_data(data)
 
-        # save the structured data in elasticsearch and in gitlab
-        # TODO: not in gitlab but in elasticsearch?!
+        # save the structured data in elasticsearch
         self.save_structured_data(file_data, results)
         self.backup_files()
 
@@ -152,6 +154,7 @@ class ResultClient(object):
         self.metadata.logMessage(self.files[".out"], message)
 
     def get_file_data(self, data, settings=None):
+        # TODO update to new ipet
         file_keys = set(["TimeLimit", "Version", "LPSolver", "GitHash", "Solver", "mode"])
 
         # logic for different solvers
@@ -166,6 +169,7 @@ class ResultClient(object):
             if i in data:
                 vs[i] = list(data[i].values())[0]
 
+        # TODO remove, want to more sensible datacollection
         filename = os.path.basename(self.files[".out"])
         rogue_string = ".zib.de"
         file_path_clean = filename.replace(rogue_string, "")
@@ -342,6 +346,7 @@ class ResultClient(object):
         self._log_info("{} file bundle backed up in Elasticsearch.".format(self.files[".out"]))
 
     def get_data_from_ipet(self):
+        # TODO update ipet
         try:
             # ipet boilerplate
             c = Experiment()

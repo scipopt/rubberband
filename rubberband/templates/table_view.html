@@ -18,6 +18,8 @@
       <th>Who</th>
       <th>Filename</th>
       <th>Commit Timestamp</th>
+      <th>Test Set</th>
+      <th>Mode</th>
       <th>Date Added</th>
     </tr>
   </thead>
@@ -28,6 +30,8 @@
       <td>{{ r.run_initiator }}</a></td>
       <td class="col-md-6"><a href="/result/{{ r.meta.id }}">{{ r.filename }}</a></td>
       <td>{{ format_attr(r, "git_commit_timestamp") }}</td>
+      <td>{{ r.test_set }}</td>
+      <td>{{ r.mode }}</td>
       <td>{{ format_attr(r, "index_timestamp") }}</td>
     </tr>
   {% end %}

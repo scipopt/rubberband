@@ -11,17 +11,19 @@ class File(DocType):
     '''
     The definition of a File object. A `File` contains the raw contents of a log file.
     '''
-    type = String(index="not_analyzed", required=True)  # out, set, err, solu
-    filename = String(index="not_analyzed", required=True)  # check.MMM.scip-021ace1...out
-    hash = String(index="not_analyzed", required=True)  # computed hash
-    testset_id = String(index="not_analyzed", required=True)  # for application-side joins
-    text = String(index="no", required=True)
+    type        = String(index="not_analyzed", required=True)  # out, set, err, solu
+    filename    = String(index="not_analyzed", required=True)  # check.MMM.scip-021ace1...out
+    hash        = String(index="not_analyzed", required=True)  # computed hash
+    testset_id  = String(index="not_analyzed", required=True)  # for application-side joins
+    # TODO should this also be "not_analyzed"?
+    text        = String(index="no", required=True)
 
     class Meta:
         index = ELASTICSEARCH_INDEX
+        # doc_type = "file"
 
     def __str__(self):
-        return "Result {} {}".format(self.parent.filename, self.instance_name)
+        return "File {} {}".format(self.filename, self.type)
 
 
 class Result(DocType):
@@ -46,18 +48,19 @@ class Result(DocType):
         gzip
     '''
 
-    instance_name = String(index="not_analyzed", required=True)  # mcf128-4-1
-    instance_type = String(index="not_analyzed")  # CIP
-    SoluFileStatus = String(index="not_analyzed")
-    Status = String(index="not_analyzed")
-    Datetime_Start = Date()
-    Datetime_End = Date()
-    dualboundhistory = Float(multi=True)
-    PrimalBoundHistory = Float(multi=True)
+    instance_name       = String(index="not_analyzed", required=True)  # mcf128-4-1
+    instance_type       = String(index="not_analyzed")  # CIP
+    SoluFileStatus      = String(index="not_analyzed")
+    Status              = String(index="not_analyzed")
+    Datetime_Start      = Date()
+    Datetime_End        = Date()
+    dualboundhistory    = Float(multi=True)
+    PrimalBoundHistory  = Float(multi=True)
 
     class Meta:
         index = ELASTICSEARCH_INDEX
         parent = MetaField(type="testset")
+        # doc_type = "result"
 
     def __str__(self):
         return "Result {} {}".format(self.parent.filename, self.instance_name)
@@ -91,28 +94,42 @@ class TestSet(DocType):
     '''
     The file definition.
     '''
-    id = String(index="not_analyzed", required=True)
-    filename = String(index="not_analyzed", required=True)
-    test_set = String(index="not_analyzed")  # 'MMM', 'short', 'miplib2010', 'bugs', 'SAP-MMP'
-    solver = String(index="not_analyzed", required=True)  # scip
-    solver_version = String(index="not_analyzed")  # 3.0.1.1
+    id                      = String(index="not_analyzed", required=True)
+    filename                = String(index="not_analyzed", required=True)
+    solver                  = String(index="not_analyzed", required=True)  # scip
+    run_initiator           = String(index="not_analyzed", required=True)  # Gregor Hendel
+    tags                    = String(index="not_analyzed", multi=True)  # user-provided tags
+    test_set                = String(index="not_analyzed")  # 'MMM', 'short', 'miplib2010', 'bugs', 'SAP-MMP'
+    solver_version          = String(index="not_analyzed")  # 3.0.1.1
+    run_environment         = String(index="not_analyzed")
+    os                      = String(index="not_analyzed")
+    architecture            = String(index="not_analyzed")
+    mode                    = String(index="not_analyzed")
+    opt_flag                = String(index="not_analyzed")  # opt, dbg
+    lp_solver               = String(index="not_analyzed")  # SoPlex
+    lp_solver_version       = String(index="not_analyzed")  # 1.7.0.2
+    git_hash                = String(index="not_analyzed")  # af21b01
+    git_commit_author       = String(index="not_analyzed")  # Gregor Hendel
+    settings_short_name     = String(index="not_analyzed")  # default
+    index_timestamp         = Date(required=True)
+    git_commit_timestamp    = Date()  # required for plotting
     file_modified_timestamp = Date()
-    index_timestamp = Date(required=True)
-    run_environment = String(index="not_analyzed")
-    os = String(index="not_analyzed")
-    architecture = String(index="not_analyzed")
-    mode = String(index="not_analyzed")
-    opt_flag = String(index="not_analyzed")  # opt, dbg
-    lp_solver = String(index="not_analyzed")  # SoPlex
-    lp_solver_version = String(index="not_analyzed")  # 1.7.0.2
-    git_hash = String(index="not_analyzed")  # af21b01
-    git_commit_timestamp = Date()  # required for plotting
-    git_commit_author = String(index="not_analyzed")  # Gregor Hendel
-    run_initiator = String(index="not_analyzed", required=True)  # Gregor Hendel
-    settings = Nested()
-    settings_default = Nested()
-    settings_short_name = String(index="not_analyzed")  # default
-    tags = String(index="not_analyzed", multi=True)  # user-provided tags
+    settings                = Nested()
+    settings_default        = Nested()
+    '''
+    current metadata from scip
+        @Permutation
+        @Seed
+        @Settings
+        @TstName
+        @BinName
+        @NodeLimit
+        @MemLimit
+        @Threads
+        @FeasTol
+        @Queue
+        @Exclusive
+    '''
 
     class Meta:
         index = ELASTICSEARCH_INDEX
@@ -123,6 +140,7 @@ class TestSet(DocType):
         Cast infinity to INFINITY_MASK, since databases don't like infinity.
         This is likely ok, because fields that could contain infinity, are [0, inf)
         and mask is -1.
+        # TODO is that so?
         '''
         for i in INFINITY_KEYS:
             if getattr(self.settings, i, None) == float("inf"):
@@ -191,12 +209,14 @@ class TestSet(DocType):
             return json.dumps(all_instances, default=date_handler)
 
         elif ftype == ".err":
+            # TODO
             raise NotImplemented()
 
     def csv(self, ftype=".out"):
         '''
         Return the data contained in the TestSet object as CSV.
         '''
+        # TODO
         raise NotImplemented()
 
     def load_children(self):
@@ -208,6 +228,7 @@ class TestSet(DocType):
         s = s.filter("term", _parent=self.meta.id)
         self.children = {}
 
+        # this uses pagination/scroll
         for hit in s.scan():
             self.children[hit.instance_name] = hit
 
@@ -216,6 +237,7 @@ class TestSet(DocType):
         s = s.filter("term", testset_id=self.meta.id)
 
         self.files = {}
+        # this uses pagination/scroll
         for hit in s.scan():
             self.children[hit.type] = hit
 
