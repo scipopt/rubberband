@@ -7,6 +7,7 @@ import traceback
 from gitlab.exceptions import GitlabGetError
 
 from ipet import Experiment
+from ipet import Key
 from tornado.options import options
 
 # package imports
@@ -18,7 +19,7 @@ from .hasher import generate_sha256_hash
 
 REQUIRED_FILES = set([".out", ".err"])
 # TODO may add files here?
-OPTIONAL_FILES = set([".solu", ".set"])
+OPTIONAL_FILES = set([".solu", ".set", ".meta"])
 
 
 class ResultClient(object):
@@ -82,13 +83,17 @@ class ResultClient(object):
             return
 
         # parse files with ipet
+        # manageables is the ipet.TestRun
         manageables = self.get_data_from_ipet()
+        # data is the 'data' DataFrame from ipet.TestRun
         data = json.loads(manageables.data.to_json())
-        # TODO does ipet still provide this? what did it do?
+        # get the scipparameters and the defaultparameters from ipet
         settings = manageables.getParameterData()
 
         # organize data into file_data and results
+        # collect data from testrun as a whole
         file_data = self.get_file_data(data, settings=settings)
+
         results = self.get_results_data(data)
 
         # save the structured data in elasticsearch
@@ -109,17 +114,22 @@ class ResultClient(object):
         '''
 
         results = {}
-        # TODO This won't work like this anymore with new version of IPET
+        # TODO This gives the index. Before this was a list of instances, now it is just ids. What do we want here?
         instances = data["SolvingTime"].keys()
 
         for i in instances:
-            results[i] = {"instance_name": i}
+            #results[i] = {"instance_name": i}
+            results[i] = {
+                    "instance_name": data[Key.ProblemName][i],
+                    "instance_id"  : i
+                    }
 
         for k, v in data.items():
             for instance, metric in v.items():
                 k = k.replace(".", "_")
                 results[instance][k] = metric
 
+        # extra: determine type of instance and number of iterations
         for k, v in results.items():
             results[k]["instance_type"] = _determine_type(v)
             iteration_values = [
@@ -154,22 +164,25 @@ class ResultClient(object):
         self.metadata.logMessage(self.files[".out"], message)
 
     def get_file_data(self, data, settings=None):
-        # TODO update to new ipet
-        file_keys = set(["TimeLimit", "Version", "LPSolver", "GitHash", "Solver", "mode"])
+        # settings is a tuple
+        # data is 'data' DataFrame from ipet.TestRun
+        # for scip these data is available
+        file_keys = set([Key.TimeLimit, Key.Version, "LPSolver", "GitHash", Key.Solver, "mode"])
+        # TODO once the ipet is up to date, use this and update the rest
+        #file_keys = set([Key.TimeLimit, Key.Version, Key.LPSolver, Key.GitHash, Key.Solver, Key.Mode])
 
-        # logic for different solvers
         if "LPSolver" in data:
+            # assume that a testrun is all run with the same lpsolver
             lp_solver_name, lp_solver_version = list(data["LPSolver"].values())[0].split(" ")
         else:
             lp_solver_name = None
             lp_solver_version = None
 
         vs = {}
-        for i in ["mode", "TimeLimit"]:
+        for i in ["mode", Key.TimeLimit]:
             if i in data:
                 vs[i] = list(data[i].values())[0]
 
-        # TODO remove, want to more sensible datacollection
         filename = os.path.basename(self.files[".out"])
         rogue_string = ".zib.de"
         file_path_clean = filename.replace(rogue_string, "")
@@ -177,20 +190,28 @@ class ResultClient(object):
 
         file_data = {
             "filename": filename,
-            "test_set": fnparts[1],  # short, bug, etc,
-            "solver": list(data["Solver"].values())[0],
-            "solver_version": list(data["Version"].values())[0],
+            "solver": list(data[Key.Solver].values())[0],
+            "solver_version": list(data[Key.Version].values())[0],
             "mode": vs.get("mode"),
-            "time_limit": vs.get("TimeLimit"),
+            "time_limit": vs.get(Key.TimeLimit),
             "lp_solver": lp_solver_name,
             "lp_solver_version": lp_solver_version,
+            "tags": self.tags,
+            "index_timestamp": datetime.now(),
+            # read these from metadata, which is added to each problem after parsing
+            # assume that a testrun is all run with the same test_set, environment, settings, opt_flag, architecture, os (etc.)
+
+            # TODO are these correct?
+            #"test_set": list(data["TstName"].values())[0]
+            "test_set": fnparts[1],  # short, bug, etc,
+            #"settings_short_name": list(data["Settings"].values())[0]
             "settings_short_name": fnparts[-2],
+            #"run_environment": list(data["Queue"].values())[0]
             "run_environment": fnparts[-3],
+            # TODO map these to metadata...
             "opt_flag": fnparts[-5],
             "architecture": fnparts[-7],
             "os": fnparts[-8],
-            "tags": self.tags,
-            "index_timestamp": datetime.now(),
         }
 
         if options.gitlab_url:
@@ -348,9 +369,9 @@ class ResultClient(object):
     def get_data_from_ipet(self):
         # TODO update ipet
         try:
-            # ipet boilerplate
             c = Experiment()
 
+            # Metafiles will be loaded automatically if they are lying next to outfiles
             c.addOutputFile(self.files[".out"])
             c.addOutputFile(self.files[".err"])
 

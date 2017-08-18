@@ -11,8 +11,7 @@ The compare view shows the same data as the Result Summary view, but for multipl
 The following two things happen when a file is uploaded:
 </p>
 <ol>
-    <li><a href="https://git.zib.de/bzfmunoz/ipet">ipet</a> parses the input and stores that parsed input in elasticsearch</li>
-    <li>the raw files are gzipped and sent to <a href="https://git.zib.de/integer/runlogs">integer/runlogs</a></li>
+    <li><a href="https://github.com/GregorCH/ipet">ipet</a> parses the input and stores that parsed input in elasticsearch</li>
 </ol>
 <p>
 If the first part fails, then the entire operation is aborted. If the first part succeeds however, and the second part fails, the operation from the first part is not rolled back. This results in a situation where you can see the parsed results, but the raw log files are not available.
