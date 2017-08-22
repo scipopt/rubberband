@@ -49,6 +49,7 @@ class Result(DocType):
     '''
 
     instance_name       = String(index="not_analyzed", required=True)  # mcf128-4-1
+    instance_id         = String(index="not_analyzed", required=True)  # mcf128-4-1
     instance_type       = String(index="not_analyzed")  # CIP
     SoluFileStatus      = String(index="not_analyzed")
     Status              = String(index="not_analyzed")

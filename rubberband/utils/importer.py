@@ -201,17 +201,21 @@ class ResultClient(object):
             # read these from metadata, which is added to each problem after parsing
             # assume that a testrun is all run with the same test_set, environment, settings, opt_flag, architecture, os (etc.)
 
+            # get these via ipet metadata...
             # TODO are these correct?
-            #"test_set": list(data["TstName"].values())[0]
-            "test_set": fnparts[1],  # short, bug, etc,
-            #"settings_short_name": list(data["Settings"].values())[0]
-            "settings_short_name": fnparts[-2],
-            #"run_environment": list(data["Queue"].values())[0]
-            "run_environment": fnparts[-3],
+            "test_set": list(data["TstName"].values())[0],
+            #"test_set": fnparts[1],  # short, bug, etc,
+            "settings_short_name": list(data["Settings"].values())[0],
+            #"settings_short_name": fnparts[-2],
+            "run_environment": list(data["Queue"].values())[0],
+            #"run_environment": fnparts[-3],
             # TODO map these to metadata...
-            "opt_flag": fnparts[-5],
-            "architecture": fnparts[-7],
-            "os": fnparts[-8],
+            #"opt_flag": fnparts[-5],
+            "opt_flag": list(data["OptFlag"].values())[0],
+            #"architecture": fnparts[-7],
+            "architecture": list(data["Architecture"].values())[0],
+            #"os": fnparts[-8],
+            "os": list(data["OperatingSystem"].values())[0]
         }
 
         if options.gitlab_url:
@@ -321,6 +325,14 @@ class ResultClient(object):
             # save children
             for r in instance_level_data:
                 r["_parent"] = f.meta.id
+                # TODO move this to constructor of Result model?
+                for key in ["Datetime_Start", "Datetime_End"]:
+                    try:
+                        timestamp = int(r[key])
+                        timestr = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S")
+                        r[key] = timestr
+                    except:
+                        pass
                 res = Result(**r)
                 res.save()
         except:
@@ -371,7 +383,7 @@ class ResultClient(object):
         try:
             c = Experiment()
 
-            # Metafiles will be loaded automatically if they are lying next to outfiles
+            # Metafiles will be loaded automatically if they are placed next to outfiles
             c.addOutputFile(self.files[".out"])
             c.addOutputFile(self.files[".err"])
 
@@ -388,7 +400,8 @@ class ResultClient(object):
                 msg = "Adding SoluFile."
 
             self.logger.info(msg)
-            c.addSoluFile(self.files[".solu"])
+            if self.files[".solu"] is not None:
+                c.addSoluFile(self.files[".solu"])
             c.collectData()
 
         except:
