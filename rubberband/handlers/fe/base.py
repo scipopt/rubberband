@@ -13,7 +13,7 @@ class BaseHandler(RequestHandler):
     '''
     def get_current_user(self):
         if not self.settings["debug"]:
-            # self.request is a single HTTP request object of type 'tornado.httputil.HTTPServerRequest'
+            # self.request is single HTTP requestobject of type 'tornado.httputil.HTTPServerRequest'
             headers = dict(self.request.headers.get_all())
             return headers.get("X-Forwarded-Email")
         else:
