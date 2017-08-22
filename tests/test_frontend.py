@@ -32,7 +32,7 @@ class GetTest(TestHandlerBase):
     def test_upload(self):
         response = self.fetch("/upload")
         self.assertEqual(response.code, 200)
-        self.assertIn(b"Please select at least 3 files for upload:", response.body)
+        self.assertIn(b"Please select a set of logfiles for upload:", response.body)
 
     def test_notfound(self):
         response = self.fetch("/dsnbhjfsb")
