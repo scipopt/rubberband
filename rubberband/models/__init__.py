@@ -48,15 +48,15 @@ class Result(DocType):
         gzip
     '''
 
-    instance_name       = String(index="not_analyzed", required=True)  # mcf128-4-1
-    instance_id         = String(index="not_analyzed", required=True)  # mcf128-4-1
-    instance_type       = String(index="not_analyzed")  # CIP
-    SoluFileStatus      = String(index="not_analyzed")
-    Status              = String(index="not_analyzed")
-    Datetime_Start      = Date()
-    Datetime_End        = Date()
-    dualboundhistory    = Float(multi=True)
-    PrimalBoundHistory  = Float(multi=True)
+    instance_name = String(index="not_analyzed", required=True)  # mcf128-4-1
+    instance_id = String(index="not_analyzed", required=True)  # mcf128-4-1
+    instance_type = String(index="not_analyzed")  # CIP
+    SoluFileStatus = String(index="not_analyzed")
+    Status = String(index="not_analyzed")
+    Datetime_Start = Date()
+    Datetime_End = Date()
+    dualboundhistory = Float(multi=True)
+    PrimalBoundHistory = Float(multi=True)
 
     class Meta:
         index = ELASTICSEARCH_INDEX
@@ -95,28 +95,28 @@ class TestSet(DocType):
     '''
     The file definition.
     '''
-    id                      = String(index="not_analyzed", required=True)
-    filename                = String(index="not_analyzed", required=True)
-    solver                  = String(index="not_analyzed", required=True)  # scip
-    run_initiator           = String(index="not_analyzed", required=True)  # Gregor Hendel
-    tags                    = String(index="not_analyzed", multi=True)  # user-provided tags
-    test_set                = String(index="not_analyzed")  # 'MMM', 'short', 'miplib2010', 'bugs', 'SAP-MMP'
-    solver_version          = String(index="not_analyzed")  # 3.0.1.1
-    run_environment         = String(index="not_analyzed")
-    os                      = String(index="not_analyzed")
-    architecture            = String(index="not_analyzed")
-    mode                    = String(index="not_analyzed")
-    opt_flag                = String(index="not_analyzed")  # opt, dbg
-    lp_solver               = String(index="not_analyzed")  # SoPlex
-    lp_solver_version       = String(index="not_analyzed")  # 1.7.0.2
-    git_hash                = String(index="not_analyzed")  # af21b01
-    git_commit_author       = String(index="not_analyzed")  # Gregor Hendel
-    settings_short_name     = String(index="not_analyzed")  # default
-    index_timestamp         = Date(required=True)
-    git_commit_timestamp    = Date()  # required for plotting
+    id = String(index="not_analyzed", required=True)
+    filename = String(index="not_analyzed", required=True)
+    solver = String(index="not_analyzed", required=True)  # scip
+    run_initiator = String(index="not_analyzed", required=True)  # Gregor Hendel
+    tags = String(index="not_analyzed", multi=True)  # user-provided tags
+    test_set = String(index="not_analyzed")  # 'MMM', 'short', 'miplib2010', 'bugs', 'SAP-MMP'
+    solver_version = String(index="not_analyzed")  # 3.0.1.1
+    run_environment = String(index="not_analyzed")
+    os = String(index="not_analyzed")
+    architecture = String(index="not_analyzed")
+    mode = String(index="not_analyzed")
+    opt_flag = String(index="not_analyzed")  # opt, dbg
+    lp_solver = String(index="not_analyzed")  # SoPlex
+    lp_solver_version = String(index="not_analyzed")  # 1.7.0.2
+    git_hash = String(index="not_analyzed")  # af21b01
+    git_commit_author = String(index="not_analyzed")  # Gregor Hendel
+    settings_short_name = String(index="not_analyzed")  # default
+    index_timestamp = Date(required=True)
+    git_commit_timestamp = Date()  # required for plotting
     file_modified_timestamp = Date()
-    settings                = Nested()
-    settings_default        = Nested()
+    settings = Nested()
+    settings_default = Nested()
     '''
     current metadata from scip
         @Permutation

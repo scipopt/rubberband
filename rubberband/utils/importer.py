@@ -20,6 +20,7 @@ from .hasher import generate_sha256_hash
 REQUIRED_FILES = set([".out"])
 OPTIONAL_FILES = set([".solu", ".err", ".set", ".meta"])
 
+
 class ResultClient(object):
     '''
     Upload and retrieve result files.
@@ -112,14 +113,12 @@ class ResultClient(object):
         '''
 
         results = {}
-        # TODO This gives the index. Before this was a list of instances, now it is just ids. What do we want here?
         instances = data["SolvingTime"].keys()
 
         for i in instances:
-            #results[i] = {"instance_name": i}
             results[i] = {
                     "instance_name": data[Key.ProblemName][i],
-                    "instance_id"  : i
+                    "instance_id": i
                     }
 
         for k, v in data.items():
@@ -167,7 +166,8 @@ class ResultClient(object):
         # for scip these data is available
         file_keys = set([Key.TimeLimit, Key.Version, "LPSolver", "GitHash", Key.Solver, "mode"])
         # TODO once the ipet is up to date, use this and update the rest
-        #file_keys = set([Key.TimeLimit, Key.Version, Key.LPSolver, Key.GitHash, Key.Solver, Key.Mode])
+        # file_keys = set([Key.TimeLimit, Key.Version, Key.LPSolver, Key.GitHash,
+        # Key.Solver, Key.Mode])
 
         if "LPSolver" in data:
             # assume that a testrun is all run with the same lpsolver
@@ -182,9 +182,6 @@ class ResultClient(object):
                 vs[i] = list(data[i].values())[0]
 
         filename = os.path.basename(self.files[".out"])
-        rogue_string = ".zib.de"
-        file_path_clean = filename.replace(rogue_string, "")
-        fnparts = file_path_clean.split(".")
 
         file_data = {
             "filename": filename,
@@ -196,28 +193,11 @@ class ResultClient(object):
             "lp_solver_version": lp_solver_version,
             "tags": self.tags,
             "index_timestamp": datetime.now(),
-            # read these from metadata, which is added to each problem after parsing
-            # assume that a testrun is all run with the same test_set, environment, settings, opt_flag, architecture, os (etc.)
-
-            # get these via ipet metadata...
-            # TODO are these correct?
-            "test_set": list(data["TstName"].values())[0],
-            #"test_set": fnparts[1],  # short, bug, etc,
-            "settings_short_name": list(data["Settings"].values())[0],
-            #"settings_short_name": fnparts[-2],
-            "run_environment": list(data["Queue"].values())[0],
-            #"run_environment": fnparts[-3],
-            # TODO map these to metadata...
-            #"opt_flag": fnparts[-5],
-            "opt_flag": list(data["OptFlag"].values())[0],
-            #"architecture": fnparts[-7],
-            "architecture": list(data["Architecture"].values())[0],
-            #"os": fnparts[-8],
-            "os": list(data["OperatingSystem"].values())[0]
         }
 
         # read the following from metadata, which is added to each problem after parsing
-        # assume that a testrun is run on all instances with the same test_set, environment, settings, opt_flag, architecture, os (etc.)
+        # assume that a testrun is run on all instances with the same test_set, environment,
+        # settings, opt_flag, architecture, os (etc.)
 
         # get these via ipet metadata...
         # TODO are these correct?
@@ -229,12 +209,12 @@ class ResultClient(object):
                 "os": "OperatingSystem"
         }
         # values before
-        #"test_set": fnparts[1],  # short, bug, etc,
-        #"settings_short_name": fnparts[-2],
-        #"run_environment": fnparts[-3],
-        #"opt_flag": fnparts[-5],
-        #"architecture": fnparts[-7],
-        #"os": fnparts[-8],
+        # "test_set": fnparts[1],  # short, bug, etc,
+        # "settings_short_name": fnparts[-2],
+        # "run_environment": fnparts[-3],
+        # "opt_flag": fnparts[-5],
+        # "architecture": fnparts[-7],
+        # "os": fnparts[-8],
 
         for key, tag in mapping.items():
             try:
