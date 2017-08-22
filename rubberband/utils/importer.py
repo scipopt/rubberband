@@ -17,10 +17,8 @@ from rubberband.utils import gitlab as gl
 from .stats import ImportStats
 from .hasher import generate_sha256_hash
 
-REQUIRED_FILES = set([".out", ".err"])
-# TODO may add files here?
-OPTIONAL_FILES = set([".solu", ".set", ".meta"])
-
+REQUIRED_FILES = set([".out"])
+OPTIONAL_FILES = set([".solu", ".err", ".set", ".meta"])
 
 class ResultClient(object):
     '''
@@ -218,6 +216,32 @@ class ResultClient(object):
             "os": list(data["OperatingSystem"].values())[0]
         }
 
+        # read the following from metadata, which is added to each problem after parsing
+        # assume that a testrun is run on all instances with the same test_set, environment, settings, opt_flag, architecture, os (etc.)
+
+        # get these via ipet metadata...
+        # TODO are these correct?
+        mapping = {
+                "test_set": "TstName",
+                "settings_short_name": "Settings",
+                "run_environment": "Queue",
+                "opt_flag": "OptFlag",
+                "os": "OperatingSystem"
+        }
+        # values before
+        #"test_set": fnparts[1],  # short, bug, etc,
+        #"settings_short_name": fnparts[-2],
+        #"run_environment": fnparts[-3],
+        #"opt_flag": fnparts[-5],
+        #"architecture": fnparts[-7],
+        #"os": fnparts[-8],
+
+        for key, tag in mapping.items():
+            try:
+                file_data[key] = list(data[tag].values())[0]
+            except:
+                pass
+
         if options.gitlab_url:
             file_data["run_initiator"] = gl.get_username(self.current_user)
         else:
@@ -385,7 +409,9 @@ class ResultClient(object):
 
             # Metafiles will be loaded automatically if they are placed next to outfiles
             c.addOutputFile(self.files[".out"])
-            c.addOutputFile(self.files[".err"])
+
+            if self.files[".err"] is not None:
+                c.addOutputFile(self.files[".err"])
 
             if self.files[".set"] is not None:
                 c.addOutputFile(self.files[".set"])
