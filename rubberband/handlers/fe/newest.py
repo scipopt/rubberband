@@ -10,6 +10,7 @@ class MainView(BaseHandler):
         # 301 permanent redirect
         self.redirect("newest", status=301)
 
+
 class NewestView(BaseHandler):
     '''
     Most recently uploaded files

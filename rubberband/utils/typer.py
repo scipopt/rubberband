@@ -9,6 +9,7 @@ def boolify(value):
         return False
     raise ValueError("{} is not a bool".format(value))
 
+
 def estimate_type(var):
     '''
     Guesses the str representation of the variables type

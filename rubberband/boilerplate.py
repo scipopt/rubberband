@@ -37,6 +37,7 @@ define("smtp_from_address", default="",
 define("smtp_username", default="", help="The username for SMTP authentication.")
 define("smtp_password", default="", help="The password for SMTP authentication.")
 
+
 # this is being called from server.py, also from bin/rubberband-ctl
 def make_app(project_root):
     # init logger

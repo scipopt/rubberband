@@ -11,12 +11,12 @@ class File(DocType):
     '''
     The definition of a File object. A `File` contains the raw contents of a log file.
     '''
-    type        = String(index="not_analyzed", required=True)  # out, set, err, solu
-    filename    = String(index="not_analyzed", required=True)  # check.MMM.scip-021ace1...out
-    hash        = String(index="not_analyzed", required=True)  # computed hash
-    testset_id  = String(index="not_analyzed", required=True)  # for application-side joins
+    type = String(index="not_analyzed", required=True)  # out, set, err, solu
+    filename = String(index="not_analyzed", required=True)  # check.MMM.scip-021ace1...out
+    hash = String(index="not_analyzed", required=True)  # computed hash
+    testset_id = String(index="not_analyzed", required=True)  # for application-side joins
     # TODO should this also be "not_analyzed"?
-    text        = String(index="no", required=True)
+    text = String(index="no", required=True)
 
     class Meta:
         index = ELASTICSEARCH_INDEX
