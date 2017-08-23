@@ -90,10 +90,10 @@ class ResultClient(object):
 
         # organize data into file_data and results
         # get data from testrun.metadatadict
-        metadata = manageable.getMetaData()
+        md = manageable.getMetaData()
         # collect data from testrun as a whole
         file_data = self.get_file_data(data, settings=settings, expirationdate=expirationdate,
-                metadata=metadata)
+                metadata=md)
 
         results = self.get_results_data(data)
 
@@ -171,7 +171,10 @@ class ResultClient(object):
         # file_keys = set([Key.TimeLimit, Key.Version, Key.LPSolver, Key.GitHash,
         if "LPSolver" in data:
             # assume that a testrun is all run with the same lpsolver
-            lp_solver_name, lp_solver_version = list(data["LPSolver"].values())[0].split(" ")
+            for v in list(data["LPSolver"].values()):
+                if v != "nan":
+                    break
+            lp_solver_name, lp_solver_version = v.split(" ")
         else:
             lp_solver_name = None
             lp_solver_version = None
@@ -193,6 +196,7 @@ class ResultClient(object):
             "lp_solver_version": lp_solver_version,
             "tags": self.tags,
             "index_timestamp": datetime.now(),
+            "metadata": metadata
         }
         if expirationdate is not None:
             file_data["expirationdate"] = expirationdate
