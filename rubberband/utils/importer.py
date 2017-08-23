@@ -89,11 +89,11 @@ class ResultClient(object):
         settings = manageable.getParameterData()
 
         # organize data into file_data and results
-        # collect data from testrun as a whole
-        file_data = self.get_file_data(data, settings=settings, expirationdate=expirationdate)
         # get data from testrun.metadatadict
         metadata = manageable.getMetaData()
-        file_data["metadata"] = metadata
+        # collect data from testrun as a whole
+        file_data = self.get_file_data(data, settings=settings, expirationdate=expirationdate,
+                metadata=metadata)
 
         results = self.get_results_data(data)
 
@@ -162,7 +162,7 @@ class ResultClient(object):
         self.logger.info(message)
         self.metadata.logMessage(self.files[".out"], message)
 
-    def get_file_data(self, data, settings=None, expirationdate=None):
+    def get_file_data(self, data, settings=None, expirationdate=None, metadata={}):
         # settings is a tuple
         # data is 'data' DataFrame from ipet.TestRun
         # for scip these data is available
@@ -221,7 +221,7 @@ class ResultClient(object):
 
         for key, tag in mapping.items():
             try:
-                file_data[key] = list(data[tag].values())[0]
+                file_data[key] = metadata[tag]
             except:
                 pass
 
