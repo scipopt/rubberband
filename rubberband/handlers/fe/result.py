@@ -60,17 +60,7 @@ class ResultView(BaseHandler):
 
         # remove from db
         t = TestSet.get(id=parent_id)
-
-        t.load_children()
-        t.load_files()
-        for c_name in t.children:
-            c = t.children[c_name]
-            c.delete()
-
-        for ft in t.files:
-            f = t.files[ft]
-            f.delete()
-
+        t.delete_all_associations()
         t.delete()
 
         msg = "{} deleted {}".format(user, t.meta.id)

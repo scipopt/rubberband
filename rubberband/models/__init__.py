@@ -64,7 +64,7 @@ class Result(DocType):
         # doc_type = "result"
 
     def __str__(self):
-        return "Result {} {}".format(self.parent.filename, self.instance_name)
+        return "Result {}".format(self.instance_name)
 
     def raw(self, ftype=".out"):
         parent = TestSet.get(id=self.meta.parent)
@@ -222,6 +222,20 @@ class TestSet(DocType):
         '''
         # TODO
         raise NotImplemented()
+
+    def delete_all_associations(self):
+        '''
+        Delete all children(Result) and associated files(File)
+        '''
+        self.load_children()
+        self.load_files()
+        for c_name in self.children:
+            c = self.children[c_name]
+            c.delete()
+
+        for ft in self.files:
+            f = self.files[ft]
+            f.delete()
 
     def load_children(self):
         '''

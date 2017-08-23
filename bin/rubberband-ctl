@@ -69,5 +69,31 @@ def populate_index():
         c.process_files(paths, remove=False)
 
 
+@main.command()
+def delete_expired_records():
+    ''' 
+    Delete TestSets whose expirationdate lies in the past.
+    If a TestSet does have an expirationdate set, then it won't get deleted here.
+    This should be run regularly (nightly, weekly)
+    '''
+    t = TestSet.search()
+    t = t.filter('range', **{'expirationdate':{'lte':'now'}})
+    for tr in t.scan():
+        print("delete testset", tr)
+        tr.delete_all_associations()
+        tr.delete()
+
+
+@main.command()
+def show_testsets():
+    '''
+    Create an index with the the required mappings (Result, File, TestSet).
+    '''
+    x = TestSet.search()
+    res = x.scan()
+    for r in res:
+        print(r)
+
+
 if __name__ == "__main__":
     main()
