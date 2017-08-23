@@ -15,11 +15,13 @@
   <thead>
     <tr>
       <th></th>
-      <th>Who</th>
-      <th>Filename</th>
-      <th>Commit Timestamp</th>
-      <th>Test Set</th>
       <th>Mode</th>
+      <th>Test Set</th>
+      <th>Setting</th>
+      <th>Seed</th>
+      <th></th>
+      <th>Commit Timestamp</th>
+      <th>Who</th>
       <th>Date Added</th>
     </tr>
   </thead>
@@ -27,11 +29,13 @@
   {% for r in results %}
   <tr data-url='result/{{ r.meta.id }}'>
       <td><input type="checkbox" name="{{ r.meta.id }}"></td>
-      <td>{{ r.run_initiator }}</a></td>
-      <td class="col-md-6"><a href="/result/{{ r.meta.id }}">{{ r.filename }}</a></td>
-      <td>{{ format_attr(r, "git_commit_timestamp") }}</td>
-      <td>{{ r.test_set }}</td>
       <td>{{ r.mode }}</td>
+      <td>{{ r.test_set }}</td>
+      <td>{{ r.settings_short_name }}</td>
+      <td>{{ r.seed }}</td>
+      <td class="col-md-6"><a href="/result/{{ r.meta.id }}">Details</a></td>
+      <td>{{ format_attr(r, "git_commit_timestamp") }}</td>
+      <td>{{ r.run_initiator }}</a></td>
       <td>{{ format_attr(r, "index_timestamp") }}</td>
     </tr>
   {% end %}

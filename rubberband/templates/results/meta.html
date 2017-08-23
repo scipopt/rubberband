@@ -126,7 +126,23 @@
 	<td>{{ format_attr(f, "time_limit") }}</td>
 	{% end %}
     </tr>
-    </tbody>
-    </table>
+    <tr>
+        <td>Expirationdate</td>
+	{% for f in [file] + compare %}
+	<td>{{ format_attr(f, "expirationdate") }}</td>
+	{% end %}
+    </tr>
+    <tr><td colspan="3"><b>Metadata</b></td></tr>
+    {% for k in meta %}
+    <tr>
+      <td>{{ k }}</td>
+  {% for m in [file] + compare %}
+  <td>{{ format_attr(m.metadata, k) }}</td>
+  {% end %} 
+    </tr>
+    {% end %}
+  </tbody>
+  </table>
+    
   </div>
   </div>

@@ -206,6 +206,7 @@ class ResultClient(object):
         mapping = {
                 "test_set": "TstName",
                 "settings_short_name": "Settings",
+                "seed": "Seed",
                 "run_environment": "Queue",
                 "opt_flag": "OptFlag",
                 "os": "OperatingSystem"
@@ -385,7 +386,6 @@ class ResultClient(object):
         self._log_info("{} file bundle backed up in Elasticsearch.".format(self.files[".out"]))
 
     def get_data_from_ipet(self):
-        # TODO update ipet
         try:
             c = Experiment()
 

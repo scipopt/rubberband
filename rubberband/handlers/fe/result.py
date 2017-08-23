@@ -41,8 +41,10 @@ class ResultView(BaseHandler):
             # save stats in parent.stats
             parent.load_stats()
 
+        meta = list(set([key for md in [parent] + compare for key in md.to_dict().get('metadata', [])]))
+        meta.sort()
         self.render("result_view.html", file=parent, page_title="Result", compare=compare,
-                    sets=sets)
+                    sets=sets, meta=meta)
 
     def post(self, parent_id):
         pass
