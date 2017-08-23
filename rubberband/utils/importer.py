@@ -37,7 +37,7 @@ class ResultClient(object):
                          .format(self.current_user, type(self).__name__))
         self.tags = []
 
-    def process_files(self, paths, tags=[], remove=True):
+    def process_files(self, paths, tags=[], remove=True, expirationdate=None):
         '''
         Process files, one at a time. Accepts a list.
         '''
@@ -49,22 +49,21 @@ class ResultClient(object):
         self.logger.info("Found {} files. Beginning to parse.".format(total_files))
         try:
             # parsing all locally saved files
-            self.parse_file_bundle(paths)
+            self.parse_file_bundle(paths, expirationdate=expirationdate)
         except:
             self.metadata.status = "fail"
             traceback.print_exc()
 
         return self.metadata
 
-    def parse_file_bundle(self, bundle):
+    def parse_file_bundle(self, bundle, expirationdate=None):
         '''
         Internal method that parses a single file bundle. The bundle is a tuple of strings (paths).
 
         A bundle should contain the following files:
             *.out
-            *.err
 
-        Optionally, the bundle could also contain a .set and .solu file.
+        Optionally, the bundle could also contain a .set, .meta, .err and .solu file.
         '''
         # validate and organize files
         self.files = self.validate_and_organize_files(bundle)
@@ -82,16 +81,19 @@ class ResultClient(object):
             return
 
         # parse files with ipet
-        # manageables is the ipet.TestRun
-        manageables = self.get_data_from_ipet()
+        # manageable is the ipet.TestRun
+        manageable = self.get_data_from_ipet()
         # data is the 'data' DataFrame from ipet.TestRun
-        data = json.loads(manageables.data.to_json())
+        data = json.loads(manageable.data.to_json())
         # get the scipparameters and the defaultparameters from ipet
-        settings = manageables.getParameterData()
+        settings = manageable.getParameterData()
 
         # organize data into file_data and results
         # collect data from testrun as a whole
-        file_data = self.get_file_data(data, settings=settings)
+        file_data = self.get_file_data(data, settings=settings, expirationdate=expirationdate)
+        # get data from testrun.metadatadict
+        metadata = manageable.getMetaData()
+        file_data["metadata"] = metadata
 
         results = self.get_results_data(data)
 
@@ -160,15 +162,13 @@ class ResultClient(object):
         self.logger.info(message)
         self.metadata.logMessage(self.files[".out"], message)
 
-    def get_file_data(self, data, settings=None):
+    def get_file_data(self, data, settings=None, expirationdate=None):
         # settings is a tuple
         # data is 'data' DataFrame from ipet.TestRun
         # for scip these data is available
         file_keys = set([Key.TimeLimit, Key.Version, "LPSolver", "GitHash", Key.Solver, "mode"])
         # TODO once the ipet is up to date, use this and update the rest
         # file_keys = set([Key.TimeLimit, Key.Version, Key.LPSolver, Key.GitHash,
-        # Key.Solver, Key.Mode])
-
         if "LPSolver" in data:
             # assume that a testrun is all run with the same lpsolver
             lp_solver_name, lp_solver_version = list(data["LPSolver"].values())[0].split(" ")
@@ -194,6 +194,8 @@ class ResultClient(object):
             "tags": self.tags,
             "index_timestamp": datetime.now(),
         }
+        if expirationdate is not None:
+            file_data["expirationdate"] = expirationdate
 
         # read the following from metadata, which is added to each problem after parsing
         # assume that a testrun is run on all instances with the same test_set, environment,

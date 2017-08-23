@@ -117,6 +117,9 @@ class TestSet(DocType):
     file_modified_timestamp = Date()
     settings = Nested()
     settings_default = Nested()
+    seed = String(index="not_analyzed")
+    metadata = Nested()
+    expirationdate = Date()
     '''
     current metadata from scip
         @Permutation

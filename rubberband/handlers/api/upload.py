@@ -30,7 +30,8 @@ class UploadEndpoint(BaseHandler):
         '''
         files = self.request.files.values()
         tags = self.get_argument("tags", [])
-        results = perform_import(files, tags, self.current_user)
+        expirationdate = self.get_argument("expirationdate", None)
+        results = perform_import(files, tags, self.current_user, expirationdate=expirationdate)
 
         if results.fail:
             self.set_status(400)  # bad request
@@ -45,8 +46,8 @@ class UploadEndpoint(BaseHandler):
 
 
 @coroutine
-def import_files(paths, tags, user, url_base):
-    results = perform_import(paths, tags, user)
+def import_files(paths, tags, user, url_base, expirationdate=None):
+    results = perform_import(paths, tags, user, expirationdate=expirationdate)
     fail = results.fail
     if fail:
         response = make_response(results.status, url_base,
@@ -59,7 +60,7 @@ def import_files(paths, tags, user, url_base):
     sendmail(response, user)
 
 
-def perform_import(files, tags, user):
+def perform_import(files, tags, user, expirationdate=None):
     paths = []
     for f in files:
         paths.append(write_file(f[0]["filename"], f[0]["body"]))
@@ -70,7 +71,7 @@ def perform_import(files, tags, user):
         tags = list(map(str.strip, tags))
 
     c = ResultClient(user=user)
-    return c.process_files(paths, tags=tags)
+    return c.process_files(paths, tags=tags, expirationdate=expirationdate)
 
 
 def make_response(status, url, msg="", errors=""):
