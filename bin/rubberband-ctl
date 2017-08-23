@@ -5,18 +5,19 @@ from elasticsearch import Elasticsearch
 from elasticsearch_dsl.connections import connections
 import glob
 import os.path
+from datetime import datetime, timedelta
 
 from rubberband.models import Result, File, TestSet
 from rubberband.utils import ResultClient
 from rubberband.version import __version__
 from rubberband.constants import ELASTICSEARCH_INDEX
-from rubberband.boilerplate import make_app                                                         
+from rubberband.boilerplate import make_app
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
-APP_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))                           
-PACKAGE_ROOT = os.path.join(APP_ROOT, "rubberband")                                                 
-                                                                                                    
-make_app(PACKAGE_ROOT) 
+APP_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+PACKAGE_ROOT = os.path.join(APP_ROOT, "rubberband")
+
+make_app(PACKAGE_ROOT)
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.version_option(version=__version__)
@@ -52,8 +53,10 @@ def populate_index():
     out_files = glob.glob(os.path.join(filepath, "*.out"))
     set_files = glob.glob(os.path.join(filepath, "*.set"))
     err_files = glob.glob(os.path.join(filepath, "*.err"))
+    meta_files = glob.glob(os.path.join(filepath, "*.meta"))
     solu_files = glob.glob(os.path.join(filepath, "*.solu"))
 
+    count = 0
     for f in out_files:
         paths = [f]
         # remove the .out
@@ -63,15 +66,26 @@ def populate_index():
             paths.append(base + ".set")
         if base + ".err" in err_files:
             paths.append(base + ".err")
+        if base + ".meta" in meta_files:
+            paths.append(base + ".meta")
         if solu_file in solu_files:
             paths.append(solu_file)
         c = ResultClient(user="debug")
-        c.process_files(paths, remove=False)
+
+        expdate = datetime.today()
+        if count < 2:
+            expdate = expdate + timedelta(days=2)
+        elif 2 <= count and count < 5:
+            expdate = expdate - timedelta(days=2)
+        elif 5 <= count and count < 8:
+            expdate = None
+        c.process_files(paths, remove=False, expirationdate=expdate)
+        count = count+1
 
 
 @main.command()
 def delete_expired_records():
-    ''' 
+    '''
     Delete TestSets whose expirationdate lies in the past.
     If a TestSet does have an expirationdate set, then it won't get deleted here.
     This should be run regularly (nightly, weekly)

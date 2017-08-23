@@ -1,0 +1,7 @@
+@TstName IP_0s_1s
+@Settings default
+@Queue opt-low
+@OptFlag dbg
+@Architecture x86_64
+@OperatingSystem linux
+@Seed 3
