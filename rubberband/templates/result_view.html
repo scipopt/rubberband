@@ -14,8 +14,8 @@
 <div class='page-header-wrapper results'>
   <h1 class="page-header">{{ page_title }}</h1>
   <ul id="resultNavTabs" role="tablist" class="nav nav-tabs nav-justified">
-    <li role="presentation" class="active"><a data-toggle="tab" aria-controls="results" role="tab" href="#results">Summary</a></li>
-    <li role="presentation" class=""><a data-toggle="tab" aria-controls="stats" role="tab" href="#stats">Statistics</a></li>
+    <li role="presentation" class="active"><a data-toggle="tab" aria-controls="results" role="tab" href="#details">Details</a></li>
+    <li role="presentation" class=""><a data-toggle="tab" aria-controls="stats" role="tab" href="#summary">Summary</a></li>
     <li role="presentation" class=""><a data-toggle="tab" aria-controls="meta" role="tab" href="#meta">Meta</a></li>
     <li role="presentation" class=""><a data-toggle="tab" aria-controls="settings" role="tab" href="#settings">Settings</a></li>
   </ul>
@@ -26,8 +26,8 @@
 <div>
   <br>
   <div class="tab-content">
-    {% include "results/instance_results.html" %}
     {% include "results/statistics.html" %}
+    {% include "results/instance_results.html" %}
     {% include "results/meta.html" %}
     {% include "results/settings.html" %}
   </div>
