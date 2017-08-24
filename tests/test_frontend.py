@@ -2,11 +2,6 @@ from base import TestHandlerBase
 
 
 class GetTest(TestHandlerBase):
-    def test_newest(self):
-        response = self.fetch("/newest")
-        self.assertEqual(response.code, 200)
-        self.assertIn(b"Recent Results", response.body)
-
     def test_faq(self):
         response = self.fetch("/faq")
         self.assertEqual(response.code, 200)
@@ -15,7 +10,7 @@ class GetTest(TestHandlerBase):
     def test_search(self):
         response = self.fetch("/search")
         self.assertEqual(response.code, 200)
-        self.assertIn(b"No results found for given query.", response.body)
+        self.assertIn(b"Search", response.body)
 
     def test_search_query(self):
         response = self.fetch("/search?test_set=&mode=&run_initiator=&settings_short_name=default&"

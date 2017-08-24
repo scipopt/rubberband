@@ -41,7 +41,7 @@ function formatResultTables() {
         $.ajax({
            type: "DELETE",
            url: "/result/" + end[2],
-           success: function (data){ window.location.href = "/newest";},
+           success: function (data){ window.location.href = "/search";},
            error:function(){
                alert("Something went wrong. Go get Cristina.");
            }
@@ -128,7 +128,7 @@ function Interpolate(colorBase, percentage) {
   }
   else {
     percentage = percentage * 100;
-    var end_color = colorBase.getColors(); 
+    var end_color = colorBase.getColors();
     var r = interpolate(255, end_color.r, 100, percentage);
     var g = interpolate(255, end_color.g, 100, percentage);
     var b = interpolate(255, end_color.b, 100, percentage);

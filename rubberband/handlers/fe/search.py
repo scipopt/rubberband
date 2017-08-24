@@ -30,14 +30,9 @@ class SearchView(BaseHandler):
                 query[f] = value
         options = get_options(query_fields)
 
-        if query:
-            results = search(query)
-            self.render("search_form.html", page_title="Search", search_options=options,
-                    results=results)
-        # if no search params, simply render search form
-        else:
-            self.render("search_form.html", page_title="Search", search_options=options,
-                    results=[])
+        results = search(query)
+        self.render("search_form.html", page_title="Search", search_options=options,
+                results=results)
 
 
 def get_options(fields):
