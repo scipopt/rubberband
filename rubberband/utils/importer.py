@@ -41,6 +41,7 @@ class ResultClient(object):
         '''
         Process files, one at a time. Accepts a list.
         '''
+        # TODO: maybe check for reasonable expdate?
         # This gets called by both the apiupload and the webupload
         self.metadata = ImportStats("results")
         total_files = len(paths)
