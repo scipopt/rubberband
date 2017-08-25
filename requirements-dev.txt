@@ -1,4 +1,4 @@
-ipet==0.0.9
+-r requirements.txt
 click==6.6
 elasticsearch==2.3.0
 elasticsearch-dsl==2.0.0
