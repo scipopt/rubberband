@@ -41,6 +41,9 @@ define("smtp_password", default="", help="The password for SMTP authentication."
 # this is being called from server.py, also from bin/rubberband-ctl
 def make_app(project_root):
     # init logger
+    logging.basicConfig(level=logging.DEBUG,
+            format='%(asctime)s %(levelname)-5s %(name)-15s %(message)s',
+            datefmt='%d-%m-%Y %H:%M -')
     loggr = logging.getLogger()
     loggr.setLevel(level=20)
     # Load options from environment

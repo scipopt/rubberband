@@ -321,6 +321,7 @@ class ResultClient(object):
             self._log_failure(msg)
             raise Exception(msg)
 
+        self.logger.info("Parsing {}.".format(required_files[".out"]))
         required_files.update(optional_files)
 
         return required_files
