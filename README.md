@@ -2,7 +2,7 @@
 
 # Rubberband
 
-A flexible LP solver log file web view and analysis tool, backed by Elasticsearch.
+A flexible LP solver log file web view and analysis tool, backed by Elasticsearch!
 
 - [Development](#development)
   - [Install Elasticsearch](#install-elasticsearch)
