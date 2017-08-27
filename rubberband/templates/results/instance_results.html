@@ -7,6 +7,7 @@
     {% end %}
       <a href="/compare?base={{file.meta.id}}" class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="add comparison runs"><span class="glyphicon glyphicon-plus h3-icon-leftalign"></span></a>
       <a href="/file/{{file.meta.id}}" data-toggle="tooltip" data-placement="top" title="view log file" class="bs-tooltip"><span class="glyphicon glyphicon-info-sign h3-icon-leftalign"></span></a>
+      <a href="/file/{{file.meta.id}}?ftype=.meta" data-toggle="tooltip" data-placement="top" title="view meta file" class="bs-tooltip"><span class="glyphicon glyphicon-paperclip h3-icon-leftalign"></span></a>
       <a href="/file/{{file.meta.id}}?ftype=.err" data-toggle="tooltip" data-placement="top" title="view error file" class="bs-tooltip"><span class="glyphicon glyphicon-exclamation-sign h3-icon-leftalign"></span></a>
       <a class="bs-tooltip" type="button" data-toggle="modal" data-target="#downloadSummaryOptions" title="download results" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-download h3-icon-leftalign" data-toggle="tooltip"></span></a>
       <a type="button" data-toggle="modal" data-target="#deleteResultModal" data-toggle="tooltip" data-placement="top" title="delete result" class="bs-tooltip"><span class="glyphicon glyphicon-trash h3-icon-leftalign"</span></a>

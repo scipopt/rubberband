@@ -7,4 +7,4 @@ class MainView(BaseHandler):
     '''
     def get(self):
         # 301 permanent redirect
-        self.redirect("search/", status=301)
+        self.redirect("search", status=301)

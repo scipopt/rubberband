@@ -208,27 +208,23 @@ class ResultClient(object):
 
         # get these via ipet metadata...
         # TODO are these correct?
-        mapping = {
-                "test_set": "TstName",
-                "settings_short_name": "Settings",
-                "seed": "Seed",
-                "run_environment": "Queue",
-                "opt_flag": "OptFlag",
-                "os": "OperatingSystem"
-        }
-        # values before
-        # "test_set": fnparts[1],  # short, bug, etc,
-        # "settings_short_name": fnparts[-2],
-        # "run_environment": fnparts[-3],
-        # "opt_flag": fnparts[-5],
-        # "architecture": fnparts[-7],
-        # "os": fnparts[-8],
+        if self.files[".meta"] is not None:
+            mapping = {
+                    "test_set": "TstName",
+                    "settings_short_name": "Settings",
+                    "seed": "Seed",
+                    "run_environment": "Queue",
+                    "opt_flag": "OptFlag",
+                    "os": "OperatingSystem"
+                    }
 
-        for key, tag in mapping.items():
-            try:
-                file_data[key] = metadata[tag]
-            except:
-                pass
+            for key, tag in mapping.items():
+                try:
+                    file_data[key] = metadata[tag]
+                except:
+                    pass
+        else:
+            file_data.update(self.parse_info_from_filename(self.files))
 
         if options.gitlab_url:
             file_data["run_initiator"] = gl.get_username(self.current_user)
@@ -273,6 +269,20 @@ class ResultClient(object):
         file_data["id"] = self.file_id
 
         return file_data
+
+    def parse_info_from_filename(self, files):
+        filename = os.path.basename(self.files[".out"])
+        rogue_string = ".zib.de"
+        file_path_clean = filename.replace(rogue_string, "")
+        fnparts = file_path_clean.split(".")
+        info = {
+                "test_set": fnparts[1],  # short, bug, etc,
+                "settings_short_name": fnparts[-2],
+                "run_environment": fnparts[-3],
+                "opt_flag": fnparts[-5],
+                "architecture": fnparts[-7],
+                "os": fnparts[-8] }
+        return info
 
     def validate_and_organize_files(self, list_of_files):
         '''
