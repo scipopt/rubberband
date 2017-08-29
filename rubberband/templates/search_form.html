@@ -1,6 +1,14 @@
-{% extends "table_view.html" %}
+{% extends "base.html" %}
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/u/dt/dt-1.10.12/datatables.min.css"/>
+{% end %}
+{% block extra_js %}
+<script type="text/javascript" src="/static/js/clickableRow.js"></script>
+<script type="text/javascript" src="/static/js/search.js"></script>
+{% end %}
+{% block body %}
 {% block search %}
-<form method="post" name="search">
+<form id="search-form">
   <p class="text-muted">
   Currently only testset search is supported. A maximum of 100 results will be returned at a time.
   </p>
@@ -90,7 +98,7 @@
     </div>
     <br>
     <div class="row">
-      <button type="submit" class="btn btn-primary pull-right">Submit</button>
+      <button id="search-button" type="button" class="btn btn-primary pull-right">Search</button>
     </div>
   </fieldset>
 </form>
@@ -99,4 +107,8 @@
 {% block action %}
 <form action="/compare" method="post">
 <button type="submit">Compare Selected Runs</button>
+{% end %}
+<div id="results-table">
+</div>
+</form>
 {% end %}

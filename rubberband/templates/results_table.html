@@ -1,17 +1,5 @@
-{% extends "base.html" %}
-{% block extra_css %}
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/u/dt/dt-1.10.12/datatables.min.css"/>
-{% end %}
-{% block extra_js %}
-<script type="text/javascript" src="/static/js/clickableRow.js"></script>
-{% end %}
-{% block body %}
-{% block search %}
-{% end %}
-{% block action %}
-{% end %}
 {% if results %}
-<table class="table table-hover table-bordered">
+<table id="results-table" class="table table-hover table-bordered">
   <thead>
     <tr>
       <th></th>
@@ -41,8 +29,8 @@
   {% end %}
   </tbody>
 </table>
-</form>
 {% else %}
-<b>No results found for given query.</b>
-{% end %}
+<div id="results-table">
+  No results found for given query.
+</div>
 {% end %}

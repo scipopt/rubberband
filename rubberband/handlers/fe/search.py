@@ -18,16 +18,15 @@ class SearchView(BaseHandler):
         # this is the ajax backend that provides the table of results
         qf, af = get_query_fields()
         query = self.fill_query(qf + af)
-        options = get_options(qf)
 
         results = search(query)
-        self.render("search_form.html", page_title="Search", search_options=options,
-                results=results)
+        print("LOGGING found {} results", len(results))
+        self.write(self.render_string("results_table.html", results=results))
 
     def fill_query(self, all_fields):
         query = {}
         for f in all_fields:
-            value = self.get_query_argument(f, default=None)
+            value = self.get_argument(f, default=None)
             if value:
                 query[f] = value
         return query

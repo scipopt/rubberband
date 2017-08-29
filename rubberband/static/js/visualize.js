@@ -22,6 +22,7 @@ if (window.location.search) {
 
 // collect names of instances for field 'data name'
 function initializeTypeahead() {
+    // jquery 'get' is just a wrapper for jquery 'ajax'
     $.get('/instances/names', function(data){
         $('.typeahead').typeahead({source:data});
     }, "json");
@@ -50,7 +51,7 @@ function generateCharts(request_data) {
         data: request_data,
         success: function (data){makeCharts(JSON.parse(data));},
         error:function(){
-            alert("Something went wrong. Go get Cristina.");
+            alert("Something went wrong.");
         }
     });
 }
