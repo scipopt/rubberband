@@ -1,7 +1,7 @@
 -e git+https://github.com/GregorCH/ipet.git@b75fd547937265c949568523256f84fa36ce9acd#egg=ipet
 click==6.6
 elasticsearch==2.3.0
-elasticsearch-dsl==2.0.0
+elasticsearch-dsl==2.2.0
 numpy==1.13.0
 pandas==0.18.0
 pytest==3.0.2

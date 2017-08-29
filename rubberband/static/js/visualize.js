@@ -8,6 +8,7 @@ $('.datetimepicker').datetimepicker({
 
 initializeTypeahead();
 
+// check if url is of right format
 if (window.location.search) {
     var parts = getParts(window.location.search);
     if (Object.keys(parts).length == 4) {
@@ -19,7 +20,7 @@ if (window.location.search) {
     }
 }
 
-
+// collect names of instances for field 'data name'
 function initializeTypeahead() {
     $.get('/instances/names', function(data){
         $('.typeahead').typeahead({source:data});
@@ -28,7 +29,7 @@ function initializeTypeahead() {
 
 function getParts(query_string) {
     /* utility method that parses a query string */
-        var match,
+    var match,
         pl     = /\+/g,  // Regex for replacing addition symbol with a space
         search = /([^&=]+)=?([^&]*)/g,
         decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
@@ -36,7 +37,7 @@ function getParts(query_string) {
 
     params = {};
     while (match = search.exec(query))
-       params[decode(match[1])] = decode(match[2]);
+        params[decode(match[1])] = decode(match[2]);
 
     return params;
 }
@@ -44,13 +45,13 @@ function getParts(query_string) {
 function generateCharts(request_data) {
     /* makes an ajax request for data and then draws charts */
     $.ajax({
-           type: "POST",
-           url: "visualize",
-           data: request_data,
-           success: function (data){makeCharts(JSON.parse(data));},
-           error:function(){
-               alert("Something went wrong. Go get Cristina.");
-           }
+        type: "POST",
+        url: "visualize",
+        data: request_data,
+        success: function (data){makeCharts(JSON.parse(data));},
+        error:function(){
+            alert("Something went wrong. Go get Cristina.");
+        }
     });
 }
 
@@ -220,7 +221,7 @@ function makeResultsTable(data, ndx) {
     tableDimension = ndx.dimension(
         function (d) {
             return d.opt_flag + ' ' + d.Nodes + ' ' + d.TotalTime_solving + ' ' + d.Iterations +
-                   ' ' + d.file_path;
+                ' ' + d.file_path;
         }
     );
 

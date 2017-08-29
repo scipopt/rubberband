@@ -16,80 +16,79 @@
 <script type="text/javascript" src="/static/js/visualize.js"></script>
 {% end %}
 {% block body %}
-<form id="visualize" name="visualizeform">
+<form id="visualize" method="get" name="visualizeform">
   <div class="row">
-  <fieldset class="form-group col-md-6">
-    <label>Type of data</label>
-    <select class="form-control" name="data-type">
-      <option>Instance</option>
-    </select>
-  </fieldset>
-  <fieldset class="form-group col-md-6">
-    <label>Data Name</label>
-    <input class="form-control typeahead" name="data-name" data-provide="typeahead" autocomplete="off" placeholder="e.g. sparse2, linking, etc">
-  </fieldset>
+    <fieldset class="form-group col-md-6">
+      <label>Type of data</label>
+      <select class="form-control" name="data-type">
+        <option>Instance</option>
+      </select>
+    </fieldset>
+    <fieldset class="form-group col-md-6">
+      <label>Data Name</label>
+      <input class="form-control typeahead" name="data-name" data-provide="typeahead" autocomplete="off" placeholder="e.g. sparse2, linking, etc">
+    </fieldset>
   </div>
   <div class="row">
-  <fieldset class="form-group col-md-6">
-   <label>Start Date</label>
-   <input type='text' class="form-control datetimepicker" name="start-date" autocomplete="off" value={{ default_start_date }}/>
-    <!-- <input class="form-control" name="start-date" placeholder="e.g. 2015-01-01"> --!>
-  </fieldset>
-  <fieldset class="form-group col-md-6">
-   <label>End Date</label>
-   <input class="form-control datetimepicker" name="end-date" autocomplete="off" value={{ default_end_date }}>
-  </fieldset>
+    <fieldset class="form-group col-md-6">
+      <label>Start Date</label>
+      <input type='text' class="form-control datetimepicker" name="start-date" autocomplete="off" value={{ default_start_date }}/>
+    </fieldset>
+    <fieldset class="form-group col-md-6">
+      <label>End Date</label>
+      <input class="form-control datetimepicker" name="end-date" autocomplete="off" value={{ default_end_date }}>
+    </fieldset>
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 <hr>
 <div id="charts" hidden>
-    <span class='reset' style='visibility: hidden;'>
-      Current filter: <span class='filter'></span>
-    </span>
-    <div class="row">
-        <div class="one-chart" id="solved-statuses">
-            <div>
-              <span class="chart-title">Result Statuses</span>
-              <a class="reset" href="javascript:solvedStatusesChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-            </div>
-        </div>
-        <div class="one-chart" id="solving-nodes">
-          <div>
-            <span class="chart-title">Solving Nodes</span>
-            <a class="reset" href="javascript:solvingNodesChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-          </div>
-        </div>
+  <span class='reset' style='visibility: hidden;'>
+    Current filter: <span class='filter'></span>
+  </span>
+  <div class="row">
+    <div class="one-chart" id="solved-statuses">
+      <div>
+        <span class="chart-title">Result Statuses</span>
+        <a class="reset" href="javascript:solvedStatusesChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+      </div>
     </div>
-    <div class="row">
-        <div class="one-chart" id="opt-mode">
-          <div>
-            <span class="chart-title">Run mode</span>
-            <a class="reset" href="javascript:runModesChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-          </div>
-        </div>
-        <div class="one-chart" id="solving-times">
-            <div>
-              <span class="chart-title">Solving Time</span>
-              <a class="reset" href="javascript:solvingTimesChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-            </div>
-        </div>
+    <div class="one-chart" id="solving-nodes">
+      <div>
+        <span class="chart-title">Solving Nodes</span>
+        <a class="reset" href="javascript:solvingNodesChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+      </div>
     </div>
-    <div class="row">
-        <div class="dc-results-count">
-            <span class='filter-count'></span> selected out of <span class='total-count'></span> records.
-        </div>
+  </div>
+  <div class="row">
+    <div class="one-chart" id="opt-mode">
+      <div>
+        <span class="chart-title">Run mode</span>
+        <a class="reset" href="javascript:runModesChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+      </div>
+    </div>
+    <div class="one-chart" id="solving-times">
+      <div>
+        <span class="chart-title">Solving Time</span>
+        <a class="reset" href="javascript:solvingTimesChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="dc-results-count">
+      <span class='filter-count'></span> selected out of <span class='total-count'></span> records.
+    </div>
     <table id="results-table" class="table table-hover">
       <thead>
         <tr class='header'>
-            <th>Original File</th>
-            <th>Git Commit Date</th>
-            <th>Run Mode</th>
-            <th>Nodes</th>
-            <th>Solving Time</th>
-            <th>Iterations</th>
+          <th>Original File</th>
+          <th>Git Commit Date</th>
+          <th>Run Mode</th>
+          <th>Nodes</th>
+          <th>Solving Time</th>
+          <th>Iterations</th>
         </tr>
       </thead>
     </table>
-</div>
-{% end %}
+  </div>
+  {% end %}

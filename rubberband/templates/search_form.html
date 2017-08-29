@@ -1,6 +1,6 @@
 {% extends "table_view.html" %}
 {% block search %}
-<form method="GET" name="search">
+<form method="post" name="search">
   <p class="text-muted">
   Currently only testset search is supported. A maximum of 100 results will be returned at a time.
   </p>
@@ -51,7 +51,6 @@
           <option value="{{i}}">{{ i }}</option>
           {% end %}
         </select>
-        </select>
       </div>
       <div class="form-group col-md-4">
         <label for="solverversion-select">Solver Version</label>
@@ -96,4 +95,8 @@
   </fieldset>
 </form>
 <br>
+{% end %}
+{% block action %}
+<form action="/compare" method="post">
+<button type="submit">Compare Selected Runs</button>
 {% end %}
