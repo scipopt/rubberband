@@ -1,27 +1,21 @@
 from .base import BaseHandler
 from rubberband.models import TestSet
-from rubberband.handlers.fe.search import SearchView, get_options, get_query_fields
-from rubberband.handlers.common import search
-from elasticsearch_dsl import Search
+from rubberband.handlers.fe.search import get_options
 
 
 class CompareView(BaseHandler):
     def get(self):
-        # get requests for search
-        qf, af = get_query_fields()
-        query = SearchView.fill_query(self, qf + af)
+        # this is the ordinary view
+        options = get_options()
 
         base_id = self.get_argument("base", None)
         base = TestSet.get(id=base_id)
-        query["test_set"] = base.test_set
-
-        options = get_options(qf)
-        results = search(query)
-        # don't include base in list
-        results = [r for r in results if not r == base]
+        options["defaults"] = {}
+        # preselect base testset
+        options["defaults"]["test_set"] = base.test_set
 
         self.render("compare.html", page_title="Compare", base=base,
-                results=results, search_options=options)
+                search_options=options)
 
     def post(self):
         # post requests for compareview

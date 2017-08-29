@@ -5,6 +5,8 @@
 {% block extra_js %}
 <script type="text/javascript" src="/static/js/clickableRow.js"></script>
 <script type="text/javascript" src="/static/js/search.js"></script>
+{% block extra_extra_js %}
+{% end %}
 {% end %}
 {% block body %}
 {% block search %}
@@ -20,7 +22,11 @@
         <select class="form-control" name="test_set" id="testset-select">
           <option></option>
           {% for i in search_options["test_set"] %}
-          <option value="{{i}}">{{ i }}</option>
+          <option value="{{i}}"
+          {% if search_options["defaults"] and search_options["defaults"]["test_set"] == i %}
+          selected
+          {% end %}
+          >{{ i }}</option>
           {% end %}
         </select>
       </div>

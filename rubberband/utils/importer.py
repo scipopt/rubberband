@@ -281,7 +281,7 @@ class ResultClient(object):
                 "run_environment": fnparts[-3],
                 "opt_flag": fnparts[-5],
                 "architecture": fnparts[-7],
-                "os": fnparts[-8] }
+                "os": fnparts[-8]}
         return info
 
     def validate_and_organize_files(self, list_of_files):

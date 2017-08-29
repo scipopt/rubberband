@@ -1,7 +1,6 @@
 
 updateResultsTable();
 
-// collect names of instances for field 'data name'
 function updateResultsTable() {
     // get formdata by selecting element with id 'search-form'
     form_data = $("#search-form").serializeArray();
@@ -9,6 +8,10 @@ function updateResultsTable() {
     $.each( form_data, function( i, field ) {
         request_data[field.name] = field.value;
     });
+    sb = $("#search-base").serializeArray();
+    if (sb != "") {
+        request_data["exclude_testset"] = sb[0].value;
+    }
     $.ajax({
         type: "POST",
         url: "search",

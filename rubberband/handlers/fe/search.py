@@ -7,23 +7,23 @@ from .base import BaseHandler
 class SearchView(BaseHandler):
     def get(self):
         # this is the ordinary view
-        query = {}
-        qf, af = get_query_fields()
-        options = get_options(qf)
+        options = get_options()
 
-        results = search(query)
-        self.render("search_form.html", page_title="Search", search_options=options, results=results)
+        self.render("search_form.html", page_title="Search", search_options=options)
 
     def post(self):
         # this is the ajax backend that provides the table of results
-        qf, af = get_query_fields()
-        query = self.fill_query(qf + af)
-
+        query = self.fill_query()
         results = search(query)
-        print("LOGGING found {} results", len(results))
+        exclude = self.get_argument("exclude_testset", default=None)
+        if exclude:
+            results = [r for r in results if r.meta.id != exclude]
+
         self.write(self.render_string("results_table.html", results=results))
 
-    def fill_query(self, all_fields):
+    def fill_query(self, all_fields=None):
+        if all_fields is None:
+            all_fields = query_fields + additional_fields
         query = {}
         for f in all_fields:
             value = self.get_argument(f, default=None)
@@ -31,24 +31,27 @@ class SearchView(BaseHandler):
                 query[f] = value
         return query
 
-def get_query_fields():
-    query_fields = [
-        "test_set",
-        "mode",
-        "run_initiator",
-        "settings_short_name",
-        "solver",
-        "solver_version",
-        "lp_solver",
-        "lp_solver_version",
-    ]
-    additional_fields = [
-        "git_hash",
-        "tags",
-    ]
-    return query_fields, additional_fields
 
-def get_options(fields):
+query_fields = [
+    "test_set",
+    "mode",
+    "run_initiator",
+    "settings_short_name",
+    "solver",
+    "solver_version",
+    "lp_solver",
+    "lp_solver_version",
+]
+
+additional_fields = [
+    "git_hash",
+    "tags",
+]
+
+
+def get_options(fields=None):
+    if fields is None:
+        fields = query_fields
     options = {}
     for field in fields:
         values = get_uniques(TestSet, field)
@@ -57,7 +60,6 @@ def get_options(fields):
             values.sort(reverse=True)
         else:
             values.sort()
-
         options[field] = values
-
+    options["defaults"] = {}
     return options

@@ -1,16 +1,16 @@
 {% extends "search_form.html" %}
-{% block extra_js %}
+{% block extra_extra_js %}
 <script type="text/javascript" src="/static/js/compare.js"></script>
 {% end %}
 {% block action %}
 <div class="row">
   <form id="compare" name="compareform" method="post">
+
     <h4>Base Test Run</h4>
     <div class="col-md-12">
-      <input name="base" value="{{base.meta.id}}" type="hidden" />
+      <input id="search-base" name="base" value="{{base.meta.id}}" type="hidden" />
       <p>{{ base.filename }} by {{ base.uploader }}, git commit on {{ format_attr(base, "git_commit_timestamp") }}</p>
     </div>
-    {% if results %}
+
     <button type="submit" class="btn btn-primary">Go!</button>
-    {% end %}
 {% end %}
