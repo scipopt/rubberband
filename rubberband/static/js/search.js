@@ -31,3 +31,8 @@ $("#search-button").click(function() {
     // on click on search-button, please update the resultstable according to the search fields
     updateResultsTable();
 });
+
+$("#reset-search-button").click(function() {
+    $("#search-form")[0].reset();
+    $("#search-button").click();
+});
