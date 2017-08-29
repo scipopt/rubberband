@@ -6,13 +6,17 @@ from .base import BaseHandler
 
 class SearchView(BaseHandler):
     def get(self):
-        # this is the ordinary view
+        '''
+        this is the ordinary view
+        '''
         options = get_options()
 
         self.render("search_form.html", page_title="Search", search_options=options)
 
     def post(self):
-        # this is the ajax backend that provides the table of results
+        '''
+        this is the ajax backend that provides the table of results
+        '''
         query = self.fill_query()
         results = search(query)
         exclude = self.get_argument("exclude_testset", default=None)

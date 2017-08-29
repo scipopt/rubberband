@@ -15,7 +15,6 @@ class File(DocType):
     filename = String(index="not_analyzed", required=True)  # check.MMM.scip-021ace1...out
     hash = String(index="not_analyzed", required=True)  # computed hash
     testset_id = String(index="not_analyzed", required=True)  # for application-side joins
-    # TODO should this also be "not_analyzed"?
     text = String(index="no", required=True)
 
     class Meta:
@@ -107,6 +106,7 @@ class TestSet(DocType):
     architecture = String(index="not_analyzed")
     mode = String(index="not_analyzed")
     opt_flag = String(index="not_analyzed")  # opt, dbg
+    time_limit = String(index="not_analyzed")
     lp_solver = String(index="not_analyzed")  # SoPlex
     lp_solver_version = String(index="not_analyzed")  # 1.7.0.2
     git_hash = String(index="not_analyzed")  # af21b01
@@ -120,20 +120,6 @@ class TestSet(DocType):
     seed = String(index="not_analyzed")
     metadata = Nested()
     expirationdate = Date()
-    '''
-    current metadata from scip
-        @Permutation
-        @Seed
-        @Settings
-        @TstName
-        @BinName
-        @NodeLimit
-        @MemLimit
-        @Threads
-        @FeasTol
-        @Queue
-        @Exclusive
-    '''
 
     class Meta:
         index = ELASTICSEARCH_INDEX

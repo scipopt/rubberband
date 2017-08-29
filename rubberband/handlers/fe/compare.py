@@ -5,7 +5,9 @@ from rubberband.handlers.fe.search import get_options
 
 class CompareView(BaseHandler):
     def get(self):
-        # this is the ordinary view
+        '''
+        this is the ordinary view
+        '''
         options = get_options()
 
         base_id = self.get_argument("base", None)
@@ -18,7 +20,9 @@ class CompareView(BaseHandler):
                 search_options=options)
 
     def post(self):
-        # post requests for compareview
+        '''
+        post requests for compareview, receives selection of comarisoninstances
+        '''
         # compares contains the meta ids (the hashes?) of all but one comparison TestSet
         compares = list(self.request.arguments.keys())
         # base identifies via meta id (via hash?) one of the comparison TestSet

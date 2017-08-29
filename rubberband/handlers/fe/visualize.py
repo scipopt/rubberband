@@ -47,18 +47,16 @@ class VisualizeView(BaseHandler):
             s = s.filter(Q("has_parent", type="testset", query=Q("range", **range_params)))
             s = s.filter(Q("term", instance_name=query))
 
-            res = []
             # this uses pagination/scroll
-            for hit in s.scan():
-                res.append(hit)
-
-            # TODO Is thIs the slow part? Have a look at it
-            for r in res:
+            for r in s.scan():
                 parent_data = TestSet.get(id=r.meta.parent)
                 components = r.to_dict()
                 components.update(parent_data.to_dict())
                 components["parent_id"] = r.meta.parent
                 final_data.append(components)
+
+            # only need the following keys: ["git_commit_timestamp", "Nodes", "Status", "opt_flag",
+            # "TotalTime_solving", "Iterations", "file_path", "parent_id", "filename"]:
 
         elif query_type == "Test Set":
             s = TestSet.search()

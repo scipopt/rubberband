@@ -86,7 +86,7 @@ class BaseHandler(RequestHandler):
             if value not in (None, ""):
                 if attr in INFINITY_KEYS and value == INFINITY_MASK:
                     return float("inf")
-                if attr.endswith("_timestamp"):
+                if attr.endswith("_timestamp") or attr.endswith("expirationdate"):
                     return datetime.strftime(value, "%B %d, %Y %H:%M")
                 if isinstance(value, str):
                     return value
