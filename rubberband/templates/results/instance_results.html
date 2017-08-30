@@ -3,22 +3,20 @@
     <h3 class="tab-title">Details</h3>
     <div class="tab-buttons">
     {% if compare %}
-      <a type="button" data-toggle="modal" data-target="#switchBaseModal" class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="switch comparison base"><span class="glyphicon glyphicon-refresh h3-icon-leftalign"></span></a>
+      <a type="button" data-toggle="modal" data-target="#switchBaseModal" class="bs-tooltip" data-placement="top" title="switch comparison base"><span class="glyphicon glyphicon-refresh h3-icon-leftalign"></span></a>
     {% end %}
       <a href="/compare?base={{file.meta.id}}" class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="add comparison runs"><span class="glyphicon glyphicon-plus h3-icon-leftalign"></span></a>
       <a href="/file/{{file.meta.id}}" data-toggle="tooltip" data-placement="top" title="view log file" class="bs-tooltip"><span class="glyphicon glyphicon-info-sign h3-icon-leftalign"></span></a>
       <a href="/file/{{file.meta.id}}?ftype=.meta" data-toggle="tooltip" data-placement="top" title="view meta file" class="bs-tooltip"><span class="glyphicon glyphicon-paperclip h3-icon-leftalign"></span></a>
       <a href="/file/{{file.meta.id}}?ftype=.err" data-toggle="tooltip" data-placement="top" title="view error file" class="bs-tooltip"><span class="glyphicon glyphicon-exclamation-sign h3-icon-leftalign"></span></a>
-      <a class="bs-tooltip" type="button" data-toggle="modal" data-target="#downloadSummaryOptions" title="download results" data-toggle="tooltip" data-placement="top"><span class="glyphicon glyphicon-download h3-icon-leftalign" data-toggle="tooltip"></span></a>
-      <a type="button" data-toggle="modal" data-target="#deleteResultModal" data-toggle="tooltip" data-placement="top" title="delete result" class="bs-tooltip"><span class="glyphicon glyphicon-trash h3-icon-leftalign"</span></a>
+      <a class="bs-tooltip" type="button" data-toggle="modal" data-target="#downloadSummaryOptions" title="download results" data-placement="top"><span class="glyphicon glyphicon-download h3-icon-leftalign" ></span></a>
+      <a type="button" data-toggle="modal" data-target="#deleteResultModal" data-placement="top" title="delete result" class="bs-tooltip"><span class="glyphicon glyphicon-trash h3-icon-leftalign"></span></a>
     </div>
   </div>
+
   <h4>Testruns</h4>
-  <ol>
-  {% for f in [file] + compare %}
-  <li>{{f.filename}} by {{ format_attr(f, "run_initiator") }} on {{ format_attr(f, "git_commit_timestamp") }}</li>
-  {% end %}
-  </ol>
+  {% raw rendered_results_table %}
+
   {% if sets.get("difference") %}
   <h4>Exclusions</h4>
   <p>The following {{ len(sets["difference"]) }} instances are not present in all of the compared test sets, and have therefore been ommitted from the table below: {{", ".join(sets['difference'])}}</p>

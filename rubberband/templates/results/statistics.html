@@ -8,11 +8,8 @@
     </div>
   </div>
   <h4>Testruns</h4>
-  <ol>
-  {% for f in [file] + compare %}
-  <li>{{f.filename}} by {{ format_attr(f, "run_initiator") }} on {{ format_attr(f, "git_commit_timestamp") }}</li>
-  {% end %}
-  </ol>
+  {% raw rendered_results_table %}
+
   {% if sets.get("difference") %}
   <h4>Exclusions</h4>
   <p>The following {{ len(sets["difference"]) }} instances are not present in all of the compared test sets, and have therefore been ommitted from the table below: {{", ".join(sets['difference'])}}</p>

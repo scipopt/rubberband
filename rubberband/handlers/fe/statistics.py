@@ -35,7 +35,10 @@ class StatisticsView(BaseHandler):
                     testset.load_stats(subset=instances_search)
                     testset.matched = instances_search
 
-        self.render("statistics.html", page_title="Custom Statistics", file=base, compare=compare)
+        rrt = self.render_string("results_table.html", results=[base]+compare, checkboxes=False)
+
+        self.render("statistics.html", page_title="Custom Statistics", file=base, compare=compare,
+                rendered_results_table=rrt)
 
 
 def find_matching(TestSetObjs, search, oneorall):

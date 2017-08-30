@@ -26,13 +26,18 @@ class BaseHandler(RequestHandler):
         else:
             return None
 
-    def write_error(self, status_code, **kwargs):
+    def write_error(self, status_code, msg="", **kwargs):
+        if status_code == 400:
+            self.render("400.html", msg=msg)
+            return
         if status_code == 404:
             #  'Simply render the template to a string and pass it to self.write'
             self.render("404.html")
+            return
         else:
             msg = "\n".join(traceback.format_exception(*kwargs["exc_info"]))
             self.render("500.html", msg=msg)
+            return
 
     def get_template_namespace(self):
         """Returns a dictionary to be used as the default template namespace.

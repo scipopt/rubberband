@@ -2,7 +2,9 @@
 <table id="results-table" class="table table-hover table-bordered">
   <thead>
     <tr>
+      {% if checkboxes %}
       <th></th>
+      {% end %}
       <th></th>
       <th>Mode</th>
       <th>Test Set</th>
@@ -19,7 +21,9 @@
   <tbody>
   {% for r in results %}
   <tr data-url='result/{{ r.meta.id }}'>
+      {% if checkboxes %}
       <td><input type="checkbox" name="{{ r.meta.id }}"></td>
+      {% end %}
       <td><a href="/result/{{ r.meta.id }}">Details</a></td>
       <td>{{ format_attr(r, "mode") }}</td>
       <td>{{ format_attr(r, "test_set") }}</td>

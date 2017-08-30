@@ -65,7 +65,12 @@ function colorateCells() {
           var other_values_str = element.attributes["title"].value;
           var values = Array(element.textContent);
           Array.prototype.push.apply(values, other_values_str.split("\n"));
-          var rgb = getRGB(values);
+          var rgb;
+          if (element.attributes["invert"] !== undefined) {
+            rgb = getRGB(values, true);
+          } else {
+            rgb = getRGB(values, false);
+          }
           if (rgb) {
             element.style.backgroundColor = "rgb(" + rgb.getColorString() + ")";
           }
@@ -76,12 +81,15 @@ function colorateCells() {
 /*
  * Get an array of values, and translate that to into an RGB array.
  */
-function getRGB(arr_values) {
+function getRGB(arr_values, invert) {
   var contains_floats = false;
   var floatValues = Array();
   for (var i = 0; i < arr_values.length; i++) {
     var floatVal = parseFloat(arr_values[i])
-    if (!isNaN(floatVal)) {
+    if (invert) {
+        floatVal = -floatVal;
+    }
+    kif (!isNaN(floatVal)) {
       contains_floats = true;
       floatValues.push(floatVal);
     }
