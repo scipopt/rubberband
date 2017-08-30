@@ -35,7 +35,7 @@ class StatisticsView(BaseHandler):
                     testset.load_stats(subset=instances_search)
                     testset.matched = instances_search
 
-        rrt = self.render_string("results_table.html", results=[base]+compare, checkboxes=False)
+        rrt = self.render_string("results_table.html", results=[base] + compare, checkboxes=False)
 
         self.render("statistics.html", page_title="Custom Statistics", file=base, compare=compare,
                 rendered_results_table=rrt)

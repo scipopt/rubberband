@@ -85,11 +85,8 @@ function getRGB(arr_values, invert) {
   var contains_floats = false;
   var floatValues = Array();
   for (var i = 0; i < arr_values.length; i++) {
-    var floatVal = parseFloat(arr_values[i])
-    if (invert) {
-        floatVal = -floatVal;
-    }
-    kif (!isNaN(floatVal)) {
+    var floatVal = parseFloat(arr_values[i]);
+    if (!isNaN(floatVal)) {
       contains_floats = true;
       floatValues.push(floatVal);
     }
@@ -101,7 +98,7 @@ function getRGB(arr_values, invert) {
       return null;
     } else {
       // compute the appropriate color
-      return computeRGB(floatValues);
+      return computeRGB(floatValues, invert);
     }
   } else if (arr_values.allValuesSame()) {
       return null;
@@ -111,7 +108,7 @@ function getRGB(arr_values, invert) {
   }
 }
 
-function computeRGB(arr_values) {
+function computeRGB(arr_values, invert) {
   // The first value of arr_values is the principle value for compare view
   // compute mean of the compare values
   var sum = 0.0;
@@ -123,7 +120,7 @@ function computeRGB(arr_values) {
   var largest = Math.max(...arr_values);
   var smallest = Math.min(...arr_values);
   var percentage = (largest - smallest)/arr_values[0];
-  if (mean < arr_values[0]) {
+  if ((mean < arr_values[0] && !invert) || (mean > arr_values[0] && invert)) {
     return Interpolate(red, percentage);
   } else {
     return Interpolate(green, percentage);
