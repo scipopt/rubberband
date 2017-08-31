@@ -58,12 +58,17 @@ def get_options(fields=None):
         fields = query_fields
     options = {}
     for field in fields:
-        values = get_uniques(TestSet, field)
+        values, hot_values = get_uniques(TestSet, field)
         # version sorting
         if field.endswith("_version"):
             values.sort(reverse=True)
+            hot_values.sort(reverse=True)
         else:
             values.sort()
-        options[field] = values
+            hot_values.sort()
+        options[field] = []
+        if len(hot_values) > 0:
+            options[field] = hot_values + ["---------"]
+        options[field].extend(values)
     options["defaults"] = {}
     return options

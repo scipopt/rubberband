@@ -6,18 +6,16 @@ def get_uniques(model, field):
     for that field in elasticsearch.
     '''
     body = {'aggs': {'counts': {'terms': {'field': field, 'size': 0}}}}
-    # this should be the same as 'model.search()'.from_dict(body).execute() ...
     response = getattr(model, "search")().from_dict(body).execute()
     values = [i.key for i in response.aggregations.counts.buckets]
 
-    #today = datetime.now()
-    #threemonthsago = (today + timedelta(days=-100)).strftime('%Y-%m-%d')
-    #body = {'filter': {'range': {'git_commit_timestamp': {'gte': threemonthsago }}} }#,
-            #'aggs': {'hot_counts': {'terms': {'field': field, 'size': 5 }}}}
-    # this should be the same as 'model.search()'.from_dict(body).execute() ...
-    #response = getattr(model, "search")().from_dict(body).execute()
-    #print("vorher")
-    #print(response)
-    #print("nachher")
-    #hot_values = [i.key for i in response.aggregations.hot_counts.buckets]
-    return values#, hot_values
+    today = datetime.now()
+    threemonthsago = (today + timedelta(days=-100)).strftime('%Y-%m-%d')
+    # TODO make this work for the most recent testruns
+    body = {"filter": {"range": {"git_commit_timestamp": {"gte": threemonthsago }}},
+            "aggs": {"hot_counts": {"terms": {"field": field, "size": 5 }}}}
+
+    response = getattr(model, "search")().from_dict(body).execute()
+    hot_values = [i.key for i in response.aggregations.hot_counts.buckets]
+    values = [v for v in values if v not in hot_values]
+    return values, hot_values

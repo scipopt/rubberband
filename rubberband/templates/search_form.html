@@ -22,7 +22,7 @@
         <select class="form-control" name="test_set" id="testset-select">
           <option></option>
           {% for i in search_options["test_set"] %}
-          <option value="{{i}}" {% if search_options["defaults"] and search_options["defaults"]["test_set"] == i %} selected {% end %} >{{ i }}</option>
+          <option value="{{i}}" {% if search_options["defaults"] and search_options["defaults"]["test_set"] == i %} selected {% end %}{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
           {% end %}
         </select>
       </div>
@@ -31,7 +31,7 @@
         <select class="form-control" name="mode" id="runmode-select">
           <option></option>
           {% for i in search_options["mode"] %}
-          <option value="{{i}}">{{ i }}</option>
+          <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
           {% end %}
         </select>
       </div>
@@ -40,7 +40,7 @@
         <select class="form-control" name="run_initiator" id="uploadername-select">
           <option></option>
           {% for i in search_options["run_initiator"] %}
-          <option value="{{i}}">{{ i }}</option>
+          <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
           {% end %}
         </select>
       </div>
@@ -49,7 +49,7 @@
         <select class="form-control" name="settings_short_name" id="settingsname-select">
           <option></option>
           {% for i in search_options["settings_short_name"] %}
-          <option value="{{i}}">{{ i }}</option>
+          <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
           {% end %}
         </select>
       </div>
@@ -58,7 +58,7 @@
         <select class="form-control" name="solver" id="solver-select">
           <option></option>
           {% for i in search_options["solver"] %}
-          <option value="{{i}}">{{ i }}</option>
+          <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
           {% end %}
         </select>
       </div>
@@ -67,7 +67,7 @@
         <select class="form-control" name="solver_version" id="solverversion-select">
           <option></option>
           {% for i in search_options["solver_version"] %}
-          <option value="{{i}}">{{ i }}</option>
+          <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
           {% end %}
         </select>
       </div>
@@ -80,7 +80,7 @@
         <select class="form-control" name="lp_solver" id="lpsolver-select">
           <option></option>
           {% for i in search_options["lp_solver"] %}
-          <option value="{{i}}">{{ i }}</option>
+          <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
           {% end %}
         </select>
       </div>
@@ -89,7 +89,7 @@
         <select class="form-control" name="lp_solver_version" id="lpsolverversion-select">
           <option></option>
           {% for i in search_options["lp_solver_version"] %}
-          <option value="{{i}}">{{ i }}</option>
+          <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
           {% end %}
         </select>
       </div>
