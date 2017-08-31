@@ -60,6 +60,7 @@ class BaseHandler(RequestHandler):
             reverse_url=self.reverse_url,
             format_attr=self.format_attr,
             format_attrs=self.format_attrs,
+            get_objsen=self.get_objsen,
             are_equivalent=self.are_equivalent,
             options=options,
         )
@@ -99,6 +100,30 @@ class BaseHandler(RequestHandler):
                     return ", ".join([str(v) for v in value])
                 return value
             return NONE_DISPLAY
+
+    def get_objsen(self, objs, inst_name):
+        '''
+        Return the objective sense based on the fields Objsense, PrimalBound, DualBound
+
+        objs: set/list of TestSets
+        inst_name: instance/problem name
+        '''
+        objsen = None
+        for o in objs:
+            objsen = getattr(o.children[inst_name], "Objsense", None)
+            if objsen is not None:
+                return float(objsen)
+        for o in objs:
+            try:
+                pb = float(getattr(o.children[inst_name], "PrimalBound", None))
+                db = float(getattr(o.children[inst_name], "DualBound", None))
+                if pb > db:
+                    return 1
+                else:
+                    return -1
+            except:
+                pass
+        return 0
 
     def format_attrs(self, objs, attr, inst_name):
         '''

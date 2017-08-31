@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 
 def get_uniques(model, field):
     '''
@@ -8,4 +9,15 @@ def get_uniques(model, field):
     # this should be the same as 'model.search()'.from_dict(body).execute() ...
     response = getattr(model, "search")().from_dict(body).execute()
     values = [i.key for i in response.aggregations.counts.buckets]
-    return values
+
+    #today = datetime.now()
+    #threemonthsago = (today + timedelta(days=-100)).strftime('%Y-%m-%d')
+    #body = {'filter': {'range': {'git_commit_timestamp': {'gte': threemonthsago }}} }#,
+            #'aggs': {'hot_counts': {'terms': {'field': field, 'size': 5 }}}}
+    # this should be the same as 'model.search()'.from_dict(body).execute() ...
+    #response = getattr(model, "search")().from_dict(body).execute()
+    #print("vorher")
+    #print(response)
+    #print("nachher")
+    #hot_values = [i.key for i in response.aggregations.hot_counts.buckets]
+    return values#, hot_values
