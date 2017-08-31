@@ -7,10 +7,8 @@
   <form id="compare" name="compareform" method="post">
 
     <h4>Base Test Run</h4>
-    <div class="col-md-12">
-      <input id="search-base" name="base" value="{{base.meta.id}}" type="hidden" />
-      <p>{{ base.filename }} by {{ base.uploader }}, git commit on {{ format_attr(base, "git_commit_timestamp") }}</p>
-    </div>
+    <input id="search-base" name="base" value="{{base.meta.id}}" type="hidden" />
+    {% raw rendered_results_table %}
 
     <button type="submit" class="btn btn-primary">Compare to these</button>
 {% end %}

@@ -14,14 +14,13 @@
       <th>Solving Time</th>
       <th>Total Time</th>
       <th>Status</th>
-      <th>Objsense</th>
       </tr>
     </thead>
     <tbody>
 {% for name, r in file.children.to_dict().items() %}{% if name in sets["intersection"] %}
       <tr>
         <td><a href="/result/{{ file.meta.id }}/instance/{{ r.meta.id }}?compare={{ ",".join([c.meta.id for c in compare]) }}">{{ r.instance_name }}</a></td>
-	      {% for i in ["instance_type", "OriginalProblem_InitialNCons", "OriginalProblem_Vars", "PresolvedProblem_InitialNCons", "PresolvedProblem_Vars", "DualBound", "PrimalBound", "Gap", "Iterations", "Nodes", "TotalTime_solving", "SolvingTime", "Status", "Objsense"]%}
+	      {% for i in ["instance_type", "OriginalProblem_InitialNCons", "OriginalProblem_Vars", "PresolvedProblem_InitialNCons", "PresolvedProblem_Vars", "DualBound", "PrimalBound", "Gap", "Iterations", "Nodes", "TotalTime_solving", "SolvingTime", "Status"] %}
         <td title="{{ format_attrs(compare, i, name) }}" {% set objsen = format_attrs(compare, "Objsense", name) %}{% if (i == "DualBound" and objsen == "1.0") or (i == "PrimalBound" and objsen == "-1.0") %}invert="yes"{% end %}>{{ format_attr(r, i) }}</td>
 	      {% end %}
        </tr>
