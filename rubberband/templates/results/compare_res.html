@@ -20,7 +20,7 @@
 {% for name, r in file.children.to_dict().items() %}{% if name in sets["intersection"] %}
       <tr>
         <td><a href="/result/{{ file.meta.id }}/instance/{{ r.meta.id }}?compare={{ ",".join([c.meta.id for c in compare]) }}">{{ r.instance_name }}</a></td>
-{% set objsen = get_objsen(compare, name) %}
+{% set objsen = get_objsen(compare + [file], name) %}
 	      {% for i in ["instance_type", "OriginalProblem_InitialNCons", "OriginalProblem_Vars", "PresolvedProblem_InitialNCons", "PresolvedProblem_Vars", "DualBound", "PrimalBound", "Gap", "Iterations", "Nodes", "TotalTime_solving", "SolvingTime", "Status"] %}
         <td title="{{ format_attrs(compare, i, name) }}"{% if (i == "DualBound" and objsen > 0) or (i == "PrimalBound" and objsen < 0) %} invert="yes"{% end %}>{{ format_attr(r, i) }}</td>
 	      {% end %}

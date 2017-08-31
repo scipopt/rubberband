@@ -18,10 +18,11 @@
       </thead>
       <tbody>
       {% for f in [file] + compare %}
-        <tr class="bs-tooltip" data-toggle="tooltip" data-container="body" data-placement="top" title="{{ format_attr(f, 'filename') }} on {{ format_attr(f, 'git_commit_timestamp') }}" count="{{ f.stats[status].to_dict().pop('count', 0) }}">
-        {% for i in f.stats[status] %}
-          {% for j in f.stats[status][i] %}
-            <td>{{ f.stats[status][i][j] }}</td>
+      {% set fstats = f.stats.to_dict().get(status, {}) %}
+      <tr class="bs-tooltip" data-toggle="tooltip" data-container="body" data-placement="top" title="{{ format_attr(f, 'filename') }} on {{ format_attr(f, 'git_commit_timestamp') }}" count="{{ fstats.pop('count', 0) }}">
+        {% for i in fstats %}
+          {% for j in fstats.get(i,{}) %}
+            <td>{{ fstats.get(i,{}).get(j,0) }}</td>
           {% end %}
         {% end %}
         </tr>
