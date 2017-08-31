@@ -17,7 +17,7 @@ class CompareView(BaseHandler):
         options["defaults"]["test_set"] = base.test_set
 
         rrt = self.render_string("results_table.html", results=[base], checkboxes=False)
-        rrt = rrt.decode("utf-8").replace('id="results-table"','id="base"')
+        rrt = rrt.decode("utf-8").replace('id="results-table"', 'id="base"')
         self.render("compare.html", page_title="Compare", base=base,
                 search_options=options, rendered_results_table=rrt)
 

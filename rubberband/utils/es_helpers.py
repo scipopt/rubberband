@@ -1,4 +1,3 @@
-import logging
 
 def get_uniques(model, field):
     '''
