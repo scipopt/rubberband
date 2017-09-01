@@ -36,13 +36,26 @@
         </select>
       </div>
       <div class="form-group col-md-2">
-        <label for="uploadername-select">Uploader Name</label>
-        <select class="form-control" name="run_initiator" id="uploadername-select">
+        <label for="solver-select">Solver</label>
+        <select class="form-control" name="solver" id="solver-select">
           <option></option>
-          {% for i in search_options["run_initiator"] %}
+          {% for i in search_options["solver"] %}
           <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
           {% end %}
         </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label for="lpsolver-select">LP Solver</label>
+        <select class="form-control" name="lp_solver" id="lpsolver-select">
+          <option></option>
+          {% for i in search_options["lp_solver"] %}
+          <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
+          {% end %}
+        </select>
+      </div>
+      <div class="form-group col-md-4">
+        <label for="commithash-input">Solver Commit Hash</label>
+        <input class="form-control" name="git_hash" id="commithash-input">
       </div>
       <div class="form-group col-md-2">
         <label for="settingsname-select">Settings Name</label>
@@ -54,10 +67,10 @@
         </select>
       </div>
       <div class="form-group col-md-2">
-        <label for="solver-select">Solver</label>
-        <select class="form-control" name="solver" id="solver-select">
+        <label for="uploadername-select">Uploader Name</label>
+        <select class="form-control" name="run_initiator" id="uploadername-select">
           <option></option>
-          {% for i in search_options["solver"] %}
+          {% for i in search_options["run_initiator"] %}
           <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
           {% end %}
         </select>
@@ -72,19 +85,6 @@
         </select>
       </div>
       <div class="form-group col-md-2">
-        <label for="commithash-input">Solver Commit Hash</label>
-        <input class="form-control" name="git_hash" id="commithash-input">
-      </div>
-      <div class="form-group col-md-2">
-        <label for="lpsolver-select">LP Solver</label>
-        <select class="form-control" name="lp_solver" id="lpsolver-select">
-          <option></option>
-          {% for i in search_options["lp_solver"] %}
-          <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
-          {% end %}
-        </select>
-      </div>
-      <div class="form-group col-md-2">
         <label for="lpsolverversion-select">LP Solver Version</label>
         <select class="form-control" name="lp_solver_version" id="lpsolverversion-select">
           <option></option>
@@ -93,15 +93,15 @@
           {% end %}
         </select>
       </div>
-      <div class="form-group col-md-2">
+      <div class="form-group col-md-4">
         <label for="tags">Tag(s)</label>
         <input class="form-control" name="tags" id="tags">
       </div>
     </div>
     <br>
-    <div class="row">
-      <button id="search-button" type="button" class="btn btn-primary pull-right">Search</button>
-      <button id="reset-search-button" type="button" class="btn btn-primary pull-left">Reset Parameters</button>
+    <div class="btn-group">
+      <button id="reset-search-button" type="button" class="btn btn-basic">Reset Parameters</button>
+      <button id="search-button" type="button" class="btn btn-primary">Search</button>
     </div>
   </fieldset>
 </form>
