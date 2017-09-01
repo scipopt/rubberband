@@ -3,6 +3,7 @@ import logging
 
 from .base import BaseHandler
 from rubberband.models import TestSet
+from rubberband.utils import ResultClient, write_file
 
 
 class ResultView(BaseHandler):
@@ -53,11 +54,30 @@ class ResultView(BaseHandler):
         pass
 
     def put(self, parent_id):
-        pass
+        '''
+        Update/reimport results (with IPET)
+        '''
+        t = TestSet.get(id=parent_id)
+        t.load_files()
+        t.delete_all_children()
+
+        # write all files to local directory
+        paths = []
+        for k in t.files:
+            paths.append(write_file(t.files[k].filename, str.encode(t.files[k].text)))
+        paths = tuple(paths)
+
+        user = self.get_current_user()
+        c = ResultClient(user=user)
+        c.reevaluate_files(paths, t)
+
+        msg = "{} updated by {}".format(t.meta.id, user)
+        logging.info(msg)
 
     def delete(self, parent_id):
         '''
         Delete the TestSet and all associated results in Elasticsearch and Gitlab.
+        called by DELETE request
         '''
         user = self.get_current_user()
 

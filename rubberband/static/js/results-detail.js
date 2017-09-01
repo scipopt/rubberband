@@ -48,6 +48,17 @@ function formatResultTables() {
         });
     });
 
+    $('button#reevaluate-result').click(function (e) {
+        e.preventDefault()
+        $.ajax({
+           type: "PUT",
+           url: "/result/" + end[2],
+           error:function(){
+               alert("Something went wrong. Go get Cristina.");
+           }
+        });
+    });
+
     $('a[href="#settings-filtered"]').click(function (e) {
       e.preventDefault();
       $("tr.default-value").remove();

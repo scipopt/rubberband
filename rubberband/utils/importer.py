@@ -37,6 +37,20 @@ class ResultClient(object):
                          .format(self.current_user, type(self).__name__))
         self.tags = []
 
+    def reevaluate_files(self, paths, testset):
+        '''
+        Reevaluate file bundle
+        '''
+        self.metadata = ImportStats("results")
+        self.remove_files = True
+        try:
+            self.parse_file_bundle(paths, initial=False, testset=testset)
+        except:
+            self.metadata.status = "fail"
+            traceback.print_exc()
+
+        return self.metadata
+
     def process_files(self, paths, tags=[], remove=True, expirationdate=None):
         '''
         Process files, one at a time. Accepts a list.
@@ -57,7 +71,7 @@ class ResultClient(object):
 
         return self.metadata
 
-    def parse_file_bundle(self, bundle, expirationdate=None):
+    def parse_file_bundle(self, bundle, expirationdate=None, initial=True, testset=None):
         '''
         Internal method that parses a single file bundle. The bundle is a tuple of strings (paths).
 
@@ -68,18 +82,20 @@ class ResultClient(object):
         '''
         # validate and organize files
         self.files = self.validate_and_organize_files(bundle)
+
         # generate file hash
         self.file_id = generate_sha256_hash(self.files[".out"])
 
-        # check if already existing
-        found = self.file_lookup()
-        if found:
-            self.metadata.status = "found"
-            self.metadata.setUrl("/result/{}".format(found.meta.id))
-            msg = "File was previously uploaded by {} on {}. Upload aborted."\
-                  .format(found.uploader, found.index_timestamp)
-            self._log_info(msg)
-            return
+        if initial:
+            # check if already existing
+            found = self.file_lookup()
+            if found:
+                self.metadata.status = "found"
+                self.metadata.setUrl("/result/{}".format(found.meta.id))
+                msg = "File was previously uploaded by {} on {}. Upload aborted."\
+                      .format(found.uploader, found.index_timestamp)
+                self._log_info(msg)
+                return
 
         # parse files with ipet
         # manageable is the ipet.TestRun
@@ -99,8 +115,9 @@ class ResultClient(object):
         results = self.get_results_data(data)
 
         # save the structured data in elasticsearch
-        self.save_structured_data(file_data, results)
-        self.backup_files()
+        self.save_structured_data(file_data, results, testset=testset)
+        if initial:
+            self.backup_files()
 
         # clean up filesystem if remove flag set
         if self.remove_files:
@@ -336,14 +353,18 @@ class ResultClient(object):
 
         return required_files
 
-    def save_structured_data(self, file_level_data, instance_level_data):
+    def save_structured_data(self, file_level_data, instance_level_data, testset=None):
         '''
         Save TestSet and Result model instances in Elasticsearch.
         '''
         try:
             # save parent
-            f = TestSet(**file_level_data)
-            f.save()
+            if testset is None:
+                f = TestSet(**file_level_data)
+                f.save()
+            else:
+                f = testset
+                f.update(**file_level_data)
             self.testset_meta_id = f.meta.id  # save this for backup step
             # save children
             for r in instance_level_data:

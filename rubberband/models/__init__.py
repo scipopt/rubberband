@@ -125,12 +125,24 @@ class TestSet(DocType):
         index = ELASTICSEARCH_INDEX
         doc_type = "testset"
 
+    def update(self, **kwargs):
+        '''
+        Cast infinity to INFINITY_MASK, since databases don't like infinity.
+        This is likely ok, because fields that could contain infinity, are [0, inf)
+        and mask is -1.
+        '''
+        for i in INFINITY_KEYS:
+            if kwargs["settings"][i] == float("inf"):
+                kwargs["settings"][i] = INFINITY_MASK
+            if kwargs["settings_default"][i] == float("inf"):
+                kwargs["settings_default"][i] = INFINITY_MASK
+        return super(TestSet, self).update(**kwargs)
+
     def save(self, **kwargs):
         '''
         Cast infinity to INFINITY_MASK, since databases don't like infinity.
         This is likely ok, because fields that could contain infinity, are [0, inf)
         and mask is -1.
-        # TODO is that so?
         '''
         for i in INFINITY_KEYS:
             if getattr(self.settings, i, None) == float("inf"):
@@ -213,12 +225,17 @@ class TestSet(DocType):
         '''
         Delete all children(Result) and associated files(File)
         '''
+        self.delete_all_children()
+        self.delete_all_files()
+
+    def delete_all_children(self):
         self.load_children()
-        self.load_files()
         for c_name in self.children:
             c = self.children[c_name]
             c.delete()
 
+    def delete_all_files(self):
+        self.load_files()
         for ft in self.files:
             f = self.files[ft]
             f.delete()
@@ -243,7 +260,7 @@ class TestSet(DocType):
         self.files = {}
         # this uses pagination/scroll
         for hit in s.scan():
-            self.children[hit.type] = hit
+            self.files[hit.type] = hit
 
     def load_stats(self, subset=[]):
         '''
