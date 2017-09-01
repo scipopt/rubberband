@@ -6,13 +6,13 @@
       <th></th>
       {% end %}
       <th></th>
+      <th>Solver</th>
+      <th>LPSolver</th>
       <th>Mode</th>
       <th>Test Set</th>
       <th>Setting</th>
-      <th>LPSolver</th>
       <th>Seed</th>
       <th>Timelimit</th>
-      <th>Solver</th>
       <th>Commit Timestamp</th>
       <th>Uploader</th>
       <th>Date Added</th>
@@ -26,13 +26,13 @@
       <td><input type="checkbox" name="{{ r.meta.id }}"></td>
       {% end %}
       <td><a href="/result/{{ r.meta.id }}">Details</a></td>
+      <td>{{ format_attr(r, "solver") }} {{ format_attr(r, "solver_version") }}</td>
+      <td>{{ format_attr(r, "lp_solver") }} {{ format_attr(r, "lp_solver_version") }}</td>
       <td>{{ format_attr(r, "mode") }}</td>
       <td>{{ format_attr(r, "test_set") }}</td>
       <td>{{ format_attr(r, "settings_short_name") }}</td>
-      <td>{{ format_attr(r, "lp_solver") }} {{ format_attr(r, "lp_solver_version") }}</td>
       <td>{{ format_attr(r, "seed") }}</td>
       <td>{{ format_attr(r, "time_limit") }}</td>
-      <td>{{ format_attr(r, "solver") }} {{ format_attr(r, "solver_version") }}</td>
       <td>{{ format_attr(r, "git_commit_timestamp") }}</td>
       <td>{{ format_attr(r, "run_initiator") }}</td>
       <td>{{ format_attr(r, "index_timestamp") }}</td>
