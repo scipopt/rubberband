@@ -4,6 +4,7 @@ import logging
 from .base import BaseHandler
 from rubberband.models import TestSet
 from rubberband.utils import ResultClient, write_file
+from rubberband.constants import EXPORT_FILE_TYPES
 
 
 class ResultView(BaseHandler):
@@ -46,9 +47,16 @@ class ResultView(BaseHandler):
         meta = list(set(metas))
         meta.sort()
 
+        fileoptions = {}
+        for ftype in EXPORT_FILE_TYPES:
+            obj = TestSet.get(id=parent_id)
+            file_contents = getattr(obj, "raw")(ftype=ftype)
+            fileoptions[ftype] = (file_contents is not None)
+            print("LOGGING", ftype, fileoptions[ftype])
+
         rrt = self.render_string("results_table.html", results=[parent] + compare)
         self.render("result_view.html", file=parent, page_title="Result", compare=compare,
-                    sets=sets, meta=meta, rendered_results_table=rrt)
+                    sets=sets, meta=meta, rendered_results_table=rrt, fileoptions=fileoptions)
 
     def post(self, parent_id):
         pass

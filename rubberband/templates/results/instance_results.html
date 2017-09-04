@@ -6,9 +6,15 @@
       <a type="button" data-toggle="modal" data-target="#switchBaseModal" class="bs-tooltip" data-placement="top" title="switch comparison base"><span class="glyphicon glyphicon-refresh h3-icon-leftalign"></span></a>
     {% end %}
       <a href="/compare?base={{file.meta.id}}" class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="add comparison runs"><span class="glyphicon glyphicon-plus h3-icon-leftalign"></span></a>
+      {% if fileoptions[".out"] %}
       <a href="/file/{{file.meta.id}}" data-toggle="tooltip" data-placement="top" title="view log file" class="bs-tooltip"><span class="glyphicon glyphicon-info-sign h3-icon-leftalign"></span></a>
+      {% end %}
+      {% if fileoptions[".meta"] %}
       <a href="/file/{{file.meta.id}}?ftype=.meta" data-toggle="tooltip" data-placement="top" title="view meta file" class="bs-tooltip"><span class="glyphicon glyphicon-paperclip h3-icon-leftalign"></span></a>
+      {% end %}
+      {% if fileoptions[".err"] %}
       <a href="/file/{{file.meta.id}}?ftype=.err" data-toggle="tooltip" data-placement="top" title="view error file" class="bs-tooltip"><span class="glyphicon glyphicon-exclamation-sign h3-icon-leftalign"></span></a>
+      {% end %}
       <a class="bs-tooltip" type="button" data-toggle="modal" data-target="#downloadSummaryOptions" title="download results" data-placement="top"><span class="glyphicon glyphicon-download h3-icon-leftalign" ></span></a>
       <a type="button" data-toggle="modal" data-target="#deleteResultModal" data-placement="top" title="delete result" class="bs-tooltip"><span class="glyphicon glyphicon-trash h3-icon-leftalign"</span></a>
       <a type="button" data-toggle="modal" data-target="#reevaluateResultModal" data-placement="top" title="reevaluate result" class="bs-tooltip"><span class="glyphicon glyphicon-repeat h3-icon-leftalign"</span></a>
@@ -102,7 +108,7 @@
       </div>
       <div class="modal-body">
         <p>Are you sure that you want to delete this result?</p>
-	<button type="button" id="delete-result" class="btn btn-danger">Yes! I know what I'm doing.</button>
+        <button type="button" id="delete-result" class="btn btn-danger">Yes! I know what I'm doing.</button>
       </div>
     </div>
   </div>
@@ -118,7 +124,7 @@
       </div>
       <div class="modal-body">
         <p>Are you sure that you want to reevaluate this result?</p>
-	<button type="button" id="reevaluate-result" class="btn btn-danger">Yes! I know what I'm doing.</button>
+	      <button type="button" id="reevaluate-result" class="btn btn-danger">Yes! I know what I'm doing.</button>
       </div>
     </div>
   </div>

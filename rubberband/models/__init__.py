@@ -171,7 +171,10 @@ class TestSet(DocType):
         s = File.search()
         s = s.filter("term", testset_id=self.meta.id)
         s = s.filter("term", type=ftype.lstrip("."))
-        contents = s.execute()[0].text
+        try:
+            contents = s.execute()[0].text
+        except:
+            contents = None
 
         return contents
 

@@ -31,6 +31,9 @@ class FileView(BaseHandler):
         # e.g. `result.json(ftype=".set")`
         file_contents = getattr(obj, fformat)(ftype=ftype)
 
+        if file_contents is None:
+            raise HTTPError(404)
+
         if for_download:
             self.write(file_contents)
         else:
