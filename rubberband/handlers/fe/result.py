@@ -46,7 +46,7 @@ class ResultView(BaseHandler):
         meta = list(set(metas))
         meta.sort()
 
-        rrt = self.render_string("results_table.html", results=[parent] + compare, checkboxes=False)
+        rrt = self.render_string("results_table.html", results=[parent] + compare)
         self.render("result_view.html", file=parent, page_title="Result", compare=compare,
                     sets=sets, meta=meta, rendered_results_table=rrt)
 

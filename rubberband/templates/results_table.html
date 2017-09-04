@@ -1,8 +1,19 @@
+{% try %}
+    {% set checkbox = checkboxes %}
+{% except NameError %}
+    {% set checkbox = False %}
+{% end %}
+{% try %}
+    {% set name = tablename %}
+{% except NameError %}
+    {% set name = 'results-table' %}
+{% end %}
+
 {% if results %}
-<table id="results-table" class="table table-hover table-bordered">
+<table id="{{ name }}" class="table table-hover table-bordered">
   <thead>
     <tr>
-      {% if checkboxes %}
+      {% if checkbox %}
       <th></th>
       {% end %}
       <th></th>
@@ -13,6 +24,7 @@
       <th>Setting</th>
       <th>Seed</th>
       <th>Timelimit</th>
+      <th>Hostname</th>
       <th>Commit Timestamp</th>
       <th>Uploader</th>
       <th>Date Added</th>
@@ -22,7 +34,7 @@
   <tbody>
   {% for r in results %}
   <tr data-url='result/{{ r.meta.id }}'>
-      {% if checkboxes %}
+      {% if checkbox %}
       <td><input type="checkbox" name="{{ r.meta.id }}"></td>
       {% end %}
       <td><a href="/result/{{ r.meta.id }}">Details</a></td>
@@ -33,6 +45,7 @@
       <td>{{ format_attr(r, "settings_short_name") }}</td>
       <td>{{ format_attr(r, "seed") }}</td>
       <td>{{ format_attr(r, "time_limit") }}</td>
+      <td>{{ format_attr(r, "run_environment") }}</td>
       <td>{{ format_attr(r, "git_commit_timestamp") }}</td>
       <td>{{ format_attr(r, "run_initiator") }}</td>
       <td>{{ format_attr(r, "index_timestamp") }}</td>
@@ -42,7 +55,7 @@
   </tbody>
 </table>
 {% else %}
-<div id="results-table">
+<div id="{{ name }}">
   No results found for given query.
 </div>
 {% end %}
