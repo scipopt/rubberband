@@ -52,7 +52,6 @@ class ResultView(BaseHandler):
             obj = TestSet.get(id=parent_id)
             file_contents = getattr(obj, "raw")(ftype=ftype)
             fileoptions[ftype] = (file_contents is not None)
-            print("LOGGING", ftype, fileoptions[ftype])
 
         rrt = self.render_string("results_table.html", results=[parent] + compare)
         self.render("result_view.html", file=parent, page_title="Result", compare=compare,
