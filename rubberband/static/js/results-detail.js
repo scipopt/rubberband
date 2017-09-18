@@ -43,18 +43,24 @@ function formatResultTables() {
            url: "/result/" + end[2],
            success: function (data){ window.location.href = "/search";},
            error:function(){
-               alert("Something went wrong. Go get Cristina.");
+               alert("Something went wrong.");
            }
         });
     });
 
-    $('button#reevaluate-result').click(function (e) {
+    $('button#reimport-result').click(function (e) {
         e.preventDefault()
+        button = document.getElementById("reimport-result")
+        button.disabled = true;
+        currurl = window.location.href;
         $.ajax({
            type: "PUT",
            url: "/result/" + end[2],
+           success: function (data){
+              window.location.href = currurl;
+           },
            error:function(){
-               alert("Something went wrong. Go get Cristina.");
+               alert("Something went wrong.");
            }
         });
     });

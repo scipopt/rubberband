@@ -37,9 +37,9 @@ class ResultClient(object):
                          .format(self.current_user, type(self).__name__))
         self.tags = []
 
-    def reevaluate_files(self, paths, testset):
+    def reimport_files(self, paths, testset):
         '''
-        Reevaluate file bundle
+        Reimport file bundle
         '''
         self.metadata = ImportStats("results")
         self.remove_files = True

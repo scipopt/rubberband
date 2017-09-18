@@ -76,7 +76,7 @@ class ResultView(BaseHandler):
 
         user = self.get_current_user()
         c = ResultClient(user=user)
-        c.reevaluate_files(paths, t)
+        c.reimport_files(paths, t)
 
         msg = "{} updated by {}".format(t.meta.id, user)
         logging.info(msg)

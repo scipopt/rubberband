@@ -17,7 +17,7 @@
       {% end %}
       <a class="bs-tooltip" type="button" data-toggle="modal" data-target="#downloadSummaryOptions" title="download results" data-placement="top"><span class="glyphicon glyphicon-download h3-icon-leftalign" ></span></a>
       <a type="button" data-toggle="modal" data-target="#deleteResultModal" data-placement="top" title="delete result" class="bs-tooltip"><span class="glyphicon glyphicon-trash h3-icon-leftalign"</span></a>
-      <a type="button" data-toggle="modal" data-target="#reevaluateResultModal" data-placement="top" title="reevaluate result" class="bs-tooltip"><span class="glyphicon glyphicon-repeat h3-icon-leftalign"</span></a>
+      <a type="button" data-toggle="modal" data-target="#reimportResultModal" data-placement="top" title="reimport result" class="bs-tooltip"><span class="glyphicon glyphicon-repeat h3-icon-leftalign"</span></a>
     </div>
   </div>
 
@@ -114,17 +114,17 @@
   </div>
 </div>
 
-<!-- Reevaluate Result Modal -->
-<div class="modal fade" id="reevaluateResultModal" tabindex="-1" role="dialog" aria-labelledby="reevaluateResultLabel">
+<!-- Reimport Result Modal -->
+<div class="modal fade" id="reimportResultModal" tabindex="-1" role="dialog" aria-labelledby="reimportResultLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="reevaluateResultLabel">Reevaluate</h4>
+        <h4 class="modal-title" id="reimportResultLabel">Reimport</h4>
       </div>
       <div class="modal-body">
-        <p>Are you sure that you want to reevaluate this result?</p>
-	      <button type="button" id="reevaluate-result" class="btn btn-danger">Yes! I know what I'm doing.</button>
+        <p>Are you sure that you want to reimport this result?</p>
+	      <button type="button" id="reimport-result" class="btn btn-danger">Yes! I know what I'm doing.</button>
       </div>
     </div>
   </div>
