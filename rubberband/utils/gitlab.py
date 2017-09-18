@@ -73,7 +73,7 @@ def get_commit_data(project_id, git_hash):
 
 def get_username(query_string):
     '''
-    Get the gitlab/interal zib username from a search term (full name, email, etc)
+    Get the gitlab/internal zib username from a search term (full name, email, etc)
     '''
     client = Gitlab(options.gitlab_url, options.gitlab_private_token)
     authors = client.users.search(query_string)
@@ -81,6 +81,6 @@ def get_username(query_string):
     if len(authors) < 1:
         return query_string
     elif len(authors) > 1:  # ref: bzfgamra
-        return authors[-1].username
+        return authors[0].username
 
     return authors[0].username

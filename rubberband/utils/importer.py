@@ -246,7 +246,7 @@ class ResultClient(object):
         if options.gitlab_url:
             file_data["run_initiator"] = gl.get_username(self.current_user)
         else:
-            file_data["run_initiator"] = self.current_user.split("@")[0]
+            file_data["run_initiator"] = self.current_user
 
         if settings:
             file_data["settings"] = settings[0]
