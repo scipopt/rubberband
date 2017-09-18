@@ -147,8 +147,6 @@ class TestSet(DocType):
         and mask is -1.
         '''
         for i in INFINITY_KEYS:
-            if i not in kwargs["settings"].keys():
-                continue
             if getattr(self.settings, i, None) == float("inf"):
                 setattr(self.settings, i, INFINITY_MASK)
             if getattr(self.settings_default, i, None) == float("inf"):
