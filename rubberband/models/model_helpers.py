@@ -16,8 +16,10 @@ def compute_stat(instances):
     stats["all"]["instances"] = instances
     # group instances into status buckets
     for i in instances:
-        # TODO this is probably not going to work with the new ipet
         status = i.Status.lower()
+        # translate from ipet
+        if status == "solved_not_verified":
+            status = "solved not verified"
         if status.startswith("fail"):
             if "fail" not in stats:
                 stats["fail"] = OrderedDict()
