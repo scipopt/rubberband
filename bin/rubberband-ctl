@@ -84,6 +84,21 @@ def populate_index():
 
 
 @main.command()
+def update_db():
+    '''
+    Update old datastructures to new ones.
+    '''
+    ts = TestSet.search()
+    for t in ts.scan():
+        t.load_children()
+        for i in t.children.to_dict().values():
+            # update the weird ipet statuses
+            if i.Status == "solved_not_verified":
+                i.Status = "solved not verified"
+                i.save()
+
+
+@main.command()
 def delete_expired_records():
     '''
     Delete TestSets whose expirationdate lies in the past.
