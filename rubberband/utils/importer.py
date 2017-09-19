@@ -122,7 +122,7 @@ class ResultClient(object):
         # clean up filesystem if remove flag set
         if self.remove_files:
             for t, f in self.files.items():
-                if f and not f == FILES_DIR + ALL_SOLU
+                if f and not f == FILES_DIR + ALL_SOLU:
                     os.remove(f)
 
         self._log_info("Finished!")
