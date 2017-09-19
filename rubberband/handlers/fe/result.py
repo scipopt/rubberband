@@ -4,7 +4,7 @@ import logging
 from .base import BaseHandler
 from rubberband.models import TestSet
 from rubberband.utils import ResultClient, write_file
-from rubberband.constants import EXPORT_FILE_TYPES
+from rubberband.constants import EXPORT_FILE_TYPES, IPET_EVALUATIONS
 
 
 class ResultView(BaseHandler):
@@ -55,7 +55,8 @@ class ResultView(BaseHandler):
 
         rrt = self.render_string("results_table.html", results=[parent] + compare)
         self.render("result_view.html", file=parent, page_title="Result", compare=compare,
-                    sets=sets, meta=meta, rendered_results_table=rrt, fileoptions=fileoptions)
+                    sets=sets, meta=meta, rendered_results_table=rrt, fileoptions=fileoptions,
+                    evals=IPET_EVALUATIONS)
 
     def post(self, parent_id):
         pass

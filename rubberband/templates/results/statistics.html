@@ -12,8 +12,28 @@
 
   {% if sets.get("difference") %}
   <h4>Exclusions</h4>
-  <p>The following {{ len(sets["difference"]) }} instances are not present in all of the compared test sets, and have therefore been ommitted from the table below: {{", ".join(sets['difference'])}}</p>
+  <p>The following {{ len(sets["difference"]) }} instances are not present in all of the compared test sets, and have therefore been ommitted from the tables below:<br \>
+  {{", ".join(sets['difference'])}}</p>
   {% end %}
+
+  <h4>IPET Evaluations</h4>
+  <form id="ipet-eval-form">
+    <p class="text-muted">Please select an IPET evaluation file:</p>
+    <div class="form-group col-md-2">
+      <select class="form-control" name="ipet-eval-file" id="ipet-eval-file-select">
+        {% for e in evals %}
+        <option value="{{ e["id"] }}">{{ e["name"] }}</option>
+        {% end %}
+      </select>
+    </div>
+    <div class="btn-group">
+      <button id="ipet-eval-button" type="button" class="btn btn-primary">Evaluate</button>
+    </div>
+  </form>
+  <div id="ipet-eval-result">
+  </div>
+  <br>
+
   <div class="row">
   {% include "stats_table.html" %}
   </div>

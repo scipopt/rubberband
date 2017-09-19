@@ -9,3 +9,4 @@ from .statistics import StatisticsView  # noqa
 from .search import SearchView  # noqa
 from .upload import UploadView  # noqa
 from .visualize import VisualizeView  # noqa
+from .evaluation import EvaluationView # noqa
