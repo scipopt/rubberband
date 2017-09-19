@@ -12,7 +12,7 @@ from tornado.options import options
 
 # package imports
 from rubberband.models import TestSet, Result, File
-from rubberband.constants import ALL_SOLU, FILES_DIR
+from rubberband.constants import ALL_SOLU
 from rubberband.utils import gitlab as gl
 from .stats import ImportStats
 from .hasher import generate_sha256_hash
@@ -122,7 +122,7 @@ class ResultClient(object):
         # clean up filesystem if remove flag set
         if self.remove_files:
             for t, f in self.files.items():
-                if f and not f == FILES_DIR + ALL_SOLU:
+                if f and not f == ALL_SOLU:
                     os.remove(f)
 
         self._log_info("Finished!")
@@ -437,7 +437,7 @@ class ResultClient(object):
 
             if self.files[".solu"] is None:
                 msg = "No solu file found."
-                path = FILES_DIR + ALL_SOLU
+                path = ALL_SOLU
                 if os.path.isfile(path):
                     msg = "Adding SoluFile."
                     self.files[".solu"] = path
