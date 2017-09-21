@@ -184,6 +184,17 @@ class TestSet(DocType):
         data = self.raw(ftype=ftype)
         return gzip.compress(data.encode("utf-8"))
 
+    def get_data(self):
+        '''
+        Get the data of the testrun
+        '''
+        all_instances = {}
+        self.load_children()
+        instances = self.children.to_dict().keys()
+        for i in instances:
+            all_instances[i] = self.children[i].to_dict()
+        return all_instances
+
     def json(self, ftype=".out"):
         '''
         Return the data contained in the TestSet object as JSON.
@@ -209,10 +220,7 @@ class TestSet(DocType):
 
         elif ftype == ".out":
             all_instances = {self.test_set: {}}
-            self.load_children()
-            instances = self.children.to_dict().keys()
-            for i in instances:
-                all_instances[self.test_set][i] = self.children[i].to_dict()
+            all_instances[self.test_set] = self.get_data()
             return json.dumps(all_instances, default=date_handler)
 
         elif ftype == ".err":

@@ -21,8 +21,8 @@
     <p class="text-muted">Please select an IPET evaluation file:</p>
     <div class="form-group col-md-2">
       <select class="form-control" name="ipet-eval-file" id="ipet-eval-file-select">
-        {% for e in evals %}
-        <option value="{{ e["id"] }}">{{ e["name"] }}</option>
+        {% for id,e in evals.items() %}
+        <option value="{{ id }}">{{ e["name"] }}</option>
         {% end %}
       </select>
     </div>

@@ -454,13 +454,13 @@ class ResultClient(object):
             self._log_failure(msg)
             raise
 
-        manageables = c.testrunmanager.getManageables()
-        if len(manageables) != 1:
-            msg = "Unexpected number of testruns. Expected 1, got: {}".format(len(manageables))
+        testruns = c.getTestRuns()
+        if len(testruns) != 1:
+            msg = "Unexpected number of testruns. Expected 1, got: {}".format(len(testruns))
             self._log_failure(msg)
             raise Exception(msg)
 
-        return manageables[0]
+        return testruns[0]
 
     def file_lookup(self):
         '''
