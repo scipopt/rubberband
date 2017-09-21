@@ -1,6 +1,11 @@
 
+button = document.getElementById("ipet-eval-button");
+button.disabled = false;
+
 $('button#ipet-eval-button').click(function (e) {
-    e.preventDefault()
+    e.preventDefault();
+    button = document.getElementById("ipet-eval-button");
+    button.disabled = true;
 
     // get data from url
     currurl = window.location.href;
@@ -22,7 +27,8 @@ $('button#ipet-eval-button').click(function (e) {
        type: "GET",
        url: evalurl,
        success:function(data) {
-           $("#ipet-eval-result").html(data);
+           $("#ipet-eval-result").replaceWith(data);
+           button.disabled = false;
        },
        error:function(){
            alert("Something went wrong.");

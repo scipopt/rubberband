@@ -1,0 +1,57 @@
+{% try %}
+    {% set mappin = mapping %}
+{% except NameError %}
+    {% set mappin = False %}
+{% end %}
+{% try %}
+    {% set long_table = ipet_long_table %}
+{% except NameError %}
+    {% set long_table = False %}
+{% end %}
+{% try %}
+    {% set aggregated_table = ipet_aggregated_table %}
+{% except NameError %}
+    {% set aggregated_table = False %}
+{% end %}
+
+<div id="ipet-eval-result">
+  {% if mappin %}
+  <table class="stats-table table table-bordered">
+    <thead>
+      <th colspan={{ len(mapping) }}>
+        Legend of columnheadings
+      </th>
+    </thead>
+    {% for k in range(len(mapping)) %}
+    <tr>
+      <td> {{ representation[k] }} </td>
+      <td> {{ mapping[k] }} </td>
+    </tr>
+    {% end %}
+  </table>
+  {% end %}
+
+  <div class="btn-group">
+  {% if long_table %}
+  <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#ipet-eval-result-long">
+    IPETLongTable
+  </button>
+  {% end %}
+  {% if aggregated_table %}
+  <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#ipet-eval-result-aggregated">
+    IPETAggregatedTable
+  </button>
+  {% end %}
+  </div>
+
+  {% if long_table %}
+  <div id="ipet-eval-result-long" class="collapse">
+    {% raw long_table %}
+  </div>
+  {% end %}
+  {% if aggregated_table %}
+  <div id="ipet-eval-result-aggregated" class="collapse">
+    {% raw aggregated_table %}
+  </div>
+  {% end %}
+</div>

@@ -16,12 +16,12 @@ class EvaluationView(BaseHandler):
         #         index=[1, 2, 3],
         #         data=[[1, 2, 3], [4, 5, 6], [7, 8, 9]])
         representation = [
-                "Apple", "Banana", "Cherry", "Dragonfruit",
+                "Apfel", "Birne", "Cherry", "Dragonfruit",
                 "Elderberry", "Fig", "Grape", "Honey",
                 "Ingwer", "Jackfruit", "Kiwi", "Lemon",
                 "Mango", "Nectarine", "Orange", "Peach",
                 "Quinoa", "Raspberry", "Strawberry", "Turnip",
-                "U", "V", "Wasabi",
+                "Ugli", "V", "Wasabi",
                 "X", "Yuzu", "Zeno"]
 
         # get evalfile
@@ -29,12 +29,12 @@ class EvaluationView(BaseHandler):
 
         # get testruns and setup ipet experiment
         ex = Experiment()
-        mapping = {}
+        mapping = []
         testrunids = self.get_argument("testruns").split(",")
         count = 0
         for i in testrunids:
             t = TestSet.get(id=i)
-            mapping[t.filename] = representation[count]
+            mapping.append(t.filename)
             ipettestrun = TestRun()
             ipettestrun.data = pd.DataFrame(t.get_data()).T
             ex.testruns.append(ipettestrun)
@@ -45,17 +45,16 @@ class EvaluationView(BaseHandler):
         table, aggregation = ev.evaluate(ex)
 
         # postprocessing
-        legend = "<table class=\"stats-table table table-bordered\"><tr>\n"
-        legend = legend + "<thead><th colspan=2>Legend of columnheadings</th></thead>\n"
-        for k, f in mapping.items():
-            legend = legend + "<tr><td>" + str(f) + "</td><td>" + k + "</td></tr>\n"
-        legend = legend + "</tr></table>\n"
-
         htmltable = table.to_html(classes="stats-table table table-bordered")
         htmlagg = aggregation.to_html(classes="stats-table table table-bordered")
-        htmltables = htmltable + htmlagg
-        for k, f in mapping.items():
-            htmltables = htmltables.replace(k, str(f))
+        for k in range(len(mapping)):
+            htmltable = htmltable.replace(mapping[k], representation[k])
+            htmlagg = htmlagg.replace(mapping[k], representation[k])
 
+        htmldata = self.render_string("results/ipet-evaluation.html",
+                representation=representation,
+                mapping=mapping,
+                ipet_long_table=htmltable,
+                ipet_aggregated_table=htmlagg)
         # send evaluated data
-        self.write(legend + htmltables)
+        self.write(htmldata)
