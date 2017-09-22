@@ -34,7 +34,8 @@ class EvaluationView(BaseHandler):
         count = 0
         for i in testrunids:
             t = TestSet.get(id=i)
-            mapping.append(t.filename)
+            if t.filename not in mapping:
+                mapping.append(t.filename)
             ipettestrun = TestRun()
             ipettestrun.data = pd.DataFrame(t.get_data()).T
             ex.testruns.append(ipettestrun)
