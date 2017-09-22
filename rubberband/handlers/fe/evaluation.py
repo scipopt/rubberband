@@ -6,6 +6,8 @@ from ipet import Experiment, TestRun
 from ipet.evaluation import IPETEvaluation
 import pandas as pd
 
+import json
+
 
 class EvaluationView(BaseHandler):
 
@@ -30,16 +32,26 @@ class EvaluationView(BaseHandler):
         # get testruns and setup ipet experiment
         ex = Experiment()
         mapping = []
+        repres = {}
         testrunids = self.get_argument("testruns").split(",")
         count = 0
         for i in testrunids:
             t = TestSet.get(id=i)
-            if t.filename not in mapping:
-                mapping.append(t.filename)
+            if t not in mapping:
+                mapping.append(t)
+                repres[t.meta.id] = representation[count]
+                count = count + 1
             ipettestrun = TestRun()
             ipettestrun.data = pd.DataFrame(t.get_data()).T
             ex.testruns.append(ipettestrun)
-            count = count + 1
+
+        githashes = []
+        for i in mapping:
+            if i.git_hash not in githashes:
+                githashes.append(i)
+            else:
+                self.write_error(400, "Githashes not unique")
+                return
 
         # evaluate with ipet
         ev = IPETEvaluation.fromXMLFile(evalfile["path"])
@@ -48,14 +60,20 @@ class EvaluationView(BaseHandler):
         # postprocessing
         htmltable = table.to_html(classes="stats-table table table-bordered")
         htmlagg = aggregation.to_html(classes="stats-table table table-bordered")
-        for k in range(len(mapping)):
-            htmltable = htmltable.replace(mapping[k], representation[k])
-            htmlagg = htmlagg.replace(mapping[k], representation[k])
+
+        htmltable = htmltable.replace("GitHash", "TestRun")
+        htmlagg = htmlagg.replace("GitHash", "TestRun")
+        for k in mapping:
+            htmltable = htmltable.replace(k.git_hash, repres[k.meta.id])
+            htmlagg = htmlagg.replace(k.git_hash, repres[k.meta.id])
 
         htmldata = self.render_string("results/ipet-evaluation.html",
-                representation=representation,
-                mapping=mapping,
                 ipet_long_table=htmltable,
-                ipet_aggregated_table=htmlagg)
+                ipet_aggregated_table=htmlagg).decode("utf-8")
+
+        resultstable = self.render_string("results_table.html", results=mapping,
+                representation=repres, tablename="ipet-legend-table").decode("utf-8")
+
         # send evaluated data
-        self.write(htmldata)
+        mydict = {"ipet-legend-table": resultstable, "ipet-eval-result": htmldata}
+        self.write(json.dumps(mydict))

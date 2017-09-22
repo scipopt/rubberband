@@ -6,8 +6,7 @@ from datetime import datetime
 import traceback
 from gitlab.exceptions import GitlabGetError
 
-from ipet import Experiment
-from ipet import Key
+from ipet import Experiment, Key
 from tornado.options import options
 
 # package imports

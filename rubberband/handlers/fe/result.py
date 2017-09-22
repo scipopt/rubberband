@@ -54,8 +54,11 @@ class ResultView(BaseHandler):
             fileoptions[ftype] = (file_contents is not None)
 
         rrt = self.render_string("results_table.html", results=[parent] + compare)
+        ilt = self.render_string("results_table.html", results=[parent] + compare,
+                tablename="ipet-legend-table")
         self.render("result_view.html", file=parent, page_title="Result", compare=compare,
-                    sets=sets, meta=meta, rendered_results_table=rrt, fileoptions=fileoptions,
+                    sets=sets, meta=meta, ipet_legend_table=ilt,
+                    rendered_results_table=rrt, fileoptions=fileoptions,
                     evals=IPET_EVALUATIONS)
 
     def post(self, parent_id):

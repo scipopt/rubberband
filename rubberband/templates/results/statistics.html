@@ -8,13 +8,7 @@
     </div>
   </div>
   <h4>Testruns</h4>
-  {% raw rendered_results_table %}
-
-  {% if sets.get("difference") %}
-  <h4>Exclusions</h4>
-  <p>The following {{ len(sets["difference"]) }} instances are not present in all of the compared test sets, and have therefore been ommitted from the tables below:<br \>
-  {{", ".join(sets['difference'])}}</p>
-  {% end %}
+  {% raw ipet_legend_table %}
 
   <h4>IPET Evaluations</h4>
   <form id="ipet-eval-form">
@@ -30,8 +24,15 @@
       <button id="ipet-eval-button" type="button" class="btn btn-primary">Evaluate</button>
     </div>
   </form>
+  <br />
   {% include "ipet-evaluation.html" %}
-  <br>
+  <br />
+
+  {% if sets.get("difference") %}
+  <h4>Exclusions</h4>
+  <p>The following {{ len(sets["difference"]) }} instances are not present in all of the compared test sets, and have therefore been ommitted from the tables below:<br \>
+  {{", ".join(sets['difference'])}}</p>
+  {% end %}
 
   <div class="row" >
   {% include "stats_table.html" %}

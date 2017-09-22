@@ -8,6 +8,11 @@
 {% except NameError %}
     {% set name = 'results-table' %}
 {% end %}
+{% try %}
+    {% set repres = representation %}
+{% except NameError %}
+    {% set repres = False %}
+{% end %}
 
 {% if results %}
 <table id="{{ name }}" class="table table-hover table-bordered">
@@ -15,6 +20,9 @@
     <tr>
       {% if checkbox %}
       <th></th>
+      {% end %}
+      {% if repres %}
+      <th>IPET-Legend</th>
       {% end %}
       <th></th>
       <th>Solver</th>
@@ -36,6 +44,9 @@
   <tr data-url='result/{{ r.meta.id }}'>
       {% if checkbox %}
       <td><input type="checkbox" name="{{ r.meta.id }}"></td>
+      {% end %}
+      {% if repres %}
+      <td> {{ representation[r.meta.id] }} </td>
       {% end %}
       <td><a href="/result/{{ r.meta.id }}">Details</a></td>
       <td>{{ format_attr(r, "solver") }} {{ format_attr(r, "solver_version") }}</td>

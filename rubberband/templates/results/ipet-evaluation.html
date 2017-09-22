@@ -1,9 +1,4 @@
 {% try %}
-    {% set mappin = mapping %}
-{% except NameError %}
-    {% set mappin = False %}
-{% end %}
-{% try %}
     {% set long_table = ipet_long_table %}
 {% except NameError %}
     {% set long_table = False %}
@@ -15,22 +10,6 @@
 {% end %}
 
 <div id="ipet-eval-result">
-  {% if mappin %}
-  <table class="stats-table table table-bordered">
-    <thead>
-      <th colspan={{ len(mapping) }}>
-        Legend of columnheadings
-      </th>
-    </thead>
-    {% for k in range(len(mapping)) %}
-    <tr>
-      <td> {{ representation[k] }} </td>
-      <td> {{ mapping[k] }} </td>
-    </tr>
-    {% end %}
-  </table>
-  {% end %}
-
   <div class="btn-group">
   {% if long_table %}
   <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#ipet-eval-result-long">

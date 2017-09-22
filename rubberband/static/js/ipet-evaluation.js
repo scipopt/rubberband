@@ -27,11 +27,16 @@ $('button#ipet-eval-button').click(function (e) {
        type: "GET",
        url: evalurl,
        success:function(data) {
-           $("#ipet-eval-result").replaceWith(data);
            button.disabled = false;
+           datadict = JSON.parse(data);
+           for(var key in datadict) {
+               var el = document.createElement("html");
+               el.innerHTML = datadict[key];
+               document.getElementById(key).replaceWith(el);
+           }
        },
-       error:function(){
-           alert("Something went wrong.");
+       error:function(data){
+           alert("Something went wrong." + data);
        }
     });
 });
