@@ -1,4 +1,9 @@
 {% try %}
+    {% set radio = radios %}
+{% except NameError %}
+    {% set radio = False %}
+{% end %}
+{% try %}
     {% set checkbox = checkboxes %}
 {% except NameError %}
     {% set checkbox = False %}
@@ -18,6 +23,9 @@
 <table id="{{ name }}" class="table table-hover table-bordered">
   <thead>
     <tr>
+      {% if radio %}
+      <th>Display</th>
+      {% end %}
       {% if checkbox %}
       <th></th>
       {% end %}
@@ -42,26 +50,33 @@
   <tbody>
   {% for r in results %}
   <tr data-url='result/{{ r.meta.id }}'>
-      {% if checkbox %}
-      <td><input type="checkbox" name="{{ r.meta.id }}"></td>
-      {% end %}
-      {% if repres %}
-      <td> {{ representation[r.meta.id] }} </td>
-      {% end %}
-      <td><a href="/result/{{ r.meta.id }}">Details</a></td>
-      <td>{{ format_attr(r, "solver") }} {{ format_attr(r, "solver_version") }}</td>
-      <td>{{ format_attr(r, "lp_solver") }} {{ format_attr(r, "lp_solver_version") }}</td>
-      <td>{{ format_attr(r, "mode") }}</td>
-      <td>{{ format_attr(r, "test_set") }}</td>
-      <td>{{ format_attr(r, "settings_short_name") }}</td>
-      <td>{{ format_attr(r, "seed") }}</td>
-      <td>{{ format_attr(r, "time_limit") }}</td>
-      <td>{{ format_attr(r, "run_environment") }}</td>
-      <td>{{ format_attr(r, "git_commit_timestamp") }}</td>
-      <td>{{ format_attr(r, "run_initiator") }}</td>
-      <td>{{ format_attr(r, "index_timestamp") }}</td>
-      <td>{{ format_attr(r, "expirationdate") }}</td>
-    </tr>
+    {% if radio %}
+    <td><input type="radio" name="base" value="{{ r.meta.id }}"
+    {% if r.meta.id == checked %}
+    checked
+    {% end %}
+    ><input name="{{ r.meta.id }}" hidden></td>
+    {% end %}
+    {% if checkbox %}
+    <td><input type="checkbox" name="{{ r.meta.id }}"></td>
+    {% end %}
+    {% if repres %}
+    <td> {{ representation[r.meta.id] }} </td>
+    {% end %}
+    <td><a href="/result/{{ r.meta.id }}">Details</a></td>
+    <td>{{ format_attr(r, "solver") }} {{ format_attr(r, "solver_version") }}</td>
+    <td>{{ format_attr(r, "lp_solver") }} {{ format_attr(r, "lp_solver_version") }}</td>
+    <td>{{ format_attr(r, "mode") }}</td>
+    <td>{{ format_attr(r, "test_set") }}</td>
+    <td>{{ format_attr(r, "settings_short_name") }}</td>
+    <td>{{ format_attr(r, "seed") }}</td>
+    <td>{{ format_attr(r, "time_limit") }}</td>
+    <td>{{ format_attr(r, "run_environment") }}</td>
+    <td>{{ format_attr(r, "git_commit_timestamp") }}</td>
+    <td>{{ format_attr(r, "run_initiator") }}</td>
+    <td>{{ format_attr(r, "index_timestamp") }}</td>
+    <td>{{ format_attr(r, "expirationdate") }}</td>
+  </tr>
   {% end %}
   </tbody>
 </table>

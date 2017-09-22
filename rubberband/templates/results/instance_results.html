@@ -2,9 +2,6 @@
   <div class="row">
     <h3 class="tab-title">Details</h3>
     <div class="tab-buttons">
-    {% if compare %}
-      <a type="button" data-toggle="modal" data-target="#switchBaseModal" class="bs-tooltip" data-placement="top" title="switch comparison base"><span class="glyphicon glyphicon-refresh h3-icon-leftalign"></span></a>
-    {% end %}
       <a href="/compare?base={{file.meta.id}}" class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="add comparison runs"><span class="glyphicon glyphicon-plus h3-icon-leftalign"></span></a>
       {% if fileoptions[".out"] %}
       <a href="/file/{{file.meta.id}}" data-toggle="tooltip" data-placement="top" title="view log file" class="bs-tooltip"><span class="glyphicon glyphicon-info-sign h3-icon-leftalign"></span></a>
@@ -22,7 +19,16 @@
   </div>
 
   <h4>Testruns</h4>
-  {% raw rendered_results_table %}
+  {% if compare %}
+  <form action="/compare" method="post">
+    <div class="btn-toolbar">
+      <button type="submit" class="btn btn-primary pull-left">Change Comparison Base</button>
+    </div>
+    {% end %}
+    {% raw rendered_results_table %}
+    {% if compare %}
+  </form>
+  {% end %}
 
   {% if sets.get("difference") %}
   <h4>Exclusions</h4>
@@ -64,35 +70,6 @@
 	    <li>json (coming soon!)</li>
 	    <li>csv (coming soon!)</li>
 	  </ul>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Switch Base Modal -->
-<div class="modal fade" id="switchBaseModal" tabindex="-1" role="dialog" aria-labelledby="switchBaseLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="switchBaseLabel">Switch Base</h4>
-      </div>
-      <div class="modal-body">
-      <form action="/compare" method="post">
-	<div class="radio">
-	  <label>
-	    <input type="radio" name="base" value="{{ file.meta.id }}" checked>{{ file.filename }}</label>
-	</div>
-	<input name="{{file.meta.id}}" hidden>
-	{% for f in compare %}
-	<div class="radio">
-	  <label>
-	    <input type="radio" name="base" value="{{ f.meta.id }}">{{ f.filename }}</label>
-	</div>
-	<input name="{{f.meta.id}}" hidden>
-	{% end %}
-	<button type="submit">Go!</button>
-      </form>
       </div>
     </div>
   </div>

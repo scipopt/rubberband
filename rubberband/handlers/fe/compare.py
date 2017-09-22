@@ -24,7 +24,7 @@ class CompareView(BaseHandler):
         '''
         post requests for compareview, receives selection of instances to comparison
         '''
-        # compares contains the meta ids (the hashes?) of all but one comparison TestSet
+        # compares contains the meta ids of all TestSets that should be compared, base among these
         compares = list(self.request.arguments.keys())
         base = self.get_argument("base", None)
         if base is not None and len(compares) == 1:
@@ -33,7 +33,7 @@ class CompareView(BaseHandler):
         elif base is None and len(compares) <= 1:
             self.write_error(400, msg="Please select at least 2 Testruns to compare.")
             return
-        # base identifies via meta id (via hash?) one of the comparison TestSet
+        # base is identified via meta id as one of the comparison TestSets
         if base:
             compares.remove("base")
             if base in compares:

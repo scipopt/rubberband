@@ -53,7 +53,8 @@ class ResultView(BaseHandler):
             file_contents = getattr(obj, "raw")(ftype=ftype)
             fileoptions[ftype] = (file_contents is not None)
 
-        rrt = self.render_string("results_table.html", results=[parent] + compare)
+        rrt = self.render_string("results_table.html", results=[parent] + compare,
+                checked=parent.meta.id, radios=(len(compare) > 0))
         ilt = self.render_string("results_table.html", results=[parent] + compare,
                 tablename="ipet-legend-table")
         self.render("result_view.html", file=parent, page_title="Result", compare=compare,
