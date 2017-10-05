@@ -104,6 +104,8 @@ class BaseHandler(RequestHandler):
     def get_objsen(self, objs, inst_name):
         '''
         Return the objective sense based on the fields Objsense, PrimalBound, DualBound
+        maximize: -1 (pb <= db)
+        minimize: 1  (pb >= db)
 
         objs: set/list of TestSets
         inst_name: instance/problem name
@@ -118,8 +120,10 @@ class BaseHandler(RequestHandler):
                 pb = float(getattr(o.children[inst_name], "PrimalBound", None))
                 db = float(getattr(o.children[inst_name], "DualBound", None))
                 if pb > db:
+                    # minimize
                     return 1
-                else:
+                elif pb < db:
+                    # maximize
                     return -1
             except:
                 pass
