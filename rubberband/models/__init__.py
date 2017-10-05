@@ -6,6 +6,8 @@ from elasticsearch_dsl import DocType, MetaField, String, Date, Float, Nested
 from rubberband.constants import INFINITY_KEYS, INFINITY_MASK, ELASTICSEARCH_INDEX
 from .model_helpers import compute_stat
 
+from ipet import Key
+
 
 class File(DocType):
     '''
@@ -195,7 +197,11 @@ class TestSet(DocType):
             all_instances[i] = self.children[i].to_dict()
             # seed instances with id of parent testrun,
             # because in most cases compared files have the same filename
-            # all_instances[i][Key.GitHash] = self.git_hash
+            all_instances[i][Key.GitHash] = self.git_hash
+            all_instances[i]["CommitTime"] = str(self.git_commit_timestamp)
+            all_instances[i][Key.LPSolver] = self.lp_solver + " " + self.lp_solver_version
+            all_instances[i][Key.LogFileName] = self.filename
+            all_instances[i][Key.Settings] = self.settings_short_name
             all_instances[i]["RubberbandId"] = self.id
         return all_instances
 
