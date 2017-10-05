@@ -61,7 +61,7 @@
     <td><input type="checkbox" name="{{ r.meta.id }}"></td>
     {% end %}
     {% if repres %}
-    <td> {{ representation[r.meta.id] }} </td>
+    <td> {{ representation[r.id] }} </td>
     {% end %}
     <td><a href="/result/{{ r.meta.id }}">Details</a></td>
     <td>{{ format_attr(r, "solver") }} {{ format_attr(r, "solver_version") }}</td>

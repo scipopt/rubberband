@@ -6,8 +6,6 @@ from elasticsearch_dsl import DocType, MetaField, String, Date, Float, Nested
 from rubberband.constants import INFINITY_KEYS, INFINITY_MASK, ELASTICSEARCH_INDEX
 from .model_helpers import compute_stat
 
-from ipet import Key
-
 
 class File(DocType):
     '''
@@ -195,9 +193,10 @@ class TestSet(DocType):
         instances = self.children.to_dict().keys()
         for i in instances:
             all_instances[i] = self.children[i].to_dict()
-            # seed instances with githash of parent testrun,
+            # seed instances with id of parent testrun,
             # because in most cases compared files have the same filename
-            all_instances[i][Key.GitHash] = self.git_hash
+            # all_instances[i][Key.GitHash] = self.git_hash
+            all_instances[i]["RubberbandId"] = self.id
         return all_instances
 
     def json(self, ftype=".out"):

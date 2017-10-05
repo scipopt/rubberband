@@ -12,11 +12,6 @@ import json
 class EvaluationView(BaseHandler):
 
     def get(self, eval_id):
-        # dummydata
-        # dataframe = pd.DataFrame(
-        #         columns=['a', 'b', 'c'],
-        #         index=[1, 2, 3],
-        #         data=[[1, 2, 3], [4, 5, 6], [7, 8, 9]])
         representation = [
                 "Apfel", "Birne", "Cherry", "Dragonfruit",
                 "Elderberry", "Fig", "Grape", "Honey",
@@ -31,27 +26,20 @@ class EvaluationView(BaseHandler):
 
         # get testruns and setup ipet experiment
         ex = Experiment()
-        mapping = []
+        results = []
         repres = {}
         testrunids = self.get_argument("testruns").split(",")
         count = 0
         for i in testrunids:
             t = TestSet.get(id=i)
-            if t not in mapping:
-                mapping.append(t)
-                repres[t.meta.id] = representation[count]
-                count = count + 1
+
+            results.append(t)
+            repres[t.id] = representation[count]
+            count = count + 1
+
             ipettestrun = TestRun()
             ipettestrun.data = pd.DataFrame(t.get_data()).T
             ex.testruns.append(ipettestrun)
-
-        githashes = []
-        for i in mapping:
-            if i.git_hash not in githashes:
-                githashes.append(i)
-            else:
-                self.write_error(400, "Githashes not unique")
-                return
 
         # evaluate with ipet
         ev = IPETEvaluation.fromXMLFile(evalfile["path"])
@@ -61,19 +49,19 @@ class EvaluationView(BaseHandler):
         htmltable = table.to_html(classes="stats-table table table-bordered")
         htmlagg = aggregation.to_html(classes="stats-table table table-bordered")
 
-        htmltable = htmltable.replace("GitHash", "TestRun")
-        htmlagg = htmlagg.replace("GitHash", "TestRun")
-        for k in mapping:
-            htmltable = htmltable.replace(k.git_hash, repres[k.meta.id])
-            htmlagg = htmlagg.replace(k.git_hash, repres[k.meta.id])
+        for k, v in repres.items():
+            htmltable = htmltable.replace(k, v)
+            htmlagg = htmlagg.replace(k, v)
 
         htmldata = self.render_string("results/ipet-evaluation.html",
                 ipet_long_table=htmltable,
                 ipet_aggregated_table=htmlagg).decode("utf-8")
 
-        resultstable = self.render_string("results_table.html", results=mapping,
-                representation=repres, tablename="ipet-legend-table").decode("utf-8")
+        resultstable = self.render_string("results_table.html",
+                results=results, representation=repres,
+                tablename="ipet-legend-table").decode("utf-8")
 
         # send evaluated data
-        mydict = {"ipet-legend-table": resultstable, "ipet-eval-result": htmldata}
+        mydict = {"ipet-legend-table": resultstable,
+                "ipet-eval-result": htmldata}
         self.write(json.dumps(mydict))
