@@ -10,3 +10,4 @@ from .search import SearchView  # noqa
 from .upload import UploadView  # noqa
 from .visualize import VisualizeView  # noqa
 from .evaluation import EvaluationView # noqa
+from .display import DisplayView # noqa

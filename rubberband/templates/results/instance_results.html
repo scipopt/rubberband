@@ -13,8 +13,8 @@
       <a href="/file/{{file.meta.id}}?ftype=.err" data-toggle="tooltip" data-placement="top" title="view error file" class="bs-tooltip"><span class="glyphicon glyphicon-exclamation-sign h3-icon-leftalign"></span></a>
       {% end %}
       <a class="bs-tooltip" type="button" data-toggle="modal" data-target="#downloadSummaryOptions" title="download results" data-placement="top"><span class="glyphicon glyphicon-download h3-icon-leftalign" ></span></a>
-      <a type="button" data-toggle="modal" data-target="#deleteResultModal" data-placement="top" title="delete result" class="bs-tooltip"><span class="glyphicon glyphicon-trash h3-icon-leftalign"</span></a>
-      <a type="button" data-toggle="modal" data-target="#reimportResultModal" data-placement="top" title="reimport result" class="bs-tooltip"><span class="glyphicon glyphicon-repeat h3-icon-leftalign"</span></a>
+      <a type="button" data-toggle="modal" data-target="#deleteResultModal" data-placement="top" title="delete result" class="bs-tooltip"><span class="glyphicon glyphicon-trash h3-icon-leftalign"></span></a>
+      <a type="button" data-toggle="modal" data-target="#reimportResultModal" data-placement="top" title="reimport result" class="bs-tooltip"><span class="glyphicon glyphicon-repeat h3-icon-leftalign"></span></a>
     </div>
   </div>
 
@@ -106,3 +106,20 @@
     </div>
   </div>
 </div>
+
+<!-- Show Evalfile Modal -->
+<div id="show-eval-file-modal" class="modal" tabindex="-1" role="dialog" aria-labelledby="show-eval-file-modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" id="show-eval-file-modal-close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="">Evaluation file</h4>
+      </div>
+      <div class="modal-body">
+        <pre lang="xml" id="show-eval-file">
+        </pre>
+      </div>
+    </div>
+  </div>
+</div>
+

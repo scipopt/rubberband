@@ -1,11 +1,29 @@
 
-button = document.getElementById("ipet-eval-button");
-button.disabled = false;
+button1 = document.getElementById("ipet-eval-button");
+button2 = document.getElementById("ipet-eval-show-button");
+button1.disabled = false;
+button2.disabled = false;
+
+modal = document.getElementById("show-eval-file-modal");
+
+evalid = "";
+
+function setButtonsDisabled(stat) {
+    button1.disabled = stat;
+    button2.disabled = stat;
+};
+
+function getData(e) {
+    e.preventDefault();
+    setButtonsDisabled(true);
+
+    // get data from form
+    form_data = $("#ipet-eval-form").serializeArray();
+    evalid = form_data[0].value;
+};
 
 $('button#ipet-eval-button').click(function (e) {
-    e.preventDefault();
-    button = document.getElementById("ipet-eval-button");
-    button.disabled = true;
+    getData(e);
 
     // get data from url
     currurl = window.location.href;
@@ -17,26 +35,51 @@ $('button#ipet-eval-button').click(function (e) {
         idlist = idlist + "," + getstr;
     }
 
-    // get data from form
-    form_data = $("#ipet-eval-form").serializeArray();
-    evalid = form_data[0].value;
-
     // construct url
     evalurl = "/eval/" + evalid + idlist;
     $.ajax({
-       type: "GET",
-       url: evalurl,
-       success:function(data) {
-           button.disabled = false;
-           datadict = JSON.parse(data);
-           for(var key in datadict) {
-               var el = document.createElement("html");
-               el.innerHTML = datadict[key];
-               document.getElementById(key).replaceWith(el);
-           }
-       },
-       error:function(data){
-           alert("Something went wrong." + data);
-       }
+        type: "GET",
+        url: evalurl,
+        success:function(data) {
+            setButtonsDisabled(false);
+            datadict = JSON.parse(data);
+            for(var key in datadict) {
+                var el = document.createElement("html");
+                el.innerHTML = datadict[key];
+                document.getElementById(key).replaceWith(el);
+            }
+        },
+        error:function(data){
+            alert("Something went wrong." + data);
+        }
     });
 });
+
+$('button#ipet-eval-show-button').click(function (e) {
+    getData(e);
+    modal.style.display = "block";
+
+    // construct url
+    evalurl = "/display/eval/" + evalid;
+    $.ajax({
+        type: "GET",
+        url: evalurl,
+        success:function(data) {
+            setButtonsDisabled(false);
+            document.getElementById("show-eval-file").innerHTML = data;
+        },
+        error:function(data){
+            alert("Something went wrong." + data);
+        }
+    });
+});
+
+$('button#show-eval-file-modal-close').click(function (e) {
+    modal.style.display = "none";
+});
+
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+};

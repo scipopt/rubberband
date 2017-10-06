@@ -1,5 +1,6 @@
 # app specific
 files/
+all.solu
 
 # python
 *.py[cod]
