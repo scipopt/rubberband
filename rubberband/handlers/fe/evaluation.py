@@ -1,5 +1,7 @@
+from datetime import datetime
+
 from .base import BaseHandler
-from rubberband.constants import IPET_EVALUATIONS
+from rubberband.constants import IPET_EVALUATIONS, FORMAT_DATETIME_SHORT
 from rubberband.models import TestSet
 
 from ipet import Experiment, TestRun
@@ -12,14 +14,16 @@ import json
 class EvaluationView(BaseHandler):
 
     def get(self, eval_id):
-        representation = [
-                "Apfel", "Birne", "Cherry", "Dragonfruit",
-                "Elderberry", "Fig", "Grape", "Honey",
-                "Ingwer", "Jackfruit", "Kiwi", "Lemon",
-                "Mango", "Nectarine", "Orange", "Peach",
-                "Quinoa", "Raspberry", "Strawberry", "Turnip",
-                "Ugli", "V", "Wasabi",
-                "X", "Yuzu", "Zeno"]
+        # representation = [
+        #         "Apfel", "Birne", "Cherry", "Dragonfruit",
+        #         "Elderberry", "Fig", "Grape", "Honey",
+        #         "Ingwer", "Jackfruit", "Kiwi", "Lemon",
+        #         "Mango", "Nectarine", "Orange", "Peach",
+        #         "Quinoa", "Raspberry", "Strawberry", "Turnip",
+        #         "Ugli", "V", "Wasabi",
+        #         "X", "Yuzu", "Zeno"]
+        letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+                "N", "O", "P", "Q", "R", "S", "T", "U", "V", "X", "Y", "Z"]
 
         # get evalfile
         evalfile = IPET_EVALUATIONS[int(eval_id)]
@@ -34,7 +38,11 @@ class EvaluationView(BaseHandler):
             t = TestSet.get(id=i)
 
             results.append(t)
-            repres[t.id] = representation[count]
+            # repres[t.id] = representation[count]
+            ts = ""
+            if t.git_commit_timestamp:
+                ts = "(" + datetime.strftime(t.git_commit_timestamp, FORMAT_DATETIME_SHORT) + ")"
+            repres[t.id] = letters[count] + " " + t.settings_short_name + " " + ts
             count = count + 1
 
             ipettestrun = TestRun()

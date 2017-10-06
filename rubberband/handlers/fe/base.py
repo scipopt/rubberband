@@ -4,7 +4,7 @@ from tornado.web import RequestHandler
 from tornado.options import options
 import traceback
 
-from rubberband.constants import NONE_DISPLAY, INFINITY_KEYS, INFINITY_MASK
+from rubberband.constants import NONE_DISPLAY, INFINITY_KEYS, INFINITY_MASK, FORMAT_DATETIME_LONG
 
 
 class BaseHandler(RequestHandler):
@@ -93,7 +93,7 @@ class BaseHandler(RequestHandler):
                 if attr in INFINITY_KEYS and value == INFINITY_MASK:
                     return float("inf")
                 if attr.endswith("_timestamp") or attr.endswith("expirationdate"):
-                    return datetime.strftime(value, "%B %d, %Y %H:%M")
+                    return datetime.strftime(value, FORMAT_DATETIME_LONG)
                 if isinstance(value, str):
                     return value
                 if isinstance(value, Iterable):

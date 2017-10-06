@@ -13,3 +13,8 @@ NONE_DISPLAY = "--"
 EXPORT_DATA_FORMATS = ("gzip", "json", "csv", "raw")
 EXPORT_FILE_TYPES = (".out", ".set", ".err", ".meta")
 ELASTICSEARCH_INDEX = "solver-results"
+
+FORMAT_DATE = "%Y-%m-%d"
+FORMAT_DATETIME_LONG = "%B %d, %Y %H:%M"
+FORMAT_DATETIME_SHORT = FORMAT_DATE + " %H:%M"
+FORMAT_DATETIME = "%Y-%m-%d %H:%M:%S"

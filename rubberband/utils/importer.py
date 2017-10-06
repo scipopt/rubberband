@@ -11,7 +11,7 @@ from tornado.options import options
 
 # package imports
 from rubberband.models import TestSet, Result, File
-from rubberband.constants import ALL_SOLU
+from rubberband.constants import ALL_SOLU, FORMAT_DATETIME
 from rubberband.utils import gitlab as gl
 from .stats import ImportStats
 from .hasher import generate_sha256_hash
@@ -372,7 +372,7 @@ class ResultClient(object):
                 for key in ["Datetime_Start", "Datetime_End"]:
                     try:
                         timestamp = int(r[key])
-                        timestr = datetime.fromtimestamp(timestamp).strftime("%Y-%m-%d %H:%M:%S")
+                        timestr = datetime.fromtimestamp(timestamp).strftime(FORMAT_DATETIME)
                         r[key] = timestr
                     except:
                         pass

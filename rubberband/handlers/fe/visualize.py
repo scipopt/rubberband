@@ -4,6 +4,7 @@ import json
 
 from .base import BaseHandler
 from rubberband.models import TestSet, Result
+from rubberband.constants import FORMAT_DATE
 
 
 class VisualizeView(BaseHandler):
@@ -13,8 +14,8 @@ class VisualizeView(BaseHandler):
         Show the form for the user to enter data that they want to visualize.
         '''
         # by default show results from the last year
-        start_date = (datetime.datetime.now() - datetime.timedelta(days=365)).strftime("%Y-%m-%d")
-        end_date = datetime.datetime.now().strftime("%Y-%m-%d")
+        start_date = (datetime.datetime.now() - datetime.timedelta(days=365)).strftime(FORMAT_DATE)
+        end_date = datetime.datetime.now().strftime(FORMAT_DATE)
         # show the form to enter data
         self.render("visualize.html", page_title="Visualize", default_start_date=start_date,
                     default_end_date=end_date)
