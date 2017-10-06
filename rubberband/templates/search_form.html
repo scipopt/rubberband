@@ -31,7 +31,7 @@
         <select class="form-control" name="mode" id="runmode-select">
           <option></option>
           {% for i in search_options["mode"] %}
-          <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
+          <option value="{{i}}" {% if search_options["defaults"] and search_options["defaults"]["mode"] == i %} selected {% end %}{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
           {% end %}
         </select>
       </div>
