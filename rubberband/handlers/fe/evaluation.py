@@ -54,8 +54,8 @@ class EvaluationView(BaseHandler):
         table, aggregation = ev.evaluate(ex)
 
         # postprocessing
-        htmltable = table.to_html(classes="stats-table table table-bordered")
-        htmlagg = aggregation.to_html(classes="stats-table table table-bordered")
+        htmltable = table.to_html(classes="ipet-table stats-table table table-bordered")
+        htmlagg = aggregation.to_html(classes="ipet-table stats-table table table-bordered")
 
         for k, v in repres.items():
             htmltable = htmltable.replace(k, v)

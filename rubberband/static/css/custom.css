@@ -165,6 +165,10 @@ form {
     margin-top: 15px;
 }
 
+.ipet-table {
+    white-space: nowrap;
+}
+
 .dataTables_wrapper {
     margin-top:20px;
 }
