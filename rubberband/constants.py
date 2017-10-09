@@ -12,10 +12,10 @@ IPET_EVALUATIONS = {
         3: {"path": STATIC_FILES_DIR + "eval4.xml", "name": "evaluation4"},
         4: {"path": STATIC_FILES_DIR + "eval5.xml", "name": "evaluation5"},
         5: {"path": STATIC_FILES_DIR + "eval6.xml", "name": "evaluation6"},
-        6: {"path": STATIC_FILES_DIR + "eval1.xml", "name": "evaluation7"},
-        7: {"path": STATIC_FILES_DIR + "eval2.xml", "name": "evaluation8"},
-        8: {"path": STATIC_FILES_DIR + "eval3.xml", "name": "evaluation9"},
-        9: {"path": STATIC_FILES_DIR + "eval4.xml", "name": "evaluation10"}
+        6: {"path": STATIC_FILES_DIR + "eval7.xml", "name": "evaluation7"},
+        7: {"path": STATIC_FILES_DIR + "eval8.xml", "name": "evaluation8"},
+        8: {"path": STATIC_FILES_DIR + "eval9.xml", "name": "evaluation9"},
+        9: {"path": STATIC_FILES_DIR + "eval10.xml", "name": "evaluation10"}
         }
 NONE_DISPLAY = "--"
 EXPORT_DATA_FORMATS = ("gzip", "json", "csv", "raw")
