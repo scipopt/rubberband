@@ -17,6 +17,15 @@
   border-bottom: 1px solid #eee;
 }
 
+pre {
+    display: block;
+    max-height: 80vh;
+    overflow: scroll;
+    word-break: normal !important;
+    word-wrap: normal !important;
+    white-space: pre !important;
+}
+
 /*
  * Top navigation
  * Hide default border to remove 1px line.
