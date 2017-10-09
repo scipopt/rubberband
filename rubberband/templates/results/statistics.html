@@ -37,4 +37,14 @@
   {{", ".join(sets['difference'])}}</p>
   {% end %}
 
+  <div>
+    <p>
+    In the IPET long table all instances are displayed. These that are only present in one testrun have a NaN in one of the columns (i.e. Time).
+    </p>
+    <p>
+    In the IPET aggregated table however only the filtergroups are displayed.
+    These take into account only instances with the highest number of occurrences, in most cases that will be the number of testruns.
+    So generally in the aggregated table you will get statistics for the instances that are present in all testruns.
+    </p>
+  </div>
 </div>
