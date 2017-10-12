@@ -1,4 +1,5 @@
 from datetime import datetime
+from lxml import html
 
 from .base import BaseHandler
 from rubberband.constants import IPET_EVALUATIONS, FORMAT_DATETIME_SHORT
@@ -51,31 +52,50 @@ class EvaluationView(BaseHandler):
 
         # evaluate with ipet
         ev = IPETEvaluation.fromXMLFile(evalfile["path"])
-        table, aggregation = ev.evaluate(ex)
+        longtable, aggtable = ev.evaluate(ex)
 
         # postprocessing
-        htmltable = table.to_html(
+        html_long = longtable.to_html(
                 classes="ipet-long-table ipet-table table table-bordered")
-        htmlagg = aggregation.to_html(
-                classes="ipet-aggregated-table ipet-table table table-bordered")
+        html_agg = aggtable.to_html(
+                classes="ipet-aggregated-table ipet-table table table-bordered stripe")
 
-        # make the dataTable fit the width
-        htmltable = htmltable.replace("class", "width=100% class")
-        htmlagg = htmlagg.replace("class", "width=100% class")
+        tables = []
+        for table in [html_long, html_agg]:
+            # split rowspan cells from the tables to enable js datatable
+            tree = html.fromstring(table)
+            table_rows = [e for e in tree.iter() if e.tag == "tr" or e.tag == "th"]
+            for row in table_rows:
+                cellcount = 0
+                for cell in row.iter():
+                    rowspan = cell.get("rowspan")
+                    if rowspan is not None:
+                        del cell.attrib["rowspan"]
+                        del cell.attrib["valign"]
+                        for i in range(int(rowspan) - 1):
+                            nextrow = row.getnext()
+                            newcell = html.fromstring(html.tostring(cell))
+                            nextrow.insert(cellcount - 1, newcell)
+                    cellcount = cellcount + 1
+            # render to string and make the dataTable fit the width
+            table = html.tostring(tree).decode("utf-8").replace("class", "width=100% class")
+            # replace ids and so on
+            for k, v in repres.items():
+                table = table.replace(k, v)
+            tables.append(table)
 
-        for k, v in repres.items():
-            htmltable = htmltable.replace(k, v)
-            htmlagg = htmlagg.replace(k, v)
+        html_long = tables[0]
+        html_agg = tables[1]
 
-        htmldata = self.render_string("results/ipet-evaluation.html",
-                ipet_long_table=htmltable,
-                ipet_aggregated_table=htmlagg).decode("utf-8")
-
-        resultstable = self.render_string("results_table.html",
+        # render to strings
+        html_tables = self.render_string("results/ipet-evaluation.html",
+                ipet_long_table=html_long,
+                ipet_aggregated_table=html_agg).decode("utf-8")
+        results_table = self.render_string("results_table.html",
                 results=results, representation=repres,
                 tablename="ipet-legend-table").decode("utf-8")
 
         # send evaluated data
-        mydict = {"ipet-legend-table": resultstable,
-                "ipet-eval-result": htmldata}
+        mydict = {"ipet-legend-table": results_table,
+                "ipet-eval-result": html_tables}
         self.write(json.dumps(mydict))

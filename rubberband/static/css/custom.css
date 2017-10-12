@@ -179,8 +179,16 @@ form {
     width: 100%;
 }
 
-.dataTables_wrapper {
+.datatables_wrapper {
     margin-top:20px;
+}
+
+.DTFC_LeftBodyLiner {
+    overflow-x: hidden;
+}
+
+.DTFC_Cloned {
+    background-color: white;
 }
 
 .one-chart {

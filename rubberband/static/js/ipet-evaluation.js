@@ -14,13 +14,21 @@ function formatIpetTable() {
         scrollY: '50vh',
         scrollX: true,
         scroller: true,
-        scrollCollapse: true
+        scrollCollapse: true,
+        paging:         false,
+        fixedColumns:   {
+            leftColumns: 1,
+        }
     });
     $('table.ipet-aggregated-table').DataTable({
         scrollY: '30vh',
         scrollX: true,
         scroller: true,
-        scrollCollapse: true
+        scrollCollapse: true,
+        paging:         false,
+        fixedColumns:   {
+            leftColumns: 1,
+        }
     });
 };
 
