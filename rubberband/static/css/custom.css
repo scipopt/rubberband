@@ -176,6 +176,7 @@ form {
 
 .ipet-table {
     white-space: nowrap;
+    width: 100%;
 }
 
 .dataTables_wrapper {

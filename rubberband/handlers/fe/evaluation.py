@@ -54,9 +54,14 @@ class EvaluationView(BaseHandler):
         table, aggregation = ev.evaluate(ex)
 
         # postprocessing
-        htmltable = table.to_html(classes="ipet-long-table ipet-table table table-bordered")
+        htmltable = table.to_html(
+                classes="ipet-long-table ipet-table table table-bordered")
         htmlagg = aggregation.to_html(
                 classes="ipet-aggregated-table ipet-table table table-bordered")
+
+        # make the dataTable fit the width
+        htmltable = htmltable.replace("class", "width=100% class")
+        htmlagg = htmlagg.replace("class", "width=100% class")
 
         for k, v in repres.items():
             htmltable = htmltable.replace(k, v)
