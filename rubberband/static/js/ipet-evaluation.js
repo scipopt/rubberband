@@ -1,12 +1,28 @@
 
+// global variables
 button1 = document.getElementById("ipet-eval-button");
 button2 = document.getElementById("ipet-eval-show-button");
 button1.disabled = false;
 button2.disabled = false;
 
 modal = document.getElementById("show-eval-file-modal");
-
 evalid = "";
+
+// format ipet tables
+function formatIpetTable() {
+    $('table.ipet-long-table').DataTable({
+        scrollY: '50vh',
+        scrollX: true,
+        scroller: true,
+        scrollCollapse: true
+    });
+    $('table.ipet-aggregated-table').DataTable({
+        scrollY: '30vh',
+        scrollX: true,
+        scroller: true,
+        scrollCollapse: true
+    });
+};
 
 function setButtonsDisabled(stat) {
     button1.disabled = stat;
@@ -44,10 +60,11 @@ $('button#ipet-eval-button').click(function (e) {
             setButtonsDisabled(false);
             datadict = JSON.parse(data);
             for(var key in datadict) {
-                var el = document.createElement("html");
+                var el = document.createElement("div");
                 el.innerHTML = datadict[key];
                 document.getElementById(key).replaceWith(el);
             }
+            formatIpetTable();
         },
         error:function(data){
             alert("Something went wrong." + data);

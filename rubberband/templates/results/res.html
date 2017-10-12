@@ -19,7 +19,7 @@
     <tbody>
     {% for name, r in file.children.to_dict().items() %}
     <tr>
-      <td><a href="/result/{{ file.meta.id }}/instance/{{ r.meta.id }}">{{ r.instance_name }}</td>
+      <td><a href="/result/{{ file.meta.id }}/instance/{{ r.meta.id }}">{{ r.instance_name }}</a></td>
       <td>{{ format_attr(r, "instance_type") }}</td>
       <td>{{ format_attr(r, "OriginalProblem_InitialNCons") }}</td>
       <td>{{ format_attr(r, "OriginalProblem_Vars") }}</td>

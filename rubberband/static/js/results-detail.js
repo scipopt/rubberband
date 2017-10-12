@@ -23,10 +23,10 @@ if (window.location.search.indexOf("compare") >= 0) {
 
 function formatResultTables() {
     table = $('.results-table').DataTable({
-      scrollY: 500,
-      scrollX: true,
-    	scroller: true,
-    	scrollCollapse: true
+        scrollY: 500,
+        scrollX: true,
+        scroller: true,
+        scrollCollapse: true
     });
 
     $('.nav-tabs').stickyTabs();

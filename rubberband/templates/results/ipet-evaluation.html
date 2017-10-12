@@ -10,27 +10,17 @@
 {% end %}
 
 <div id="ipet-eval-result">
-  <div class="btn-group">
-  {% if long_table %}
-  <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#ipet-eval-result-long">
-    IPETLongTable
-  </button>
-  {% end %}
-  {% if aggregated_table %}
-  <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#ipet-eval-result-aggregated">
-    IPETAggregatedTable
-  </button>
-  {% end %}
-  </div>
 
-  {% if long_table %}
-  <div id="ipet-eval-result-long" class="collapse">
-    {% raw long_table %}
-  </div>
-  {% end %}
   {% if aggregated_table %}
-  <div id="ipet-eval-result-aggregated" class="collapse">
+  <div id="ipet-eval-result-aggregated">
     {% raw aggregated_table %}
   </div>
   {% end %}
+
+  {% if long_table %}
+  <div id="ipet-eval-result-long">
+    {% raw long_table %}
+  </div>
+  {% end %}
+
 </div>
