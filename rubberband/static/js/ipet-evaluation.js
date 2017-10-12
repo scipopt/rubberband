@@ -11,7 +11,7 @@ evalid = "";
 // format ipet tables
 function formatIpetTable() {
     $('table.ipet-long-table').DataTable({
-        scrollY: '50vh',
+        scrollY: '80vh',
         scrollX: true,
         scroller: true,
         scrollCollapse: true,
@@ -21,13 +21,13 @@ function formatIpetTable() {
         }
     });
     $('table.ipet-aggregated-table').DataTable({
-        scrollY: '30vh',
+        scrollY: '80vh',
         scrollX: true,
         scroller: true,
         scrollCollapse: true,
         paging:         false,
         fixedColumns:   {
-            leftColumns: 1,
+            leftColumns: 2,
         }
     });
 };

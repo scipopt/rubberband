@@ -56,7 +56,7 @@ class EvaluationView(BaseHandler):
 
         # postprocessing
         html_long = longtable.to_html(
-                classes="ipet-long-table ipet-table table table-bordered")
+                classes="ipet-long-table ipet-table table table-bordered stripe")
         html_agg = aggtable.to_html(
                 classes="ipet-aggregated-table ipet-table table table-bordered stripe")
 
