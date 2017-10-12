@@ -72,8 +72,9 @@ class EvaluationView(BaseHandler):
                     if rowspan is not None:
                         del cell.attrib["rowspan"]
                         del cell.attrib["valign"]
+                        nextrow = row
                         for i in range(int(rowspan) - 1):
-                            nextrow = row.getnext()
+                            nextrow = nextrow.getnext()
                             newcell = html.fromstring(html.tostring(cell))
                             nextrow.insert(cellcount - 1, newcell)
                     cellcount = cellcount + 1
