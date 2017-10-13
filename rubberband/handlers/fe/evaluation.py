@@ -89,7 +89,7 @@ class EvaluationView(BaseHandler):
         html_agg = tables[1]
 
         # render to strings
-        html_tables = self.render_string("results/ipet-evaluation.html",
+        html_tables = self.render_string("results/evaluation.html",
                 ipet_long_table=html_long,
                 ipet_aggregated_table=html_agg).decode("utf-8")
         results_table = self.render_string("results_table.html",
