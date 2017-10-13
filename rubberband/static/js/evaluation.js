@@ -7,6 +7,7 @@ button2.disabled = false;
 
 modal = document.getElementById("show-eval-file-modal");
 evalid = "";
+defaultrun = "";
 
 // format ipet tables
 function formatIpetTable() {
@@ -44,7 +45,8 @@ function getData(e) {
 
     // get data from form
     form_data = $("#ipet-eval-form").serializeArray();
-    evalid = form_data[0].value;
+    evalid = $("#ipet-eval-file-select").val();
+    defaultrun = $("#ipet-eval-form input[type='radio']:checked").val();
 };
 
 $('button#ipet-eval-button').click(function (e) {
@@ -61,7 +63,7 @@ $('button#ipet-eval-button').click(function (e) {
     }
 
     // construct url
-    evalurl = "/eval/" + evalid + idlist;
+    evalurl = "/eval/" + evalid + idlist + "&default=" + defaultrun;
     $.ajax({
         type: "GET",
         url: evalurl,

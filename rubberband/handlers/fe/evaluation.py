@@ -29,14 +29,22 @@ class EvaluationView(BaseHandler):
         # get evalfile
         evalfile = IPET_EVALUATIONS[int(eval_id)]
 
+        # read testrunids
+        testrunids = self.get_argument("testruns").split(",")
+
+        # read defaultgroup
+        default = self.get_argument("default", testrunids[0])
+        default_rbid = None
+
         # get testruns and setup ipet experiment
         ex = Experiment()
         results = []
         repres = {}
-        testrunids = self.get_argument("testruns").split(",")
         count = 0
         for i in testrunids:
             t = TestSet.get(id=i)
+            if i == default:
+                default_rbid = t.id
 
             results.append(t)
             # repres[t.id] = representation[count]
@@ -52,6 +60,7 @@ class EvaluationView(BaseHandler):
 
         # evaluate with ipet
         ev = IPETEvaluation.fromXMLFile(evalfile["path"])
+        ev.set_defaultgroup(default_rbid)
         longtable, aggtable = ev.evaluate(ex)
 
         # postprocessing
@@ -93,7 +102,8 @@ class EvaluationView(BaseHandler):
                 ipet_long_table=html_long,
                 ipet_aggregated_table=html_agg).decode("utf-8")
         results_table = self.render_string("results_table.html",
-                results=results, representation=repres,
+                results=results, representation=repres, radios=True,
+                checked=default,
                 tablename="ipet-legend-table").decode("utf-8")
 
         # send evaluated data
