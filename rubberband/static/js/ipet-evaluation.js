@@ -24,6 +24,7 @@ function formatIpetTable() {
         scrollY: '80vh',
         scrollX: true,
         scroller: true,
+        ordering: false,
         scrollCollapse: true,
         paging:         false,
         fixedColumns:   {
