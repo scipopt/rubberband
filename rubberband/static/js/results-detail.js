@@ -29,7 +29,7 @@ function formatResultTables() {
         scrollCollapse: true,
         paging: false,
         columnDefs: [
-            { type: 'any-number', targets: 0 }
+            { type: 'any-number', targets: 'number' },
         ]
     });
 
