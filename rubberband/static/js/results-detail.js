@@ -27,7 +27,10 @@ function formatResultTables() {
         scrollX: true,
         scroller: true,
         scrollCollapse: true,
-        paging: false
+        paging: false,
+        columnDefs: [
+            { type: 'any-number', targets: 0 }
+        ]
     });
 
     $('.nav-tabs').stickyTabs();
