@@ -38,16 +38,20 @@ class EvaluationView(BaseHandler):
 
         # get testruns and setup ipet experiment
         ex = Experiment()
-        results = []
-        repres = {}
-        count = 0
+        testruns = []
         for i in testrunids:
-            t = TestSet.get(id=i)
+            testruns.append(TestSet.get(id=i))
+
+        testruns.sort(key=lambda x: x.git_commit_timestamp)
+
+        count = 0
+        repres = {}
+        results = []
+        for t in testruns:
             if i == default:
                 default_rbid = t.id
 
             results.append(t)
-            # repres[t.id] = representation[count]
             ts = ""
             if t.git_commit_timestamp:
                 ts = "(" + datetime.strftime(t.git_commit_timestamp, FORMAT_DATETIME_SHORT) + ")"
