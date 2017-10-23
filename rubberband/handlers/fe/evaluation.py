@@ -15,14 +15,6 @@ import json
 class EvaluationView(BaseHandler):
 
     def get(self, eval_id):
-        # representation = [
-        #         "Apfel", "Birne", "Cherry", "Dragonfruit",
-        #         "Elderberry", "Fig", "Grape", "Honey",
-        #         "Ingwer", "Jackfruit", "Kiwi", "Lemon",
-        #         "Mango", "Nectarine", "Orange", "Peach",
-        #         "Quinoa", "Raspberry", "Strawberry", "Turnip",
-        #         "Ugli", "V", "Wasabi",
-        #         "X", "Yuzu", "Zeno"]
         letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
                 "N", "O", "P", "Q", "R", "S", "T", "U", "V", "X", "Y", "Z"]
 
@@ -48,7 +40,7 @@ class EvaluationView(BaseHandler):
         repres = {}
         results = []
         for t in testruns:
-            if i == default:
+            if t.meta.id == default:
                 default_rbid = t.id
 
             results.append(t)
