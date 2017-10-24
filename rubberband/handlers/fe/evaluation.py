@@ -10,13 +10,13 @@ from ipet.evaluation import IPETEvaluation
 import pandas as pd
 
 import json
+import string
 
 
 class EvaluationView(BaseHandler):
 
     def get(self, eval_id):
-        letters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-                "N", "O", "P", "Q", "R", "S", "T", "U", "V", "X", "Y", "Z"]
+        letters = list(string.ascii_uppercase)
 
         # get evalfile
         evalfile = IPET_EVALUATIONS[int(eval_id)]
@@ -33,6 +33,9 @@ class EvaluationView(BaseHandler):
         testruns = []
         for i in testrunids:
             testruns.append(TestSet.get(id=i))
+
+        if len(testrunids) > 26:
+            letters = [x + y for x in letters for y in letters]
 
         testruns.sort(key=lambda x: x.git_commit_timestamp)
 
