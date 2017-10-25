@@ -1,6 +1,10 @@
 # app specific
-files/
 all.solu
+*.solu
+*.out
+*.res
+*.meta
+*.err
 
 # python
 *.py[cod]

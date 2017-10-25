@@ -7,11 +7,12 @@ import traceback
 from gitlab.exceptions import GitlabGetError
 
 from ipet import Experiment, Key
+from ipet.misc import loader
 from tornado.options import options
 
 # package imports
 from rubberband.models import TestSet, Result, File
-from rubberband.constants import ALL_SOLU, FORMAT_DATETIME
+from rubberband.constants import ALL_SOLU, ADD_READERS, FORMAT_DATETIME
 from rubberband.utils import gitlab as gl
 from .stats import ImportStats
 from .hasher import generate_sha256_hash
@@ -448,6 +449,16 @@ class ResultClient(object):
             self.logger.info(msg)
             if self.files[".solu"] is not None:
                 c.addSoluFile(self.files[".solu"])
+
+            msg = "No reader file found."
+            path = ADD_READERS
+            if os.path.isfile(path):
+                msg = "Adding additional readers."
+                for r in loader.loadAdditionalReaders([path]):
+                    c.readermanager.registerReader(r)
+
+            self.logger.info(msg)
+
             c.collectData()
 
         except:

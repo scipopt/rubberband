@@ -202,6 +202,8 @@ class TestSet(DocType):
                 count = count + 1
             if "ProblemName" not in all_instances[i].keys():
                 all_instances[i]["ProblemName"] = all_instances[i]["instance_name"]
+            if "TimeLimit" not in all_instances[i].keys():
+                all_instances[i]["TimeLimit"] = self.time_limit
             # seed instances with id of parent testrun,
             # because in most cases compared files have the same filename
             all_instances[i][Key.GitHash] = self.git_hash
