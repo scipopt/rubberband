@@ -107,7 +107,7 @@ class TestSet(DocType):
     os = String(index="not_analyzed")
     architecture = String(index="not_analyzed")
     mode = String(index="not_analyzed")
-    opt_flag = String(index="not_analyzed")  # opt, dbg
+    opt_flag = String(index="not_analyzed")  # spx1, spx2, cpx
     time_limit = String(index="not_analyzed")
     lp_solver = String(index="not_analyzed")  # SoPlex
     lp_solver_version = String(index="not_analyzed")  # 1.7.0.2
@@ -116,10 +116,11 @@ class TestSet(DocType):
     settings_short_name = String(index="not_analyzed")  # default
     index_timestamp = Date(required=True)
     git_commit_timestamp = Date()  # required for plotting
-    file_modified_timestamp = Date()
+    upload_timestamp = Date(required=True)
     settings = Nested()
     settings_default = Nested()
     seed = String(index="not_analyzed")
+    permutation = String(index="not_analyzed")
     metadata = Nested()
     expirationdate = Date()
 

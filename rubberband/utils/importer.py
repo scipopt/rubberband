@@ -213,6 +213,7 @@ class ResultClient(object):
             "lp_solver_version": lp_solver_version,
             "tags": self.tags,
             "index_timestamp": datetime.now(),
+            "upload_timestamp": datetime.now(),
             "metadata": metadata
         }
         if expirationdate is not None:
@@ -229,6 +230,7 @@ class ResultClient(object):
                     "test_set": "TstName",
                     "settings_short_name": "Settings",
                     "seed": "Seed",
+                    "permutation": "Permutation",
                     "run_environment": "Queue",
                     "opt_flag": "OptFlag",
                     "os": "OperatingSystem"

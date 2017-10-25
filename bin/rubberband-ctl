@@ -6,6 +6,7 @@ from elasticsearch_dsl.connections import connections
 import glob
 import os.path
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 from rubberband.models import Result, File, TestSet
 from rubberband.utils import ResultClient
@@ -90,6 +91,26 @@ def update_db():
     '''
     ts = TestSet.search()
     for t in ts.scan():
+
+        # add expirationdate to debugruns that have none
+        if t.expirationdate is None and t.mode == "debug" and t.run_initiator == "debug":
+            t.expirationdate = t.index_timestamp + relativedelta(months=3)
+
+        # clean up a misunderstanding
+        if t.opt_flag not in ["spx", "spx1", "spx2", "cpx"]:
+            if t.lp_solver == "CPLEX":
+                t.opt_flag = "cpx"
+            elif t.lp_solver == "SoPlex":
+                t.opt_flag = "spx"
+
+        # save the original upload timestamp
+        if t.upload_timestamp is None:
+            t.upload_timestamp = t.index_timestamp
+
+        t.save()
+
+        continue
+        # perform updates on the children
         t.load_children()
         for i in t.children.to_dict().values():
             # update the weird ipet statuses
