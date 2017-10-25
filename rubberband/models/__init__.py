@@ -116,7 +116,7 @@ class TestSet(DocType):
     settings_short_name = String(index="not_analyzed")  # default
     index_timestamp = Date(required=True)
     git_commit_timestamp = Date()  # required for plotting
-    upload_timestamp = Date(required=True)
+    upload_timestamp = Date()
     settings = Nested()
     settings_default = Nested()
     seed = String(index="not_analyzed")
@@ -134,13 +134,18 @@ class TestSet(DocType):
         This is likely ok, because fields that could contain infinity, are [0, inf)
         and mask is -1.
         '''
-        for i in INFINITY_KEYS:
-            if i not in kwargs["settings"].keys():
-                continue
-            if kwargs["settings"][i] == float("inf"):
-                kwargs["settings"][i] = INFINITY_MASK
-            if kwargs["settings_default"][i] == float("inf"):
-                kwargs["settings_default"][i] = INFINITY_MASK
+        if kwargs != {} and "settings" in kwargs.keys():
+            for i in INFINITY_KEYS:
+                if getattr(self.settings, i, None) == float("inf"):
+                    setattr(self.settings, i, INFINITY_MASK)
+                if getattr(self.settings_default, i, None) == float("inf"):
+                    setattr(self.settings_default, i, INFINITY_MASK)
+                if i not in kwargs["settings"].keys():
+                    continue
+                if kwargs["settings"][i] == float("inf"):
+                    kwargs["settings"][i] = INFINITY_MASK
+                if kwargs["settings_default"][i] == float("inf"):
+                    kwargs["settings_default"][i] = INFINITY_MASK
         return super(TestSet, self).update(**kwargs)
 
     def save(self, **kwargs):
@@ -149,11 +154,19 @@ class TestSet(DocType):
         This is likely ok, because fields that could contain infinity, are [0, inf)
         and mask is -1.
         '''
-        for i in INFINITY_KEYS:
-            if getattr(self.settings, i, None) == float("inf"):
-                setattr(self.settings, i, INFINITY_MASK)
-            if getattr(self.settings_default, i, None) == float("inf"):
-                setattr(self.settings_default, i, INFINITY_MASK)
+        if kwargs != {} and "settings" in kwargs.keys():
+            for i in INFINITY_KEYS:
+                if getattr(self.settings, i, None) == float("inf"):
+                    setattr(self.settings, i, INFINITY_MASK)
+                if getattr(self.settings_default, i, None) == float("inf"):
+                    setattr(self.settings_default, i, INFINITY_MASK)
+                if i not in kwargs["settings"].keys():
+                    continue
+                if kwargs["settings"][i] == float("inf"):
+                    kwargs["settings"][i] = INFINITY_MASK
+                if kwargs["settings_default"][i] == float("inf"):
+                    kwargs["settings_default"][i] = INFINITY_MASK
+
         return super(TestSet, self).save(**kwargs)
 
     def __str__(self):

@@ -214,7 +214,6 @@ class ResultClient(object):
             "lp_solver_version": lp_solver_version,
             "tags": self.tags,
             "index_timestamp": datetime.now(),
-            "upload_timestamp": datetime.now(),
             "metadata": metadata
         }
         if expirationdate is not None:
@@ -363,9 +362,12 @@ class ResultClient(object):
             # save parent
             if testset is None:
                 f = TestSet(**file_level_data)
+                f.upload_timestamp = datetime.now()
                 f.save()
             else:
                 f = testset
+                if f.upload_timestamp is None:
+                    file_level_data["upload_timestamp"] = f.index_timestamp
                 f.update(**file_level_data)
             self.testset_meta_id = f.meta.id  # save this for backup step
             # save children
