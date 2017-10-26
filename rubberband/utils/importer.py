@@ -187,7 +187,7 @@ class ResultClient(object):
         file_keys = set([Key.TimeLimit, Key.Version, "LPSolver", "GitHash", Key.Solver, "mode"])
         # TODO once the ipet is up to date, use this and update the rest
         # file_keys = set([Key.TimeLimit, Key.Version, Key.LPSolver, Key.GitHash,
-        if "LPSolver" in data:
+        if "LPSolver" in data.keys():
             # assume that a testrun is all run with the same lpsolver
             for v in list(data["LPSolver"].values()):
                 if v != "nan":

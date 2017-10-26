@@ -12,7 +12,7 @@ FULLDATAPATH = os.path.join(os.path.dirname(__file__), DATAFILES)
 
 
 def test_hasher_file():
-    expected_result = "0a8c44c1b6f4e7e7f595c6fbaab804832d3c8daa3cbf516eb33064f200533327"
+    expected_result = "952a91b64de0b3cca2f520da5083624cf29d948d9058b34c71ef7fe839246065"
     computed_hash = generate_sha256_hash(FULLDATAPATH)
     assert computed_hash == expected_result
 

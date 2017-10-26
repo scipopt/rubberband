@@ -1,7 +1,0 @@
-@TstName MMM
-@Settings default
-@Queue M620v2
-@OptFlag spx2
-@Architecture x86_64
-@OperatingSystem linux
-@Seed 1
