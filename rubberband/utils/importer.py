@@ -361,13 +361,15 @@ class ResultClient(object):
         try:
             # save parent
             if testset is None:
+                file_level_data["upload_timestamp"] = file_level_data["index_timestamp"]
+                file_level_data["uploader"] = file_level_data["run_initiator"]
                 f = TestSet(**file_level_data)
-                f.upload_timestamp = datetime.now()
                 f.save()
             else:
                 f = testset
                 if f.upload_timestamp is None:
                     file_level_data["upload_timestamp"] = f.index_timestamp
+                    file_level_data["uploader"] = f.run_initiator
                 f.update(**file_level_data)
             self.testset_meta_id = f.meta.id  # save this for backup step
             # save children
