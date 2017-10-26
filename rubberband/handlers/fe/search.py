@@ -23,7 +23,8 @@ class SearchView(BaseHandler):
         if exclude:
             results = [r for r in results if r.meta.id != exclude]
 
-        self.write(self.render_string("results_table.html", results=results, checkboxes=True))
+        self.write(self.render_string("results_table.html", tablename="search-result",
+            tableclass="compact", results=results, checkboxes=True))
 
     def fill_query(self, all_fields=None):
         if all_fields is None:

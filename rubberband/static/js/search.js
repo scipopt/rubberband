@@ -27,7 +27,16 @@ function updateResultsTable() {
 function fillResultTable(data) {
     // fill resultTable with data,
     // while data should be a htmlstring that just has to be poured into the right container
-    $("#results-table").replaceWith(data);
+    //$("#results-table").replaceWith(data);
+    $("#results-table").html(data);
+    $("#search-result").DataTable({
+        scrollY: '80vh',
+        scrollX: true,
+        scroller: true,
+        scrollCollapse: true,
+        paging: false,
+        searching: false,
+    });
 }
 
 $("#search-button").click(function() {

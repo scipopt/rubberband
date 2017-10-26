@@ -9,6 +9,11 @@
     {% set checkbox = False %}
 {% end %}
 {% try %}
+    {% set tclass = tableclass %}
+{% except NameError %}
+    {% set tclass = " " %}
+{% end %}
+{% try %}
     {% set name = tablename %}
 {% except NameError %}
     {% set name = 'results-table' %}
@@ -20,7 +25,7 @@
 {% end %}
 
 {% if results %}
-<table id="{{ name }}" class="table table-hover table-bordered">
+<table id="{{ name }}" class="table table-hover table-bordered {{ tclass }}" width="100%">
   <thead>
     <tr>
       {% if radio %}

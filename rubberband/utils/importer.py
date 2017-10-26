@@ -190,7 +190,7 @@ class ResultClient(object):
         if "LPSolver" in data.keys():
             # assume that a testrun is all run with the same lpsolver
             for v in list(data["LPSolver"].values()):
-                if v != "nan":
+                if v != "nan" and v is not None and v != "None":
                     break
             lp_solver_name, lp_solver_version = v.split(" ")
         else:
