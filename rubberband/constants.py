@@ -25,5 +25,5 @@ ELASTICSEARCH_INDEX = "solver-results"
 
 FORMAT_DATE = "%Y-%m-%d"
 FORMAT_DATETIME_LONG = "%B %d, %Y %H:%M"
-FORMAT_DATETIME_SHORT = FORMAT_DATE + " %H:%M"
+FORMAT_DATETIME_SHORT = "%d. %b %Y, %H:%M"
 FORMAT_DATETIME = "%Y-%m-%d %H:%M:%S"

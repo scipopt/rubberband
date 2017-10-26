@@ -1,4 +1,4 @@
-  <div role="tabpanel" class="tab-pane" id="meta">
+<div role="tabpanel" class="tab-pane" id="meta">
   <div class="row">
     <h3>Meta</h3>
   </div>
@@ -61,9 +61,27 @@
 	{% end %}
     </tr>
     <tr>
-        <td>Index Timestamp</td>
+        <td>Upload Timestamp</td>
+	{% for f in [file] + compare %}
+	<td>{{ format_attr(f, "upload_timestamp")}}</td>
+	{% end %}
+    </tr>
+    <tr>
+        <td>Uploader</td>
+	{% for f in [file] + compare %}
+	<td>{{ format_attr(f, "uploader") }}</td>
+	{% end %}
+    </tr>
+    <tr>
+        <td>Latest Import</td>
 	{% for f in [file] + compare %}
 	<td>{{ format_attr(f, "index_timestamp")}}</td>
+	{% end %}
+    </tr>
+    <tr>
+        <td>Latest Importer</td>
+	{% for f in [file] + compare %}
+	<td>{{ format_attr(f, "run_initiator") }}</td>
 	{% end %}
     </tr>
     <tr>
@@ -91,13 +109,7 @@
 	{% end %}
     </tr>
     <tr>
-        <td>Uploader</td>
-	{% for f in [file] + compare %}
-	<td>{{ format_attr(f, "run_initiator") }}</td>
-	{% end %}
-    </tr>
-    <tr>
-        <td>Settings name</td>
+        <td>Settings Name</td>
 	{% for f in [file] + compare %}
 	<td>{{ format_attr(f, "settings_short_name") }}</td>
 	{% end %}
@@ -115,13 +127,13 @@
 	{% end %}
     </tr>
     <tr>
-        <td>Test set</td>
+        <td>Testset</td>
 	{% for f in [file] + compare %}
 	<td>{{ format_attr(f, "test_set") }}</td>
 	{% end %}
     </tr>
     <tr>
-        <td>Time Limit</td>
+        <td>Timelimit</td>
 	{% for f in [file] + compare %}
 	<td>{{ format_attr(f, "time_limit") }}</td>
 	{% end %}
