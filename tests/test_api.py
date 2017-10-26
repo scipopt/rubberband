@@ -15,7 +15,7 @@ class GetAPITest(TestHandlerBase):
         self.assertEqual(response.code, 200)
         data = json.loads(response.body.decode("utf-8"))
         self.assertTrue(isinstance(data, list))
-        self.assertTrue(len(data) > 100)
+        self.assertTrue(len(data) > 50)
 
 
 class UploadAPITest(TestHandlerBase):

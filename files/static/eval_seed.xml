@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<Evaluation index="ProblemName Setting" indexsplit="-1">
+<Evaluation index="ProblemName Settings" indexsplit="-1">
     <Column name="T" origcolname="SolvingTime" minval="0.5" comp="quot" maxval="TimeLimit" alternative="TimeLimit" reduction="mean">
         <Filter anytestrun="one" expression1="_fail_" expression2="1" operator="eq"/>
         <Aggregation aggregation="shmean" name="sgm" shiftby="1.0"/>

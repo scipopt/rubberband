@@ -93,7 +93,7 @@ class ResultClient(object):
                 self.metadata.status = "found"
                 self.metadata.setUrl("/result/{}".format(found.meta.id))
                 msg = "File was previously uploaded by {} on {}. Upload aborted."\
-                      .format(found.uploader, found.index_timestamp)
+                      .format(found.get_uploader, found.index_timestamp)
                 self._log_info(msg)
                 return
 
@@ -369,6 +369,7 @@ class ResultClient(object):
                 f = testset
                 if f.upload_timestamp is None:
                     file_level_data["upload_timestamp"] = f.index_timestamp
+                if f.uploader is None:
                     file_level_data["uploader"] = f.run_initiator
                 f.update(**file_level_data)
             self.testset_meta_id = f.meta.id  # save this for backup step

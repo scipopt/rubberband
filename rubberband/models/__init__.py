@@ -140,7 +140,7 @@ class TestSet(DocType):
                 setattr(self.settings, i, INFINITY_MASK)
             if getattr(self.settings_default, i, None) == float("inf"):
                 setattr(self.settings_default, i, INFINITY_MASK)
-            if kwargs != {} and "settings" in kwargs.keys():
+            if kwargs != {} and "settings" in kwargs.keys() and i in kwargs["settings"].keys():
                 if kwargs["settings"][i] == float("inf"):
                     kwargs["settings"][i] = INFINITY_MASK
                 if kwargs["settings_default"][i] == float("inf"):
@@ -158,7 +158,7 @@ class TestSet(DocType):
                 setattr(self.settings, i, INFINITY_MASK)
             if getattr(self.settings_default, i, None) == float("inf"):
                 setattr(self.settings_default, i, INFINITY_MASK)
-            if kwargs != {} and "settings" in kwargs.keys():
+            if kwargs != {} and "settings" in kwargs.keys() and i in kwargs["settings"].keys():
                 if kwargs["settings"][i] == float("inf"):
                     kwargs["settings"][i] = INFINITY_MASK
                 if kwargs["settings_default"][i] == float("inf"):
@@ -169,8 +169,11 @@ class TestSet(DocType):
         return "TestSet {}".format(self.filename)
 
     @property
-    def uploader(self):
-        return self.run_initiator
+    def get_uploader(self):
+        if self.uploader is not None:
+            return self.uploader
+        else:
+            return self.run_initiator
 
     def get_filename(self, ending=".out"):
         if not ending or ending == ".out":

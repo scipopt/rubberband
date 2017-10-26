@@ -106,6 +106,7 @@ def update_db():
         # save the original upload timestamp
         if t.upload_timestamp is None:
             t.upload_timestamp = t.index_timestamp
+            t.uploader = t.run_initiator
 
         t.save()
 
