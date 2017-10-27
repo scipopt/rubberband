@@ -13,32 +13,37 @@
   </head>
   <body class="top-buffer">
     <nav class="navbar navbar-fixed-top bg-primary">
-      <a class="navbar-brand" href="/">Rubberband</a>
-    </nav>
+      <div class="container-fluid">
+        <!-- "Rubberband" and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#rb-mobile-navbar" aria-expanded="false">
+            <span class="glyphicon glyphicon-menu-hamburger" ></span>
+          </button>
+          <a class="navbar-brand" href="/">Rubberband</a>
+        </div>
 
-    <div class="container-fluid">
-      <div class="row">
-        <div class="sidebar">
-          <ul class="nav nav-sidebar">
-              <li><a href="/search" class="nav-link"><span class="glyphicon glyphicon-search menu-glyphicon" aria-hidden="true"></span>Search</a></li>
-              {% if options.gitlab_url %}
-              <li><a href="/visualize" class="nav-link"><span class="glyphicon glyphicon-stats menu-glyphicon" aria-hidden="true"></span>Visualize</a></li>
-              {% end %}
-              <li><a href="/upload" class="nav-link"><span class="glyphicon glyphicon-upload menu-glyphicon" aria-hidden="true"></span>Upload</a></li>
-              <li><a href="/faq" class="nav-link"><span class="glyphicon glyphicon-question-sign menu-glyphicon" aria-hidden="true"></span>FAQ</a></li>
+        <!-- Collect navigation for toggling -->
+        <div class="collapse navbar-collapse" id="rb-mobile-navbar">
+          <ul class="nav navbar-nav-rb navbar-nav">
+            <li><a href="/search" class="nav-link"><span class="glyphicon glyphicon-search menu-glyphicon" aria-hidden="true"></span>Search</a></li>
+            {% if options.gitlab_url %}
+            <li><a href="/visualize" class="nav-link"><span class="glyphicon glyphicon-stats menu-glyphicon" aria-hidden="true"></span>Visualize</a></li>
+            {% end %}
+            <li><a href="/upload" class="nav-link"><span class="glyphicon glyphicon-upload menu-glyphicon" aria-hidden="true"></span>Upload</a></li>
+            <li><a href="/faq" class="nav-link"><span class="glyphicon glyphicon-question-sign menu-glyphicon" aria-hidden="true"></span>FAQ</a></li>
           </ul>
         </div>
-        <div class="main" id="body-target">
-            {% block title %}
-            <h1 class="page-header">{{ page_title }}</h1>
-            {% end %}
-            {% block body %}
-            {% end %}
-        </div>
       </div>
+    </nav>
+    <div class="main" id="body-target">
+      {% block title %}
+      <h1 class="page-header">{{ page_title }}</h1>
+      {% end %}
+      {% block body %}
+      {% end %}
     </div>
     <!-- JavaScript at end to decrease pageload time
-    ================================================== -->
+      ================================================== -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
     {% block extra_js %}
