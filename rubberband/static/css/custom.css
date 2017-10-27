@@ -7,6 +7,14 @@
   padding-top: 50px;
 }
 
+p {
+    max-width: 800px;
+    text-align: justify;
+}
+
+p.exclusions {
+    text-align: left;
+}
 
 /*
  * Global add-ons

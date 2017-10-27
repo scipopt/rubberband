@@ -32,7 +32,9 @@
 
   {% if sets.get("difference") %}
   <h4>Exclusions</h4>
-  <p>The following {{ len(sets["difference"]) }} instances are not present in all of the compared test sets, and have therefore been ommitted from the table below: {{", ".join(sets['difference'])}}</p>
+  <p>The following {{ len(sets["difference"]) }} instances are not present in all of the compared test sets, and have therefore been ommitted from the table below:
+  <p class="exclusions">{{", ".join(sets['difference'])}}</p>
+  </p>
   {% end %}
   <div class="row datatables-content">
     <table class="results-table table table-bordered stripe" width="100%">

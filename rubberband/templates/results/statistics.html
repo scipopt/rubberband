@@ -34,7 +34,9 @@
   {% if sets.get("difference") %}
   <h4>Exclusions</h4>
   <p>The following {{ len(sets["difference"]) }} instances are not present in all of the compared test sets, and have therefore been ommitted from the tables below:<br \>
+  <p class="exclusions">
   {{", ".join(sets['difference'])}}</p>
+  </p>
   {% end %}
 
   <div>
