@@ -40,7 +40,7 @@ class SearchView(BaseHandler):
 query_fields = [
     "test_set",
     "mode",
-    "run_initiator",
+    "uploader",
     "settings_short_name",
     "solver",
     "solver_version",

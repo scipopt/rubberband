@@ -69,10 +69,10 @@
         </select>
       </div>
       <div class="form-group col-md-2">
-        <label for="uploadername-select">Importer Name</label>
-        <select class="form-control" name="run_initiator" id="uploadername-select">
+        <label for="uploadername-select">Original Uploader</label>
+        <select class="form-control" name="uploader" id="uploadername-select">
           <option></option>
-          {% for i in search_options["run_initiator"] %}
+          {% for i in search_options["uploader"] %}
           <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
           {% end %}
         </select>
