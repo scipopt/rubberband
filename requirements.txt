@@ -3,7 +3,7 @@ click==6.6
 elasticsearch==2.3.0
 elasticsearch-dsl==2.2.0
 numpy==1.13.0
-pandas==0.18.0
+pandas==0.19.0
 pytest==3.0.2
 python-gitlab==0.14
 requests==2.10.0

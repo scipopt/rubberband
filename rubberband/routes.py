@@ -7,7 +7,7 @@ routes = [
     (r"/", fe.MainView),
     (r"/visualize", fe.VisualizeView),
     (r"/compare", fe.CompareView),
-    (r"/faq", fe.FAQView),
+    (r"/help", fe.HelpView),
     # for typeahead in visualize.js
     (r"/instances/names", fe.InstanceNamesEndpoint),
     # for typeahead in statistic.js

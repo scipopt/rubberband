@@ -15,9 +15,12 @@ $("a.bs-popover").popover();
 
 // if compare is in query string, then we are in the compare view
 if (window.location.search.indexOf("compare") >= 0) {
-  red = new Color(245, 50, 50);
+  /* red = new Color(245, 50, 50);
   green = new Color(50, 245, 50);
-  gray = new Color(170, 170, 170);
+  gray = new Color(170, 170, 170); */
+  red = new Color(240, 40, 150);
+  green = new Color(160, 230, 40);
+  gray = new Color(200, 200, 200);
   colorateCells();
 }
 

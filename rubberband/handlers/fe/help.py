@@ -1,7 +1,7 @@
 from .base import BaseHandler
 
 
-class FAQView(BaseHandler):
+class HelpView(BaseHandler):
     def get(self):
         # The logfiles are not stored in integer/runlogs
-        self.render("faq.html", page_title="Frequently Asked Questions")
+        self.render("help.html", page_title="Help")

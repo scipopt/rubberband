@@ -63,10 +63,10 @@ class EvaluationView(BaseHandler):
         longtable, aggtable = ev.evaluate(ex)
 
         # postprocessing
-        html_long = longtable.to_html(
-                classes="ipet-long-table ipet-table table table-bordered stripe")
-        html_agg = aggtable.to_html(
-                classes="ipet-aggregated-table ipet-table table table-bordered stripe")
+        html_long = longtable.to_html(border=0,
+                classes="ipet-long-table ipet-table table stripe")
+        html_agg = aggtable.to_html(border=0,
+                classes="ipet-aggregated-table ipet-table table")
 
         tables = []
         for table in [html_long, html_agg]:
