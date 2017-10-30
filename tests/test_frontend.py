@@ -2,10 +2,10 @@ from base import TestHandlerBase
 
 
 class GetTest(TestHandlerBase):
-    def test_faq(self):
-        response = self.fetch("/faq")
+    def test_help(self):
+        response = self.fetch("/help")
         self.assertEqual(response.code, 200)
-        self.assertIn(b"Frequently Asked Questions", response.body)
+        self.assertIn(b"Help", response.body)
 
     def test_search(self):
         response = self.fetch("/search")

@@ -189,9 +189,7 @@ class ResultClient(object):
         # file_keys = set([Key.TimeLimit, Key.Version, Key.LPSolver, Key.GitHash,
         if "LPSolver" in data.keys():
             # assume that a testrun is all run with the same lpsolver
-            for v in list(data["LPSolver"].values()):
-                if v != "nan" and v is not None and v != "None":
-                    break
+            v = most_frequent_value(data['LPSolver'])
             lp_solver_name, lp_solver_version = v.split(" ")
         else:
             lp_solver_name = None
@@ -200,14 +198,14 @@ class ResultClient(object):
         vs = {}
         for i in ["mode", Key.TimeLimit]:
             if i in data:
-                vs[i] = list(data[i].values())[0]
+                vs[i] = most_frequent_value(data[i])
 
         filename = os.path.basename(self.files[".out"])
 
         file_data = {
             "filename": filename,
-            "solver": list(data[Key.Solver].values())[0],
-            "solver_version": list(data[Key.Version].values())[0],
+            "solver": most_frequent_value(data[Key.Solver]),
+            "solver_version": most_frequent_value(data[Key.Version]),
             "mode": vs.get("mode"),
             "time_limit": vs.get(Key.TimeLimit),
             "lp_solver": lp_solver_name,
@@ -255,7 +253,7 @@ class ResultClient(object):
 
         # get data from git if it's available
         if "GitHash" in data and data["GitHash"]:
-            git_hash = list(data["GitHash"].values())[0]
+            git_hash = most_frequent_value(data['GitHash'])
 
             if git_hash.endswith("-dirty"):
                 file_data["git_hash_dirty"] = True
@@ -553,3 +551,10 @@ def _determine_type(inst):
     elif (integer_variables == 0): return "MBP"
 
     else: return "MIP"
+
+
+def most_frequent_value(d):
+    count = {}
+    for v in d.values():
+        count[v] = count.get(v, 0) + 1
+    return max(count, key=count.get)
