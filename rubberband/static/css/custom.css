@@ -31,6 +31,10 @@ p.exclusions {
 
 table {
   border: none;
+  text-align: right;
+}
+th {
+    text-align: left;
 }
 
 /*

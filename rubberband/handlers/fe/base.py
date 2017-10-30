@@ -92,6 +92,12 @@ class BaseHandler(RequestHandler):
             if value not in (None, ""):
                 if attr in INFINITY_KEYS and value == INFINITY_MASK:
                     return float("inf")
+                if attr in ["DualBound", "PrimalBound"]:
+                    return "%.4f" % value
+                if attr in ["SolvingTime", "TotalTime_solving", "Gap"]:
+                    return "%.2f" % value
+                if attr in ["Iterations"]:
+                    return int(value)
                 if attr.endswith("_timestamp") or attr.endswith("expirationdate"):
                     return datetime.strftime(value, FORMAT_DATETIME_SHORT)
                 if isinstance(value, str):
