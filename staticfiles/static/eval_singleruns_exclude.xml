@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
+<!-- single runs - exclude fails & aborts (standard) -->
 <Evaluation comparecolformat="%.2f" index="ProblemName RubberbandId" indexsplit="-1">
     <Column formatstr="%.2f" name="T" origcolname="SolvingTime" minval="0.5" comp="quot" maxval="TimeLimit" alternative="TimeLimit" reduction="mean">
-        <Filter anytestrun="one" expression1="_fail_" expression2="1" operator="eq"/>
         <Aggregation aggregation="shmean" name="sgm" shiftby="1.0"/>
     </Column>
     <Column formatstr="%.0f" name="N" origcolname="Nodes" comp="quot" reduction="mean">
@@ -67,7 +67,7 @@
         <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
         <Filter anytestrun="one" expression1="_solved_" expression2="0" operator="eq"/>
     </FilterGroup>
-    <FilterGroup active="True" filtertype="intersection" name="MIPLIB2010 bench (87)">
+    <FilterGroup active="True" filtertype="intersection" name="MIPLIB2010 (87)">
         <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
         <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter active="True" anytestrun="all" datakey="ProblemName" operator="keep">
@@ -81,7 +81,7 @@
             <Value active="True" name="MMM"/>
         </Filter>
     </FilterGroup>
-    <FilterGroup active="True" filtertype="intersection" name="MMM complete (387)">
+    <FilterGroup active="True" filtertype="intersection" name="MMM compl (387)">
         <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
         <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter active="True" anytestrun="one" datakey="ProblemName" operator="keep">
