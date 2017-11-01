@@ -7,11 +7,16 @@ STATIC_FILES_DIR = FILES_DIR + "static/"
 ALL_SOLU = STATIC_FILES_DIR + "all.solu"
 ADD_READERS = STATIC_FILES_DIR + "additional_readers.xml"
 IPET_EVALUATIONS = {
-        0: {"path": STATIC_FILES_DIR + "eval_singleruns_exclude.xml", "name": "single runs - exclude fails & aborts (standard)"},
-        1: {"path": STATIC_FILES_DIR + "eval_singleruns_include.xml", "name": "single runs - include fails & aborts (standard)"},
-        2: {"path": STATIC_FILES_DIR + "eval_singleruns_punish.xml", "name": "single runs - punish fails & aborts (standard)"},
-        3: {"path": STATIC_FILES_DIR + "eval_groupgithash_exclude.xml", "name": "group by githash - exclude fails & aborts"},
-        4: {"path": STATIC_FILES_DIR + "eval_groupsettings_exclude.xml", "name": "group by settings - exclude fails & aborts"},
+        0: {"path": STATIC_FILES_DIR + "eval_singleruns_exclude.xml",
+            "name": "single runs - exclude fails & aborts (standard)"},
+        1: {"path": STATIC_FILES_DIR + "eval_singleruns_include.xml",
+            "name": "single runs - include fails & aborts (standard)"},
+        2: {"path": STATIC_FILES_DIR + "eval_singleruns_punish.xml",
+            "name": "single runs - punish fails & aborts (standard)"},
+        3: {"path": STATIC_FILES_DIR + "eval_groupgithash_exclude.xml",
+            "name": "group by githash - exclude fails & aborts"},
+        4: {"path": STATIC_FILES_DIR + "eval_groupsettings_exclude.xml",
+            "name": "group by settings - exclude fails & aborts"},
         }
 NONE_DISPLAY = "--"
 EXPORT_DATA_FORMATS = ("gzip", "json", "csv", "raw")
