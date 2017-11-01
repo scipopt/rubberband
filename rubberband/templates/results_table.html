@@ -9,11 +9,6 @@
     {% set checkbox = False %}
 {% end %}
 {% try %}
-    {% set tclass = tableclass %}
-{% except NameError %}
-    {% set tclass = " " %}
-{% end %}
-{% try %}
     {% set name = tablename %}
 {% except NameError %}
     {% set name = 'results-table' %}
@@ -25,7 +20,7 @@
 {% end %}
 
 {% if results %}
-<table id="{{ name }}" class="table table-hover {{ tclass }}" width="100%">
+<table id="{{ name }}" class="table-hover compact data-table" width="100%">
   <thead>
     <tr>
       {% if radio %}
@@ -47,11 +42,8 @@
       <th>Timelimit</th>
       <th>Hostname</th>
       <th>Commit Timestamp</th>
-      <th>Latest Importer</th>
-      <th>Latest Import</th>
       <th>Uploader</th>
       <th>Date Added</th>
-      <th>Expirationdate</th>
     </tr>
   </thead>
   <tbody>
@@ -80,11 +72,8 @@
     <td>{{ format_attr(r, "time_limit") }}</td>
     <td>{{ format_attr(r, "run_environment") }}</td>
     <td>{{ format_attr(r, "git_commit_timestamp") }}</td>
-    <td>{{ format_attr(r, "run_initiator") }}</td>
-    <td>{{ format_attr(r, "index_timestamp") }}</td>
     <td>{{ format_attr(r, "uploader") }}</td>
     <td>{{ format_attr(r, "upload_timestamp") }}</td>
-    <td>{{ format_attr(r, "expirationdate") }}</td>
   </tr>
   {% end %}
   </tbody>

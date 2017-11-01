@@ -6,10 +6,6 @@
     font-family: 'Fira Mono', sans-serif;
 }
 
-table {
-    font-family: monospace;
-}
-
 .rb-btn-group {
     width: 15em;
     display: grid;
@@ -30,11 +26,10 @@ p.exclusions {
 }
 
 table {
-  border: none;
-  text-align: right;
-}
-th {
-    text-align: left;
+    word-wrap: break-word;
+    margin-top: 15px;
+    font-family: monospace;
+    border: none;
 }
 
 /*
@@ -176,18 +171,16 @@ div#loading-icon {
     to { -moz-transform: rotate(360deg);}
 }
 
-table {
-    word-wrap: break-word;
-    margin-top: 15px;
-}
 
 form {
     margin-top: 15px;
 }
 
-.ipet-table {
+th,
+.data-table th,
+.data-table {
     white-space: nowrap;
-    width: 100%;
+    text-align: right;
 }
 
 .datatables_wrapper {
@@ -247,8 +240,7 @@ span.h3-icon-leftalign {
 }
 
 #resultNavTabs {
-  width: 70%;
-  margin-left: 30%;
+  width: 100%;
   padding-top: 7px;
 }
 
@@ -265,13 +257,10 @@ span.h3-icon-leftalign {
 
 /* Results Page Settings */
 .tab-title {
-  width: 30%;
-  float: left;
 }
 
 .tab-buttons {
-  width: 70%;
-  margin-left: 30%;
+  width: 100%;
   margin-top: 20px;
   text-align: right;
   font-size: 24px;
