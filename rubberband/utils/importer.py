@@ -189,7 +189,7 @@ class ResultClient(object):
         # file_keys = set([Key.TimeLimit, Key.Version, Key.LPSolver, Key.GitHash,
         if "LPSolver" in data.keys():
             # assume that a testrun is all run with the same lpsolver
-            v = most_frequent_value(data['LPSolver'])
+            v = most_frequent_value(data, 'LPSolver')
             lp_solver_name, lp_solver_version = v.split(" ")
         else:
             lp_solver_name = None
@@ -198,14 +198,14 @@ class ResultClient(object):
         vs = {}
         for i in ["mode", Key.TimeLimit]:
             if i in data:
-                vs[i] = most_frequent_value(data[i])
+                vs[i] = most_frequent_value(data, i)
 
         filename = os.path.basename(self.files[".out"])
 
         file_data = {
             "filename": filename,
-            "solver": most_frequent_value(data[Key.Solver]),
-            "solver_version": most_frequent_value(data[Key.Version]),
+            "solver": most_frequent_value(data, Key.Solver),
+            "solver_version": most_frequent_value(data, Key.Version),
             "mode": vs.get("mode"),
             "time_limit": vs.get(Key.TimeLimit),
             "lp_solver": lp_solver_name,
@@ -253,7 +253,7 @@ class ResultClient(object):
 
         # get data from git if it's available
         if "GitHash" in data and data["GitHash"]:
-            git_hash = most_frequent_value(data['GitHash'])
+            git_hash = most_frequent_value(data, 'GitHash')
 
             if git_hash.endswith("-dirty"):
                 file_data["git_hash_dirty"] = True
@@ -448,19 +448,20 @@ class ResultClient(object):
                     self.files[".solu"] = path
             else:
                 msg = "Adding SoluFile."
-
             self.logger.info(msg)
+
             if self.files[".solu"] is not None:
                 c.addSoluFile(self.files[".solu"])
 
-            msg = "No reader file found."
             path = ADD_READERS
             if os.path.isfile(path):
-                msg = "Adding additional readers."
                 for r in loader.loadAdditionalReaders([path]):
                     c.readermanager.registerReader(r)
+                    self.logger.info("Added additional reader: " + r.getName())
 
-            self.logger.info(msg)
+            for solver in loader.loadAdditionalSolvers():
+                c.readermanager.addSolver(solver)
+                self.logger.info("Added additional solver: " + solver.getName())
 
             c.collectData()
 
@@ -553,7 +554,10 @@ def _determine_type(inst):
     else: return "MIP"
 
 
-def most_frequent_value(d):
+def most_frequent_value(data, key):
+    if key not in data.keys():
+        return None
+    d = data[key]
     count = {}
     for v in d.values():
         count[v] = count.get(v, 0) + 1
