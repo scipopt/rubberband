@@ -1,3 +1,8 @@
+{% if file.solver == "GENIOS" %}
+{% set cols = ["MemRatio"] %}
+{% else %}
+{% set cols = ["Status"] %}
+{% end %}
     <thead>
       <tr>
       <th>Instance Name</th>
@@ -13,7 +18,9 @@
       <th class="number">Nodes</th>
       <th class="number">Solving Time</th>
       <th class="number">Total Time</th>
-      <th>Status</th>
+      {% for i in cols %}
+      <th>{{ i }}</th>
+      {% end %}
       </tr>
     </thead>
     <tbody>
@@ -36,7 +43,9 @@
       <td>{{ format_attr(r, "Nodes") }}</td>
       <td>{{ format_attr(r, "TotalTime_solving") }}</td>
       <td>{{ format_attr(r, "SolvingTime") }}</td>
-      <td>{{ format_attr(r, "Status") }}</td>
+      {% for i in cols %}
+      <td>{{ format_attr(r, i) }}</td>
+      {% end %}
     </tr>
     {% end %}
   </tbody>
