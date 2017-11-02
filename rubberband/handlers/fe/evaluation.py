@@ -2,7 +2,7 @@ from datetime import datetime
 from lxml import html
 
 from .base import BaseHandler
-from rubberband.constants import IPET_EVALUATIONS, FORMAT_DATETIME_SHORT
+from rubberband.constants import IPET_EVALUATIONS, FORMAT_DATETIME_SHORT, NONE_DISPLAY
 from rubberband.models import TestSet
 
 from ipet import Experiment, TestRun
@@ -43,8 +43,8 @@ class EvaluationView(BaseHandler):
         longtable, aggtable = ev.evaluate(ex)
 
         # postprocessing
-        html_long = table_to_html(longtable, add_class="ipet-long-table")
-        html_agg = table_to_html(aggtable, add_class="ipet-aggregated-table")
+        html_long = table_to_html(longtable, ev, add_class="ipet-long-table")
+        html_agg = table_to_html(aggtable, ev, add_class="ipet-aggregated-table")
 
         html_long = process_ipet_table(html_long, repres)
         html_agg = process_ipet_table(html_agg, repres)
@@ -92,6 +92,7 @@ def setup_experiment(testruns):
 
     return ex, results, repres
 
+
 def process_ipet_table(table, repres):
     # split rowspan cells from the tables to enable js datatable
     tree = html.fromstring(table)
@@ -114,7 +115,9 @@ def process_ipet_table(table, repres):
     # replace ids and so on
     for k, v in repres.items():
         table = table.replace(k, v)
+    table = table.replace("nan", NONE_DISPLAY)
     return table
+
 
 def get_letters(quantity):
     letters = list(string.ascii_uppercase)
@@ -122,8 +125,9 @@ def get_letters(quantity):
         letters = [x + y for x in letters for y in letters]
     return letters
 
-def table_to_html(table, add_class="", border=0):
-    tableclasses = add_class + " ipet-table data-table table-hover compact"
-    table = table.to_html(border=border, classes=tableclasses)
-    return table
 
+def table_to_html(table, ev, add_class="", border=0):
+    formatters = ev.getColumnFormatters(table)
+    tableclasses = add_class + " ipet-table data-table table-hover compact"
+    table = table.to_html(border=border, formatters=formatters, classes=tableclasses)
+    return table

@@ -4,7 +4,8 @@ from tornado.web import RequestHandler
 from tornado.options import options
 import traceback
 
-from rubberband.constants import NONE_DISPLAY, INFINITY_KEYS, INFINITY_MASK, FORMAT_DATETIME_SHORT
+from rubberband.constants import NONE_DISPLAY, INFINITY_KEYS, \
+        INFINITY_MASK, INFINITY, FORMAT_DATETIME_SHORT
 
 
 class BaseHandler(RequestHandler):
@@ -92,6 +93,8 @@ class BaseHandler(RequestHandler):
             if value not in (None, ""):
                 if attr in INFINITY_KEYS and value == INFINITY_MASK:
                     return float("inf")
+                if value >= INFINITY:
+                    return INFINITY
                 if attr in ["DualBound", "PrimalBound"]:
                     return "%.4f" % value
                 if attr in ["SolvingTime", "TotalTime_solving", "Gap"]:
