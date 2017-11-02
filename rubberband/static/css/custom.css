@@ -2,8 +2,9 @@
  * Base structure
  */
 
-* {
+body {
     font-family: 'Fira Mono', sans-serif;
+    font-size: 12px;
 }
 
 .rb-btn-group {
