@@ -45,6 +45,7 @@
       <th>Commit Timestamp</th>
       <th>Uploader</th>
       <th>Date Added</th>
+      <th>Expirationdate</th>
     </tr>
   </thead>
   <tbody>
@@ -76,6 +77,7 @@
     <td>{{ format_attr(r, "git_commit_timestamp") }}</td>
     <td>{{ format_attr(r, "uploader") }}</td>
     <td>{{ format_attr(r, "upload_timestamp") }}</td>
+    <td>{{ format_attr(r, "expirationdate") }}</td>
   </tr>
   {% end %}
   </tbody>

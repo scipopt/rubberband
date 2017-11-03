@@ -18,6 +18,10 @@ IPET_EVALUATIONS = {
             "name": "group by githash - exclude fails & aborts"},
         4: {"path": STATIC_FILES_DIR + "eval_groupsettings_exclude.xml",
             "name": "group by settings - exclude fails & aborts"},
+        5: {"path": STATIC_FILES_DIR + "evaluation-pure.xml",
+            "name": "pure evaluation for sap"},
+        6: {"path": STATIC_FILES_DIR + "evaluation-deco.xml",
+            "name": "deco evaluation for sap"},
         }
 NONE_DISPLAY = "--"
 EXPORT_DATA_FORMATS = ("gzip", "json", "csv", "raw")
