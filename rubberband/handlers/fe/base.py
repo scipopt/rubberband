@@ -93,7 +93,7 @@ class BaseHandler(RequestHandler):
             if value not in (None, ""):
                 if attr in INFINITY_KEYS and value == INFINITY_MASK:
                     return float("inf")
-                if (value is int or value is float) and value >= INFINITY:
+                if (type(value) is int or type(value) is float) and value >= INFINITY:
                     return INFINITY
                 if attr in ["DualBound", "PrimalBound"]:
                     return "%.4f" % value

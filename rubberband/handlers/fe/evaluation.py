@@ -129,5 +129,6 @@ def get_letters(quantity):
 def table_to_html(table, ev, add_class="", border=0):
     formatters = ev.getColumnFormatters(table)
     tableclasses = add_class + " ipet-table data-table table-hover compact"
-    table = table.to_html(border=border, formatters=formatters, classes=tableclasses)
+    table = table.to_html(border=border, formatters=formatters, na_rep=NONE_DISPLAY,
+            classes=tableclasses)
     return table
