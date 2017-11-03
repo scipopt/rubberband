@@ -2,6 +2,7 @@
 
 import click
 from elasticsearch import Elasticsearch
+from elasticsearch_dsl import Q
 from elasticsearch_dsl.connections import connections
 import glob
 import os.path
@@ -90,8 +91,10 @@ def update_db():
     Update old datastructures to new ones.
     '''
     ts = TestSet.search()
+    ts = ts.query("bool", filter=[
+        Q("match", mode="debug"),
+        Q("match", run_initiator="debug")])
     for t in ts.scan():
-
         # add expirationdate to debugruns that have none
         if t.expirationdate is None and t.mode == "debug" and t.run_initiator == "debug":
             t.expirationdate = t.index_timestamp + relativedelta(months=3)
@@ -104,13 +107,13 @@ def update_db():
                 t.opt_flag = "spx"
 
         # save the original upload timestamp
-        if t.upload_timestamp is None:
+        if getattr(t, "upload_timestamp", None) is None:
             t.upload_timestamp = t.index_timestamp
             t.uploader = t.run_initiator
 
         t.save()
 
-        continue
+        # continue
         # perform updates on the children
         t.load_children()
         for i in t.children.to_dict().values():
@@ -131,8 +134,8 @@ def delete_expired_records():
     t = t.filter('range', **{'expirationdate':{'lte':'now'}})
     for tr in t.scan():
         print("delete testset", tr)
-        tr.delete_all_associations()
-        tr.delete()
+        # tr.delete_all_associations()
+        # tr.delete()
 
 
 @main.command()

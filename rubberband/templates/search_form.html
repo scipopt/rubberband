@@ -55,10 +55,15 @@
           {% end %}
         </select>
       </div>
-      <div class="form-group col-md-4">
+      <div class="form-group col-md-2">
         <label for="commithash-input">Solver Commit Hash</label>
         <input class="form-control" name="git_hash" id="commithash-input">
       </div>
+      <div class="form-group col-md-2">
+        <label for="resultnumber-input">Number of results</label>
+        <input class="form-control" name="limit" id="resultnumber-input" value="100" type="number">
+      </div>
+
       <div class="form-group col-md-2">
         <label for="settingsname-select">Settings Name</label>
         <select class="form-control" name="settings_short_name" id="settingsname-select">

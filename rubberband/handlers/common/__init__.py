@@ -13,6 +13,7 @@ def search(query):
 
     # return 100 items unless a limit is explicitly set
     limit = query.pop("limit", None) or 100
+    limit = int(limit)
 
     for field, value in query.items():
         filter_dict = {field: value}
