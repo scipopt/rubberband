@@ -60,6 +60,7 @@ class BaseHandler(RequestHandler):
             xsrf_form_html=self.xsrf_form_html,
             reverse_url=self.reverse_url,
             format_attr=self.format_attr,
+            format_type=self.format_type,
             format_attrs=self.format_attrs,
             get_objsen=self.get_objsen,
             are_equivalent=self.are_equivalent,
@@ -70,6 +71,17 @@ class BaseHandler(RequestHandler):
         namespace.update(self.ui)
 
         return namespace
+
+    def format_type(self, obj, attr):
+        '''
+        Return (null) type (attributes attr of obj).
+        '''
+        value = getattr(obj, attr, None)
+        if isinstance(value, str):
+            return "text"
+        if isinstance(value, float) or isinstance(value, int):
+            return "number"
+        return ""
 
     def format_attr(self, obj, attr):
         '''

@@ -19,7 +19,8 @@ function formatIpetTable() {
         paging:         false,
         fixedColumns:   {
             leftColumns: 1,
-        }
+        },
+        order: 1,
     });
     $('table.ipet-aggregated-table').DataTable({
         scrollY: '80vh',

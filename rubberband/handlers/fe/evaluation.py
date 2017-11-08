@@ -43,11 +43,14 @@ class EvaluationView(BaseHandler):
         longtable, aggtable = ev.evaluate(ex)
 
         # postprocessing
-        html_long = table_to_html(longtable, ev, add_class="ipet-long-table")
-        html_agg = table_to_html(aggtable, ev, add_class="ipet-aggregated-table")
+        longtable.insert(0, "id", range(1, len(longtable) + 1))
+        html_long, style_long = table_to_html(longtable, ev, add_class="ipet-long-table")
+        html_agg, style_agg = table_to_html(aggtable, ev, add_class="ipet-aggregated-table")
 
-        html_long = process_ipet_table(html_long, repres)
-        html_agg = process_ipet_table(html_agg, repres)
+        html_long = process_ipet_table(html_long, repres) + \
+            html.tostring(style_long).decode("utf-8")
+        html_agg = process_ipet_table(html_agg, repres) + \
+            html.tostring(style_agg).decode("utf-8")
 
         # render to strings
         html_tables = self.render_string("results/evaluation.html",
@@ -95,28 +98,27 @@ def setup_experiment(testruns):
 
 def process_ipet_table(table, repres):
     # split rowspan cells from the tables to enable js datatable
-    tree = html.fromstring(table)
-    table_rows = [e for e in tree.iter() if e.tag == "tr" or e.tag == "th"]
+    table_rows = [e for e in table.find(".//tbody").iter() if e.tag == "tr" or e.tag == "th"]
     for row in table_rows:
         cellcount = 0
         for cell in row.iter():
             rowspan = cell.get("rowspan")
             if rowspan is not None:
                 del cell.attrib["rowspan"]
-                del cell.attrib["valign"]
                 nextrow = row
                 for i in range(int(rowspan) - 1):
                     nextrow = nextrow.getnext()
                     newcell = html.fromstring(html.tostring(cell))
                     nextrow.insert(cellcount - 1, newcell)
             cellcount = cellcount + 1
+
     # render to string and make the dataTable fit the width
-    table = html.tostring(tree).decode("utf-8").replace("class", "width=100% class")
+    htmltable = html.tostring(table).decode("utf-8")
     # replace ids and so on
     for k, v in repres.items():
-        table = table.replace(k, v)
-    table = table.replace("nan", NONE_DISPLAY)
-    return table
+        htmltable = htmltable.replace(k, v)
+    htmltable = htmltable.replace("nan", NONE_DISPLAY)
+    return htmltable
 
 
 def get_letters(quantity):
@@ -126,9 +128,42 @@ def get_letters(quantity):
     return letters
 
 
-def table_to_html(table, ev, add_class="", border=0):
-    formatters = ev.getColumnFormatters(table)
+# apply functions for pandas styler: Series/DataFrame -> Series/Dataframe of identical
+# shape of strings with CSS "value: attribute" pair
+def highlight_series(s):
+    return ['background-color: #eee' for v in s]
+
+
+# applymap functions for pandas styler: scalar -> scalarstring with CSS "value: attribute" pair
+def align_elems(s):
+    align = 'right' if (type(s) is int or type(s) is float) else 'left'
+    return 'text-align: %s' % align
+
+
+def table_to_html(df, ev, add_class="", border=0):
+    formatters = ev.getColumnFormatters(df)
+    l = 0
+    if isinstance(df.columns[0], tuple):
+        l = len(df.columns[0]) - 1
+
+    if l == 0:
+        highlight_cols = [c for c in df.columns
+            if (c[l].startswith("_") and c[l].endswith("_")) or c[l].endswith("Q")]
+    else:
+        highlight_cols = [c for c in df.columns
+            if (c[l].startswith("_") and c[l].endswith("_")) or c[l].endswith("Q")]
+    # apply formatters styles
+    styler = df.style.format(formatters).\
+        apply(highlight_series, subset=highlight_cols).\
+        applymap(align_elems)
+
+    htmlstr = styler.render()
+    tree = html.fromstring(htmlstr)
+    treestyle = tree.find(".//style")
+    treetable = tree.find(".//table")
+    treetable.set("width", "100%")
+
     tableclasses = add_class + " ipet-table data-table table-hover compact"
-    table = table.to_html(border=border, formatters=formatters, na_rep=NONE_DISPLAY,
-            classes=tableclasses)
-    return table
+    treetable.set("class", tableclasses)
+
+    return treetable, treestyle

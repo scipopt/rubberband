@@ -178,10 +178,20 @@ form {
 }
 
 th,
-.data-table th,
 .data-table {
     white-space: nowrap;
+}
+.data-table .number {
     text-align: right;
+}
+.data-table .text {
+    text-align: left;
+}
+th.col_heading {
+    text-align: right;
+}
+th.row_heading {
+    text-align: left;
 }
 
 .datatables_wrapper {
