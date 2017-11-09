@@ -72,6 +72,9 @@ class ResultView(BaseHandler):
         '''
         t = TestSet.get(id=parent_id)
         t.load_files()
+        if ".out" not in t.files.keys():
+            self.write_error(400, msg="Logfile not stored in database, cannot reimport.")
+            return
         t.delete_all_children()
 
         # write all files to local directory
