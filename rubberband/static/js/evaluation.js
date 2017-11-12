@@ -20,7 +20,7 @@ function formatIpetTable() {
         fixedColumns:   {
             leftColumns: 1,
         },
-        order: 1,
+        order: [1, "desc"],
     });
     $('table.ipet-aggregated-table').DataTable({
         scrollY: '80vh',
