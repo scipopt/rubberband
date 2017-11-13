@@ -184,7 +184,8 @@ class ResultClient(object):
         # settings is a tuple
         # data is 'data' DataFrame from ipet.TestRun
         # for scip these data is available
-        file_keys = set([Key.TimeLimit, Key.Version, "LPSolver", "GitHash", Key.Solver, "mode"])
+        file_keys = set([Key.TimeLimit, Key.Version, "LPSolver", "GitHash",
+            Key.Solver, "mode", "SpxGitHash"])
         # TODO once the ipet is up to date, use this and update the rest
         # file_keys = set([Key.TimeLimit, Key.Version, Key.LPSolver, Key.GitHash,
         if "LPSolver" in data.keys():
@@ -194,6 +195,11 @@ class ResultClient(object):
         else:
             lp_solver_name = None
             lp_solver_version = None
+
+        if "SpxGitHash" in data.keys():
+            lp_solver_githash = most_frequent_value(data, "SpxGitHash")
+        else:
+            lp_solver_githash = None
 
         vs = {}
         for i in ["mode", Key.TimeLimit]:
@@ -210,6 +216,7 @@ class ResultClient(object):
             "time_limit": vs.get(Key.TimeLimit),
             "lp_solver": lp_solver_name,
             "lp_solver_version": lp_solver_version,
+            "lp_solver_githash": lp_solver_githash,
             "tags": self.tags,
             "index_timestamp": datetime.now(),
             "metadata": metadata

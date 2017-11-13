@@ -193,6 +193,11 @@ th.col_heading {
 th.row_heading {
     text-align: left;
 }
+tbody > tr.hover > td,
+tbody > tr.hover > th,
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+    background-color: #bdf !important;
+}
 
 .datatables_wrapper {
     margin-top:20px;

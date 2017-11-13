@@ -111,6 +111,7 @@ class TestSet(DocType):
     time_limit = String(index="not_analyzed")
     lp_solver = String(index="not_analyzed")  # SoPlex
     lp_solver_version = String(index="not_analyzed")  # 1.7.0.2
+    lp_solver_githash = String(index="not_analyzed")
     git_hash = String(index="not_analyzed")  # af21b01
     git_commit_author = String(index="not_analyzed")  # Gregor Hendel
     settings_short_name = String(index="not_analyzed")  # default
@@ -218,6 +219,8 @@ class TestSet(DocType):
                 all_instances[i]["TimeLimit"] = self.time_limit
             # seed instances with id of parent testrun,
             # because in most cases compared files have the same filename
+            if self.lp_solver_githash:
+                all_instances[i]["SpxGitHash"] = self.lp_solver_githash
             all_instances[i][Key.GitHash] = self.git_hash
             all_instances[i]["CommitTime"] = str(self.git_commit_timestamp)
             all_instances[i][Key.LPSolver] = self.lp_solver + " " + self.lp_solver_version

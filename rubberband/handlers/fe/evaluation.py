@@ -154,8 +154,11 @@ def table_to_html(df, ev, add_class="", border=0):
             if (c[l].startswith("_") and c[l].endswith("_")) or c[l].endswith("Q")]
     # apply formatters styles
     styler = df.style.format(formatters).\
-        apply(highlight_series, subset=highlight_cols).\
         applymap(align_elems)
+
+    # style requires a nonempty subset
+    if highlight_cols != []:
+        styler = styler.apply(highlight_series, subset=highlight_cols)
 
     htmlstr = styler.render()
     tree = html.fromstring(htmlstr)
@@ -163,7 +166,7 @@ def table_to_html(df, ev, add_class="", border=0):
     treetable = tree.find(".//table")
     treetable.set("width", "100%")
 
-    tableclasses = add_class + " ipet-table data-table table-hover compact"
+    tableclasses = add_class + " ipet-table data-table compact"
     treetable.set("class", tableclasses)
 
     return treetable, treestyle

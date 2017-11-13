@@ -91,6 +91,12 @@
 	{% end %}
     </tr>
     <tr>
+        <td>LP Solver Githash</td>
+	{% for f in [file] + compare %}
+	<td>{{ format_attr(f, "lp_solver_githash") }}</td>
+	{% end %}
+    </tr>
+    <tr>
         <td>Mode</td>
 	{% for f in [file] + compare %}
 	<td>{{ format_attr(f, "mode") }}</td>

@@ -35,6 +35,56 @@ function formatIpetTable() {
     });
 };
 
+$(document).on({
+    mouseenter: function () {
+        trIndex = $(this).index()+3;
+        $("table.ipet-long-table").each(function(index) {
+            row = $(this).find("tr:eq("+trIndex+")")
+            row.addClass("hover");
+            row.each(function(index) {
+                $(this).find("td").addClass("hover");
+                $(this).find("th").addClass("hover");
+            });
+        });
+    },
+    mouseleave: function () {
+        trIndex = $(this).index()+3;
+        $("table.ipet-long-table").each(function(index) {
+            row = $(this).find("tr:eq("+trIndex+")")
+            row.removeClass("hover");
+            row.each(function(index) {
+                $(this).find("td").removeClass("hover");
+                $(this).find("th").removeClass("hover");
+            });
+        });
+    }
+}, "table.ipet-long-table tbody tr");
+
+$(document).on({
+    mouseenter: function () {
+        trIndex = $(this).index()+2;
+        $("table.ipet-aggregated-table").each(function(index) {
+            row = $(this).find("tr:eq("+trIndex+")")
+            row.addClass("hover");
+            row.each(function(index) {
+                $(this).find("td").addClass("hover");
+                $(this).find("th").addClass("hover");
+            });
+        });
+    },
+    mouseleave: function () {
+        trIndex = $(this).index()+2;
+        $("table.ipet-aggregated-table").each(function(index) {
+            row = $(this).find("tr:eq("+trIndex+")")
+            row.removeClass("hover");
+            row.each(function(index) {
+                $(this).find("td").removeClass("hover");
+                $(this).find("th").removeClass("hover");
+            });
+        });
+    }
+}, "table.ipet-aggregated-table tbody tr");
+
 function setButtonsDisabled(stat) {
     button1.disabled = stat;
     button2.disabled = stat;
