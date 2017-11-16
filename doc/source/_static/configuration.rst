@@ -1,4 +1,5 @@
-# Configuration
+Configuration
+=============
 
 In the config directory there is an example configuration file for nginx with oauth2_proxy.
 There is also a template configuration app.cfg for rubberband that you can copy into /etc/rubberband/ and change it according to your needs.

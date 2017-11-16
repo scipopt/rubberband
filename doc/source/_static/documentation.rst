@@ -1,12 +1,11 @@
-# Documentation
+Documentation
+=============
 
 ## How to build the documentation?
 
-```
 cd doc/
 make html
 
-```
 
 ## Convention
 

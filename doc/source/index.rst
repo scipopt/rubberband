@@ -10,7 +10,13 @@ Welcome to Rubberband's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   roadmap
+   api
+   _static/configuration
+   _static/crashcourses
+   _static/documentation
+   _static/folderstructure
+   _static/overview
+   _static/roadmap
 
 
 Indices and tables

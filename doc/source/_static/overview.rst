@@ -1,4 +1,5 @@
-# Overview
+Overview
+========
 
 Rubberband is a flexible archiving and analysis tool written in python for optimization benchmarks, i.e. organization of logfiles of LP-Solvers.
 It consists of a python [tornado](TODO) application running on a webserver (like nginx or apache) and authenticates users via [oauth2_proxy](TODO).

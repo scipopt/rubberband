@@ -1,4 +1,5 @@
-# structure of project
+Structure of project
+====================
 
 ## Main tree:
 
