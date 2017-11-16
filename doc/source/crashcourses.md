@@ -16,4 +16,3 @@ The URL has the following form:
 
 The request body contains additional information, like a the input values of a form, information on browser, cookies etc. (TODO)
 
-

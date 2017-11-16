@@ -1,4 +1,5 @@
-# Roadmap
+Roadmap
+=======
 
 ## Roles and interplay of the components
 
@@ -48,6 +49,7 @@ The second role is the evaluation of data to compare and investigate multiple up
     4. Rubberband processes the request and sends back a response to the user.
 
 ### How does Rubberband form a response?
+
 Say the request looks like this:
 
 `GET rubberband.example/search`
@@ -56,3 +58,6 @@ Say the request looks like this:
     2. In the RequestHandler the method gets called that matches the method of the HTTP request, in our case `SearchView.get(...)` in `rubberband/handlers/fe/search.py`.
     4. The method evaluates the request, possibly passed arguments and may query the database via the [elasticsearch_dsl](TODO) python module.
     3. At the end of the method usually a response is rendered from the gathered data and an html template and sent back to the user, in our example the template is `rubberband/templates/search_view.html`.
+
+### How do rubberband and elasticsearch communicate?
+
