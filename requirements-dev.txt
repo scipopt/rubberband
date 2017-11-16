@@ -3,3 +3,5 @@ flake8==3.2.1
 python-dateutil==2.5.3
 python-gitlab==0.14
 pyyaml==3.12
+pep257==0.7.0
+Sphinx==1.6.5
