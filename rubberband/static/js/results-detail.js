@@ -10,6 +10,8 @@ Array.prototype.allValuesSame = function() {
 }
 var table;
 formatResultTables();
+formatMetaTable();
+formatSettingsTable();
 $(".bs-tooltip").tooltip();
 $("a.bs-popover").popover();
 
@@ -22,6 +24,26 @@ if (window.location.search.indexOf("compare") >= 0) {
   green = new Color(160, 230, 40);
   gray = new Color(200, 200, 200);
   colorateCells();
+}
+
+function formatMetaTable() {
+    table = $('.meta-table').DataTable({
+        scrollY: '80vh',
+        scrollX: true,
+        scroller: true,
+        scrollCollapse: true,
+        paging: false,
+    });
+}
+
+function formatSettingsTable() {
+    table = $('.settings-table').DataTable({
+        scrollY: '80vh',
+        scrollX: true,
+        scroller: true,
+        scrollCollapse: true,
+        paging: false,
+    });
 }
 
 function formatResultTables() {

@@ -3,7 +3,7 @@
     <h3>Meta</h3>
   </div>
   <div class="row">
-    <table class="meta-table table table-bordered">
+    <table class="meta-table table table-hover table-bordered" width="100%">
     <thead>
     <tr>
       <th>Field</th>
@@ -150,7 +150,19 @@
 	<td>{{ format_attr(f, "expirationdate") }}</td>
 	{% end %}
     </tr>
-    <tr><td><b>Metadata</b></td></tr>
+  </table>
+  <h3>Metadata</h3>
+  <table class="meta-table table table-hover table-bordered" width="100%">
+  <thead>
+  <tr>
+    <th>Field</th>
+    <th>Base</th>
+    {% for f in compare %}
+    <th>Compare</th>
+    {% end %}
+  </tr>
+  </thead>
+  <tbody>
     {% for k in meta %}
     <tr>
       <td>{{ k }}</td>
