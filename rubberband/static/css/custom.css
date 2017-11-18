@@ -203,6 +203,10 @@ tbody > tr.hover > th,
     margin-top:20px;
 }
 
+.dataTables_filter {
+    float: left !important;
+}
+
 .DTFC_LeftBodyLiner {
     overflow-x: hidden;
 }
