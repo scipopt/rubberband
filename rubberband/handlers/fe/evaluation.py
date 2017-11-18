@@ -142,16 +142,21 @@ def align_elems(s):
 
 def table_to_html(df, ev, add_class="", border=0):
     formatters = ev.getColumnFormatters(df)
+
     l = 0
     if isinstance(df.columns[0], tuple):
         l = len(df.columns[0]) - 1
 
     if l == 0:
         highlight_cols = [c for c in df.columns
-            if (c[l].startswith("_") and c[l].endswith("_")) or c[l].endswith("Q")]
+                if (c.startswith("_") and c.endswith("_")) or c.endswith("Q")]
+        p_cols = [c for c in df.columns if c.endswith("p")]
     else:
         highlight_cols = [c for c in df.columns
-            if (c[l].startswith("_") and c[l].endswith("_")) or c[l].endswith("Q")]
+                if (c[l].startswith("_") and c[l].endswith("_")) or c[l].endswith("Q")]
+        p_cols = [c for c in df.columns if c[l].endswith("p")]
+    for p in p_cols:
+        formatters[p] = lambda x: "%.3f" % x
     # apply formatters styles
     styler = df.style.format(formatters).\
         applymap(align_elems)
