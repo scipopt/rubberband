@@ -1,13 +1,16 @@
 Documentation
 =============
 
-## How to build the documentation?
+How to build the documentation?
+-------------------------------
 
-cd doc/
-make html
+You can compile it like this::
 
+   cd doc/
+   make html
 
-## Convention
+Convention
+----------
 
-The rubberband documentation uses [PEP247](TODO) style.
+The rubberband documentation uses `PEP247 <http://TODO>`_ style.
 
