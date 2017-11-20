@@ -34,7 +34,10 @@ class EvaluationView(BaseHandler):
                 default_rbid = t.id
             testruns.append(t)
 
-        testruns.sort(key=lambda x: x.git_commit_timestamp)
+        try:
+            testruns.sort(key=lambda x: x.git_commit_timestamp)
+        except:
+            pass
 
         # evaluate with ipet
         ex, results, repres = setup_experiment(testruns)
