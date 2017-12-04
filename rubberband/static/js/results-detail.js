@@ -9,6 +9,8 @@ Array.prototype.allValuesSame = function() {
     return true;
 }
 var table;
+var meta_table;
+var settings_table;
 formatResultTables();
 formatMetaTable();
 formatSettingsTable();
@@ -27,7 +29,7 @@ if (window.location.search.indexOf("compare") >= 0) {
 }
 
 function formatMetaTable() {
-    table = $('.meta-table').DataTable({
+    meta_table = $('.meta-table').DataTable({
         scrollY: '80vh',
         scrollX: true,
         scroller: true,
@@ -37,7 +39,7 @@ function formatMetaTable() {
 }
 
 function formatSettingsTable() {
-    table = $('.settings-table').DataTable({
+    settings_table = $('.settings-table').DataTable({
         scrollY: '80vh',
         scrollX: true,
         scroller: true,
