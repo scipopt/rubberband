@@ -12,6 +12,9 @@ class BaseHandler(RequestHandler):
     '''
     Custom overrides.
     '''
+    def get_rb_url(self):
+        return self.request.protocol + "://" + self.request.host + self.request.uri
+
     def get_current_user(self):
         if not self.settings["debug"]:
             # self.request is single HTTP requestobject of type 'tornado.httputil.HTTPServerRequest'

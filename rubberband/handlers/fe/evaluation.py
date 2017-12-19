@@ -26,6 +26,10 @@ class EvaluationView(BaseHandler):
         default = self.get_argument("default", testrunids[0])
         default_rbid = None
 
+        # default and implicit style is ipetevaluation. if given latex, generate a table in the
+        # style of the release report
+        style = self.get_argument("style", None)
+
         # get testruns
         testruns = []
         for i in testrunids:
@@ -45,30 +49,138 @@ class EvaluationView(BaseHandler):
         ev.set_defaultgroup(default_rbid)
         longtable, aggtable = ev.evaluate(ex)
 
-        # postprocessing
-        longtable.insert(0, "id", range(1, len(longtable) + 1))
-        html_long, style_long = table_to_html(longtable, ev, add_class="ipet-long-table")
-        html_agg, style_agg = table_to_html(aggtable, ev, add_class="ipet-aggregated-table")
+        # None style is default
+        if style is None:
+            # postprocessing
+            longtable.insert(0, "id", range(1, len(longtable) + 1))
+            html_long, style_long = table_to_html(longtable, ev, add_class="ipet-long-table")
+            html_agg, style_agg = table_to_html(aggtable, ev, add_class="ipet-aggregated-table")
 
-        html_long = process_ipet_table(html_long, repres) + \
-            html.tostring(style_long).decode("utf-8")
-        html_agg = process_ipet_table(html_agg, repres) + \
-            html.tostring(style_agg).decode("utf-8")
+            html_long = process_ipet_table(html_long, repres) + \
+                html.tostring(style_long).decode("utf-8")
+            html_agg = process_ipet_table(html_agg, repres) + \
+                html.tostring(style_agg).decode("utf-8")
 
-        # render to strings
-        html_tables = self.render_string("results/evaluation.html",
-                ipet_long_table=html_long,
-                ipet_aggregated_table=html_agg).decode("utf-8")
+            # render to strings
+            html_tables = self.render_string("results/evaluation.html",
+                    ipet_long_table=html_long,
+                    ipet_aggregated_table=html_agg).decode("utf-8")
 
-        results_table = self.render_string("results_table.html",
-                results=results, representation=repres, radios=True,
-                checked=default,
-                tablename="ipet-legend-table").decode("utf-8")
+            results_table = self.render_string("results_table.html",
+                    results=results, representation=repres, radios=True,
+                    checked=default,
+                    tablename="ipet-legend-table").decode("utf-8")
 
-        # send evaluated data
-        mydict = {"ipet-legend-table": results_table,
-                "ipet-eval-result": html_tables}
-        self.write(json.dumps(mydict))
+            # send evaluated data
+            mydict = {"ipet-legend-table": results_table,
+                    "ipet-eval-result": html_tables}
+            self.write(json.dumps(mydict))
+        elif style == "latex":
+            # generate a table that can be used in the release-report
+            df = aggtable
+            # care for the columns
+            df = df.reset_index()
+            poss = ['GitHash', 'Settings', 'LPSolver']
+            for i in poss:
+                if i in df.columns:
+                    colindex = i
+
+            cols = [c for c in df.columns if (c in ['Group', colindex, '_time_'] or
+                c.startswith("N_") or c.startswith("T_")) and not c.endswith(")p")]
+            # collect keys for later replacement
+            repl = {}
+            repl["_time_"] = "timeout"
+            for i in cols:
+                if i.startswith("N_"):
+                    repl[i] = "nodes"
+                if i.startswith("T_"):
+                    repl[i] = "time"
+
+            cols1 = [c for c in cols if c.endswith("Q") or c in ['Group', colindex]]
+            cols2 = [c for c in cols if not c.endswith("Q") or c in ['Group', colindex]]
+            df_rel = df[cols1]
+            df_abs = df[cols2]
+            df_count = df["_count_"]
+
+            # groups
+            groups = ['[0,tilim]', '[1,tilim]', '[10,tilim]', '[100,tilim]', '[1000,tilim]',
+                    'diff-timeouts']
+            add_groups = ['MIPLIB2010 (87)', 'Cor@l (349)', 'continuous', 'integer']
+
+            df_rel = df_rel.pivot_table(index=['Group'], columns=['GitHash']).swaplevel(
+                    axis=1).sort_index(axis=1, level=0, sort_remaining=True, ascending=False)
+            df_abs = df_abs.pivot_table(index=['Group'], columns=['GitHash']).swaplevel(
+                    axis=1).sort_index(axis=1, level=0, sort_remaining=True, ascending=False)
+            df_count = df.pivot_table(values=['_count_'], index=['Group'],
+                    columns=['GitHash']).swaplevel(axis=1)
+
+            df = df_abs
+            df.insert(loc=0, column=(None, "instances"), value=df_count[df_count.columns[0]])
+            for key in df_abs.columns:
+                df[key] = df_abs[key]
+            for key in df_rel.columns:
+                if not df_rel[key].mean() == 1.0:
+                    (a, b) = key
+                    df['relative', b] = df_rel[key]
+
+            rows = groups + add_groups
+            df = df.loc[df.index.intersection(rows)].reindex(rows)
+
+            # render to latex
+            formatters = {}
+            for p in df.columns:
+                (a, b) = p
+                if b.endswith("Q"):
+                    formatters[p] = lambda x: "%.2f" % x
+                elif b.startswith("T_"):
+                    formatters[p] = lambda x: "%.1f" % x
+                else:
+                    formatters[p] = lambda x: "%.0f" % x
+            out = df.to_latex(column_format='@{}l@{\\;\\;\\extracolsep{\\fill}}rrrrrrrrr@{}',
+                    multicolumn_format="c", escape=False, formatters=formatters)
+
+            # postprocessing
+            repl["Group"] = "Subset"
+            repl["NaN"] = "  -"
+            repl["nan"] = "  -"
+            repl["relative} \\\\\n"] = """relative} \\\\
+\\cmidrule{3-5} \cmidrule{6-8} \cmidrule{9-10}\n"""
+            repl["timeQ"] = "time"
+            repl["nodesQ"] = "nodes"
+            repl["{} & instances"] = "Subset & instances"
+            repl["GitHash &         - &"] = "& &"
+            repl["egin{tabular"] = "egin{tabular*}{\\textwidth"
+            repl["end{tabular"] = "end{tabular*"
+            repl['[0,tilim]'] = "\\bracket{0}{tilim}"
+            repl['[1,tilim]'] = "\\bracket{1}{tilim}"
+            repl['[10,tilim]'] = "\\bracket{10}{tilim}"
+            repl['[100,tilim]'] = "\\bracket{100}{tilim}"
+            repl['[1000,tilim]'] = "\\bracket{1000}{tilim}"
+            repl['diff-timeouts'] = "\\difftimeouts"
+            repl['MIPLIB2010 (87)'] = "\\cmidrule{1-10}\n\\miplib        "
+            repl['Cor@l (349)'] = "\\coral     "
+            for t in testruns:
+                repl[t.get_data(colindex)] = t.get_data("ReportVersion")
+            for k, v in repl.items():
+                out = out.replace(k, v)
+
+            latex_table_top = """
+% table automatically generated by rubberband, please have a look and check everything
+\\begin{table}
+  \label{tbl:rubberband_table}
+  \captin{Performance comparison}
+  \scriptsize
+
+  """
+            latex_table_bottom = """
+\end{table}
+
+"""
+
+            out = latex_table_top + out + latex_table_bottom + "%% " + self.get_rb_url()
+
+            # send reply
+            self.render("file.html", contents=out)
 
 
 def setup_experiment(testruns):

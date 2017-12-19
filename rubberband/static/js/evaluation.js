@@ -2,12 +2,25 @@
 // global variables
 button1 = document.getElementById("ipet-eval-button");
 button2 = document.getElementById("ipet-eval-show-button");
+button3 = document.getElementById("ipet-eval-latex-button");
 button1.disabled = false;
 button2.disabled = false;
+button3.disabled = false;
 
 modal = document.getElementById("show-eval-file-modal");
 evalid = "";
 defaultrun = "";
+
+function display_modal(data) {
+    setButtonsDisabled(true);
+    modal.style.display = "block";
+    document.getElementById("show-eval-file").innerHTML = data;
+};
+
+function hide_modal() {
+    modal.style.display = "none";
+    setButtonsDisabled(false);
+};
 
 // format ipet tables
 function formatIpetTable() {
@@ -88,11 +101,11 @@ $(document).on({
 function setButtonsDisabled(stat) {
     button1.disabled = stat;
     button2.disabled = stat;
+    button3.disabled = stat;
 };
 
 function getData(e) {
     e.preventDefault();
-    setButtonsDisabled(true);
 
     // get data from form
     form_data = $("#ipet-eval-form").serializeArray();
@@ -102,6 +115,7 @@ function getData(e) {
 
 $('button#ipet-eval-button').click(function (e) {
     getData(e);
+    display_modal("Please wait, generating table");
 
     // get data from url
     currurl = window.location.href;
@@ -119,6 +133,7 @@ $('button#ipet-eval-button').click(function (e) {
         type: "GET",
         url: evalurl,
         success:function(data) {
+            hide_modal();
             setButtonsDisabled(false);
             datadict = JSON.parse(data);
             for(var key in datadict) {
@@ -129,14 +144,13 @@ $('button#ipet-eval-button').click(function (e) {
             formatIpetTable();
         },
         error:function(data){
-            alert("Something went wrong." + data);
+            display_modal("Something went wrong.");
         }
     });
 });
 
 $('button#ipet-eval-show-button').click(function (e) {
     getData(e);
-    modal.style.display = "block";
 
     // construct url
     evalurl = "/display/eval/" + evalid;
@@ -144,8 +158,7 @@ $('button#ipet-eval-show-button').click(function (e) {
         type: "GET",
         url: evalurl,
         success:function(data) {
-            setButtonsDisabled(false);
-            document.getElementById("show-eval-file").innerHTML = data;
+            display_modal(data);
         },
         error:function(data){
             alert("Something went wrong." + data);
@@ -153,12 +166,32 @@ $('button#ipet-eval-show-button').click(function (e) {
     });
 });
 
+$('button#ipet-eval-latex-button').click(function (e) {
+    getData(e);
+    display_modal("Please wait, generating table");
+
+    // get data from url
+    currurl = window.location.href;
+    path = window.location.pathname.split("/");
+    id = path[2];
+    getstr = (location.search.split("compare"+'=')[1] || '').split('&')[0];
+    idlist = "?testruns=" + id;
+    if (getstr != "") {
+        idlist = idlist + "," + getstr;
+    }
+
+    // construct url
+    evalurl = "/eval/" + evalid + idlist + "&default=" + defaultrun + "&style=latex";
+    window.open(evalurl, "_blank");
+    hide_modal();
+});
+
 $('button#show-eval-file-modal-close').click(function (e) {
-    modal.style.display = "none";
+    hide_modal();
 });
 
 window.onclick = function(event) {
     if (event.target == modal) {
-        modal.style.display = "none";
+        hide_modal();
     }
 };

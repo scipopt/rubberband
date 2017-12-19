@@ -200,37 +200,57 @@ class TestSet(DocType):
         data = self.raw(ftype=ftype)
         return gzip.compress(data.encode("utf-8"))
 
-    def get_data(self):
+    def get_data(self, key=None):
         '''
         Get the data of the testrun
         '''
-        all_instances = {}
-        self.load_children()
-        instances = self.children.to_dict().keys()
-        count = 0
-        for i in instances:
-            all_instances[i] = self.children[i].to_dict()
-            if "instance_id" not in all_instances[i].keys():
-                all_instances[i]["instance_id"] = count
-                count = count + 1
-            if "ProblemName" not in all_instances[i].keys():
-                all_instances[i]["ProblemName"] = all_instances[i]["instance_name"]
-            if "TimeLimit" not in all_instances[i].keys():
-                all_instances[i]["TimeLimit"] = self.time_limit
-            # seed instances with id of parent testrun,
-            # because in most cases compared files have the same filename
-            if self.lp_solver_githash:
-                all_instances[i]["SpxGitHash"] = self.lp_solver_githash
-            all_instances[i][Key.GitHash] = self.git_hash
-            all_instances[i]["CommitTime"] = str(self.git_commit_timestamp)
-            all_instances[i][Key.LPSolver] = self.lp_solver + " " + self.lp_solver_version
-            all_instances[i][Key.LogFileName] = self.filename
+        if key is None:
+            all_instances = {}
+            self.load_children()
+            instances = self.children.to_dict().keys()
+            count = 0
+            for i in instances:
+                all_instances[i] = self.children[i].to_dict()
+                if "instance_id" not in all_instances[i].keys():
+                    all_instances[i]["instance_id"] = count
+                    count = count + 1
+                if "ProblemName" not in all_instances[i].keys():
+                    all_instances[i]["ProblemName"] = all_instances[i]["instance_name"]
+                if "TimeLimit" not in all_instances[i].keys():
+                    all_instances[i]["TimeLimit"] = self.get_data("TimeLimit")
+                if self.lp_solver_githash:
+                    all_instances[i]["SpxGitHash"] = self.lp_solver_githash
+
+                further_keys = [Key.GitHash, "CommitTime", Key.LPSolver, Key.LogFileName,
+                        Key.Settings, "RubberbandId"]
+                for fk in further_keys:
+                    all_instances[i][fk] = self.get_data(fk)
+            return all_instances
+
+        if key == Key.LPSolver:
+            return self.lp_solver + " " + self.lp_solver_version
+        if key == Key.Settings:
             if self.settings_short_name is not None:
-                all_instances[i][Key.Settings] = self.settings_short_name
+                return self.settings_short_name
             else:
-                all_instances[i][Key.Settings] = self.settings_short_name
-            all_instances[i]["RubberbandId"] = self.id
-        return all_instances
+                return "none"
+        if key == Key.LogFileName:
+            return self.filename
+        if key == "RubberbandId":
+            return self.id
+        if key == "TimeLimit":
+            return self.time_limit
+        if key == "CommitTime":
+            return str(self.git_commit_timestamp)
+        if key == "SpxGitHash":
+            return self.lp_solver_githash
+        if key == Key.GitHash:
+            return self.git_hash
+        if key == "ReportVersion":
+            return "\\{}~{}+\\{}~{}".format(str.lower(self.solver),
+                    self.solver_version,
+                    str.lower(self.lp_solver),
+                    self.lp_solver_version)
 
     def json(self, ftype=".out"):
         '''
