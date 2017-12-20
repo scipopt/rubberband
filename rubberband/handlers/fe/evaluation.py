@@ -80,7 +80,7 @@ class EvaluationView(BaseHandler):
             df = aggtable
             # care for the columns
             df = df.reset_index()
-            poss = ['GitHash', 'Settings', 'LPSolver']
+            poss = ['RubberbandId', 'GitHash', 'Settings', 'LPSolver']
             for i in poss:
                 if i in df.columns:
                     colindex = i
@@ -102,17 +102,16 @@ class EvaluationView(BaseHandler):
             df_abs = df[cols2]
             df_count = df["_count_"]
 
-            # groups
-            groups = ['[0,tilim]', '[1,tilim]', '[10,tilim]', '[100,tilim]', '[1000,tilim]',
-                    'diff-timeouts']
-            add_groups = ['MIPLIB2010 (87)', 'Cor@l (349)', 'continuous', 'integer']
+            # groups in rows
+            rows = ['clean', '[0,tilim]', '[1,tilim]', '[10,tilim]', '[100,tilim]', '[1000,tilim]',
+                    'diff-timeouts', 'MIPLIB2010 (87)', 'Cor@l (349)', 'continuous', 'integer']
 
-            df_rel = df_rel.pivot_table(index=['Group'], columns=['GitHash']).swaplevel(
+            df_rel = df_rel.pivot_table(index=['Group'], columns=[colindex]).swaplevel(
                     axis=1).sort_index(axis=1, level=0, sort_remaining=True, ascending=False)
-            df_abs = df_abs.pivot_table(index=['Group'], columns=['GitHash']).swaplevel(
+            df_abs = df_abs.pivot_table(index=['Group'], columns=[colindex]).swaplevel(
                     axis=1).sort_index(axis=1, level=0, sort_remaining=True, ascending=False)
             df_count = df.pivot_table(values=['_count_'], index=['Group'],
-                    columns=['GitHash']).swaplevel(axis=1)
+                    columns=[colindex]).swaplevel(axis=1)
 
             df = df_abs
             df.insert(loc=0, column=(None, "instances"), value=df_count[df_count.columns[0]])
@@ -123,7 +122,6 @@ class EvaluationView(BaseHandler):
                     (a, b) = key
                     df['relative', b] = df_rel[key]
 
-            rows = groups + add_groups
             df = df.loc[df.index.intersection(rows)].reindex(rows)
 
             # render to latex
@@ -148,16 +146,17 @@ class EvaluationView(BaseHandler):
             repl["timeQ"] = "time"
             repl["nodesQ"] = "nodes"
             repl["{} & instances"] = "Subset & instances"
-            repl["GitHash &         - &"] = "& &"
+            repl[colindex + " &         - &"] = "& &"
             repl["egin{tabular"] = "egin{tabular*}{\\textwidth"
             repl["end{tabular"] = "end{tabular*"
-            repl['[0,tilim]'] = "\\bracket{0}{tilim}"
+            repl["clean"] = "\\cleaninst"
+            repl['[0,tilim]'] = "\\cmidrule{1-10}\n\\bracket{0}{tilim}"
             repl['[1,tilim]'] = "\\bracket{1}{tilim}"
             repl['[10,tilim]'] = "\\bracket{10}{tilim}"
             repl['[100,tilim]'] = "\\bracket{100}{tilim}"
             repl['[1000,tilim]'] = "\\bracket{1000}{tilim}"
             repl['diff-timeouts'] = "\\difftimeouts"
-            repl['MIPLIB2010 (87)'] = "\\cmidrule{1-10}\n\\miplib        "
+            repl['MIPLIB2010 (87)'] = "\\cmidrule{1-10}\n\\miplibs       "
             repl['Cor@l (349)'] = "\\coral     "
             for t in testruns:
                 repl[t.get_data(colindex)] = t.get_data("ReportVersion")
