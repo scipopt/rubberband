@@ -18,9 +18,13 @@ IPET_EVALUATIONS = {
             "name": "group by githash - exclude fails & aborts"},
         4: {"path": STATIC_FILES_DIR + "eval_groupsettings_exclude.xml",
             "name": "group by settings - exclude fails & aborts"},
-        5: {"path": STATIC_FILES_DIR + "evaluation-pure.xml",
+        5: {"path": STATIC_FILES_DIR + "eval_grouplpsolver_exclude.xml",
+            "name": "group by LP solver - exclude fails & aborts"},
+        6: {"path": STATIC_FILES_DIR + "eval_grouplpsolver_exclude_detailed.xml",
+            "name": "detailed view - group githash, exclude"},
+        7: {"path": STATIC_FILES_DIR + "evaluation-pure.xml",
             "name": "pure evaluation for sap"},
-        6: {"path": STATIC_FILES_DIR + "evaluation-deco.xml",
+        8: {"path": STATIC_FILES_DIR + "evaluation-deco.xml",
             "name": "deco evaluation for sap"},
         }
 NONE_DISPLAY = "--"

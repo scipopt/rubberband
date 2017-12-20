@@ -51,6 +51,10 @@ class EvaluationView(BaseHandler):
 
         # None style is default
         if style is None:
+            filtergroupdata = {}
+            for fg in ev.getActiveFilterGroups():
+                filtergroupdata[fg] = ev.getInstanceGroupData(fg)
+
             # postprocessing
             longtable.insert(0, "id", range(1, len(longtable) + 1))
             html_long, style_long = table_to_html(longtable, ev, add_class="ipet-long-table")
