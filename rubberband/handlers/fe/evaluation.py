@@ -92,9 +92,9 @@ class EvaluationView(BaseHandler):
             repl["_time_"] = "timeout"
             for i in cols:
                 if i.startswith("N_"):
-                    repl[i] = "nodes"
+                    repl[" " + i + " "] = " nodes "
                 if i.startswith("T_"):
-                    repl[i] = "time"
+                    repl[" " + i + " "] = " time "
 
             cols1 = [c for c in cols if c.endswith("Q") or c in ['Group', colindex]]
             cols2 = [c for c in cols if not c.endswith("Q") or c in ['Group', colindex]]
