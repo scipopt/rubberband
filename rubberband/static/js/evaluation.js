@@ -19,7 +19,6 @@ function display_modal(data) {
 
 function hide_modal() {
     modal.style.display = "none";
-    setButtonsDisabled(false);
 };
 
 // format ipet tables
@@ -145,6 +144,7 @@ $('button#ipet-eval-button').click(function (e) {
         },
         error:function(data){
             display_modal("Something went wrong.");
+            setButtonsDisabled(false);
         }
     });
 });
@@ -159,16 +159,17 @@ $('button#ipet-eval-show-button').click(function (e) {
         url: evalurl,
         success:function(data) {
             display_modal(data);
+            setButtonsDisabled(false);
         },
         error:function(data){
-            alert("Something went wrong." + data);
+            display_modal("Something went wrong.");
+            setButtonsDisabled(false);
         }
     });
 });
 
 $('button#ipet-eval-latex-button').click(function (e) {
     getData(e);
-    display_modal("Please wait, generating table");
 
     // get data from url
     currurl = window.location.href;
@@ -183,7 +184,6 @@ $('button#ipet-eval-latex-button').click(function (e) {
     // construct url
     evalurl = "/eval/" + evalid + idlist + "&default=" + defaultrun + "&style=latex";
     window.open(evalurl, "_blank");
-    hide_modal();
 });
 
 $('button#show-eval-file-modal-close').click(function (e) {
