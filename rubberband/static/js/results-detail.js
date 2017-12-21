@@ -20,12 +20,12 @@ $("a.bs-popover").popover();
 // if compare is in query string, then we are in the compare view
 if (window.location.search.indexOf("compare") >= 0) {
   /* red = new Color(245, 50, 50);
-  green = new Color(50, 245, 50);
-  gray = new Color(170, 170, 170); */
-  red = new Color(240, 40, 150);
-  green = new Color(130, 200, 30);
+  green = new Color(50, 245, 50); */
+  dark_gray = new Color(160, 160, 160);
   gray = new Color(200, 200, 200);
   white = new Color(255, 255, 255);
+  red = new Color(240, 40, 150);
+  green = new Color(130, 200, 30);
   colorateCells();
 }
 
@@ -163,17 +163,24 @@ function computeRGB(arr_values, invert) {
   // compute mean of the compare values
   var sum = 0.0;
   var arr_length = arr_values.length;
-  for( var i = 0; i < arr_length-1; i++ ){
+  for( var i = 0; i < arr_length; i++ ){
     sum += arr_values[i];
   }
   var mean = sum/(arr_length);
+
+  var sum_of_squares = 0.0;
+  for( var i = 0; i < arr_length; i++ ){
+    sum_of_squares += (arr_values[i]-mean) * (arr_values[i]-mean);
+  }
+  var variance = Math.sqrt(sum_of_squares/(arr_length));
+  var percentage = variance/mean;
 
   var largest = Math.max(...arr_values.slice(1));
   var smallest = Math.min(...arr_values.slice(1));
   var value = arr_values[0];
 
   if ( (smallest < 0 && largest > 0) || smallest == 0 || largest == 0) {
-    return white;
+    return Interpolate(dark_gray, percentage);
   }
 
   if (invert) {
@@ -183,7 +190,6 @@ function computeRGB(arr_values, invert) {
     value = - value;
   }
 
-  var percentage;
   if (value < smallest) {
       percentage = (smallest - value)/smallest;
   } else if (value > largest) {
@@ -194,7 +200,7 @@ function computeRGB(arr_values, invert) {
   } else if ((largest < value && invert) || (smallest > value && !invert)) {
     return Interpolate(green, percentage);
   } else {
-    return white;
+    return Interpolate(dark_gray, percentage);
   }
 }
 
