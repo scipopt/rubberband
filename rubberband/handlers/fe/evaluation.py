@@ -108,7 +108,7 @@ class EvaluationView(BaseHandler):
 
             # groups in rows
             rows = ['clean', '[0,tilim]', '[1,tilim]', '[10,tilim]', '[100,tilim]', '[1000,tilim]',
-                    'diff-timeouts', 'MIPLIB2010 (87)', 'Cor@l (349)', 'continuous', 'integer']
+                    'diff-timeouts', 'MMM compl (387)', 'Cor@l (349)', 'continuous', 'integer']
 
             df_rel = df_rel.pivot_table(index=['Group'], columns=[colindex]).swaplevel(
                     axis=1).sort_index(axis=1, level=0, sort_remaining=True, ascending=False)
@@ -160,8 +160,9 @@ class EvaluationView(BaseHandler):
             repl['[100,tilim]'] = "\\bracket{100}{tilim}"
             repl['[1000,tilim]'] = "\\bracket{1000}{tilim}"
             repl['diff-timeouts'] = "\\difftimeouts"
-            repl['MIPLIB2010 (87)'] = "\\cmidrule{1-10}\n\\miplibs       "
+            repl['MMM compl (387)'] = "\\cmidrule{1-10}\n\\miplibs       "
             repl['Cor@l (349)'] = "\\coral     "
+            repl['- & \multi'] = "  & \multi"
             for t in testruns:
                 repl[t.get_data(colindex)] = t.get_data("ReportVersion")
             for k, v in repl.items():
