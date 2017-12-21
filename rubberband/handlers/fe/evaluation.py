@@ -150,7 +150,7 @@ class EvaluationView(BaseHandler):
             repl["timeQ"] = "time"
             repl["nodesQ"] = "nodes"
             repl["{} & instances"] = "Subset & instances"
-            repl[colindex + " &         - &"] = "& &"
+            repl[colindex + " &"] = "&"
             repl["egin{tabular"] = "egin{tabular*}{\\textwidth"
             repl["end{tabular"] = "end{tabular*"
             repl["clean"] = "\\cleaninst"
