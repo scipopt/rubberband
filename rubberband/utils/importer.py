@@ -76,7 +76,7 @@ class ResultClient(object):
         Internal method that parses a single file bundle. The bundle is a tuple of strings (paths).
 
         A bundle should contain the following files:
-            *.out
+            \*.out
 
         Optionally, the bundle could also contain a .set, .meta, .err and .solu file.
         '''

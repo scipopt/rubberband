@@ -20,7 +20,7 @@
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../../rubberband/'))
-
+print("Looking into sys.path: {}".format(sys.path))
 
 # -- General configuration ------------------------------------------------
 
@@ -35,6 +35,14 @@ extensions = ['sphinx.ext.autodoc',
     'sphinx.ext.todo',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages']
+
+# Include Python objects as they appear in source files
+# Default 'alphabetical', also 'bysource'
+autodoc_member_order = 'alphabetical'
+# Default flags used by autodoc directives
+autodoc_default_flags = ['members', 'show-inheritance']
+# Generate autodoc stubs with summaries from code
+autosummary_generate = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -86,7 +94,7 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'nature'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -99,18 +107,9 @@ html_theme = 'alabaster'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-# Custom sidebar templates, must be a dictionary that maps document names
-# to template names.
-#
-# This is required for the alabaster theme
-# refs: http://alabaster.readthedocs.io/en/latest/installation.html#sidebars
 html_sidebars = {
-    '**': [
-        'relations.html',  # needs 'show_related': True theme option to display
-        'searchbox.html',
-    ]
+    '**': ['globaltoc.html', 'sourcelink.html', 'searchbox.html'],
 }
-
 
 # -- Options for HTMLHelp output ------------------------------------------
 
@@ -168,5 +167,10 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
+# -- Extension interface --------------------------
+
+def setup(app):
+    app.add_stylesheet('css/custom.css') # may also be an URL, files found in _static/css
+    # app.add_javascript('file.js') # may also be an URL, files found in _static/
 
 

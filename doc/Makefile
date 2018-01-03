@@ -14,6 +14,14 @@ help:
 
 .PHONY: help Makefile
 
+doc: buildapi
+	make html
+
+buildapi:
+	sphinx-apidoc -f ../rubberband -o source/_modules/rubberband
+	@echo "Auto-generation of API documentation finished. " \
+		"The generated files are in 'source/_modules/rubberband"
+
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile

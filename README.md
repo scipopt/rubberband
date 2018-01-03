@@ -117,6 +117,16 @@ If everything went well, you should be able to open [http://127.0.0.1:8888/](htt
 
 ![rubberband screenshot](https://raw.githubusercontent.com/xmunoz/rubberband/master/rubberband-screenshot.png)
 
+## Documentation
+
+To build the documentation run the following commands:
+
+```
+cd doc
+make doc
+```
+
+Now you can view the documentation by opening `doc/build/html/index.html` in your favorite webbrowser.
 
 ## Testing
 

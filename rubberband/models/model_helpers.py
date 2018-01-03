@@ -8,7 +8,6 @@ from collections import OrderedDict
 def compute_stat(instances):
     '''
     Computes statistical information about a list of instances.
-        instances (list)
     # TODO this whole method is going to be replaced by ipet?
     '''
     stats = {}

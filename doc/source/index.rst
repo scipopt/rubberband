@@ -8,9 +8,7 @@ Welcome to Rubberband's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
-   api
    _static/configuration
    _static/crashcourses
    _static/documentation
@@ -18,8 +16,9 @@ Welcome to Rubberband's documentation!
    _static/overview
    _static/roadmap
 
+   _modules/rubberband/modules
 
-Indices and tables
+Indices and Tables
 ==================
 
 * :ref:`genindex`
