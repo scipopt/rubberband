@@ -24,7 +24,7 @@ Run tests to confirm that everything is set up properly.
 2. Create a branch: `git checkout -b my_feature`
 3. Make changes
 4. Install and run `flake8 rubberband/` to ensure that your changes conform to the coding style of this project
-5. Install and run `pep247 rubberband/` to ensure that your changes conform to the document style of this project
+5. Install and run `pep257 rubberband/` to ensure that your changes conform to the document style of this project
 6. Commit: `git commit -am "Great new feature that closes #3"`. Reference any related issues in the first line of the commit message.
 7. Push: `git push origin my_feature`
 8. Open a pull request
