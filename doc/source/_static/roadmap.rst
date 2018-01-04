@@ -4,6 +4,14 @@ Roadmap
 Roles and interplay of the components
 -------------------------------------
 
+.. figure:: img/interplay.svg
+    :width: 500px
+    :align: center
+    :alt: interplay of rubberband components
+    :figclass: align-center
+
+    Interplay of single components to rubberband application.
+
 Webserver
 _________
 

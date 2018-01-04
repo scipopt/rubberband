@@ -47,3 +47,7 @@ nosetests.xml
 
 # vim
 *.swp
+
+# Documentation
+doc/build
+doc/source/_modules
