@@ -112,8 +112,11 @@ class BaseHandler(RequestHandler):
             if value not in (None, ""):
                 if attr in INFINITY_KEYS and value == INFINITY_MASK:
                     return INFINITY_DISPLAY
-                if (type(value) is int or type(value) is float) and value >= INFINITY:
-                    return INFINITY_DISPLAY
+                if (type(value) is int or type(value) is float):
+                    if value >= INFINITY:
+                        return INFINITY_DISPLAY
+                    if value <= -INFINITY:
+                        return -INFINITY_DISPLAY
                 if attr in ["DualBound", "PrimalBound"]:
                     return "%.4f" % value
                 if attr in ["SolvingTime", "TotalTime_solving", "Gap"]:
@@ -168,7 +171,8 @@ class BaseHandler(RequestHandler):
         '''
         attr_str = []
         for o in objs:
-            attr_str.append(getattr(o.children[inst_name], attr, None))
+            val = self.format_attr(o.children[inst_name], attr)
+            attr_str.append(val)
 
         partial_list = sorted([a for a in attr_str if a is not None], reverse=True)
         partial_list.extend([NONE_DISPLAY for a in attr_str if a is None])
