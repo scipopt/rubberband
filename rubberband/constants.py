@@ -2,6 +2,8 @@ INFINITY_KEYS = ("separating/flowcover/maxslackroot", "separating/flowcover/maxs
                  "heuristics/undercover/maxcoversizeconss")
 INFINITY_MASK = -1
 INFINITY = 1e+20
+INFINITY_FLOAT = float('inf')
+INFINITY_DISPLAY = 1e+20
 ZIPPED_SUFFIX = ".gz"
 FILES_DIR = "files/"
 STATIC_FILES_DIR = FILES_DIR + "static/"

@@ -3,7 +3,7 @@ import json
 import datetime
 from elasticsearch_dsl import DocType, MetaField, String, Date, Float, Nested
 
-from rubberband.constants import INFINITY_KEYS, INFINITY_MASK, ELASTICSEARCH_INDEX
+from rubberband.constants import INFINITY_KEYS, INFINITY_MASK, ELASTICSEARCH_INDEX, INFINITY_FLOAT
 from .model_helpers import compute_stat
 
 from ipet import Key
@@ -137,14 +137,14 @@ class TestSet(DocType):
         and mask is -1.
         '''
         for i in INFINITY_KEYS:
-            if getattr(self.settings, i, None) == float("inf"):
+            if getattr(self.settings, i, None) == INFINITY_FLOAT:
                 setattr(self.settings, i, INFINITY_MASK)
-            if getattr(self.settings_default, i, None) == float("inf"):
+            if getattr(self.settings_default, i, None) == INFINITY_FLOAT:
                 setattr(self.settings_default, i, INFINITY_MASK)
             if kwargs != {} and "settings" in kwargs.keys() and i in kwargs["settings"].keys():
-                if kwargs["settings"][i] == float("inf"):
+                if kwargs["settings"][i] == INFINITY_FLOAT:
                     kwargs["settings"][i] = INFINITY_MASK
-                if kwargs["settings_default"][i] == float("inf"):
+                if kwargs["settings_default"][i] == INFINITY_FLOAT:
                     kwargs["settings_default"][i] = INFINITY_MASK
         return super(TestSet, self).update(**kwargs)
 
@@ -155,14 +155,14 @@ class TestSet(DocType):
         and mask is -1.
         '''
         for i in INFINITY_KEYS:
-            if getattr(self.settings, i, None) == float("inf"):
+            if getattr(self.settings, i, None) == INFINITY_FLOAT:
                 setattr(self.settings, i, INFINITY_MASK)
-            if getattr(self.settings_default, i, None) == float("inf"):
+            if getattr(self.settings_default, i, None) == INFINITY_FLOAT:
                 setattr(self.settings_default, i, INFINITY_MASK)
             if kwargs != {} and "settings" in kwargs.keys() and i in kwargs["settings"].keys():
-                if kwargs["settings"][i] == float("inf"):
+                if kwargs["settings"][i] == INFINITY_FLOAT:
                     kwargs["settings"][i] = INFINITY_MASK
-                if kwargs["settings_default"][i] == float("inf"):
+                if kwargs["settings_default"][i] == INFINITY_FLOAT:
                     kwargs["settings_default"][i] = INFINITY_MASK
         return super(TestSet, self).save(**kwargs)
 
@@ -268,9 +268,9 @@ class TestSet(DocType):
 
                 if k in INFINITY_KEYS:
                     if setting == INFINITY_MASK:
-                        setting = float("inf")
+                        setting = INFINITY_FLOAT
                     if default == INFINITY_MASK:
-                        default = float("inf")
+                        default = INFINITY_FLOAT
 
                 output[k] = {
                     "setting": setting,

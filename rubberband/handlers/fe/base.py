@@ -5,7 +5,7 @@ from tornado.options import options
 import traceback
 
 from rubberband.constants import NONE_DISPLAY, INFINITY_KEYS, \
-        INFINITY_MASK, INFINITY, FORMAT_DATETIME_SHORT
+        INFINITY_MASK, INFINITY, INFINITY_DISPLAY, FORMAT_DATETIME_SHORT
 
 
 class BaseHandler(RequestHandler):
@@ -107,9 +107,9 @@ class BaseHandler(RequestHandler):
             value = getattr(obj, attr, None)
             if value not in (None, ""):
                 if attr in INFINITY_KEYS and value == INFINITY_MASK:
-                    return float("inf")
+                    return INFINITY_DISPLAY
                 if (type(value) is int or type(value) is float) and value >= INFINITY:
-                    return INFINITY
+                    return INFINITY_DISPLAY
                 if attr in ["DualBound", "PrimalBound"]:
                     return "%.4f" % value
                 if attr in ["SolvingTime", "TotalTime_solving", "Gap"]:
