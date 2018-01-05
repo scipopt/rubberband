@@ -79,6 +79,10 @@ class BaseHandler(RequestHandler):
         '''
         Return (null) type (attributes attr of obj).
         '''
+        if attr in ["instance_type", "OriginalProblem_InitialNCons"]:
+            return "text"
+        if attr in ["OriginalProblem_Vars", "PresolvedProblem_InitialNCons", "PresolvedProblem_Vars", "DualBound", "PrimalBound", "Gap", "Iterations", "Nodes", "TotalTime_solving"]:
+            return "number"
         value = getattr(obj, attr, None)
         if isinstance(value, str):
             return "text"
