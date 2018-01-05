@@ -175,9 +175,9 @@ class BaseHandler(RequestHandler):
             attr_str.append(val)
 
         partial_list = sorted([a for a in attr_str
-            if a is not None and type(a) in ["int", "float"]], reverse=True)
+            if a is not None and type(a) in [int, float]], reverse=True)
         partial_list.extend(sorted([a for a in attr_str
-            if a is not None and type(a) not in ["int", "float"]], reverse=True))
+            if a is not None and type(a) not in [int, float]], reverse=True))
         partial_list.extend([NONE_DISPLAY for a in attr_str if a is None])
         return "\n".join(map(str, partial_list))
 
