@@ -195,9 +195,9 @@ function computeRGB(arr_values, invert) {
   } else if (value > largest) {
       percentage = (value - smallest)/smallest;
   }
-  if ((largest < value && !invert) || (smallest > value && invert)) {
+  if (largest < value) {
     return Interpolate(red, percentage);
-  } else if ((largest < value && invert) || (smallest > value && !invert)) {
+  } else if (smallest > value) {
     return Interpolate(green, percentage);
   } else {
     return Interpolate(dark_gray, percentage);
