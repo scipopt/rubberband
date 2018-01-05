@@ -28,15 +28,7 @@
     <tr>
       <td><a href="/result/{{ file.meta.id }}/instance/{{ r.meta.id }}">{{ r.instance_name }}</a></td>
 
-      {% for i in ["instance_type", "OriginalProblem_InitialNCons", "OriginalProblem_Vars", "PresolvedProblem_InitialNCons", "PresolvedProblem_Vars"] %}
-        <td class="{{ format_type(r, i) }}">{{ format_attr(r, i) }}</td>
-      {% end %}
-      {% if format_attr(r, "SoluFileStatus") == "inf" %}
-      <td class="{{ format_type(r, "SoluFileStatus") }}">&infin;</td>
-      {% else %}
-      <td class="{{ format_type(r, "DualBound") }}">{{ format_attr(r, "DualBound") }}</td>
-      {% end %}
-      {% for i in [ "PrimalBound", "Gap", "Iterations", "Nodes", "TotalTime_solving", "SolvingTime" ] %}
+      {% for i in ["instance_type", "OriginalProblem_InitialNCons", "OriginalProblem_Vars", "PresolvedProblem_InitialNCons", "PresolvedProblem_Vars", "DualBound", "PrimalBound", "Gap", "Iterations", "Nodes", "TotalTime_solving", "SolvingTime" ] %}
         <td class="{{ format_type(r, i) }}">{{ format_attr(r, i) }}</td>
       {% end %}
       {% for i in cols %}
