@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/xmunoz/rubberband.svg?branch=master)](https://travis-ci.org/xmunoz/rubberband)
-
 # Rubberband
+
+[![Build Status](https://travis-ci.org/xmunoz/rubberband.svg?branch=master)](https://travis-ci.org/xmunoz/rubberband)
 
 A flexible web view and analysis platform for solver log files of mathematical optimization software, backed by Elasticsearch.
 

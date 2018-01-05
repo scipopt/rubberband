@@ -47,18 +47,20 @@ autosummary_generate = True
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
+# add markdown support
+source_parsers = {
+   '.md': 'recommonmark.parser.CommonMarkParser',
+}
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
-#
-# source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ['.rst', '.md']
 
 # The master toctree document.
 master_doc = 'index'
 
 # General information about the project.
 project = 'Rubberband'
-copyright = '2017, Zuse Institute Berlin'
+copyright = '2018, Zuse Institute Berlin'
 author = 'Zuse Institute Berlin'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -94,21 +96,64 @@ todo_include_todos = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'nature'
+html_theme = 'classic' # classic, nature, alabaster
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
+# http://www.sphinx-doc.org/en/stable/theming.html
 #
-# html_theme_options = {}
+# custom colors
+rb_color_bg_light = "#fff"
+rb_color_bg_highlight = "#bdf"
+rb_color_bg_dark = "#337ab7"
+
+rb_color_text_dark = "#333"
+rb_color_text_gray = "#555"
+rb_color_text_light = "#fff"
+rb_color_text_highlight = rb_color_bg_dark
+rb_color_text_highdark = rb_color_bg_highlight
+
+html_theme_options = {
+        "rightsidebar": False,
+        "stickysidebar": True,
+        "collapsiblesidebar": False, # does not work with stickysidebar
+        "externalrefs": False,
+        "footerbgcolor": rb_color_bg_light,
+        "footertextcolor": rb_color_bg_dark ,
+        "sidebarbgcolor": rb_color_bg_dark ,
+        "sidebarbtncolor": rb_color_bg_dark ,
+        "sidebartextcolor": rb_color_text_light ,
+        "sidebarlinkcolor": rb_color_text_highdark ,
+        "relbarbgcolor": rb_color_bg_dark ,
+        "relbartextcolor": rb_color_text_light ,
+        "relbarlinkcolor": rb_color_text_highdark ,
+        "bgcolor": rb_color_bg_light,
+        "textcolor": rb_color_text_dark ,
+        "linkcolor": rb_color_text_highlight ,
+        "visitedlinkcolor": rb_color_text_highlight ,
+        "headbgcolor": rb_color_bg_highlight ,
+        "headtextcolor": rb_color_text_dark ,
+        "headlinkcolor": rb_color_text_dark ,
+#        "codebgcolor": rb_color_bg_ ,
+#        "codetextcolor": rb_color_text_ ,
+        "bodyfont": "'Fira Mono' sans-serif",
+        "headfont": "'Fira Mono' sans-serif",
+        }
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+# can be the following:
+# localtoc.html – a fine-grained table of contents of the current document
+# globaltoc.html – a coarse-grained table of contents for the whole documentation set, collapsed
+# relations.html – two links to the previous and next documents
+# sourcelink.html – a link to the source of the current document, if enabled in html_show_sourcelink
+# searchbox.html – the “quick search” box
 html_sidebars = {
-    '**': ['globaltoc.html', 'sourcelink.html', 'searchbox.html'],
+    '**': ['localtoc.html', 'searchbox.html', 'globaltoc.html', 'sourcelink.html' ],
 }
 
 # -- Options for HTMLHelp output ------------------------------------------

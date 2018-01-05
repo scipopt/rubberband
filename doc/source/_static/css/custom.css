@@ -1,3 +1,8 @@
+
 * {
-    font-size: 12pt;
+    font-size: 12px;
+}
+
+div.body h3, div.body h4, div.body h5, div.body h6, div.body h7 {
+    background: #fff;
 }

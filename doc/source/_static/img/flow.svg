@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="16cm" height="23cm" viewBox="23 66 310 454" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g>
+    <ellipse style="fill: #ffffff" cx="178.668" cy="83.1605" rx="66.7801" ry="16.695"/>
+    <ellipse style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" cx="178.668" cy="83.1605" rx="66.7801" ry="16.695"/>
+    <text font-size="6.77333" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="178.668" y="85.1772">
+      <tspan x="178.668" y="85.1772">User</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="25.094" y="252.905" width="307.147" height="37.5333"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" x="25.094" y="252.905" width="307.147" height="37.5333"/>
+    <text font-size="6.77333" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="178.668" y="269.455">
+      <tspan x="178.668" y="269.455">Python tornado service "Rubberband" on webserver (e.g. Apache, NginX)</tspan>
+      <tspan x="178.668" y="277.921">(optional behind a oauth2-proxy)</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="25.152" y="163.563" width="307.033" height="29.0667"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" x="25.152" y="163.563" width="307.033" height="29.0667"/>
+    <text font-size="6.77333" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="178.668" y="180.113">
+      <tspan x="178.668" y="180.113">Browser application (e.g. Firefox)</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="25.124" y="386.27" width="307.09" height="29.0667"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" x="25.124" y="386.27" width="307.09" height="29.0667"/>
+    <text font-size="6.77333" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="178.669" y="402.82">
+      <tspan x="178.669" y="402.82">Request Handler instance (e.g. SearchView)</tspan>
+    </text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" x1="131.447" y1="94.9657" x2="105.142" y2="156.059"/>
+    <polygon style="fill: #000000" points="102.175,162.947 101.538,151.785 105.142,156.059 110.723,155.74 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" points="102.175,162.947 101.538,151.785 105.142,156.059 110.723,155.74 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" x1="101.91" y1="192.63" x2="101.885" y2="244.734"/>
+    <polygon style="fill: #000000" points="101.881,252.234 96.886,242.231 101.885,244.734 106.886,242.236 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" points="101.881,252.234 96.886,242.231 101.885,244.734 106.886,242.236 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" x1="101.881" y1="290.438" x2="101.895" y2="378.099"/>
+    <polygon style="fill: #000000" points="101.896,385.599 96.8947,375.6 101.895,378.099 106.895,375.598 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" points="101.896,385.599 96.8947,375.6 101.895,378.099 106.895,375.598 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" x1="259.86" y1="422.21" x2="294.057" y2="475.412"/>
+    <polygon style="fill: #000000" points="255.804,415.901 265.417,421.609 259.86,422.21 257.005,427.017 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" points="255.804,415.901 265.417,421.609 259.86,422.21 257.005,427.017 "/>
+    <polygon style="fill: #000000" points="298.112,481.721 288.499,476.012 294.057,475.412 296.911,470.605 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" points="298.112,481.721 288.499,476.012 294.057,475.412 296.911,470.605 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" x1="255.426" y1="163.563" x2="229.12" y2="102.47"/>
+    <polygon style="fill: #000000" points="226.154,95.5818 234.701,102.789 229.12,102.47 225.517,106.744 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" points="226.154,95.5818 234.701,102.789 229.12,102.47 225.517,106.744 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" x1="255.454" y1="252.905" x2="255.43" y2="200.801"/>
+    <polygon style="fill: #000000" points="255.427,193.301 260.431,203.299 255.43,200.801 250.431,203.303 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" points="255.427,193.301 260.431,203.299 255.43,200.801 250.431,203.303 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" x1="255.441" y1="386.27" x2="255.453" y2="298.609"/>
+    <polygon style="fill: #000000" points="255.454,291.109 260.453,301.11 255.453,298.609 250.453,301.108 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" points="255.454,291.109 260.453,301.11 255.453,298.609 250.453,301.108 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" x1="97.4386" y1="422.184" x2="62.7703" y2="475.437"/>
+    <polygon style="fill: #000000" points="101.531,415.899 100.265,427.007 97.4386,422.184 91.8844,421.552 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" points="101.531,415.899 100.265,427.007 97.4386,422.184 91.8844,421.552 "/>
+    <polygon style="fill: #000000" points="58.6784,481.723 59.944,470.614 62.7703,475.437 68.3246,476.07 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" points="58.6784,481.723 59.944,470.614 62.7703,475.437 68.3246,476.07 "/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="66.6788" y="121.106" width="100" height="16.3167"/>
+    <text font-size="6.77333" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="116.679" y="127.356">
+      <tspan x="116.679" y="127.356">Enters URL or clicks a button.</tspan>
+      <tspan x="116.679" y="135.823">E. g. "rubberband.url/search"</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="44.5955" y="210.376" width="114.6" height="24.7833"/>
+    <text font-size="6.77333" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="101.895" y="216.626">
+      <tspan x="101.895" y="216.626">Sends HTTP Request consisting of</tspan>
+      <tspan x="101.895" y="225.092">METHOD url requestdata.</tspan>
+      <tspan x="101.895" y="233.559">E. g.  GET rubberband.url/search</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="23.2887" y="317.496" width="157.2" height="41.7167"/>
+    <text font-size="6.77333" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="101.889" y="323.746">
+      <tspan x="101.889" y="323.746">Chooses via expression matching</tspan>
+      <tspan x="101.889" y="332.212">in routes.py the correct request handler</tspan>
+      <tspan x="101.889" y="340.679">for the requested url and calls </tspan>
+      <tspan x="101.889" y="349.146">the method corresponding to request method.</tspan>
+      <tspan x="101.889" y="357.612">E. g. SearchView.get()</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="226.808" y="436.419" width="100.3" height="24.7833"/>
+    <text font-size="6.77333" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="276.958" y="442.669">
+      <tspan x="276.958" y="442.669">Process data in form of</tspan>
+      <tspan x="276.958" y="451.136">python pandas dataframes.</tspan>
+      <tspan x="276.958" y="459.602">IPET parses and/or evaluates.</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="214.798" y="325.962" width="81.3" height="24.7833"/>
+    <text font-size="6.77333" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="255.448" y="332.212">
+      <tspan x="255.448" y="332.212">Forms a HTTP response,</tspan>
+      <tspan x="255.448" y="340.679">renders (HTML)</tspan>
+      <tspan x="255.448" y="349.146">templates with data.</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="217.965" y="218.842" width="74.95" height="7.85"/>
+    <text font-size="6.77333" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="255.44" y="225.092">
+      <tspan x="255.44" y="225.092">Sends HTTP response.</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="197.583" y="116.873" width="86.15" height="24.7833"/>
+    <text font-size="6.77333" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="240.658" y="123.123">
+      <tspan x="240.658" y="123.123">Displays HTTP response,</tspan>
+      <tspan x="240.658" y="131.59">renders HTML (with CSS),</tspan>
+      <tspan x="240.658" y="140.056">executes Javascript.</tspan>
+    </text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" x1="156.097" y1="474.473" x2="171.735" y2="423.436"/>
+    <polygon style="fill: #000000" points="153.9,481.644 152.049,470.617 156.097,474.473 161.61,473.547 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" points="153.9,481.644 152.049,470.617 156.097,474.473 161.61,473.547 "/>
+    <polygon style="fill: #000000" points="173.932,416.265 175.783,427.291 171.735,423.436 166.222,424.362 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" points="173.932,416.265 175.783,427.291 171.735,423.436 166.222,424.362 "/>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="46.255" y="437.14" width="151.95" height="24.7833"/>
+    <text font-size="6.77333" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="122.23" y="443.39">
+      <tspan x="122.23" y="443.39">Collects data over HTTP via python modules.</tspan>
+      <tspan x="122.23" y="451.857">Data from/to elasticsearch comes in form of</tspan>
+      <tspan x="122.23" y="460.324">python objects defined in models/__init__.py.</tspan>
+    </text>
+  </g>
+  <g>
+    <g>
+      <rect style="fill: #ffffff" x="275.475" y="482.285" width="46" height="37.5333"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" x="275.475" y="482.285" width="46" height="37.5333"/>
+      <text font-size="6.77333" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="298.475" y="498.835">
+        <tspan x="298.475" y="498.835">IPET</tspan>
+        <tspan x="298.475" y="507.302">module</tspan>
+      </text>
+    </g>
+    <g>
+      <rect style="fill: #ffffff" x="35.9124" y="482.285" width="44.8" height="37.5333"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" x="35.9124" y="482.285" width="44.8" height="37.5333"/>
+      <text font-size="6.77333" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="58.3124" y="498.835">
+        <tspan x="58.3124" y="498.835">Gitlab</tspan>
+        <tspan x="58.3124" y="507.302">service</tspan>
+      </text>
+    </g>
+    <g>
+      <rect style="fill: #ffffff" x="121.154" y="482.285" width="65.1" height="37.5333"/>
+      <rect style="fill: none; fill-opacity:0; stroke-width: 0.6; stroke: #000000" x="121.154" y="482.285" width="65.1" height="37.5333"/>
+      <text font-size="6.77333" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="153.704" y="498.835">
+        <tspan x="153.704" y="498.835">Elasticsearch</tspan>
+        <tspan x="153.704" y="507.302">service</tspan>
+      </text>
+    </g>
+  </g>
+</svg>

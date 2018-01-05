@@ -15,5 +15,5 @@ where `venv` is the name of your virtual environment.
 Convention
 ----------
 
-The rubberband documentation uses `PEP247 <http://TODO>`_ style.
+The rubberband documentation uses `PEP257 <http://www.python.org/dev/peps/pep-0257/>`_ style.
 
