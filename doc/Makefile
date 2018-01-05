@@ -18,7 +18,7 @@ doc: buildapi
 	make html
 
 buildapi:
-	sphinx-apidoc -f ../rubberband -o source/_modules/rubberband
+	sphinx-apidoc -fTM ../rubberband -o source/_modules/rubberband
 	@echo "Auto-generation of API documentation finished. " \
 		"The generated files are in 'source/_modules/rubberband"
 

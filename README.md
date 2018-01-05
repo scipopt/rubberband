@@ -119,7 +119,7 @@ If everything went well, you should be able to open [http://127.0.0.1:8888/](htt
 
 ## Documentation
 
-To build the documentation run the following commands:
+To build the documentation run the following commands from inside the virtualenvironment:
 
 ```
 cd doc
