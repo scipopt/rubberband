@@ -210,6 +210,9 @@ function Interpolate(colorBase, percentage) {
   }
   else {
     percentage = percentage * 100;
+    if (percentage < 7) {
+        percentage = 7;
+    }
     var end_color = colorBase.getColors();
     var r = interpolate(255, end_color.r, 100, percentage);
     var g = interpolate(255, end_color.g, 100, percentage);
