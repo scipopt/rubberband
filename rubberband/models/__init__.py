@@ -1,18 +1,17 @@
+"""Define data models and methods, also used by elasticsearch_dsl."""
 import gzip
 import json
 import datetime
 from elasticsearch_dsl import DocType, MetaField, String, Date, Float, Nested
+from ipet import Key
 
 from rubberband.constants import INFINITY_KEYS, INFINITY_MASK, ELASTICSEARCH_INDEX, INFINITY_FLOAT
 from .model_helpers import compute_stat
 
-from ipet import Key
-
 
 class File(DocType):
-    '''
-    The definition of a File object. A `File` contains the raw contents of a log file.
-    '''
+    """The definition of a File object. A `File` contains the raw contents of a log file."""
+
     type = String(index="not_analyzed", required=True)  # out, set, err, solu
     filename = String(index="not_analyzed", required=True)  # check.MMM.scip-021ace1...out
     hash = String(index="not_analyzed", required=True)  # computed hash
@@ -24,11 +23,12 @@ class File(DocType):
         # doc_type = "file"
 
     def __str__(self):
+        """Return a string description of the file object."""
         return "File {} {}".format(self.filename, self.type)
 
 
 class Result(DocType):
-    '''
+    """
     The definition of a result object. A `Result` is the result of a single instance run.
 
     Attributes:
@@ -47,7 +47,7 @@ class Result(DocType):
         json
         csv
         gzip
-    '''
+    """
 
     instance_name = String(index="not_analyzed", required=True)  # mcf128-4-1
     instance_id = String(index="not_analyzed", required=True)  # mcf128-4-1
@@ -65,9 +65,16 @@ class Result(DocType):
         # doc_type = "result"
 
     def __str__(self):
+        """Return a string description of the result object."""
         return "Result {}".format(self.instance_name)
 
     def raw(self, ftype=".out"):
+        """
+        Return a log of Result object from logfile.
+
+        Keyword arguments:
+        ftype -- extension of file to get data from (default ".out")
+        """
         parent = TestSet.get(id=self.meta.parent)
         whole_file = parent.raw(ftype=".out")
         # TODO: remove this once integer/ipet#20 is resolved
@@ -80,22 +87,36 @@ class Result(DocType):
             return "Unable to locate instance in out file :("
 
     def json(self, ftype=".out"):
+        """
+        Return a data of Result object from logfile in JSON format.
+
+        Keyword arguments:
+        ftype -- extension of file to get data from (default ".out")
+        """
         return json.dumps(self.to_dict(), default=date_handler)
 
     def csv(self, ftype=".out"):
+        """
+        Return a data of Result object from logfile in CSV format.
+
+        Keyword arguments:
+        ftype -- extension of file to get data from (default ".out")
+        """
         raise NotImplemented()
 
     def gzip(self, ftype=".out"):
-        '''
-        Return a gzipped segment of the raw log file.
-        '''
+        """
+        Return a gzipped log of Result object.
+
+        Keyword arguments:
+        ftype -- extension of file to get data from (default ".out")
+        """
         raise NotImplemented()
 
 
 class TestSet(DocType):
-    '''
-    The file definition.
-    '''
+    """Define TestSet object, derived from DocType."""
+
     id = String(index="not_analyzed", required=True)
     filename = String(index="not_analyzed", required=True)
     solver = String(index="not_analyzed", required=True)  # scip
@@ -131,29 +152,33 @@ class TestSet(DocType):
         doc_type = "testset"
 
     def update(self, **kwargs):
-        '''
-        Cast infinity to INFINITY_MASK, since databases don't like infinity.
-        This is likely ok, because fields that could contain infinity, are [0, inf)
-        and mask is -1.
-        '''
-        for i in INFINITY_KEYS:
-            if getattr(self.settings, i, None) == INFINITY_FLOAT:
-                setattr(self.settings, i, INFINITY_MASK)
-            if getattr(self.settings_default, i, None) == INFINITY_FLOAT:
-                setattr(self.settings_default, i, INFINITY_MASK)
-            if kwargs != {} and "settings" in kwargs.keys() and i in kwargs["settings"].keys():
-                if kwargs["settings"][i] == INFINITY_FLOAT:
-                    kwargs["settings"][i] = INFINITY_MASK
-                if kwargs["settings_default"][i] == INFINITY_FLOAT:
-                    kwargs["settings_default"][i] = INFINITY_MASK
+        """
+        Extend update method, to deal with infinities before saving in elasticsearch.
+
+        Keyword arguments
+        kwargs -- keyword arguments
+        """
+        mask_infinities(**kwargs)
         return super(TestSet, self).update(**kwargs)
 
     def save(self, **kwargs):
-        '''
+        """
+        Extend save method, to deal with infinities before saving in elasticsearch.
+
+        Keyword arguments
+        kwargs -- keyword arguments
+        """
+        mask_infinities(**kwargs)
+        return super(TestSet, self).save(**kwargs)
+
+    def mask_infinities(self, **kwargs):
+        """
+        Substitute infinities in fields for elasticsearch to be able to deal with them.
+
         Cast infinity to INFINITY_MASK, since databases don't like infinity.
         This is likely ok, because fields that could contain infinity, are [0, inf)
         and mask is -1.
-        '''
+        """
         for i in INFINITY_KEYS:
             if getattr(self.settings, i, None) == INFINITY_FLOAT:
                 setattr(self.settings, i, INFINITY_MASK)
@@ -164,28 +189,38 @@ class TestSet(DocType):
                     kwargs["settings"][i] = INFINITY_MASK
                 if kwargs["settings_default"][i] == INFINITY_FLOAT:
                     kwargs["settings_default"][i] = INFINITY_MASK
-        return super(TestSet, self).save(**kwargs)
 
     def __str__(self):
+        """Return a string description of the testset object."""
         return "TestSet {}".format(self.filename)
 
     @property
     def get_uploader(self):
+        """Return original uploader TestSet object."""
         if self.uploader is not None:
             return self.uploader
         else:
             return self.run_initiator
 
     def get_filename(self, ending=".out"):
+        """
+        Return filename of file associated to TestSet object.
+
+        Keyword arguments:
+        ending -- extension of file to get data from (default ".out")
+        """
         if not ending or ending == ".out":
             return self.filename
         else:
             return self.filename.rsplit(".", 1)[0] + ending
 
     def raw(self, ftype=".out"):
-        '''
-        Get the raw data file.
-        '''
+        """
+        Return raw content of file assiociated to TestSet object.
+
+        Keyword arguments:
+        ftype -- extension of file to get data from (default ".out")
+        """
         s = File.search()
         s = s.filter("term", testset_id=self.meta.id)
         s = s.filter("term", type=ftype.lstrip("."))
@@ -197,13 +232,22 @@ class TestSet(DocType):
         return contents
 
     def gzip(self, ftype=".out"):
+        """
+        Return the data contained in the TestSet object in Gzip format.
+
+        Keyword arguments:
+        ftype -- extension of file to get data from (default ".out")
+        """
         data = self.raw(ftype=ftype)
         return gzip.compress(data.encode("utf-8"))
 
     def get_data(self, key=None):
-        '''
-        Get the data of the testrun
-        '''
+        """
+        Get the data of the TestSet.
+
+        Keyword arguments:
+        key -- the key of requested data (default None)
+        """
         if key is None:
             all_instances = {}
             self.load_children()
@@ -257,9 +301,12 @@ class TestSet(DocType):
                     self.lp_solver_version)
 
     def json(self, ftype=".out"):
-        '''
+        """
         Return the data contained in the TestSet object as JSON.
-        '''
+
+        Keyword arguments:
+        ftype -- extension of file to get data from (default ".out")
+        """
         if ftype == ".set":
             output = {}
             for k in list(self.settings):
@@ -289,35 +336,35 @@ class TestSet(DocType):
             raise NotImplemented()
 
     def csv(self, ftype=".out"):
-        '''
+        """
         Return the data contained in the TestSet object as CSV.
-        '''
-        # TODO
+
+        Keyword arguments:
+        ftype -- extension of file to get data from (default ".out")
+        """
         raise NotImplemented()
 
     def delete_all_associations(self):
-        '''
-        Delete all children(Result) and associated files(File)
-        '''
+        """Delete all children associated to a TestSet object, i.e. Result and File objects."""
         self.delete_all_children()
         self.delete_all_files()
 
     def delete_all_children(self):
+        """Delete all children (Result objects) associated to a TestSet object."""
         self.load_children()
         for c_name in self.children:
             c = self.children[c_name]
             c.delete()
 
     def delete_all_files(self):
+        """Delete all File objects associated to a TestSet object."""
         self.load_files()
         for ft in self.files:
             f = self.files[ft]
             f.delete()
 
     def load_children(self):
-        '''
-        Get all of the instance results associated with a TestSet.
-        '''
+        """Load all children (Results objects) associated to a TestSet object."""
         s = Result.search()
         # it's generally discouraged to return a large number of elements from a search query
         s = s.filter("term", _parent=self.meta.id)
@@ -328,6 +375,7 @@ class TestSet(DocType):
             self.children[hit.instance_name] = hit
 
     def load_files(self):
+        """Load the files of a TestSet object."""
         s = File.search()
         s = s.filter("term", testset_id=self.meta.id)
 
@@ -337,10 +385,12 @@ class TestSet(DocType):
             self.files[hit.type] = hit
 
     def load_stats(self, subset=[]):
-        '''
-        Loads the statistics for a particular file. Accept a subset of instance names to
-        compute statistics for.
-        '''
+        """
+        Load the statistics of a TestSet object.
+
+        Keyword arguments:
+        subset -- a subset of instance names to compute statistics for (default [])
+        """
         self.stats = {}
         if not hasattr(self, "children"):
             self.load_children()

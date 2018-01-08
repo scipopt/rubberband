@@ -1,11 +1,17 @@
+"""Helper methods for elasticsearch queries."""
 from datetime import datetime, timedelta
 
 
 def get_uniques(model, field):
-    '''
-    Take an elasticsearch model and a field name. The looks up all of the possible values
-    for that field in elasticsearch.
-    '''
+    """
+    Look up all of the possible values for a field in elasticsearch.
+
+    Return all possible values and the 5 most common ones.
+
+    Parameters:
+    model : rubberband.model -- Model to get values from.
+    field : attribute -- Field of model to get values from.
+    """
     body = {'aggs': {'counts': {'terms': {'field': field, 'size': 0}}}}
     response = getattr(model, "search")().from_dict(body).execute()
     values = [i.key for i in response.aggregations.counts.buckets]

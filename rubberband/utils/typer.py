@@ -1,8 +1,12 @@
+"""Methods to convert or estimate types."""
 
 def boolify(value):
-    '''
+    """
     Convert a string to a bool, if not possible, raise a ValueError.
-    '''
+
+    Parameters:
+    value : str -- value to convert.
+    """
     if value.lower() == "true":
         return True
     elif value.lower() == "false":
@@ -11,8 +15,12 @@ def boolify(value):
 
 
 def estimate_type(var):
-    '''
-    Guesses the str representation of the variables type
+    """
+    Guess the string representation of the variables type.
+
+    Parameters:
+    var -- value to estimate type for.
+
     Example:
 
     >>> estimate_type("3.0")
@@ -23,7 +31,7 @@ def estimate_type(var):
     True
     >>> type(estimate_type("true"))
     <class 'bool'>
-    '''
+    """
     var = str(var)
 
     for caster in (boolify, int, float):

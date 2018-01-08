@@ -1,3 +1,4 @@
+"""Methods for importing a TestSet from logfiles."""
 import os
 import json
 import logging
@@ -22,11 +23,15 @@ OPTIONAL_FILES = set([".solu", ".err", ".set", ".meta"])
 
 
 class ResultClient(object):
-    '''
-    Upload and retrieve result files.
-    '''
+    """Organize and process retrieved files."""
 
     def __init__(self, user):
+        """
+        Create a ResultClient object for a user.
+
+        Parameters:
+        user : str -- current user
+        """
         if not user:
             raise Exception("Missing user when initiliazing client.")
 
@@ -38,9 +43,13 @@ class ResultClient(object):
         self.tags = []
 
     def reimport_files(self, paths, testset):
-        '''
-        Reimport file bundle
-        '''
+        """
+        Reimport file bundle.
+
+        Parameters:
+        paths : dict str -- dictionary of filenames
+        testset : TestSet -- already existing TestSet in Rubberband
+        """
         self.metadata = ImportStats("results")
         self.remove_files = True
         try:
@@ -52,9 +61,17 @@ class ResultClient(object):
         return self.metadata
 
     def process_files(self, paths, tags=[], remove=True, expirationdate=None):
-        '''
-        Process files, one at a time. Accepts a list.
-        '''
+        """
+        Process filebundle and import to rubberband.
+
+        Parameters:
+        paths : list str -- list of filenames
+
+        Keyword parameters:
+        tags : list -- tags to add to TestSet (default [])
+        remove : bool -- remove raw uploaded files from server (default True)
+        expirationdate : str in date form -- Date after which data can be purged from elasticsearch (default: None)
+        """
         # TODO: maybe check for reasonable expdate?
         # This gets called by both the apiupload and the webupload
         self.metadata = ImportStats("results")
@@ -72,14 +89,20 @@ class ResultClient(object):
         return self.metadata
 
     def parse_file_bundle(self, bundle, expirationdate=None, initial=True, testset=None):
-        '''
-        Internal method that parses a single file bundle. The bundle is a tuple of strings (paths).
+        """
+        Internal method that parses a single file bundle.
 
-        A bundle should contain the following files:
-            \*.out
+        The bundle is a tuple of strings (paths).
+        A bundle should contain the following files: .out (.solu, .err, .set, .meta)
 
-        Optionally, the bundle could also contain a .set, .meta, .err and .solu file.
-        '''
+        Parameters:
+        bundle : list str -- list of filenames
+
+        Keyword arguments:
+        expirationdate : str in date form -- Date after which data can be purged from elasticsearch (default: None)
+        initial : bool -- indicate if the testset is parsed the first time or already exists (default: None)
+        testset : TestSet -- TestSet if already existing (default: None)
+        """
         # validate and organize files
         self.files = self.validate_and_organize_files(bundle)
 
@@ -128,10 +151,14 @@ class ResultClient(object):
         self._log_info("Finished!")
 
     def get_results_data(self, data):
-        '''
-        Denormalize ipet data
-        '''
+        """
+        Denormalize IPET data.
 
+        Parameters:
+        data : dict dict -- Data from IPET
+
+        Return modified data dict dict.
+        """
         results = {}
         instances = data["SolvingTime"].keys()
 
@@ -163,9 +190,12 @@ class ResultClient(object):
         return results.values()
 
     def _log_failure(self, message):
-        '''
-        Keep track of import failures
-        '''
+        """
+        Keep track of import failures.
+
+        Parameters:
+        message : str -- Message to log.
+        """
         self.logger.error(message)
         if not hasattr(self, "files"):
             self.metadata.logMessage("_", message)
@@ -174,13 +204,27 @@ class ResultClient(object):
         self.metadata.fail += 1
 
     def _log_info(self, message):
-        '''
-        Keep track of import failures
-        '''
+        """
+        Keep track of import events.
+
+        Parameters:
+        message : str -- Message to log.
+        """
         self.logger.info(message)
         self.metadata.logMessage(self.files[".out"], message)
 
     def get_file_data(self, data, settings=None, expirationdate=None, metadata={}):
+        """
+        Get data about file.
+
+        Parameters:
+        data : dict -- data in json format from ipet
+
+        Keyword parameters:
+        settings -- Parameterdata dictionary from ipet (default: None)
+        expirationdate : str in date form -- Date after which data can be purged from elasticsearch (default: None)
+        metadata -- Metadata dictionary from IPET (default: {})
+        """
         # settings is a tuple
         # data is 'data' DataFrame from ipet.TestRun
         # for scip these data is available
@@ -294,6 +338,14 @@ class ResultClient(object):
         return file_data
 
     def parse_info_from_filename(self, files):
+        """
+        Parse information from filename.
+
+        Parameters:
+        files : dict -- Files to parse from. Should contain ".out".
+
+        Return : dict of information about build options.
+        """
         filename = os.path.basename(self.files[".out"])
         rogue_string = ".zib.de"
         file_path_clean = filename.replace(rogue_string, "")
@@ -308,9 +360,14 @@ class ResultClient(object):
         return info
 
     def validate_and_organize_files(self, list_of_files):
-        '''
+        """
         Ensure files are of the correct type and readable.
-        '''
+
+        Parameters:
+        list_of_files : list -- List of filenames.
+
+        Return : dict str of filenames that are correct and readable.
+        """
         required_files = {key: None for key in REQUIRED_FILES}
         optional_files = {key: None for key in OPTIONAL_FILES}
 
@@ -360,9 +417,16 @@ class ResultClient(object):
         return required_files
 
     def save_structured_data(self, file_level_data, instance_level_data, testset=None):
-        '''
+        """
         Save TestSet and Result model instances in Elasticsearch.
-        '''
+
+        Parameters:
+        file_level_data : dict -- Data about TestSet (the whole TestRun)
+        instance_level_data -- Data of individual instances
+
+        Keyword parameters:
+        testset : TestSet -- (default: None)
+        """
         try:
             # save parent
             if testset is None:
@@ -403,9 +467,7 @@ class ResultClient(object):
         self.metadata.setUrl("/result/{}".format(self.testset_meta_id))
 
     def backup_files(self):
-        '''
-        Save all of the file contents in Elasticsearch.
-        '''
+        """Save all file contents in Elasticsearch."""
         # remove solu file from checkin
         self.files.pop(".solu")
         for ftype, f in self.files.items():
@@ -435,6 +497,13 @@ class ResultClient(object):
         self._log_info("{} file bundle backed up in Elasticsearch.".format(self.files[".out"]))
 
     def get_data_from_ipet(self):
+        """
+        Import data from IPET.
+
+        Create ipet.experiment, add files and execute ipet.collectData.
+
+        Return : ipet.testrun object
+        """
         try:
             c = Experiment()
 
@@ -486,11 +555,11 @@ class ResultClient(object):
         return testruns[0]
 
     def file_lookup(self):
-        '''
-        Uses the file_id (sha256 hash) to determine if a file is already existing in elasticsearch.
+        """
+        Use the file_id (sha256 hash) to determine if a file is already existing in elasticsearch.
 
         Return None if not found.
-        '''
+        """
         # this should not happen
         if hasattr(self, "testset_meta_id"):
             f = TestSet.get(id=self.testset_meta_id)
@@ -510,10 +579,17 @@ class ResultClient(object):
 
 
 def _determine_type(inst):
-    '''
-    Determine the problem type. This code was adapted from check/check.awk
+    """
+    Determine the problem type of a given Result.
+
+    This code was adapted from check/check.awk
     Possible return values: MIQCP, MINLP, QCP, NLP, CIP, LP, BP, IP MBP, MIP
-    '''
+
+    Parameters:
+    inst : Result -- Result instance to determine type for.
+
+    Return : str
+    """
     initvariables = inst.get("OriginalProblem_Vars") or 0
 
     # the original problem had no variables, so parsing probably went wrong
@@ -562,6 +638,14 @@ def _determine_type(inst):
 
 
 def most_frequent_value(data, key):
+    """
+    Find most frequent value in data[key].
+
+    Parameters:
+    data : dict -- dictionary containing lists of values.
+    key : key -- key to search for
+    Return : value
+    """
     if key not in data.keys():
         return None
     d = data[key]
