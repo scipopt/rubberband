@@ -1,3 +1,4 @@
+"""Define variables and setup rubberband app."""
 import os
 import logging
 
@@ -38,8 +39,22 @@ define("smtp_username", default="", help="The username for SMTP authentication."
 define("smtp_password", default="", help="The password for SMTP authentication.")
 
 
-# this is being called from server.py, also from bin/rubberband-ctl
 def make_app(project_root):
+    """
+    Construct the rubberband app.
+
+    This method is being called from server.py, also from bin/rubberband-ctl.
+
+    Parameters
+    ----------
+    project_root : str
+        Root path of rubberband source code.
+
+    Returns
+    -------
+    app
+        the rubberband app
+    """
     # init logger
     logging.basicConfig(level=logging.DEBUG,
             format='%(asctime)s %(levelname)-5s %(name)-15s %(message)s',

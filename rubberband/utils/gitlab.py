@@ -11,11 +11,17 @@ def get_commit_data(project_id, git_hash):
     """
     Get commit information from the git hash.
 
-    Parameters:
-    project_id : int -- Id of project in gitlab.
-    git_hash : str -- Githash of commit to look up.
+    Parameters
+    ----------
+    project_id : int
+        Id of project in gitlab.
+    git_hash : str
+        Githash of commit to look up.
 
-    Return : commit object
+    Returns
+    -------
+    commit object
+        requested commit
     """
     if git_hash.endswith("-dirty"):
         git_hash = git_hash.rstrip("-dirty")
@@ -30,10 +36,15 @@ def get_username(query_string):
     """
     Get the gitlab/internal username from a search term (full name, email, etc).
 
-    Parameters:
-    query_string : str -- String to search for.
+    Parameters
+    ----------
+    query_string : str
+        String to search for.
 
-    Return : str
+    Returns
+    -------
+    str
+        username
     """
     client = Gitlab(options.gitlab_url, options.gitlab_private_token)
     authors = client.users.search(query_string)

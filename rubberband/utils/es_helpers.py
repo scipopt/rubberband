@@ -6,11 +6,16 @@ def get_uniques(model, field):
     """
     Look up all of the possible values for a field in elasticsearch.
 
-    Return all possible values and the 5 most common ones.
+    Parameters
+    ----------
+    model : rubberband.model
+        Model to get values from.
+    field : attribute
+        Field of model to get values from.
 
-    Parameters:
-    model : rubberband.model -- Model to get values from.
-    field : attribute -- Field of model to get values from.
+    Returns
+    -------
+        all possible values and the 5 most common ones.
     """
     body = {'aggs': {'counts': {'terms': {'field': field, 'size': 0}}}}
     response = getattr(model, "search")().from_dict(body).execute()

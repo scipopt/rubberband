@@ -9,8 +9,10 @@ class ImportStats(object):
         """
         Initialize an ImportStats object.
 
-        Parameters:
-        collection -- name for the object
+        Parameters
+        ----------
+        collection
+            name for the object
         """
         self.collection = collection
         self.fail = 0
@@ -22,9 +24,12 @@ class ImportStats(object):
         """
         Store (or log) message under field identifier.
 
-        Parameters:
-        identifier - Identifier to store message under.
-        msg : str - Message to store.
+        Parameters
+        ----------
+        identifier
+            Identifier to store message under.
+        msg : str
+            Message to store.
         """
         self.messages[identifier].append(msg)
 
@@ -36,8 +41,10 @@ class ImportStats(object):
         """
         Store the url.
 
-        Parameters:
-        url : str -- Url to store
+        Parameters
+        ----------
+        url : str
+            Url to store
         """
         self.url = url
 

@@ -10,9 +10,12 @@ def sendmail(message, recipient):
     """
     Send an email.
 
-    Parameters:
-    message : str -- Message to send.
-    recipient : str -- Recipient of mail.
+    Parameters
+    ----------
+    message : str
+        Message to send.
+    recipient : str
+        Recipient of mail.
     """
     msg = MIMEText(json.dumps(message))
 

@@ -1,13 +1,18 @@
+"""Contains CompareView."""
 from .base import BaseHandler
 from rubberband.models import TestSet
 from rubberband.handlers.fe.search import get_options
 
 
 class CompareView(BaseHandler):
+    """Request handler caring about comparison of more than one TestRun."""
+
     def get(self):
-        '''
-        this is the ordinary view
-        '''
+        """
+        Answer to GET requests.
+
+        Renders `compare.html`.
+        """
         options = get_options()
 
         base_id = self.get_argument("base", None)
@@ -22,9 +27,13 @@ class CompareView(BaseHandler):
                 search_options=options, rendered_results_table=rrt)
 
     def post(self):
-        '''
-        post requests for compareview, receives selection of instances to comparison
-        '''
+        """
+        Answer to POST requests.
+
+        Gets called when the user clicks on "change comparison base".
+        Organizes instances and constructs url.
+        Redirects to CompareView.get().
+        """
         # compares contains the meta ids of all TestSets that should be compared, base among these
         compares = list(self.request.arguments.keys())
         base = self.get_argument("base", None)

@@ -1,11 +1,18 @@
+"""Contains DisplayView."""
 from .base import BaseHandler
 from rubberband.constants import IPET_EVALUATIONS
 
 
 class DisplayView(BaseHandler):
+    """Request handler caring about the display of files."""
 
-    # displays a file, api backend
     def get(self, mode, id):
+        """
+        Answer to GET requests.
+
+        Writes a file.
+        Gives an error if the file does not exists.
+        """
         # display evalfile
         if mode == "eval":
             ipeteval = IPET_EVALUATIONS[int(id)]

@@ -1,3 +1,4 @@
+"""Common class to derive all rubberband request handlers from."""
 from collections import Iterable
 from datetime import datetime
 from tornado.web import RequestHandler
@@ -9,13 +10,28 @@ from rubberband.constants import NONE_DISPLAY, INFINITY_KEYS, \
 
 
 class BaseHandler(RequestHandler):
-    '''
-    Custom overrides.
-    '''
+    """Custom overrides."""
+
     def get_rb_url(self):
+        """
+        Url where the rubberband instance lives.
+
+        Returns
+        -------
+        str
+            the rubberband url
+        """
         return self.request.protocol + "://" + self.request.host + self.request.uri
 
     def get_current_user(self):
+        """
+        Get the name of the User that sent the request.
+
+        Returns
+        -------
+        str
+            Current user
+        """
         if not self.settings["debug"]:
             # self.request is single HTTP requestobject of type 'tornado.httputil.HTTPServerRequest'
             headers = dict(self.request.headers.get_all())
@@ -24,6 +40,19 @@ class BaseHandler(RequestHandler):
             return "debug"
 
     def get_cookie(self, name="_oauth2_proxy"):
+        """
+        Get the cookie from the request.
+
+        Parameters
+        ----------
+        name : str
+            The name of the cookie
+
+        Returns
+        -------
+        str
+            The value of the cookie.
+        """
         if not self.settings["debug"]:
             cookie_val = self.request.cookies.get(name).value
             return cookie_val
@@ -31,6 +60,18 @@ class BaseHandler(RequestHandler):
             return None
 
     def write_error(self, status_code, msg="", **kwargs):
+        """
+        Send an error page back to the user.
+
+        Parameters
+        ----------
+        status_code : int
+            The status code of the error to be written.
+        msg : str
+            The message to be printed (default "").
+        kwargs : keyword arguments
+            keyword arguments for `traceback.format_exception`
+        """
         if status_code == 400:
             self.render("400.html", msg=msg)
             return
@@ -44,7 +85,7 @@ class BaseHandler(RequestHandler):
             return
 
     def get_template_namespace(self):
-        """Returns a dictionary to be used as the default template namespace.
+        """Return a dictionary to be used as the default template namespace.
 
         May be overridden by subclasses to add or modify values.
 
@@ -76,9 +117,19 @@ class BaseHandler(RequestHandler):
         return namespace
 
     def format_type(self, obj, attr):
-        '''
-        Return (null) type (attributes attr of obj).
-        '''
+        """
+        Return type of attribute of obj.
+
+        Parameters
+        ----------
+        obj : object
+        attr : attribute of obj
+
+        Returns
+        -------
+        str
+            type of attr of obj or ""
+        """
         if attr in ["instance_type", "OriginalProblem_InitialNCons"]:
             return "text"
         if attr in ["OriginalProblem_Vars", "PresolvedProblem_InitialNCons", "PresolvedProblem_Vars", "DualBound", "PrimalBound", "Gap", "Iterations", "Nodes", "TotalTime_solving"]:
@@ -91,13 +142,22 @@ class BaseHandler(RequestHandler):
         return ""
 
     def format_attr(self, obj, attr):
-        '''
-        Format (null) values (attributes attr of obj).
+        """
+        Format values (attributes attr of obj).
+
         Value gets properly formatted if attr is a single attribute.
         If attr is a list, the keys are concatenated with " ".
 
-        attr: key or list of keys
-        '''
+        Parameters
+        ----------
+        obj : object
+        attr: key or list of keys of obj
+
+        Returns
+        -------
+        str
+            type of attr of obj
+        """
         if isinstance(attr, list):
             value = []
             for i in attr:
@@ -133,14 +193,19 @@ class BaseHandler(RequestHandler):
             return NONE_DISPLAY
 
     def get_objsen(self, objs, inst_name):
-        '''
-        Return the objective sense based on the fields Objsense, PrimalBound, DualBound
-        maximize: -1 (pb <= db)
-        minimize: 1  (pb >= db)
+        """
+        Return the objective sense based on the fields Objsense, PrimalBound, DualBound.
 
+        Parameters
+        ----------
         objs: set/list of TestSets
         inst_name: instance/problem name
-        '''
+
+        Returns
+        -------
+        int
+            -1 if obj is a maximation problem (pb <= db), 1 if minimization (pb >= db), 0 else
+        """
         objsen = None
         for o in objs:
             objsen = getattr(o.children[inst_name], "Objsense", None)
@@ -161,14 +226,20 @@ class BaseHandler(RequestHandler):
         return 0
 
     def format_attrs(self, objs, attr, inst_name):
-        '''
-        Return sorted attribute (attr) of an instance (inst_name)
-        from multiple TestSets (objs) as a formatted string separated by newlines.
+        """
+        Return sorted attribute (attr) of an instance (inst_name) from multiple TestSets (objs) as a formatted string separated by newlines.
 
+        Parameters
+        ----------
         objs: set/list of TestSets
         attr: attribute
         inst_name: instance/problem name
-        '''
+
+        Returns
+        -------
+        str
+            all atributes formatted
+        """
         attr_str = []
         for o in objs:
             val = self.format_attr(o.children[inst_name], attr)
@@ -182,9 +253,20 @@ class BaseHandler(RequestHandler):
         return "\n".join(map(str, partial_list))
 
     def are_equivalent(self, one, two, attr):
-        '''
+        """
         Decide if the data in attr is the same in both TestSets one and two.
-        '''
+
+        Parameters
+        ----------
+        one : TestSet
+        two : TestSet
+        attr : attributes of one and two
+
+        Returns
+        -------
+        bool
+            Decide if a i
+        """
         a = self.format_attr(one, attr)
         b = self.format_attr(two, attr)
         return a == b

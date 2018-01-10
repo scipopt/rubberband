@@ -1,3 +1,4 @@
+"""URL routes for rubberband tornado app."""
 import rubberband.handlers.fe as fe
 import rubberband.handlers.api as api
 

@@ -29,8 +29,10 @@ class ResultClient(object):
         """
         Create a ResultClient object for a user.
 
-        Parameters:
-        user : str -- current user
+        Parameters
+        ----------
+        user : str
+            current user
         """
         if not user:
             raise Exception("Missing user when initiliazing client.")
@@ -46,9 +48,12 @@ class ResultClient(object):
         """
         Reimport file bundle.
 
-        Parameters:
-        paths : dict str -- dictionary of filenames
-        testset : TestSet -- already existing TestSet in Rubberband
+        Parameters
+        ----------
+        paths : dict str
+            dictionary of filenames
+        testset : TestSet
+            already existing TestSet in Rubberband
         """
         self.metadata = ImportStats("results")
         self.remove_files = True
@@ -64,13 +69,16 @@ class ResultClient(object):
         """
         Process filebundle and import to rubberband.
 
-        Parameters:
-        paths : list str -- list of filenames
-
-        Keyword parameters:
-        tags : list -- tags to add to TestSet (default [])
-        remove : bool -- remove raw uploaded files from server (default True)
-        expirationdate : str in date form -- Date after which data can be purged from elasticsearch (default: None)
+        Parameters
+        ----------
+        paths : list str
+            list of filenames
+        tags : list
+            tags to add to TestSet (default [])
+        remove : bool
+            remove raw uploaded files from server (default True)
+        expirationdate : str in date form
+            Date after which data can be purged from elasticsearch (default: None)
         """
         # TODO: maybe check for reasonable expdate?
         # This gets called by both the apiupload and the webupload
@@ -95,13 +103,16 @@ class ResultClient(object):
         The bundle is a tuple of strings (paths).
         A bundle should contain the following files: .out (.solu, .err, .set, .meta)
 
-        Parameters:
-        bundle : list str -- list of filenames
-
-        Keyword arguments:
-        expirationdate : str in date form -- Date after which data can be purged from elasticsearch (default: None)
-        initial : bool -- indicate if the testset is parsed the first time or already exists (default: None)
-        testset : TestSet -- TestSet if already existing (default: None)
+        Parameters
+        ----------
+        bundle : list str
+            list of filenames
+        expirationdate : str in date form
+            Date after which data can be purged from elasticsearch (default: None)
+        initial : bool
+            indicate if the testset is parsed the first time or already exists (default: None)
+        testset : TestSet
+            TestSet if already existing (default: None)
         """
         # validate and organize files
         self.files = self.validate_and_organize_files(bundle)
@@ -154,10 +165,15 @@ class ResultClient(object):
         """
         Denormalize IPET data.
 
-        Parameters:
-        data : dict dict -- Data from IPET
+        Parameters
+        ----------
+        data : dict dict
+            Data from IPET
 
-        Return modified data dict dict.
+        Returns
+        -------
+        dict dict
+            modified data
         """
         results = {}
         instances = data["SolvingTime"].keys()
@@ -193,8 +209,10 @@ class ResultClient(object):
         """
         Keep track of import failures.
 
-        Parameters:
-        message : str -- Message to log.
+        Parameters
+        ----------
+        message : str
+            Message to log.
         """
         self.logger.error(message)
         if not hasattr(self, "files"):
@@ -207,8 +225,10 @@ class ResultClient(object):
         """
         Keep track of import events.
 
-        Parameters:
-        message : str -- Message to log.
+        Parameters
+        ----------
+        message : str
+            Message to log.
         """
         self.logger.info(message)
         self.metadata.logMessage(self.files[".out"], message)
@@ -217,13 +237,16 @@ class ResultClient(object):
         """
         Get data about file.
 
-        Parameters:
-        data : dict -- data in json format from ipet
-
-        Keyword parameters:
-        settings -- Parameterdata dictionary from ipet (default: None)
-        expirationdate : str in date form -- Date after which data can be purged from elasticsearch (default: None)
-        metadata -- Metadata dictionary from IPET (default: {})
+        Parameters
+        ----------
+        data : dict
+            data in json format from ipet
+        settings
+            Parameterdata dictionary from ipet (default: None)
+        expirationdate : str in date form
+            Date after which data can be purged from elasticsearch (default: None)
+        metadata
+            Metadata dictionary from IPET (default: {})
         """
         # settings is a tuple
         # data is 'data' DataFrame from ipet.TestRun
@@ -341,10 +364,14 @@ class ResultClient(object):
         """
         Parse information from filename.
 
-        Parameters:
-        files : dict -- Files to parse from. Should contain ".out".
+        Parameters
+        ----------
+        files : dict
+            Files to parse from. Should contain ".out".
 
-        Return : dict of information about build options.
+        Returns
+        -------
+            dict of information about build options.
         """
         filename = os.path.basename(self.files[".out"])
         rogue_string = ".zib.de"
@@ -363,10 +390,14 @@ class ResultClient(object):
         """
         Ensure files are of the correct type and readable.
 
-        Parameters:
-        list_of_files : list -- List of filenames.
+        Parameters
+        ----------
+        list_of_files : list
+            List of filenames.
 
-        Return : dict str of filenames that are correct and readable.
+        Returns
+        -------
+            dict str of filenames that are correct and readable.
         """
         required_files = {key: None for key in REQUIRED_FILES}
         optional_files = {key: None for key in OPTIONAL_FILES}
@@ -420,12 +451,14 @@ class ResultClient(object):
         """
         Save TestSet and Result model instances in Elasticsearch.
 
-        Parameters:
-        file_level_data : dict -- Data about TestSet (the whole TestRun)
-        instance_level_data -- Data of individual instances
-
-        Keyword parameters:
-        testset : TestSet -- (default: None)
+        Parameters
+        ----------
+        file_level_data : dict
+            Data about TestSet (the whole TestRun)
+        instance_level_data
+            Data of individual instances
+        testset : TestSet
+            (default: None)
         """
         try:
             # save parent
@@ -502,7 +535,9 @@ class ResultClient(object):
 
         Create ipet.experiment, add files and execute ipet.collectData.
 
-        Return : ipet.testrun object
+        Returns
+        -------
+        ipet.testrun object
         """
         try:
             c = Experiment()
@@ -585,10 +620,14 @@ def _determine_type(inst):
     This code was adapted from check/check.awk
     Possible return values: MIQCP, MINLP, QCP, NLP, CIP, LP, BP, IP MBP, MIP
 
-    Parameters:
-    inst : Result -- Result instance to determine type for.
+    Parameters
+    ----------
+    inst : Result
+        Result instance to determine type for.
 
-    Return : str
+    Returns
+    -------
+    str
     """
     initvariables = inst.get("OriginalProblem_Vars") or 0
 
@@ -641,10 +680,16 @@ def most_frequent_value(data, key):
     """
     Find most frequent value in data[key].
 
-    Parameters:
-    data : dict -- dictionary containing lists of values.
-    key : key -- key to search for
-    Return : value
+    Parameters
+    ----------
+    data : dict
+        dictionary containing lists of values.
+    key : key
+        key to search for
+
+    Returns
+    -------
+    value
     """
     if key not in data.keys():
         return None

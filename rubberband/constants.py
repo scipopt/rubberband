@@ -1,3 +1,5 @@
+"""Define constants used by rubberband."""
+
 INFINITY_KEYS = ("separating/flowcover/maxslackroot", "separating/flowcover/maxslack",
                  "heuristics/undercover/maxcoversizeconss")
 INFINITY_MASK = -1
