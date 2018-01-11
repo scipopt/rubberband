@@ -1,3 +1,4 @@
+"""Contains RequestHandlers for Webinterface."""
 from .fourohfour import FourOhFourView  # noqa
 from .compare import CompareView  # noqa
 from .instance import InstanceView, InstanceNamesEndpoint, InstanceEndpoint  # noqa

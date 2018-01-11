@@ -1,3 +1,4 @@
+"""Contains SearchView."""
 from rubberband.models import TestSet
 from rubberband.utils import get_uniques
 from rubberband.handlers.common import search
@@ -5,18 +6,26 @@ from .base import BaseHandler
 
 
 class SearchView(BaseHandler):
+    """Request handler handling the search."""
+
     def get(self):
-        '''
-        this is the ordinary view
-        '''
+        """
+        Answer to GET requests.
+
+        The initial search view, possibly prefilled with query string options.
+        Renders `search_form.html`.
+        """
         options = get_options()
 
         self.render("search_form.html", page_title="Search", search_options=options)
 
     def post(self):
-        '''
-        this is the ajax backend that provides the table of results
-        '''
+        """
+        Answer to POST requests, this serves as the ajax backend that provides the results table.
+
+        Searches according to form fields in POST request.
+        Writes `results_table.html`.
+        """
         query = self.fill_query()
         results = search(query)
         exclude = self.get_argument("exclude_testset", default=None)
@@ -27,6 +36,19 @@ class SearchView(BaseHandler):
             results=results, checkboxes=True))
 
     def fill_query(self, all_fields=None):
+        """
+        Fill out query with from POST data.
+
+        Parameters
+        ----------
+        all_fields : list
+            List of fields that are supposed to be contained in the query.
+
+        Returns
+        -------
+        dict
+            query as dict
+        """
         if all_fields is None:
             all_fields = query_fields + additional_fields
         query = {}
@@ -56,6 +78,19 @@ additional_fields = [
 
 
 def get_options(fields=None):
+    """
+    Get the selection options for the search, the five most used ones and all of them.
+
+    Parameters
+    ----------
+    fields : list
+        List of fields to get the options for
+
+    Returns
+    -------
+    dict
+        Dictionary containing the selection options.
+    """
     if fields is None:
         fields = query_fields
     options = {}

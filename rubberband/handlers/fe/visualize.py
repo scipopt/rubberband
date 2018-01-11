@@ -1,3 +1,4 @@
+"""Contains VisualizeView."""
 import datetime
 from elasticsearch_dsl import Q
 import json
@@ -8,11 +9,15 @@ from rubberband.constants import FORMAT_DATE
 
 
 class VisualizeView(BaseHandler):
+    """Request handler caring about visualization of rubberband data."""
 
     def get(self):
-        '''
+        """
+        Answer to GET requests.
+
         Show the form for the user to enter data that they want to visualize.
-        '''
+        Renders `visualize.html`.
+        """
         # by default show results from the last year
         start_date = (datetime.datetime.now() - datetime.timedelta(days=365)).strftime(FORMAT_DATE)
         end_date = datetime.datetime.now().strftime(FORMAT_DATE)
@@ -21,10 +26,13 @@ class VisualizeView(BaseHandler):
                     default_end_date=end_date)
 
     def post(self):
-        '''
+        """
+        Answer to POST requests.
+
         AJAX endpoint from frontend.
-        Invoked after the user clicked on 'submit' in visualize-view
-        '''
+        Invoked after the user clicked on 'submit' in visualize-view.
+        Write data as json.
+        """
         query_type = self.get_argument('data-type', None)
         query = self.get_argument('data-name', None)
         start_date = self.get_argument('start-date', None)

@@ -1,16 +1,28 @@
+"""Contains UploadView."""
 from rubberband.utils import ResultClient, write_file
 from .base import BaseHandler
 
 
 class UploadView(BaseHandler):
+    """Request handler handling the upload form."""
+
     def get(self):
+        """
+        Answer to GET requests.
+
+        Show the upload form.
+        Renders `upload.html`
+        """
         cookie = self.get_cookie()
         self.render("upload.html", page_title="Upload", msgs=None, cookie=cookie)
 
     def post(self):
-        '''
+        """
+        Answer to POST requests.
+
         The method that the rubberband UI calls to upload files.
-        '''
+        Renders `upload.html` containing log messages about upload.
+        """
         paths = []
         files = self.request.files.get("resultFiles")
         expirationdate = self.get_argument("expirationdate", None)

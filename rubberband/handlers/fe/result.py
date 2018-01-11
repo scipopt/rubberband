@@ -1,3 +1,4 @@
+"""Contains ResultView."""
 from tornado.web import HTTPError
 import logging
 
@@ -8,10 +9,21 @@ from rubberband.constants import EXPORT_FILE_TYPES, IPET_EVALUATIONS
 
 
 class ResultView(BaseHandler):
-    '''
-    Results view
-    '''
+    """Request handler handling the results view."""
+
     def get(self, parent_id):
+        """
+        Answer to GET requests.
+
+        Parameters
+        ----------
+        parent_id
+            Rubberband id of parent
+
+        Returns
+        -------
+
+        """
         # parent id is the first argument: meta id of TestSet
         if not parent_id:
             raise HTTPError(404)
@@ -64,12 +76,24 @@ class ResultView(BaseHandler):
                     evals=IPET_EVALUATIONS)
 
     def post(self, parent_id):
+        """
+        Answer to POST requests.
+
+        Currently do nothing.
+        """
         pass
 
     def put(self, parent_id):
-        '''
-        Update/reimport results (with IPET)
-        '''
+        """
+        Answer to PUT requests.
+
+        Update/Reimport TestSet (with IPET)
+
+        Parameters
+        ----------
+        parent_id
+            id of TestSet to update.
+        """
         t = TestSet.get(id=parent_id)
         t.load_files()
         if "out" not in t.files.to_dict().keys():
@@ -91,10 +115,16 @@ class ResultView(BaseHandler):
         logging.info(msg)
 
     def delete(self, parent_id):
-        '''
-        Delete the TestSet and all associated results in Elasticsearch and Gitlab.
-        called by DELETE request
-        '''
+        """
+        Answer to DELETE requests.
+
+        Delete the TestSet and all associated Results in Elasticsearch.
+
+        Parameters
+        ----------
+        parent_id
+            id of TestSet to delete.
+        """
         user = self.get_current_user()
 
         # remove from db
@@ -107,6 +137,19 @@ class ResultView(BaseHandler):
 
 
 def load_testsets(ids):
+    """
+    Load TestSets and their associated Results.
+
+    Parameters
+    ----------
+    ids : list
+        List of ids of TestSets
+
+    Returns
+    -------
+    list
+        List of TestSets
+    """
     tss = []
     for id in ids:
         t = TestSet.get(id=id)
@@ -117,6 +160,19 @@ def load_testsets(ids):
 
 
 def get_same_status(runs):
+    """
+    Get a list of instance names that have the same status in all given TestSets.
+
+    Parameters
+    ----------
+    runs
+        set of TestSets
+
+    Returns
+    -------
+    list
+        list of names of instances whose status is the same in all TestSets.
+    """
     instances = runs[0].children.to_dict()
     final_instances = set([])
     for i in instances:
@@ -133,9 +189,20 @@ def get_same_status(runs):
 
 
 def get_intersection_difference(runs):
-    '''
-    Get the intersection and difference of the list of lists.
-    '''
+    """
+    Get the intersection and difference of a list of lists.
+
+    Parameters
+    ----------
+    runs
+        set of TestSets
+
+    Returns
+    -------
+    dict
+        Key "intersection" : list of Results present in all given TestSets,
+        Key "difference" : list of Results present in at least one given TestSet but not in all.
+    """
     intersection = set(runs[0])
     difference = set()
 
