@@ -178,6 +178,7 @@ def get_column_formatters(df):
             formatters[p] = lambda x: "%.0f" % x
     return formatters
 
+
 def insert_into_latex(body, url):
     """
     Surround a latex table body by a latex header and footer.
@@ -208,7 +209,8 @@ def insert_into_latex(body, url):
 \end{table}
 
 """
-    return latex_table_top + out + latex_table_bottom + "%% " + url
+    return latex_table_top + body + latex_table_bottom + "%% " + url
+
 
 def get_replacement_dict(cols, colindex):
     """
@@ -257,6 +259,7 @@ def get_replacement_dict(cols, colindex):
     repl['- & \multi'] = "  & \multi"
     return repl
 
+
 def setup_experiment(testruns):
     """
     Setup an ipet experiment for the given testruns.
@@ -278,6 +281,7 @@ def setup_experiment(testruns):
     ex = Experiment()
     count = 0
     repres = {}
+    results = []
     # get data
     for t in testruns:
         # collect result

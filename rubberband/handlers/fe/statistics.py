@@ -11,7 +11,8 @@ class StatisticsView(BaseHandler):
         """
         Answer to GET requests.
 
-        Shows the custom statistics page, where the user can request custom statistics and sees the results.
+        Shows the custom statistics page, where the user can request custom statistics and sees
+        the results.
         Can be requested prefilled with query parameters.
         Renders `statistics.html`
 

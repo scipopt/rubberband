@@ -158,7 +158,7 @@ class TestSet(DocType):
         Keyword arguments
         kwargs -- keyword arguments
         """
-        mask_infinities(**kwargs)
+        self.mask_infinities(**kwargs)
         return super(TestSet, self).update(**kwargs)
 
     def save(self, **kwargs):
@@ -168,7 +168,7 @@ class TestSet(DocType):
         Keyword arguments
         kwargs -- keyword arguments
         """
-        mask_infinities(**kwargs)
+        self.mask_infinities(**kwargs)
         return super(TestSet, self).save(**kwargs)
 
     def mask_infinities(self, **kwargs):

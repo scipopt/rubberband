@@ -1,3 +1,4 @@
+"""Baseclass for tests."""
 import os
 from tornado.testing import AsyncHTTPTestCase
 
@@ -11,5 +12,8 @@ app = make_app(PACKAGE_ROOT)
 
 
 class TestHandlerBase(AsyncHTTPTestCase):
+    """Test class that all tests will inherit from."""
+
     def get_app(self):
+        """Return the application."""
         return app

@@ -1,10 +1,6 @@
 """Methods to use for the communication with gitlab."""
-import gzip
 from tornado.options import options
-from base64 import b64encode
 from gitlab import Gitlab
-import requests
-import logging
 
 
 def get_commit_data(project_id, git_hash):

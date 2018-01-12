@@ -1,4 +1,4 @@
-"""Common class to derive all rubberband request handlers from."""
+"""Common class to derive all rubberband web request handlers from."""
 from collections import Iterable
 from datetime import datetime
 from tornado.web import RequestHandler
@@ -132,7 +132,9 @@ class BaseHandler(RequestHandler):
         """
         if attr in ["instance_type", "OriginalProblem_InitialNCons"]:
             return "text"
-        if attr in ["OriginalProblem_Vars", "PresolvedProblem_InitialNCons", "PresolvedProblem_Vars", "DualBound", "PrimalBound", "Gap", "Iterations", "Nodes", "TotalTime_solving"]:
+        if attr in ["OriginalProblem_Vars", "PresolvedProblem_InitialNCons",
+                "PresolvedProblem_Vars", "DualBound", "PrimalBound", "Gap", "Iterations",
+                "Nodes", "TotalTime_solving"]:
             return "number"
         value = getattr(obj, attr, None)
         if isinstance(value, str):
@@ -227,7 +229,7 @@ class BaseHandler(RequestHandler):
 
     def format_attrs(self, objs, attr, inst_name):
         """
-        Return sorted attribute (attr) of an instance (inst_name) from multiple TestSets (objs) as a formatted string separated by newlines.
+        Return sorted attribute (attr) of an instance (inst_name) from multiple TestSets (objs).
 
         Parameters
         ----------
@@ -238,7 +240,7 @@ class BaseHandler(RequestHandler):
         Returns
         -------
         str
-            all atributes formatted
+            a formatted string separated by newlines.
         """
         attr_str = []
         for o in objs:

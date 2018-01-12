@@ -1,12 +1,22 @@
+"""Contains Search api endpoint."""
 import json
 
 from rubberband.handlers.common import search
 from rubberband.models import date_handler
-from .base import BaseHandler
+from .base import BaseHandler, authenticated
 
 
 class SearchEndpoint(BaseHandler):
+    """Request handler handling the search."""
+
+    @authenticated
     def get(self):
+        """
+        Answer to GET requests.
+
+        The initial search view, possibly prefilled with query string options.
+        Renders `search_form.html`.
+        """
         query_fields = [
             "test_set",
             "mode",

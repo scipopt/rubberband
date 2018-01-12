@@ -1,7 +1,21 @@
+"""Common methods for request handlers."""
 from rubberband.models import TestSet
 
 
 def search(query):
+    """
+    Execute a search to elasticsearch database, gives by default the 100 first results.
+
+    Parameters
+    ----------
+    query : dict
+        Search parameters
+
+    Results
+    -------
+    Response
+        elasticsearch-dsl Response object
+    """
     s = TestSet.search()
 
     if "tags" in query:

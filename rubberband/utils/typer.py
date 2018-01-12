@@ -1,5 +1,6 @@
 """Methods to convert or estimate types."""
 
+
 def boolify(value):
     """
     Convert a string to a bool, if not possible, raise a ValueError.
