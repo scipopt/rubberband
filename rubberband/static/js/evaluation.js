@@ -1,4 +1,3 @@
-
 // global variables
 button1 = document.getElementById("ipet-eval-button");
 button2 = document.getElementById("ipet-eval-show-button");
@@ -38,7 +37,6 @@ function formatIpetTable() {
         scrollY: '80vh',
         scrollX: true,
         scroller: true,
-        ordering: false,
         scrollCollapse: true,
         paging:         false,
         fixedColumns:   {

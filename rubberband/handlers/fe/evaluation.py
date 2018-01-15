@@ -76,9 +76,9 @@ class EvaluationView(BaseHandler):
             html_long, style_long = table_to_html(longtable, ev, add_class="ipet-long-table")
             html_agg, style_agg = table_to_html(aggtable, ev, add_class="ipet-aggregated-table")
 
-            html_long = process_ipet_table(html_long, repres["short"]) + \
+            html_long = process_ipet_table(html_long, repres["short"], add_ind=False) + \
                 html.tostring(style_long).decode("utf-8")
-            html_agg = process_ipet_table(html_agg, repres["long"]) + \
+            html_agg = process_ipet_table(html_agg, repres["long"], add_ind=True) + \
                 html.tostring(style_agg).decode("utf-8")
 
             # render to strings
@@ -318,7 +318,7 @@ def setup_experiment(testruns):
     return ex, results, repres
 
 
-def process_ipet_table(table, repres):
+def process_ipet_table(table, repres, add_ind=False):
     """
     Make some modifications to the html structure.
 
@@ -330,6 +330,8 @@ def process_ipet_table(table, repres):
         html structure of table
     repres : dict
         Replacement dictionary, `key` -> `value`
+    add_ind : bool
+        Add indices to rows
 
     Returns
     -------
@@ -338,9 +340,15 @@ def process_ipet_table(table, repres):
     """
     # split rowspan cells from the tables to enable js datatable
     table_rows = [e for e in table.find(".//tbody").iter() if e.tag == "tr" or e.tag == "th"]
+    groupcount = 1
+    oldtext = ""
     for row in table_rows:
         cellcount = 0
         for cell in row.iter():
+            if add_ind and cellcount == 1 and cell.tag == "th" and cell.text != oldtext:
+                cell.text = str(groupcount) + ". " + cell.text
+                oldtext = cell.text
+                groupcount = groupcount + 1
             rowspan = cell.get("rowspan")
             if rowspan is not None:
                 del cell.attrib["rowspan"]
