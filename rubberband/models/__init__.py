@@ -72,8 +72,10 @@ class Result(DocType):
         """
         Return a log of Result object from logfile.
 
-        Keyword arguments:
-        ftype -- extension of file to get data from (default ".out")
+        Parameters
+        ----------
+        ftype : str
+            extension of file to get data from (default ".out")
         """
         parent = TestSet.get(id=self.meta.parent)
         whole_file = parent.raw(ftype=".out")
@@ -90,8 +92,10 @@ class Result(DocType):
         """
         Return a data of Result object from logfile in JSON format.
 
-        Keyword arguments:
-        ftype -- extension of file to get data from (default ".out")
+        Parameters
+        ----------
+        ftype : str
+            extension of file to get data from (default ".out")
         """
         return json.dumps(self.to_dict(), default=date_handler)
 
@@ -99,8 +103,10 @@ class Result(DocType):
         """
         Return a data of Result object from logfile in CSV format.
 
-        Keyword arguments:
-        ftype -- extension of file to get data from (default ".out")
+        Parameters
+        ----------
+        ftype : str
+            extension of file to get data from (default ".out")
         """
         raise NotImplemented()
 
@@ -108,8 +114,10 @@ class Result(DocType):
         """
         Return a gzipped log of Result object.
 
-        Keyword arguments:
-        ftype -- extension of file to get data from (default ".out")
+        Parameters
+        ----------
+        ftype : str
+            extension of file to get data from (default ".out")
         """
         raise NotImplemented()
 
@@ -155,8 +163,10 @@ class TestSet(DocType):
         """
         Extend update method, to deal with infinities before saving in elasticsearch.
 
-        Keyword arguments
-        kwargs -- keyword arguments
+        Parameters
+        ----------
+        kwargs
+            keyword arguments
         """
         self.mask_infinities(**kwargs)
         return super(TestSet, self).update(**kwargs)
@@ -165,8 +175,10 @@ class TestSet(DocType):
         """
         Extend save method, to deal with infinities before saving in elasticsearch.
 
-        Keyword arguments
-        kwargs -- keyword arguments
+        Parameters
+        ----------
+        kwargs
+            keyword arguments
         """
         self.mask_infinities(**kwargs)
         return super(TestSet, self).save(**kwargs)
@@ -178,6 +190,11 @@ class TestSet(DocType):
         Cast infinity to INFINITY_MASK, since databases don't like infinity.
         This is likely ok, because fields that could contain infinity, are [0, inf)
         and mask is -1.
+
+        Parameters
+        ----------
+        kwargs
+            keyword arguments
         """
         for i in INFINITY_KEYS:
             if getattr(self.settings, i, None) == INFINITY_FLOAT:
@@ -206,8 +223,10 @@ class TestSet(DocType):
         """
         Return filename of file associated to TestSet object.
 
-        Keyword arguments:
-        ending -- extension of file to get data from (default ".out")
+        Parameters
+        ----------
+        ending : str
+            extension of file to get data from (default ".out")
         """
         if not ending or ending == ".out":
             return self.filename
@@ -218,8 +237,10 @@ class TestSet(DocType):
         """
         Return raw content of file assiociated to TestSet object.
 
-        Keyword arguments:
-        ftype -- extension of file to get data from (default ".out")
+        Parameters
+        ----------
+        ftype : str
+            extension of file to get data from (default ".out")
         """
         s = File.search()
         s = s.filter("term", testset_id=self.meta.id)
@@ -235,18 +256,24 @@ class TestSet(DocType):
         """
         Return the data contained in the TestSet object in Gzip format.
 
-        Keyword arguments:
-        ftype -- extension of file to get data from (default ".out")
+        Parameters
+        ----------
+        ftype : str
+            extension of file to get data from (default ".out")
         """
         data = self.raw(ftype=ftype)
         return gzip.compress(data.encode("utf-8"))
 
-    def get_data(self, key=None):
+    def get_data(self, key=None, add_data=None):
         """
         Get the data of the TestSet.
 
-        Keyword arguments:
-        key -- the key of requested data (default None)
+        Parameters
+        ----------
+        key : str
+            the key of the requested data (default None)
+        add_data : dict
+            the key of the requested data (default None)
         """
         if key is None:
             all_instances = {}
@@ -269,6 +296,10 @@ class TestSet(DocType):
                         Key.Settings, "RubberbandId", "Seed", "Permutation"]
                 for fk in further_keys:
                     all_instances[i][fk] = self.get_data(fk)
+
+                if add_data is not None:
+                    for k, v in add_data.items():
+                        all_instances[i][k] = v
             return all_instances
 
         if key == Key.LPSolver:
@@ -304,8 +335,10 @@ class TestSet(DocType):
         """
         Return the data contained in the TestSet object as JSON.
 
-        Keyword arguments:
-        ftype -- extension of file to get data from (default ".out")
+        Parameters
+        ----------
+        ftype : str
+            extension of file to get data from (default ".out")
         """
         if ftype == ".set":
             output = {}
@@ -339,8 +372,10 @@ class TestSet(DocType):
         """
         Return the data contained in the TestSet object as CSV.
 
-        Keyword arguments:
-        ftype -- extension of file to get data from (default ".out")
+        Parameters
+        ----------
+        ftype : str
+            extension of file to get data from (default ".out")
         """
         raise NotImplemented()
 
@@ -388,8 +423,10 @@ class TestSet(DocType):
         """
         Load the statistics of a TestSet object.
 
-        Keyword arguments:
-        subset -- a subset of instance names to compute statistics for (default [])
+        Parameters
+        ----------
+        subset : list
+            a subset of instance names to compute statistics for (default [])
         """
         self.stats = {}
         if not hasattr(self, "children"):

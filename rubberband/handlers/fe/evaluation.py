@@ -3,7 +3,8 @@ from datetime import datetime
 from lxml import html
 
 from .base import BaseHandler
-from rubberband.constants import IPET_EVALUATIONS, FORMAT_DATETIME_SHORT, NONE_DISPLAY
+from rubberband.constants import IPET_EVALUATIONS, FORMAT_DATETIME_SHORT, \
+        NONE_DISPLAY, FORMAT_DATETIME
 from rubberband.models import TestSet
 
 from ipet import Experiment, TestRun
@@ -75,9 +76,9 @@ class EvaluationView(BaseHandler):
             html_long, style_long = table_to_html(longtable, ev, add_class="ipet-long-table")
             html_agg, style_agg = table_to_html(aggtable, ev, add_class="ipet-aggregated-table")
 
-            html_long = process_ipet_table(html_long, repres) + \
+            html_long = process_ipet_table(html_long, repres["short"]) + \
                 html.tostring(style_long).decode("utf-8")
-            html_agg = process_ipet_table(html_agg, repres) + \
+            html_agg = process_ipet_table(html_agg, repres["long"]) + \
                 html.tostring(style_agg).decode("utf-8")
 
             # render to strings
@@ -86,7 +87,7 @@ class EvaluationView(BaseHandler):
                     ipet_aggregated_table=html_agg).decode("utf-8")
 
             results_table = self.render_string("results_table.html",
-                    results=results, representation=repres, radios=True,
+                    results=results, representation=repres["template"], radios=True,
                     checked=default,
                     tablename="ipet-legend-table").decode("utf-8")
 
@@ -279,8 +280,7 @@ def setup_experiment(testruns):
     letters = get_letters(len(testruns))
 
     ex = Experiment()
-    count = 0
-    repres = {}
+    repres = {"long": {}, "short": {}, "template": {}}
     results = []
     # get data
     for t in testruns:
@@ -289,16 +289,32 @@ def setup_experiment(testruns):
 
         # update representation
         ts = ""
+        ts_sort = ""
         if t.git_commit_timestamp:
             ts = "(" + datetime.strftime(t.git_commit_timestamp, FORMAT_DATETIME_SHORT) + ")"
-        repres[t.id] = letters[count] + " " + t.settings_short_name + " " + ts
-        count = count + 1
+            ts_sort = "(" + datetime.strftime(t.git_commit_timestamp, FORMAT_DATETIME) + ")"
+        extended_rbid = ts_sort + t.settings_short_name + t.id
+
+        repres["template"][extended_rbid] = t.id
+        repres["long"][extended_rbid] = " " + t.settings_short_name + " " + ts
 
         # collect data and pass to ipet
         ipettestrun = TestRun()
-        ipettestrun.data = pd.DataFrame(t.get_data()).T
+        additional_data = {"RubberbandId": extended_rbid}
+        ipettestrun.data = pd.DataFrame(
+                t.get_data(add_data=additional_data)).T
         ex.testruns.append(ipettestrun)
 
+    count = 0
+    # sort substitution keys for testruns
+    for extended_rbid in sorted(repres["template"].keys()):
+        tid = repres["template"][extended_rbid]
+        longname = letters[count] + repres["long"][extended_rbid]
+        repres["short"][extended_rbid] = letters[count]
+        repres["long"][extended_rbid] = longname
+        # for template
+        repres["template"][tid] = longname
+        count = count + 1
     return ex, results, repres
 
 

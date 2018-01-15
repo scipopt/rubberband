@@ -25,5 +25,4 @@ routes = [
     (r"/api/upload/async", api.UploadAsyncEndpoint),
     (r"/api/upload", api.UploadEndpoint),
     (r"/api/search", api.SearchEndpoint),
-    (r"/api.*", api.MiscEndpoint),
 ]
