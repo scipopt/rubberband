@@ -315,3 +315,6 @@ select.comparator {
 input.fieldValue {
     width: 5%;
 }
+
+/* Toggle buttons */
+.quick .toggle-group { transition: none; -webkit-transition: none; }

@@ -254,21 +254,34 @@ class BaseHandler(RequestHandler):
         partial_list.extend([NONE_DISPLAY for a in attr_str if a is None])
         return "\n".join(map(str, partial_list))
 
-    def are_equivalent(self, one, two, attr):
+    def are_equivalent(self, sets, attr):
         """
-        Decide if the data in attr is the same in both TestSets one and two.
+        Decide if the data in attr is the same in all TestSets.
 
         Parameters
         ----------
-        one : TestSet
-        two : TestSet
-        attr : attributes of one and two
+        sets : list of TestSets
+        attr : attribute
 
         Returns
         -------
         bool
-            Decide if a i
         """
-        a = self.format_attr(one, attr)
-        b = self.format_attr(two, attr)
-        return a == b
+        if len(sets) <= 1:
+            return True
+
+        if attr == "number_instances":
+            l = [len(ts.children.to_dict().keys()) for ts in sets]
+            old = l[0]
+            for i in l:
+                new = i
+                if old != new:
+                    return False
+            return True
+
+        old = self.format_attr(sets[0], attr)
+        for ts in sets[1:]:
+            new = self.format_attr(ts, attr)
+            if old != new:
+                return False
+        return True

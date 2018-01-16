@@ -16,6 +16,32 @@ formatMetaTable();
 formatSettingsTable();
 $(".bs-tooltip").tooltip();
 $("a.bs-popover").popover();
+$("#toggle-settings").bootstrapToggle()
+$(function() {
+    $("#toggle-settings").change(function() {
+        var elements = $(".toggle_settings_hide");
+        var displaystyle = "";
+        if ($(this).prop('checked')) {
+            displaystyle = "none";
+        }
+        for(var i=0; i<elements.length; i++){
+            elements[i].style.display = displaystyle;
+        }
+    })
+})
+$("#toggle-meta").bootstrapToggle()
+$(function() {
+    $("#toggle-meta").change(function() {
+        var elements = $(".toggle_meta_hide");
+        var displaystyle = "";
+        if ($(this).prop('checked')) {
+            displaystyle = "none";
+        }
+        for(var i=0; i<elements.length; i++){
+            elements[i].style.display = displaystyle;
+        }
+    })
+})
 
 // if compare is in query string, then we are in the compare view
 if (window.location.search.indexOf("compare") >= 0) {
