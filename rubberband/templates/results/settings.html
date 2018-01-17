@@ -4,7 +4,7 @@
     {% if file.settings %}
     <div class="tab-buttons">
       <input id="toggle-settings" data-toggle="toggle" data-on="<i class='glyphicon glyphicon-eye-open'></i>" data-off="<i class='glyphicon glyphicon-eye-close'></i>" data-style="quick" data-size="small" type="checkbox">
-    <a href="/file/{{file.meta.id}}?ftype=.set" class="bs-tooltip" data-placement="top" data-toggle="tooltip" title="view settings file">
+      <a href="/file/{{file.meta.id}}?ftype=.set" class="bs-tooltip" data-placement="top" data-toggle="tooltip" title="view settings file">
       <span class="glyphicon glyphicon-info-sign"></span>
       </a>
       <a class="bs-tooltip" type="button" data-toggle="modal" data-target="#downloadSettingsOptions" title="download settings" id="download-settings-file" data-placement="top" data-toggle="tooltip">

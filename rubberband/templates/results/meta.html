@@ -2,9 +2,11 @@
   <div class="row">
     <h3>Meta</h3>
   </div>
+  {% if len(compare) >= 1 %}
   <div class="tab-buttons">
     <input id="toggle-meta" data-toggle="toggle" data-on="<i class='glyphicon glyphicon-eye-open'></i>" data-off="<i class='glyphicon glyphicon-eye-close'></i>" data-style="quick" data-size="small" type="checkbox">
   </div>
+  {% end %}
   <div class="row">
     <table class="meta-table table table-hover table-bordered" width="100%">
     <thead>

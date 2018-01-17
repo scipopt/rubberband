@@ -115,6 +115,7 @@ function formatResultTables() {
            type: "PUT",
            url: "/result/" + end[2],
            success: function (data){
+              alert("Reimport complete");
               window.location.href = currurl;
            },
            error:function(){
