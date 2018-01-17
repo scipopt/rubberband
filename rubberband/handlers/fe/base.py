@@ -130,11 +130,11 @@ class BaseHandler(RequestHandler):
         str
             type of attr of obj or ""
         """
-        if attr in ["instance_type", "OriginalProblem_InitialNCons"]:
+        if attr in ["instance_type"]:
             return "text"
-        if attr in ["OriginalProblem_Vars", "PresolvedProblem_InitialNCons",
-                "PresolvedProblem_Vars", "DualBound", "PrimalBound", "Gap", "Iterations",
-                "Nodes", "TotalTime_solving"]:
+        if attr in ["OriginalProblem_Vars", "OriginalProblem_InitialNCons",
+                "PresolvedProblem_InitialNCons", "PresolvedProblem_Vars", "DualBound",
+                "PrimalBound", "Gap", "Iterations", "Nodes", "TotalTime_solving"]:
             return "number"
         value = getattr(obj, attr, None)
         if isinstance(value, str):

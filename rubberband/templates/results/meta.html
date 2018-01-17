@@ -1,6 +1,6 @@
 <div role="tabpanel" class="tab-pane" id="meta">
   <div class="row">
-    <h3>Meta</h3>
+    <h3>Meta information</h3>
   </div>
   {% if len(compare) >= 1 %}
   <div class="tab-buttons">
@@ -158,7 +158,12 @@
 	{% end %}
     </tr>
   </table>
-  <h3>Metadata</h3>
+
+  <p>
+  The above data is gathered from data parsed by IPET, additional data given via .meta file and gitlab, possibly from the filename if it contains information.
+  </p>
+
+  <h3>Data from .meta file.</h3>
   <table class="meta-table table table-hover table-bordered" width="100%">
   <thead>
   <tr>
