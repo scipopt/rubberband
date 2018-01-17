@@ -42,7 +42,10 @@ $(function() {
         }
     })
 })
-
+/* adjust tables */
+$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+});
 // if compare is in query string, then we are in the compare view
 if (window.location.search.indexOf("compare") >= 0) {
   /* red = new Color(245, 50, 50);

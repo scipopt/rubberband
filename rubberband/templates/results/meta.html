@@ -4,7 +4,9 @@
   </div>
   {% if len(compare) >= 1 %}
   <div class="tab-buttons">
-    <input id="toggle-meta" data-toggle="toggle" data-on="<i class='glyphicon glyphicon-eye-open'></i>" data-off="<i class='glyphicon glyphicon-eye-close'></i>" data-style="quick" data-size="small" type="checkbox">
+    <i title='Show/Hide rows with equal data' class='bs-tooltip'>
+      <input id="toggle-meta" data-toggle="toggle" data-on="<i class='glyphicon glyphicon-eye-open'></i>" data-off="<i class='glyphicon glyphicon-eye-close'></i>" data-style="quick" data-size="small" type="checkbox">
+    </i>
   </div>
   {% end %}
   <div class="row">

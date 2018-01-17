@@ -346,7 +346,7 @@ def process_ipet_table(table, repres, add_ind=False):
         cellcount = 0
         for cell in row.iter():
             if add_ind and cellcount == 1 and cell.tag == "th" and cell.text != oldtext:
-                cell.text = str(groupcount) + ". " + cell.text
+                cell.text = "{:0>2d}. {}".format(groupcount, cell.text)
                 oldtext = cell.text
                 groupcount = groupcount + 1
             rowspan = cell.get("rowspan")

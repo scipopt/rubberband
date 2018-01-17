@@ -31,7 +31,6 @@ function fillResultTable(data) {
     $("#results-table").html(data);
     tmp = $("#search-result");
     if (tmp[0].tagName == "TABLE") {
-        console.log("table");
         tmp.DataTable({
             scrollY: '80vh',
             scrollX: true,
