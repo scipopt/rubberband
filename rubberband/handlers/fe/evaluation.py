@@ -458,11 +458,11 @@ def table_to_html(df, ev, add_class="", border=0):
     if l == 0:
         highlight_cols = [c for c in df.columns
                 if (c.startswith("_") and c.endswith("_")) or c.endswith("Q")]
-        p_cols = [c for c in df.columns if c.endswith("p")]
+        p_cols = [c for c in df.columns if c.endswith(")p")]
     else:
         highlight_cols = [c for c in df.columns
                 if (c[l].startswith("_") and c[l].endswith("_")) or c[l].endswith("Q")]
-        p_cols = [c for c in df.columns if c[l].endswith("p")]
+        p_cols = [c for c in df.columns if c[l].endswith(")p")]
     for p in p_cols:
         formatters[p] = lambda x: "%.3f" % x
     # apply formatters styles
