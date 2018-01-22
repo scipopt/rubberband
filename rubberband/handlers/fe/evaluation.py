@@ -4,7 +4,7 @@ from lxml import html
 
 from .base import BaseHandler
 from rubberband.constants import IPET_EVALUATIONS, FORMAT_DATETIME_SHORT, \
-        NONE_DISPLAY, FORMAT_DATETIME
+        NONE_DISPLAY
 from rubberband.models import TestSet
 
 from ipet import Experiment, TestRun
@@ -60,9 +60,12 @@ class EvaluationView(BaseHandler):
             pass
 
         # evaluate with ipet
-        ex, results, repres = setup_experiment(testruns)
+        print("BEF", default_rbid)
+        ex, results, repres, default_rbid = setup_experiment(testruns, default_rbid)
+        print("AFT", default_rbid)
         ev = IPETEvaluation.fromXMLFile(evalfile["path"])
         ev.set_defaultgroup(default_rbid)
+        print("defgroup", ev.getDefaultgroup(ex.getJoinedData()))
         longtable, aggtable = ev.evaluate(ex)
 
         # None style is default
@@ -261,7 +264,7 @@ def get_replacement_dict(cols, colindex):
     return repl
 
 
-def setup_experiment(testruns):
+def setup_experiment(testruns, default_rbid):
     """
     Setup an ipet experiment for the given testruns.
 
@@ -292,8 +295,10 @@ def setup_experiment(testruns):
         ts_sort = ""
         if t.git_commit_timestamp:
             ts = "(" + datetime.strftime(t.git_commit_timestamp, FORMAT_DATETIME_SHORT) + ")"
-            ts_sort = "(" + datetime.strftime(t.git_commit_timestamp, FORMAT_DATETIME) + ")"
+            ts_sort = datetime.strftime(t.git_commit_timestamp, "%Y%m%d%H%M%S")
         extended_rbid = ts_sort + t.settings_short_name + t.id
+        if t.id == default_rbid:
+            default_rbid = extended_rbid
 
         repres["template"][extended_rbid] = t.id
         repres["long"][extended_rbid] = " " + t.settings_short_name + " " + ts
@@ -315,7 +320,7 @@ def setup_experiment(testruns):
         # for template
         repres["template"][tid] = longname
         count = count + 1
-    return ex, results, repres
+    return ex, results, repres, default_rbid
 
 
 def process_ipet_table(table, repres, add_ind=False):
