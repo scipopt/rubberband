@@ -55,6 +55,13 @@ class ResultView(BaseHandler):
             # save stats in parent.stats
             parent.load_stats()
 
+        # construct link to download archive
+        testset_ids = []
+        if compare:
+            testset_ids = compare_ids
+        testset_ids.append(parent_id)
+        downloadziplink = "/download?testsets=" + (",".join(testset_ids))
+
         metas = [key for md in [parent] + compare for key in md.to_dict().get('metadata', [])]
         meta = list(set(metas))
         meta.sort()
@@ -73,7 +80,7 @@ class ResultView(BaseHandler):
         self.render("result_view.html", file=parent, page_title="Evaluate", compare=compare,
                     sets=sets, meta=meta, ipet_legend_table=ilt,
                     rendered_results_table=rrt, fileoptions=fileoptions,
-                    evals=IPET_EVALUATIONS)
+                    downloadzip=downloadziplink, evals=IPET_EVALUATIONS)
 
     def post(self, parent_id):
         """
@@ -151,10 +158,13 @@ def load_testsets(ids):
         List of TestSets
     """
     tss = []
-    for id in ids:
-        t = TestSet.get(id=id)
-        t.load_children()
-        tss.append(t)
+    try:
+        for id in ids:
+            t = TestSet.get(id=id)
+            t.load_children()
+            tss.append(t)
+    except:
+        raise HTTPError(404)
 
     return tss
 

@@ -9,6 +9,7 @@ from .main import MainView  # noqa
 from .statistics import StatisticsView  # noqa
 from .search import SearchView  # noqa
 from .upload import UploadView  # noqa
+from .download import DownloadView # noqa
 from .visualize import VisualizeView  # noqa
 from .evaluation import EvaluationView # noqa
 from .display import DisplayView # noqa

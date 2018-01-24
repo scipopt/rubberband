@@ -19,6 +19,7 @@ routes = [
     (r"/statistics/(?P<parent_id>[^\/]+)", fe.StatisticsView),
     (r"/search", fe.SearchView),
     (r"/upload", fe.UploadView),
+    (r"/download?(?P<arg>[^\/]+)", fe.DownloadView),
     (r"/eval/(?P<eval_id>[^\/]+)", fe.EvaluationView),
     (r"/display/(?P<mode>[^\/]+)/(?P<id>[^\/]+)", fe.DisplayView),
     # API Endpoints
