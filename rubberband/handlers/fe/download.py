@@ -2,6 +2,7 @@
 from tornado.web import HTTPError
 import zipfile
 from io import BytesIO
+import os
 
 from rubberband.constants import EXPORT_FILE_TYPES
 from .base import BaseHandler
@@ -38,8 +39,8 @@ class DownloadView(BaseHandler):
                 for ts in ts_list:
                     for ftype in EXPORT_FILE_TYPES:
                         try:
-                            archive.writestr("{}/{}{}".format(ts.meta.id, ts.filename, ftype),
-                                    ts.raw(ftype))
+                            archive.writestr("{}/{}{}".format(ts.meta.id,
+                                os.path.splitext(ts.filename)[0], ftype), ts.raw(ftype))
                         except TypeError:
                             pass
 
