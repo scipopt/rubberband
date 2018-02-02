@@ -60,13 +60,21 @@ class EvaluationView(BaseHandler):
             pass
 
         # evaluate with ipet
-        print("BEF", default_rbid)
         ex, results, repres, default_rbid = setup_experiment(testruns, default_rbid)
-        print("AFT", default_rbid)
         ev = IPETEvaluation.fromXMLFile(evalfile["path"])
         ev.set_defaultgroup(default_rbid)
-        print("defgroup", ev.getDefaultgroup(ex.getJoinedData()))
         longtable, aggtable = ev.evaluate(ex)
+        longtable["Filtergroups"] = ""
+        for fg in ev.getActiveFilterGroups():
+            fgdf = ev.getInstanceGroupData(fg)
+            for idx, row in fgdf.iterrows():
+                rowidx = row.name
+                oldval = (longtable.loc[rowidx, "Filtergroups"])[0]
+                if oldval == "":
+                    newval = fg.getName()
+                else:
+                    newval = ", ".join([oldval, fg.getName()])
+                longtable.loc[rowidx, "Filtergroups"] = newval
 
         # None style is default
         if style is None:
