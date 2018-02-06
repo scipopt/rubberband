@@ -64,9 +64,18 @@ class EvaluationView(BaseHandler):
         ev = IPETEvaluation.fromXMLFile(evalfile["path"])
         ev.set_defaultgroup(default_rbid)
         longtable, aggtable = ev.evaluate(ex)
-        longtable["Filtergroups"] = ""
+        longtable["Filtergroups"] = "all"
+        filtergroupbuttons = 'Show filtergroups: <div id="ipet-long-filter-buttons"'
+        filtergroupbuttons = filtergroupbuttons + 'class="btn-group" role="group">'
         for fg in ev.getActiveFilterGroups():
+            if fg.getName() == "all":
+                continue
             fgdf = ev.getInstanceGroupData(fg)
+            if len(fgdf) == 0:
+                continue
+            newbutton = '<button id="ipet-long-filter-button" type="button"'
+            newbutton = newbutton + 'class="btn btn-sm btn-info">' + fg.getName() + '</button>'
+            filtergroupbuttons = filtergroupbuttons + newbutton
             for idx, row in fgdf.iterrows():
                 rowidx = row.name
                 oldval = (longtable.loc[rowidx, "Filtergroups"])[0]
@@ -75,6 +84,7 @@ class EvaluationView(BaseHandler):
                 else:
                     newval = ", ".join([oldval, fg.getName()])
                 longtable.loc[rowidx, "Filtergroups"] = newval
+        filtergroupbuttons = filtergroupbuttons + '</div>'
 
         # None style is default
         if style is None:
@@ -104,7 +114,8 @@ class EvaluationView(BaseHandler):
 
             # send evaluated data
             mydict = {"ipet-legend-table": results_table,
-                    "ipet-eval-result": html_tables}
+                    "ipet-eval-result": html_tables,
+                    "buttons": filtergroupbuttons}
             self.write(json.dumps(mydict))
         elif style == "latex":
             # generate a table that can be used in the release-report
