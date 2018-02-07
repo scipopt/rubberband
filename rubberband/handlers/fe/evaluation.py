@@ -68,22 +68,22 @@ class EvaluationView(BaseHandler):
         filtergroupbuttons = 'Show filtergroups: <div id="ipet-long-filter-buttons"'
         filtergroupbuttons = filtergroupbuttons + 'class="btn-group" role="group">'
         for fg in ev.getActiveFilterGroups():
-            if fg.getName() == "all":
-                continue
+            longtable["Newfiltergroup"] = ""
+            fgname = fg.getName()
             fgdf = ev.getInstanceGroupData(fg)
+            if fgname == "all":
+                continue
             if len(fgdf) == 0:
                 continue
             newbutton = '<button id="ipet-long-filter-button" type="button"'
-            newbutton = newbutton + 'class="btn btn-sm btn-info">' + fg.getName() + '</button>'
+            newbutton = newbutton + 'class="btn btn-sm btn-info">' + fgname + '</button>'
+            fgdf["Newfiltergroup"] = fgname
+            longtable.update(fgdf)
+            newcolumn = longtable[["Filtergroups", "Newfiltergroup"]].apply(
+                lambda x: x[0] if pd.isnull(x[1]) else ''.join(x), axis=1)
+            longtable["Filtergroups"] = newcolumn
             filtergroupbuttons = filtergroupbuttons + newbutton
-            for idx, row in fgdf.iterrows():
-                rowidx = row.name
-                oldval = (longtable.loc[rowidx, "Filtergroups"])[0]
-                if oldval == "":
-                    newval = fg.getName()
-                else:
-                    newval = ", ".join([oldval, fg.getName()])
-                longtable.loc[rowidx, "Filtergroups"] = newval
+        longtable.drop(columns=["Newfiltergroup"], inplace=True)
         filtergroupbuttons = filtergroupbuttons + '</div>'
 
         # None style is default
