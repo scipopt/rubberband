@@ -39,63 +39,42 @@ class EvaluationView(BaseHandler):
         testrunids = self.get_argument("testruns").split(",")
 
         # read defaultgroup
-        default = self.get_argument("default", testrunids[0])
-        default_rbid = None
+        default_id = self.get_argument("default", testrunids[0])
 
         # default and implicit style is ipetevaluation. if given latex, generate a table in the
         # style of the release report
         style = self.get_argument("style", None)
 
-        # get testruns
-        testruns = []
-        for i in testrunids:
-            t = TestSet.get(id=i)
-            if t.meta.id == default:
-                default_rbid = t.id
-            testruns.append(t)
-
-        try:
-            testruns.sort(key=lambda x: x.git_commit_timestamp)
-        except:
-            pass
+        # get testruns and default
+        testruns = get_testruns(testrunids)
 
         # evaluate with ipet
-        ex, results, repres, default_rbid = setup_experiment(testruns, default_rbid)
-        ev = IPETEvaluation.fromXMLFile(evalfile["path"])
-        ev.set_defaultgroup(default_rbid)
-        ev.set_validate(ALL_SOLU)
+        ex = setup_experiment(testruns)
+        ev = setup_evaluation(evalfile["path"], ALL_SOLU)
+
+        # set defaultgroup
+        set_defaultgroup(ev, ex, default_id)
+
+        # do evaluation
         longtable, aggtable = ev.evaluate(ex)
-        longtable["Filtergroups"] = "all"
-        filtergroupbuttons = 'Show filtergroups: <div id="ipet-long-filter-buttons"'
-        filtergroupbuttons = filtergroupbuttons + 'class="btn-group" role="group">'
-        for fg in ev.getActiveFilterGroups():
-            longtable["Newfiltergroup"] = ""
-            fgname = fg.getName()
-            fgdf = ev.getInstanceGroupData(fg)
-            if len(fgdf) == 0:
-                continue
-            newbutton = '<button id="ipet-long-filter-button" type="button"'
-            newbutton = newbutton + 'class="btn btn-sm btn-info">' + fgname + '</button>'
-            fgdf["Newfiltergroup"] = fgname
-            longtable.update(fgdf)
-            newcolumn = longtable[["Filtergroups", "Newfiltergroup"]].apply(
-                lambda x: x[0] if pd.isnull(x[1]) else ''.join(x), axis=1)
-            longtable["Filtergroups"] = newcolumn
-            filtergroupbuttons = filtergroupbuttons + newbutton
-        longtable.drop(columns=["Newfiltergroup"], inplace=True)
-        filtergroupbuttons = filtergroupbuttons + '</div>'
 
         # None style is default
         if style is None:
-            filtergroupdata = {}
-            for fg in ev.getActiveFilterGroups():
-                filtergroupdata[fg] = ev.getInstanceGroupData(fg)
 
-            # postprocessing
+            # add filtergroup buttons to ipet long table
+            fg_buttons_str, longtable["Filtergroups"] = generate_filtergroup_buttons(longtable, ev)
+
+            # add id column to longtable
             longtable.insert(0, "id", range(1, len(longtable) + 1))
+
+            # convert to html and get style
             html_long, style_long = table_to_html(longtable, ev, add_class="ipet-long-table")
             html_agg, style_agg = table_to_html(aggtable, ev, add_class="ipet-aggregated-table")
 
+            # get substitutions dictionary
+            repres = setup_substitutions_dict(testruns)
+
+            # postprocessing
             html_long = process_ipet_table(html_long, repres["short"], add_ind=False) + \
                 html.tostring(style_long).decode("utf-8")
             html_agg = process_ipet_table(html_agg, repres["long"], add_ind=True) + \
@@ -107,15 +86,18 @@ class EvaluationView(BaseHandler):
                     ipet_aggregated_table=html_agg).decode("utf-8")
 
             results_table = self.render_string("results_table.html",
-                    results=results, representation=repres["template"], radios=True,
-                    checked=default,
+                    results=testruns,
+                    representation=repres["template"],
+                    radios=True,
+                    checked=default_id,
                     tablename="ipet-legend-table").decode("utf-8")
 
             # send evaluated data
             mydict = {"ipet-legend-table": results_table,
-                    "ipet-eval-result": html_tables,
-                    "buttons": filtergroupbuttons}
+                      "ipet-eval-result": html_tables,
+                      "buttons": fg_buttons_str}
             self.write(json.dumps(mydict))
+
         elif style == "latex":
             # generate a table that can be used in the release-report
             df = aggtable
@@ -282,67 +264,128 @@ def get_replacement_dict(cols, colindex):
     return repl
 
 
-def setup_experiment(testruns, default_rbid):
+def setup_experiment(testruns):
     """
     Setup an ipet experiment for the given testruns.
 
     Parameters
     ----------
-    testrun : list
+    testruns : list
         a list of rubberband TestSet
 
-    Return
-    ipet.experiment, list, dict
-        experiment,
-        list of used TestSets
-        dictionary of representation key value pairs
+    Returns
+    -------
+    ipet.experiment
+        experiment
     """
-    # evaluate with ipet
-    letters = get_letters(len(testruns))
-
     ex = Experiment()
-    repres = {"long": {}, "short": {}, "template": {}}
-    results = []
+
     # get data
     for t in testruns:
-        # collect result
-        results.append(t)
-
         # update representation
-        ts = ""
-        ts_sort = ""
-        if t.git_commit_timestamp:
-            ts = "(" + datetime.strftime(t.git_commit_timestamp, FORMAT_DATETIME_SHORT) + ")"
-            ts_sort = datetime.strftime(t.git_commit_timestamp, "%Y%m%d%H%M%S")
-        extended_rbid = ts_sort + t.settings_short_name + t.id
-        if t.id == default_rbid:
-            default_rbid = extended_rbid
-
-        repres["long"][t.git_hash] = ts
-        repres["short"][t.git_hash] = ts
-        repres["template"][extended_rbid] = t.id
-        repres["long"][extended_rbid] = " " + t.settings_short_name + " " + ts
+        additional_data = {"RubberbandId": get_rbid_representation(t, "extended")}
 
         # collect data and pass to ipet
         ipettestrun = TestRun()
-        additional_data = {"RubberbandId": extended_rbid}
-        ipettestrun.data = pd.DataFrame(
-                t.get_data(add_data=additional_data)).T
+        tr_raw_data = t.get_data(add_data=additional_data)
+        ipettestrun.data = pd.DataFrame(tr_raw_data).T
+
         ex.testruns.append(ipettestrun)
+    return ex
+
+
+def get_rbid_representation(testrun, mode="extended"):
+    """
+    Get representative string for a testrun.
+
+    This is used for uniqueness and sorting
+
+    Parameters
+    ----------
+    testrun : rubberband.TestSet
+        TestSet to be represented
+    mode : str
+        ["extended", "readable"] format of representative
+
+    Returns
+    -------
+    str
+        representation
+    """
+    if testrun.git_commit_timestamp:
+        ts = "(" + datetime.strftime(testrun.git_commit_timestamp, FORMAT_DATETIME_SHORT) + ")"
+        ts_time = datetime.strftime(testrun.git_commit_timestamp, "%Y%m%d%H%M%S")
+    else:
+        ts_time = ""
+        ts = ""
+
+    if mode == "readable":
+        rbid_repres = " " + testrun.settings_short_name + " " + ts
+    else:  # if mode == "extended"
+        rbid_repres = ts_time + testrun.settings_short_name + testrun.id
+
+    return rbid_repres
+
+
+def setup_substitutions_dict(testruns):
+    """
+    Setup the substitutions dictionary for the regular view.
+
+    Parameters
+    ----------
+    testruns : list
+        a list of rubberband TestSet
+
+    Returns
+    -------
+    dict
+        dictionary of representation key value pairs
+    """
+    # get representations letters
+    letters = get_letters(len(testruns))
+
+    # for long table, for aggregated (short) table and for the results_table (template)
+    repres = {"long": {}, "short": {}, "template": {}}
+
+    # substitutions in both tables
+    for k in ["long", "short"]:
+        repres[k]["GitHash"] = "Commit"
+
+    for t in testruns:
+        if t.git_commit_timestamp:
+            ts = "(" + datetime.strftime(t.git_commit_timestamp, FORMAT_DATETIME_SHORT) + ")"
+        else:
+            ts = ""
+
+        extended_rbid = get_rbid_representation(t, "extended")
+        readable_rbid = get_rbid_representation(t, "readable")
+
+        for k in ["long", "short"]:
+            repres[k][t.git_hash] = ts
+
+        repres["long"][extended_rbid] = readable_rbid
+        repres["template"][extended_rbid] = t.id
 
     count = 0
-    # sort substitution keys for testruns
+
+    # sort testruns by extended_rbid
     for extended_rbid in sorted(repres["template"].keys()):
         tid = repres["template"][extended_rbid]
+
+        # prepend a letter to the readable_rbid
         longname = letters[count] + repres["long"][extended_rbid]
+
+        # substitute the extended_rbids with a sortable and readable name
         repres["short"][extended_rbid] = letters[count]
         repres["long"][extended_rbid] = longname
-        # for template
+
+        # in the template we need the testrun id as a key
         repres["template"][tid] = longname
+
+        # count through the letters of the alphabet
         count = count + 1
-    repres["long"]["GitHash"] = "Commit"
-    repres["short"]["GitHash"] = "Commit"
-    return ex, results, repres, default_rbid
+
+    return repres
 
 
 def process_ipet_table(table, repres, add_ind=False):
@@ -510,3 +553,118 @@ def table_to_html(df, ev, add_class="", border=0):
     treetable.set("class", tableclasses)
 
     return treetable, treestyle
+
+
+def get_testruns(testrunids):
+    """
+    Collect testruns from the ids.
+
+    Parameters
+    ----------
+    testrunids : list or string
+        list of testrun ids or a single one
+
+    Returns
+    -------
+    list
+        corresponding rubberband.TestSet(s)
+    """
+    if type(testrunids) is not list:
+        return TestSet.get(id=testrunids)
+
+    testruns = []
+    for i in testrunids:
+        t = TestSet.get(id=i)
+        testruns.append(t)
+    return testruns
+
+
+def setup_evaluation(evalfile, solufile):
+    """
+    Setup the IPET evaluation.
+
+    Parameters
+    ----------
+    evalfile : str
+        name of evaluation file to use
+    solufile : str
+        name of solution file to use
+
+    Returns
+    -------
+    ipet.IPETEvaluation
+    """
+    evaluation = IPETEvaluation.fromXMLFile(evalfile)
+    evaluation.set_validate(solufile)
+    return evaluation
+
+
+def set_defaultgroup(evaluation, experiment, testrun_id):
+    """
+    Set defaultgroup implied by testrun_id based on evaluation.
+
+    Parameters
+    ----------
+    evaluation : ipet.IPETEvaluation
+        evaluation to use
+    experiment : ipet.IPETExperiment
+        experiment to use
+    testrun_id : str
+        testrun setting defaultgroup
+    """
+    index = evaluation.getColIndex()
+    # testrun_id can be found in column "RubberbandMetaId"
+    df = experiment.getJoinedData()[index + ["RubberbandMetaId"]]
+    df = df[df.RubberbandMetaId == testrun_id]
+    defaultgroup_list = list(df.iloc[0][index])
+    defaultgroup_string = ":".join(defaultgroup_list)
+    evaluation.set_defaultgroup(defaultgroup_string)
+
+
+def generate_filtergroup_buttons(table, evaluation):
+    """
+    Generate a string with html filtergroup buttons for ipet long table and and a column for table.
+
+    Parameters
+    ----------
+    table : pandas.DataFrame
+        ipet long table
+    evaluation : ipet.IPETEvaluation
+        corresponding ipet evaluation
+
+    Returns
+    -------
+    str, pandas.Series
+        buttons and additional column
+    """
+    table = table.copy()
+    table["Filtergroups"] = "all"
+    buttons_str = 'Show filtergroups: <div id="ipet-long-filter-buttons" class="btn-group" role="group">' # noqa
+
+    for fg in evaluation.getActiveFilterGroups():
+        table["Newfiltergroup"] = ""
+        fg_name = fg.getName()
+        fg_data = evaluation.getInstanceGroupData(fg)
+
+        # don't show empty filtergroups
+        if len(fg_data) == 0:
+            continue
+
+        # construct new button string
+        newbutton = '<button id="ipet-long-filter-button" type="button" class="btn btn-sm btn-info">' + fg_name + '</button>' # noqa
+        fg_data["Newfiltergroup"] = fg_name
+
+        # update the table with the new filtergroup data
+        table.update(fg_data)
+
+        # join the values in the filtergroup columns
+        newcolumn = table[["Filtergroups", "Newfiltergroup"]].apply(
+            lambda x: x[0] if pd.isnull(x[1]) else ''.join(x), axis=1)
+        # update original table
+        table["Filtergroups"] = newcolumn
+
+        # update buttons_str
+        buttons_str = buttons_str + newbutton
+
+    buttons_str = buttons_str + '</div>'
+    return buttons_str, table["Filtergroups"]

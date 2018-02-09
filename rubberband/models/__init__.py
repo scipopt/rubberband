@@ -293,7 +293,7 @@ class TestSet(DocType):
                     all_instances[i]["SpxGitHash"] = self.lp_solver_githash
 
                 further_keys = [Key.GitHash, "CommitTime", Key.LPSolver, Key.LogFileName,
-                        Key.Settings, "RubberbandId", "Seed", "Permutation"]
+                        Key.Settings, "RubberbandMetaId", "Seed", "Permutation"]
                 for fk in further_keys:
                     all_instances[i][fk] = self.get_data(fk)
 
@@ -311,8 +311,8 @@ class TestSet(DocType):
                 return "none"
         if key == Key.LogFileName:
             return self.filename
-        if key == "RubberbandId":
-            return self.id
+        if key == "RubberbandMetaId":
+            return self.meta.id
         if key == "Seed":
             return self.seed or 0
         if key == "Permutation":
