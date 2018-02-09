@@ -4,7 +4,7 @@ from lxml import html
 
 from .base import BaseHandler
 from rubberband.constants import IPET_EVALUATIONS, FORMAT_DATETIME_SHORT, \
-        NONE_DISPLAY
+        NONE_DISPLAY, ALL_SOLU
 from rubberband.models import TestSet
 
 from ipet import Experiment, TestRun
@@ -63,6 +63,7 @@ class EvaluationView(BaseHandler):
         ex, results, repres, default_rbid = setup_experiment(testruns, default_rbid)
         ev = IPETEvaluation.fromXMLFile(evalfile["path"])
         ev.set_defaultgroup(default_rbid)
+        ev.set_validate(ALL_SOLU)
         longtable, aggtable = ev.evaluate(ex)
         longtable["Filtergroups"] = "all"
         filtergroupbuttons = 'Show filtergroups: <div id="ipet-long-filter-buttons"'
