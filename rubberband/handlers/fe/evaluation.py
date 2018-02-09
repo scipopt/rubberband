@@ -318,6 +318,8 @@ def setup_experiment(testruns, default_rbid):
         if t.id == default_rbid:
             default_rbid = extended_rbid
 
+        repres["long"][t.git_hash] = ts
+        repres["short"][t.git_hash] = ts
         repres["template"][extended_rbid] = t.id
         repres["long"][extended_rbid] = " " + t.settings_short_name + " " + ts
 
@@ -338,6 +340,8 @@ def setup_experiment(testruns, default_rbid):
         # for template
         repres["template"][tid] = longname
         count = count + 1
+    repres["long"]["GitHash"] = "Commit"
+    repres["short"]["GitHash"] = "Commit"
     return ex, results, repres, default_rbid
 
 
