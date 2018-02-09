@@ -51,6 +51,9 @@ pre {
     white-space: pre !important;
 }
 
+div.ipet-long-toolbar {
+  margin-bottom: 5px;
+}
 /*
  * Top navigation
  * Hide default border to remove 1px line.

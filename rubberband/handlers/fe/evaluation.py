@@ -72,8 +72,6 @@ class EvaluationView(BaseHandler):
             longtable["Newfiltergroup"] = ""
             fgname = fg.getName()
             fgdf = ev.getInstanceGroupData(fg)
-            if fgname == "all":
-                continue
             if len(fgdf) == 0:
                 continue
             newbutton = '<button id="ipet-long-filter-button" type="button"'
