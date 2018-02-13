@@ -314,15 +314,15 @@ class TestSet(DocType):
         if key == "RubberbandMetaId":
             return self.meta.id
         if key == "Seed":
-            return self.seed or 0
+            return self.seed or str(0)
         if key == "Permutation":
-            return self.permutation or 0
+            return self.permutation or str(0)
         if key == "TimeLimit":
-            return self.time_limit
+            return self.time_limit or str(0)
         if key == "CommitTime":
             return str(self.git_commit_timestamp)
         if key == "SpxGitHash":
-            return self.lp_solver_githash
+            return self.lp_solver_githash or ""
         if key == Key.GitHash:
             return self.git_hash
         if key == "ReportVersion":
