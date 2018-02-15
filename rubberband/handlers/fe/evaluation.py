@@ -85,6 +85,9 @@ class EvaluationView(BaseHandler):
                     ipet_long_table=html_long,
                     ipet_aggregated_table=html_agg).decode("utf-8")
 
+            # sort testruns by their representation and render table
+            testruns = sorted(testruns,
+                    key=lambda x: repres['long'][get_rbid_representation(x, "extended")])
             results_table = self.render_string("results_table.html",
                     results=testruns,
                     representation=repres["template"],
