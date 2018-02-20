@@ -100,7 +100,16 @@
           {% end %}
         </select>
       </div>
-      <div class="form-group col-md-4">
+      <div class="form-group col-md-2">
+        <label for="runenvironment-select">Hostname</label>
+        <select class="form-control" name="run_environment" id="runenvironment-select">
+          <option></option>
+          {% for i in search_options["run_environment"] %}
+          <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
+          {% end %}
+        </select>
+      </div>
+      <div class="form-group col-md-2">
         <label for="tags">Tag(s)</label>
         <input class="form-control" name="tags" id="tags">
       </div>

@@ -68,6 +68,7 @@ query_fields = [
     "solver_version",
     "lp_solver",
     "lp_solver_version",
+    "run_environment",
     "limit",
 ]
 
