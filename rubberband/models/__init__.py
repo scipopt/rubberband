@@ -2,21 +2,21 @@
 import gzip
 import json
 import datetime
-from elasticsearch_dsl import DocType, MetaField, String, Date, Float, Nested
+from elasticsearch_dsl import DocType, InnerDoc, Text, Keyword, Date, Float, Nested
 from ipet import Key
 
 from rubberband.constants import INFINITY_KEYS, INFINITY_MASK, ELASTICSEARCH_INDEX, INFINITY_FLOAT
 from .model_helpers import compute_stat
 
 
-class File(DocType):
+class File(InnerDoc):
     """The definition of a File object. A `File` contains the raw contents of a log file."""
 
-    type = String(index="not_analyzed", required=True)  # out, set, err, solu
-    filename = String(index="not_analyzed", required=True)  # check.MMM.scip-021ace1...out
-    hash = String(index="not_analyzed", required=True)  # computed hash
-    testset_id = String(index="not_analyzed", required=True)  # for application-side joins
-    text = String(index="no", required=True)  # this field is not indexed and is not searchable
+    type = Keyword(index=True, required=True)  # out, set, err, solu
+    filename = Text(index=False, required=True)  # check.MMM.scip-021ace1...out
+    hash = Keyword(index=True, required=True)  # computed hash
+    testset_id = Keyword(index=True, required=True)  # for application-side joins
+    text = Text(index=False, required=True)  # this field is not indexed and is not searchable
 
     class Meta:
         index = ELASTICSEARCH_INDEX
@@ -27,7 +27,7 @@ class File(DocType):
         return "File {} {}".format(self.filename, self.type)
 
 
-class Result(DocType):
+class Result(InnerDoc):
     """
     The definition of a result object. A `Result` is the result of a single instance run.
 
@@ -49,11 +49,11 @@ class Result(DocType):
         gzip
     """
 
-    instance_name = String(index="not_analyzed", required=True)  # mcf128-4-1
-    instance_id = String(index="not_analyzed", required=True)  # mcf128-4-1
-    instance_type = String(index="not_analyzed")  # CIP
-    SoluFileStatus = String(index="not_analyzed")
-    Status = String(index="not_analyzed")
+    instance_name = Keyword(index=True, required=True)  # mcf128-4-1
+    instance_id = Keyword(index=True, required=True)  # mcf128-4-1
+    instance_type = Keyword(index=True)  # CIP
+    SoluFileStatus = Keyword(index=True)
+    Status = Keyword(index=True)
     Datetime_Start = Date()
     Datetime_End = Date()
     dualboundhistory = Float(multi=True)
@@ -61,7 +61,6 @@ class Result(DocType):
 
     class Meta:
         index = ELASTICSEARCH_INDEX
-        parent = MetaField(type="testset")
         # doc_type = "result"
 
     def __str__(self):
@@ -125,39 +124,49 @@ class Result(DocType):
 class TestSet(DocType):
     """Define TestSet object, derived from DocType."""
 
-    id = String(index="not_analyzed", required=True)
-    filename = String(index="not_analyzed", required=True)
-    solver = String(index="not_analyzed", required=True)  # scip
-    run_initiator = String(index="not_analyzed", required=True)  # Gregor Hendel, last editor
-    tags = String(index="not_analyzed", multi=True)  # user-provided tags
-    test_set = String(index="not_analyzed")  # 'MMM', 'short', 'miplib2010', 'bugs', 'SAP-MMP'
-    solver_version = String(index="not_analyzed")  # 3.0.1.1
-    run_environment = String(index="not_analyzed")
-    os = String(index="not_analyzed")
-    architecture = String(index="not_analyzed")
-    mode = String(index="not_analyzed")
-    opt_flag = String(index="not_analyzed")  # spx1, spx2, cpx
-    time_limit = String(index="not_analyzed")
-    lp_solver = String(index="not_analyzed")  # SoPlex
-    lp_solver_version = String(index="not_analyzed")  # 1.7.0.2
-    lp_solver_githash = String(index="not_analyzed")
-    git_hash = String(index="not_analyzed")  # af21b01
-    git_commit_author = String(index="not_analyzed")  # Gregor Hendel
-    settings_short_name = String(index="not_analyzed")  # default
+    id = Keyword(index=True, required=True)
+    filename = Text(index=False, required=True)
+    solver = Keyword(index=False, required=True)  # scip
+    run_initiator = Keyword(index=True, required=True)  # Gregor Hendel, last editor
+    tags = Keyword() # user-provided tags
+    test_set = Keyword(index=True)  # 'MMM', 'short', 'miplib2010', 'bugs', 'SAP-MMP'
+    solver_version = Keyword(index=True)  # 3.0.1.1
+    run_environment = Keyword(index=True)
+    os = Keyword(index=True)
+    architecture = Keyword(index=True)
+    mode = Keyword(index=True)
+    opt_flag = Keyword(index=True)  # spx1, spx2, cpx
+    time_limit = Keyword(index=True)
+    lp_solver = Keyword(index=True)  # SoPlex
+    lp_solver_version = Keyword(index=True)  # 1.7.0.2
+    lp_solver_githash = Keyword(index=True)
+    git_hash = Keyword(index=True)  # af21b01
+    git_commit_author = Keyword(index=True)  # Gregor Hendel
+    settings_short_name = Keyword(index=True)  # default
     index_timestamp = Date(required=True)
     git_commit_timestamp = Date()  # required for plotting
     upload_timestamp = Date()
-    uploader = String(index="not_analyzed")
+    uploader = Keyword(index=True)
     settings = Nested()
     settings_default = Nested()
-    seed = String(index="not_analyzed")
-    permutation = String(index="not_analyzed")
+    seed = Keyword(index=True)
+    permutation = Keyword(index=True)
     metadata = Nested()
-    expirationdate = Date()
+    expirationdate = Date(required=False)
+    results = Nested(Result)
+    files = Nested(File)
 
     class Meta:
         index = ELASTICSEARCH_INDEX
-        doc_type = "testset"
+        #doc_type = "testset"
+
+    def add_result(self, **kwargs):
+        self.results.append(
+                Result(**kwargs))
+
+    def add_file(self, **kwargs):
+        self.files.append(
+                File(**kwargs))
 
     def update(self, **kwargs):
         """

@@ -33,6 +33,7 @@ IPET_EVALUATIONS = {
         }
 # date sorting works only with the empty NONE_DISPLAY at the moment
 NONE_DISPLAY = ""
+MAX_VALUE_RECORDS = 100000
 EXPORT_DATA_FORMATS = ("gzip", "json", "csv", "raw")
 EXPORT_FILE_TYPES = (".out", ".set", ".err", ".meta")
 ELASTICSEARCH_INDEX = "solver-results"

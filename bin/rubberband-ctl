@@ -9,7 +9,7 @@ import os.path
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
-from rubberband.models import Result, File, TestSet
+from rubberband.models import TestSet
 from rubberband.utils import ResultClient
 from rubberband.version import __version__
 from rubberband.constants import ELASTICSEARCH_INDEX
@@ -39,10 +39,10 @@ def delete_index():
 @main.command()
 def create_index():
     '''
-    Create an index with the the required mappings (Result, File, TestSet).
+    Create an index with the the required mappings (TestSet).
     '''
-    Result.init()
-    File.init()
+    # please execute this for elasticsearch to increase limit on index
+    # curl -XPUT 'http://localhost:9200/_all/_settings?preserve_existing=true' -d '{ "index.mapping.total_fields.limit" : "2500" }' -H 'Content-Type: application/json'
     TestSet.init()
 
 

@@ -1,7 +1,7 @@
 -e git+https://github.com/GregorCH/ipet.git@d9924712e782ed6c1679a7e535bca661df88fb33#egg=ipet
 click==6.6
-elasticsearch==2.3.0
-elasticsearch-dsl==2.2.0
+elasticsearch==6.1.1
+elasticsearch-dsl==6.1.0
 Jinja2>=2.9.6
 lxml==4.0.0
 numpy==1.13.0

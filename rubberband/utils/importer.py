@@ -149,9 +149,7 @@ class ResultClient(object):
         results = self.get_results_data(data)
 
         # save the structured data in elasticsearch
-        self.save_structured_data(file_data, results, testset=testset)
-        if initial:
-            self.backup_files()
+        self.save_structured_data(file_data, results, testset=testset, initial=initial)
 
         # clean up filesystem if remove flag set
         if self.remove_files:
@@ -288,7 +286,7 @@ class ResultClient(object):
             "index_timestamp": datetime.now(),
             "metadata": metadata
         }
-        if expirationdate is not None:
+        if expirationdate is not None and expirationdate != "":
             file_data["expirationdate"] = expirationdate
 
         # read the following from metadata, which is added to each problem after parsing
@@ -447,7 +445,7 @@ class ResultClient(object):
 
         return required_files
 
-    def save_structured_data(self, file_level_data, instance_level_data, testset=None):
+    def save_structured_data(self, file_level_data, instance_level_data, testset=None, initial=False):
         """
         Save TestSet and Result model instances in Elasticsearch.
 
@@ -465,19 +463,17 @@ class ResultClient(object):
             if testset is None:
                 file_level_data["upload_timestamp"] = file_level_data["index_timestamp"]
                 file_level_data["uploader"] = file_level_data["run_initiator"]
-                f = TestSet(**file_level_data)
-                f.save()
+                testset = TestSet(**file_level_data)
+                testset.save()
             else:
-                f = testset
-                if f.upload_timestamp is None:
-                    file_level_data["upload_timestamp"] = f.index_timestamp
-                if f.uploader is None:
-                    file_level_data["uploader"] = f.run_initiator
-                f.update(**file_level_data)
-            self.testset_meta_id = f.meta.id  # save this for backup step
+                if testset.upload_timestamp is None:
+                    file_level_data["upload_timestamp"] = testset.index_timestamp
+                if testset.uploader is None:
+                    file_level_data["uploader"] = testset.run_initiator
+                testset.update(**file_level_data)
+            self.testset_meta_id = testset.meta.id  # save this for backup step
             # save children
             for r in instance_level_data:
-                r["_parent"] = f.meta.id
                 # TODO move this to constructor of Result model?
                 for key in ["Datetime_Start", "Datetime_End"]:
                     try:
@@ -486,8 +482,7 @@ class ResultClient(object):
                         r[key] = timestr
                     except:
                         pass
-                res = Result(**r)
-                res.save()
+                testset.add_result(**r)
         except:
             # database error
             msg = "Some kind of database error."
@@ -499,8 +494,9 @@ class ResultClient(object):
         self.metadata.status = "success"
         self.metadata.setUrl("/result/{}".format(self.testset_meta_id))
 
-    def backup_files(self):
-        """Save all file contents in Elasticsearch."""
+        if not initial:
+            return
+
         # remove solu file from checkin
         self.files.pop(".solu")
         for ftype, f in self.files.items():
@@ -519,8 +515,7 @@ class ResultClient(object):
 
                 data["text"] = f_in.read()
                 try:
-                    fobj = File(**data)
-                    fobj.save()
+                    testset.add_file(**data)
                 except:
                     msg = "Couldn't create file in Elasticsearch. Check the logs for more info."\
                           " Aborting..."
