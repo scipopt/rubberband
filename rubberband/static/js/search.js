@@ -30,6 +30,7 @@ function fillResultTable(data) {
     //$("#results-table").replaceWith(data);
     $("#results-table").html(data);
     tmp = $("#search-result");
+    $.fn.dataTable.moment( 'D. MMM YYYY, HH:mm' );
     if (tmp[0].tagName == "TABLE") {
         tmp.DataTable({
             scrollY: '80vh',

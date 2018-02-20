@@ -31,7 +31,8 @@ IPET_EVALUATIONS = {
         8: {"path": STATIC_FILES_DIR + "evaluation-deco.xml",
             "name": "deco evaluation for sap"},
         }
-NONE_DISPLAY = "--"
+# date sorting works only with the empty NONE_DISPLAY at the moment
+NONE_DISPLAY = ""
 EXPORT_DATA_FORMATS = ("gzip", "json", "csv", "raw")
 EXPORT_FILE_TYPES = (".out", ".set", ".err", ".meta")
 ELASTICSEARCH_INDEX = "solver-results"
