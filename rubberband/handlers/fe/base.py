@@ -175,10 +175,7 @@ class BaseHandler(RequestHandler):
                 if attr in INFINITY_KEYS and value == INFINITY_MASK:
                     return INFINITY_DISPLAY
                 if (type(value) is int or type(value) is float):
-                    if value >= INFINITY:
-                        return INFINITY_DISPLAY
-                    if value <= -INFINITY:
-                        return -INFINITY_DISPLAY
+                    return value
                 if attr in ["DualBound", "PrimalBound"]:
                     return "%.4f" % value
                 if attr in ["SolvingTime", "TotalTime_solving", "Gap"]:
