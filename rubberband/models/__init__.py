@@ -147,8 +147,24 @@ class TestSet(DocType):
     git_commit_timestamp = Date()  # required for plotting
     upload_timestamp = Date()
     uploader = Keyword(index=True)
-    settings = Nested()
-    settings_default = Nested()
+    settings = Nested(
+            properties={
+                "solvingphases/optimalvalue" : Text(index=False),
+                "misc/referencevalue": Text(index=False),
+                # find out what is up with inftyvalues
+                #"separating/flowcover/maxslackroot" : Text(index=False),
+                #"separating/flowcover/maxslack" : Text(index=False),
+                #"heuristics/undercover/maxcoversizeconss" : Text(index=False),
+                })
+    settings_default = Nested(
+            properties={
+                "solvingphases/optimalvalue" : Text(index=False),
+                "misc/referencevalue": Text(index=False),
+                # find out what is up with inftyvalues
+                #"separating/flowcover/maxslackroot" : Text(index=False),
+                #"separating/flowcover/maxslack" : Text(index=False),
+                #"heuristics/undercover/maxcoversizeconss" : Text(index=False),
+                })
     seed = Keyword(index=True)
     permutation = Keyword(index=True)
     metadata = Nested()

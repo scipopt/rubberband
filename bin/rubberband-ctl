@@ -42,7 +42,7 @@ def create_index():
     Create an index with the the required mappings (TestSet).
     '''
     # please execute this for elasticsearch to increase limit on index
-    # curl -XPUT 'http://localhost:9200/_all/_settings?preserve_existing=true' -d '{ "index.mapping.total_fields.limit" : "2500" }' -H 'Content-Type: application/json'
+    # curl -XPUT 'http://localhost:9200/_all/_settings?preserve_existing=true' -d '{ "index.mapping.total_fields.limit" : "8000" }' -H 'Content-Type: application/json'
     TestSet.init()
 
 
