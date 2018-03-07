@@ -404,46 +404,6 @@ class TestSet(DocType):
         """
         raise NotImplemented()
 
-    def delete_all_associations(self):
-        """Delete all children associated to a TestSet object, i.e. Result and File objects."""
-        self.delete_all_children()
-        self.delete_all_files()
-
-    def delete_all_children(self):
-        """Delete all children (Result objects) associated to a TestSet object."""
-        self.load_children()
-        for c_name in self.children:
-            c = self.children[c_name]
-            c.delete()
-
-    def delete_all_files(self):
-        """Delete all File objects associated to a TestSet object."""
-        self.load_files()
-        for ft in self.files:
-            f = self.files[ft]
-            f.delete()
-
-    def load_children(self):
-        """Load all children (Results objects) associated to a TestSet object."""
-        s = Result.search()
-        # it's generally discouraged to return a large number of elements from a search query
-        s = s.filter("term", _parent=self.meta.id)
-        self.children = {}
-
-        # this uses pagination/scroll
-        for hit in s.scan():
-            self.children[hit.instance_name] = hit
-
-    def load_files(self):
-        """Load the files of a TestSet object."""
-        s = File.search()
-        s = s.filter("term", testset_id=self.meta.id)
-
-        self.files = {}
-        # this uses pagination/scroll
-        for hit in s.scan():
-            self.files[hit.type] = hit
-
     def load_stats(self, subset=[]):
         """
         Load the statistics of a TestSet object.
@@ -454,13 +414,11 @@ class TestSet(DocType):
             a subset of instance names to compute statistics for (default [])
         """
         self.stats = {}
-        if not hasattr(self, "children"):
-            self.load_children()
 
         if subset:
-            all_instances = [self.children[instance_name] for instance_name in subset]
+            all_instances = [self.results[instance_name] for instance_name in subset]
         else:
-            all_instances = self.children.to_dict().values()
+            all_instances = [self.results[instance_name] for instance_name in subset]
 
         self.stats = compute_stat(all_instances)
 

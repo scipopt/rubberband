@@ -32,16 +32,11 @@ class ResultView(BaseHandler):
         if not parent:
             raise HTTPError(404)
 
-        # get data associated with TestSet, save in parent.children[]
-        parent.load_children()
-
         compare = self.get_argument("compare", default=[])
 
         if compare:
             compare_ids = compare.split(",")
             compare = load_testsets(compare_ids)
-            for c in compare:
-                c.load_children()
 
             all_runs = [parent] + compare
             same_status = get_same_status(all_runs)
