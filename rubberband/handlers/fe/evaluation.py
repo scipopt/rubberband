@@ -121,7 +121,8 @@ class EvaluationView(BaseHandler):
             df_count = df["_count_"]
 
             # groups in rows
-            rows = ['clean', '[0,tilim]', '[1,tilim]', '[10,tilim]', '[100,tilim]', '[1000,tilim]',
+            rows = ['clean', 'affected', '[0,tilim]', '[1,tilim]', '[10,tilim]', '[100,tilim]',
+                    '[1000,tilim]',
                     'diff-timeouts', 'MMM compl (387)', 'Cor@l (349)', 'continuous', 'integer']
 
             df_rel = df_rel.pivot_table(index=['Group'], columns=[colindex]).swaplevel(
@@ -255,6 +256,7 @@ def get_replacement_dict(cols, colindex):
     repl["egin{tabular"] = "egin{tabular*}{\\textwidth"
     repl["end{tabular"] = "end{tabular*"
     repl["clean"] = "\\cleaninst"
+    repl["affected"] = "\\affected"
     repl['[0,tilim]'] = "\\cmidrule{1-10}\n\\bracket{0}{tilim}"
     repl['[1,tilim]'] = "\\bracket{1}{tilim}"
     repl['[10,tilim]'] = "\\bracket{10}{tilim}"

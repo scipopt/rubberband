@@ -6,7 +6,7 @@ from tornado.options import options
 import traceback
 
 from rubberband.constants import NONE_DISPLAY, INFINITY_KEYS, \
-        INFINITY_MASK, INFINITY, INFINITY_DISPLAY, FORMAT_DATETIME_SHORT
+        INFINITY_MASK, INFINITY_DISPLAY, FORMAT_DATETIME_SHORT
 
 
 class BaseHandler(RequestHandler):
