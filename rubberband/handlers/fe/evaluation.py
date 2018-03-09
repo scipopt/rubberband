@@ -284,6 +284,7 @@ def setup_experiment(testruns):
         experiment
     """
     ex = Experiment()
+    ex.addSoluFile(ALL_SOLU)
 
     # get data
     for t in testruns:
