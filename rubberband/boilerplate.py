@@ -89,9 +89,11 @@ def make_app(project_root):
     logging.info("Setting up Elasticsearch connection.")
     # set up elasticsearch
     # create connection instance
+    # the timeout argument is needed when you upload big files
     conn = Elasticsearch([options.elasticsearch_url], use_ssl=options.elasticsearch_use_ssl,
                          verify_certs=options.elasticsearch_verify_certs,
-                         ca_certs=options.elasticsearch_ca_certs)
+                         ca_certs=options.elasticsearch_ca_certs,
+                         timeout=100)
     # connect connection to pool
     connections.add_connection("default", conn)
 
