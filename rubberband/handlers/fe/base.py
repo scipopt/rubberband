@@ -176,8 +176,10 @@ class BaseHandler(RequestHandler):
                 val_tfac = getattr(obj, "time_factor", None)
                 if val_tfac is not None:
                     return "x {}".format(val_tfac)
-                else:
+                elif val_tlim is not None:
                     return "{}s".format(val_tlim)
+                else:
+                    return ""
 
             # get value
             value = getattr(obj, attr, None)
