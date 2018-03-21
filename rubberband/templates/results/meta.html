@@ -145,10 +145,10 @@
 	<td>{{ format_attr(f, "test_set") }}</td>
 	{% end %}
     </tr>
-    <tr{% if are_equivalent([file]+compare, "time_limit") %} class="toggle_meta_hide" {% end %}>
+    <tr{% if are_equivalent([file]+compare, "time_mod") %} class="toggle_meta_hide" {% end %}>
         <td>Timelimit</td>
 	{% for f in [file] + compare %}
-	<td>{{ format_attr(f, "time_limit") }}</td>
+	<td>{{ format_attr(f, "time_mod") }}</td>
 	{% end %}
     </tr>
     <tr{% if are_equivalent([file]+compare, "expirationdate") %} class="toggle_meta_hide" {% end %}>

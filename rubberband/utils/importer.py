@@ -306,7 +306,7 @@ class ResultClient(object):
                     "run_environment": "Queue",
                     "opt_flag": "OptFlag",
                     "os": "OperatingSystem",
-                    "time_limit": "TimeLimit"
+                    "time_factor": "TimeFactor"
                     }
 
             for key, tag in mapping.items():

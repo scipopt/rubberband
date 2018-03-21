@@ -138,6 +138,7 @@ class TestSet(DocType):
     mode = String(index="not_analyzed")
     opt_flag = String(index="not_analyzed")  # spx1, spx2, cpx
     time_limit = String(index="not_analyzed")
+    time_factor = String(index="not_analyzed")
     lp_solver = String(index="not_analyzed")  # SoPlex
     lp_solver_version = String(index="not_analyzed")  # 1.7.0.2
     lp_solver_githash = String(index="not_analyzed")
@@ -319,6 +320,8 @@ class TestSet(DocType):
             return self.permutation or str(0)
         if key == "TimeLimit":
             return self.time_limit or str(0)
+        if key == "TimeFactor":
+            return self.time_factor or str(1)
         if key == "CommitTime":
             return str(self.git_commit_timestamp)
         if key == "SpxGitHash":

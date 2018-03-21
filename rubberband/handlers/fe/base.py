@@ -170,6 +170,16 @@ class BaseHandler(RequestHandler):
                 return NONE_DISPLAY
             return " ".join(value)
         else:
+            # treat time_mod differently
+            if attr == "time_mod":
+                val_tlim = getattr(obj, "time_limit", None)
+                val_tfac = getattr(obj, "time_factor", None)
+                if val_tfac is not None:
+                    return "x {}".format(val_tfac)
+                else:
+                    return "{}s".format(val_tlim)
+
+            # get value
             value = getattr(obj, attr, None)
             if value not in (None, ""):
                 if attr in INFINITY_KEYS and value == INFINITY_MASK:
