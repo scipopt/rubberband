@@ -20,6 +20,8 @@ def compute_stat(instances):
     stats["all"]["instances"] = instances
     # group instances into status buckets
     for i in instances:
+        if i.Status is None:
+            continue
         status = i.Status.lower()
         # translate from ipet
         if status == "solved_not_verified":

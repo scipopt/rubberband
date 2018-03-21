@@ -644,7 +644,7 @@ def generate_filtergroup_buttons(table, evaluation):
         buttons and additional column
     """
     table = table.copy()
-    table["Filtergroups"] = "all"
+    table["Filtergroups"] = "|all|"
     buttons_str = 'Show filtergroups: <div id="ipet-long-filter-buttons" class="btn-group" role="group">' # noqa
 
     for fg in evaluation.getActiveFilterGroups():
@@ -658,7 +658,7 @@ def generate_filtergroup_buttons(table, evaluation):
 
         # construct new button string
         newbutton = '<button id="ipet-long-filter-button" type="button" class="btn btn-sm btn-info">' + fg_name + '</button>' # noqa
-        fg_data["Newfiltergroup"] = fg_name
+        fg_data["Newfiltergroup"] = "|{}|".format(fg_name)
 
         # update the table with the new filtergroup data
         table.update(fg_data)

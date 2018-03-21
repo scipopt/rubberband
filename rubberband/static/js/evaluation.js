@@ -137,7 +137,8 @@ function getData(e) {
 
 $('div#summary').on('click', 'button#ipet-long-filter-button', function (e) {
     fg_name = this.innerHTML;
-    ipetlongtable.search(fg_name).draw()
+    // The '|' are for avoiding trouble with substrings
+    ipetlongtable.search("|"+fg_name+"|").draw()
 });
 
 $('button#ipet-eval-button').click(function (e) {
