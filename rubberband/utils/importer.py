@@ -305,14 +305,13 @@ class ResultClient(object):
                     "permutation": "Permutation",
                     "run_environment": "Queue",
                     "opt_flag": "OptFlag",
-                    "os": "OperatingSystem"
+                    "os": "OperatingSystem",
+                    "time_limit": "TimeLimit"
                     }
 
             for key, tag in mapping.items():
-                try:
+                if tag in metadata.keys():
                     file_data[key] = metadata[tag]
-                except:
-                    pass
         else:
             file_data.update(self.parse_info_from_filename(self.files))
 
