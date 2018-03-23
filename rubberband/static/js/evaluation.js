@@ -1,10 +1,12 @@
 // global variables
 button1 = document.getElementById("ipet-eval-button");
 button2 = document.getElementById("ipet-eval-show-button");
-button3 = document.getElementById("ipet-eval-latex-button");
+button3 = document.getElementById("ipet-eval-download-button");
+button4 = document.getElementById("ipet-eval-latex-button");
 button1.disabled = false;
 button2.disabled = false;
 button3.disabled = false;
+button4.disabled = false;
 var ipetlongtable;
 var ipetaggtable;
 
@@ -70,6 +72,13 @@ $('button#ipet-eval-show-button').click(function (e) {
     });
 });
 
+$('button#ipet-eval-download-button').click(function (e) {
+    getData(e);
+    evalurl = "/download?evaluation=" + evalid;
+    window.location.href = evalurl;
+});
+
+
 $(document).on({
     mouseenter: function () {
         trIndex = $(this).index()+3;
@@ -124,6 +133,7 @@ function setButtonsDisabled(stat) {
     button1.disabled = stat;
     button2.disabled = stat;
     button3.disabled = stat;
+    button4.disabled = stat;
 };
 
 function getData(e) {
