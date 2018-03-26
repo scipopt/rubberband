@@ -290,6 +290,8 @@ class TestSet(DocType):
                     all_instances[i]["ProblemName"] = all_instances[i]["instance_name"]
                 if "TimeLimit" not in all_instances[i].keys():
                     all_instances[i]["TimeLimit"] = self.get_data("TimeLimit")
+                if "TimeFactor" not in all_instances[i].keys():
+                    all_instances[i]["TimeFactor"] = self.get_data("TimeFactor")
                 if self.lp_solver_githash:
                     all_instances[i]["SpxGitHash"] = self.lp_solver_githash
 
