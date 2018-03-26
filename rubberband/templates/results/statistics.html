@@ -1,17 +1,17 @@
-  <div role="tabpanel" class="tab-pane" id="summary">
+<div role="tabpanel" class="tab-pane" id="summary">
   <div class="row">
     <h3 class="tab-title">Summary</h3>
     <div class="tab-buttons">
-        <a href="/statistics/{{file.meta.id}}{% if compare %}?compare={{ ",".join([c.meta.id for c in compare]) }}{% end %}" class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="custom statistics">
+      <a href="/statistics/{{file.meta.id}}{% if compare %}?compare={{ ",".join([c.meta.id for c in compare]) }}{% end %}" class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="custom statistics">
         <span class="glyphicon glyphicon-filter"></span>
       </a>
     </div>
   </div>
   <h4>Testruns</h4>
   <form id="ipet-eval-form">
-  {% raw ipet_legend_table %}
+    {% raw ipet_legend_table %}
 
-  <h4>IPET Evaluations</h4>
+    <h4>IPET Evaluations</h4>
     <p class="text-muted">Please select an IPET evaluation file:</p>
     <div class="form-group col-md-2">
       <select class="form-control" name="ipet-eval-file" id="ipet-eval-file-select">
@@ -33,11 +33,10 @@
       <button id="ipet-eval-latex-button" type="button" class="btn btn-primary">Generate latex table*</button>
     </div>
   </form>
-  </div>
   <br />
   {% include "evaluation.html" %}
   <p style="color:#c00">
-    * Experimental feature: Use it with "group by githash..." and make sure you are comparing two runs or two seeded/permutation runs.
+  * Experimental feature: Use it with "group by githash..." and make sure you are comparing two runs or two seeded/permutation runs.
   </p>
   <br />
 
