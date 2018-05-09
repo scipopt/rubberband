@@ -20,6 +20,12 @@ function display_modal(data) {
     document.getElementById("show-eval-file").innerHTML = data;
 };
 
+$('#eval-tolerance-slider').slider({
+  formatter: function(val) {
+    return val.toExponential(0);
+  }
+});
+
 function hide_modal() {
     modal.style.display = "none";
 };
@@ -136,6 +142,11 @@ function setButtonsDisabled(stat) {
     button4.disabled = stat;
 };
 
+function getTolerance() {
+    val = $("#eval-tolerance-slider");
+    return val[0].value;
+};
+
 function getData(e) {
     e.preventDefault();
 
@@ -153,6 +164,8 @@ $('div#summary').on('click', 'button#ipet-long-filter-button', function (e) {
 
 $('button#ipet-eval-button').click(function (e) {
     getData(e);
+    tol = getTolerance();
+    console.log(tol);
     display_modal("Please wait, generating table");
 
     // get data from url
@@ -166,7 +179,7 @@ $('button#ipet-eval-button').click(function (e) {
     }
 
     // construct url
-    evalurl = "/eval/" + evalid + idlist + "&default=" + defaultrun;
+    evalurl = "/eval/" + evalid + idlist + "&default=" + defaultrun + "&tolerance=" + tol;
     $.ajax({
         type: "GET",
         url: evalurl,

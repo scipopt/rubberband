@@ -35,6 +35,8 @@ class EvaluationView(BaseHandler):
         # get evalfile
         evalfile = IPET_EVALUATIONS[int(eval_id)]
 
+        tolerance = self.get_argument("tolerance")
+
         # read testrunids
         testrunids = self.get_argument("testruns").split(",")
 
@@ -50,7 +52,7 @@ class EvaluationView(BaseHandler):
 
         # evaluate with ipet
         ex = setup_experiment(testruns)
-        ev = setup_evaluation(evalfile["path"], ALL_SOLU)
+        ev = setup_evaluation(evalfile["path"], ALL_SOLU, tolerance)
 
         # set defaultgroup
         set_defaultgroup(ev, ex, default_id)
@@ -585,7 +587,7 @@ def get_testruns(testrunids):
     return testruns
 
 
-def setup_evaluation(evalfile, solufile):
+def setup_evaluation(evalfile, solufile, tolerance):
     """
     Setup the IPET evaluation.
 
@@ -595,6 +597,8 @@ def setup_evaluation(evalfile, solufile):
         name of evaluation file to use
     solufile : str
         name of solution file to use
+    tolerance : str
+        tolerance for validation
 
     Returns
     -------
@@ -602,6 +606,10 @@ def setup_evaluation(evalfile, solufile):
     """
     evaluation = IPETEvaluation.fromXMLFile(evalfile)
     evaluation.set_validate(solufile)
+
+    # evaluation.set_tol(tolerance)
+    evaluation.set_feastol(tolerance)
+
     return evaluation
 
 
