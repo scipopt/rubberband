@@ -20,10 +20,14 @@ function display_modal(data) {
     document.getElementById("show-eval-file").innerHTML = data;
 };
 
+function formattol(val) {
+  newval = Number("1e" + String(val));
+  return newval.toExponential(0);
+}
+
 $('#eval-tolerance-slider').slider({
   formatter: function(val) {
-    newval = Number("1e" + String(val));
-    return newval.toExponential(0);
+    return formattol(val);
   }
 });
 
@@ -145,7 +149,7 @@ function setButtonsDisabled(stat) {
 
 function getTolerance() {
     val = $("#eval-tolerance-slider");
-    return val[0].value;
+    return formattol(val[0].value);
 };
 
 function getData(e) {
