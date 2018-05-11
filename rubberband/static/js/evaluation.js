@@ -22,7 +22,8 @@ function display_modal(data) {
 
 $('#eval-tolerance-slider').slider({
   formatter: function(val) {
-    return val.toExponential(0);
+    newval = Number("1e" + String(val));
+    return newval.toExponential(0);
   }
 });
 

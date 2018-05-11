@@ -36,6 +36,8 @@ class EvaluationView(BaseHandler):
         evalfile = IPET_EVALUATIONS[int(eval_id)]
 
         tolerance = self.get_argument("tolerance")
+        if tolerance == "":
+            tolerance = 1e-6
 
         # read testrunids
         testrunids = self.get_argument("testruns").split(",")
