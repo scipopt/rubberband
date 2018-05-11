@@ -607,7 +607,6 @@ def setup_evaluation(evalfile, solufile, tolerance):
     evaluation = IPETEvaluation.fromXMLFile(evalfile)
     evaluation.set_validate(solufile)
 
-    # evaluation.set_tol(tolerance)
     evaluation.set_feastol(tolerance)
 
     return evaluation

@@ -321,3 +321,7 @@ input.fieldValue {
 
 /* Toggle buttons */
 .quick .toggle-group { transition: none; -webkit-transition: none; }
+
+.slider {
+  width: 90% !important;
+}
