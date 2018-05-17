@@ -6,7 +6,7 @@ import time
 
 logger = logging.getLogger(__name__)
 
-sockethandler = logging.handlers.SocketHandler('localhost',
+sockethandler = logging.handlers.SocketHandler('localhost:8888/testsocket',
         logging.handlers.DEFAULT_TCP_LOGGING_PORT)
 #sockethandler = logging.handlers.SocketHandler()
 sockethandler.setLevel(logging.INFO)
@@ -27,13 +27,17 @@ class TestSocketHandler(websocket.WebSocketHandler):
 
     def open(self):
         print("Socket opened")
+        log()
 
     def on_close(self):
         print("WebSocket closed")
 
     def on_message(self, message):
+        print(message)
         self.write_message(u"Received {}".format(message))
-        log()
+
+    def check_origin(self, origin):
+        return True
 
 #from .base import BaseHandler
 #from tornado import gen, web, httpclient
@@ -64,15 +68,16 @@ class TestSocketHandler(websocket.WebSocketHandler):
 class TestView(BaseHandler):
 
     def get(self):
-        url = "http://127.0.0.1:8888/testsocket"
+        self.render("test.html", page_title="test", content="HEY")
+        #url = "ws://127.0.0.1:8888/testsocket"
 
-        conn = yield websocket_connect(url)
-        while True:
-            msg = yield conn.read_message()
-            if msg is None:
-                break
-            self.write(msg)
-            self.flush()
+        #conn = yield websocket_connect(url)
+        #while True:
+        #    msg = yield conn.read_message()
+        #    if msg is None:
+        #        break
+        #    self.write(msg)
+        #    self.flush()
 
     #def get(self):
     #    log()
