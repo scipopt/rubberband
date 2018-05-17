@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block body %}
+  <script>
+var ws = new WebSocket("ws://localhost:8888/websocket");
+ws.onopen = function() {
+  ws.send("Hello, world");
+};
+ws.onmessage = function(evt) {
+  alert(evt.data);
+};
+  </script>
+<div class="row">
+
+<pre>
+{{ content }}
+</pre>
+
+</div>
+{% end %}
