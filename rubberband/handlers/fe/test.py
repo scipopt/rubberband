@@ -1,97 +1,45 @@
 
 from .base import BaseHandler
 from tornado import gen, web, httpclient, websocket
-import logging, logging.handlers
+import logging
+from logging import StreamHandler
 import time
 
 logger = logging.getLogger(__name__)
 
-sockethandler = logging.handlers.SocketHandler('localhost:8888/testsocket',
-        logging.handlers.DEFAULT_TCP_LOGGING_PORT)
-#sockethandler = logging.handlers.SocketHandler()
-sockethandler.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-sockethandler.setFormatter(formatter)
+class RBHandler(StreamHandler):
 
-logger.addHandler(sockethandler)
+    def __init__(self, handle):
+        StreamHandler.__init__(self)
+        self.rbhandle = handle
 
-def log(iterations=3):
-    logger.info("new round")
-    logger.info("hallo welt, {} speaking.".format(__name__))
-    for i in range(iterations):
-        out = "iteration {}".format(i)
-        logger.info(out)
-        time.sleep(1)
+    def flush(self):
+        self.rbhandle.flush()
 
-class TestSocketHandler(websocket.WebSocketHandler):
+    def emit(self, record):
+        msg = self.format(record)
+        self.rbhandle.write(msg)
+        self.flush()
 
-    def open(self):
-        print("Socket opened")
-        log()
-
-    def on_close(self):
-        print("WebSocket closed")
-
-    def on_message(self, message):
-        print(message)
-        self.write_message(u"Received {}".format(message))
-
-    def check_origin(self, origin):
-        return True
-
-#from .base import BaseHandler
-#from tornado import gen, web, httpclient
-#import logging
-#import time
-#from io import StringIO
-#
-###### LOGGING
-#log_stream = StringIO()
-#
-#logger = logging.getLogger(__name__)
-#
-#logsubset = logging.StreamHandler(log_stream)
-#logsubset.setLevel(logging.INFO)
-#formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-#logsubset.setFormatter(formatter)
-#
-#logger.addHandler(logsubset)
-#
-#def log(iterations=3):
-#    logger.info("hallo welt, {} speaking.".format(__name__))
-#    for i in range(iterations):
-#        out = "iteration {}".format(i)
-#        logger.info(out)
-#        print(out)
-#        time.sleep(1)
+    def __repr__(self):
+        return "rb handler ({}, {})".format(name, level)
 
 class TestView(BaseHandler):
 
     def get(self):
-        self.render("test.html", page_title="test", content="HEY")
-        #url = "ws://127.0.0.1:8888/testsocket"
+        rbhandler = RBHandler(self)
 
-        #conn = yield websocket_connect(url)
-        #while True:
-        #    msg = yield conn.read_message()
-        #    if msg is None:
-        #        break
-        #    self.write(msg)
-        #    self.flush()
+        rbhandler.setLevel(logging.INFO)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        rbhandler.setFormatter(formatter)
 
-    #def get(self):
-    #    log()
-    #    #self.render("test.html", page_title="test", content=log_stream.getvalue())
+        logger.addHandler(rbhandler)
 
-    #    self.write("hello.")
-    #    self.flush()
-    #    character = None
-    #    for line in log_stream.getvalue():
-    #        self.write(line)
-    #        self.flush()
+        log()
 
-    #    log_stream.flush()
-    #    self.write(log_stream.getvalue())
+        #self.render("test.html", page_title="test", content=log_stream.getvalue())
+        logger.removeHandler(rbhandler)
+        rbhandler.close()
 
-    #    self.write('done')
-    #    self.flush()
+        self.finish()
+

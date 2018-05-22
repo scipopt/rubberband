@@ -9,7 +9,7 @@ INFINITY_DISPLAY = 1e+20
 ZIPPED_SUFFIX = ".gz"
 FILES_DIR = "files/"
 STATIC_FILES_DIR = FILES_DIR + "static/"
-ALL_SOLU = "instancedata/database/instancedb.sqlite3"  # or STATIC_FILES_DIR + "all.solu"
+ALL_SOLU = "/home/franzi/git/instancedata/database/instancedb.sqlite3"
 ADD_READERS = STATIC_FILES_DIR + "additional_readers.xml"
 IPET_EVALUATIONS = {
         0: {"path": STATIC_FILES_DIR + "eval_singleruns_exclude.xml",

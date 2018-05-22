@@ -14,6 +14,28 @@ import pandas as pd
 import json
 import string
 
+####logging
+#import logging
+#from logging import StreamHandler
+#logger = logging.getLogger(__name__)
+####logging
+
+#class RBHandler(StreamHandler):
+#
+#    def __init__(self, handle):
+#        StreamHandler.__init__(self)
+#        self.rbhandle = handle
+#
+#    def flush(self):
+#        self.rbhandle.flush()
+#
+#    def emit(self, record):
+#        msg = self.format(record)
+#        self.rbhandle.write(msg)
+#        self.flush()
+#
+#    def __repr__(self):
+#        return "rb handler ({}, {})".format(name, level)
 
 class EvaluationView(BaseHandler):
     """Request handler caring about the evaluation of sets of TestRuns."""
@@ -53,6 +75,16 @@ class EvaluationView(BaseHandler):
         testruns = get_testruns(testrunids)
 
         # evaluate with ipet
+        ####logger
+        #rbhandler = RBHandler(self)
+
+        #rbhandler.setLevel(logging.INFO)
+        #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        #rbhandler.setFormatter(formatter)
+
+        #logger.addHandler(rbhandler)
+        ####logger
+
         ex = setup_experiment(testruns)
         ev = setup_evaluation(evalfile["path"], ALL_SOLU, tolerance)
 
@@ -103,7 +135,7 @@ class EvaluationView(BaseHandler):
             mydict = {"ipet-legend-table": results_table,
                       "ipet-eval-result": html_tables,
                       "buttons": fg_buttons_str}
-            self.write(json.dumps(mydict))
+            #self.write(json.dumps(mydict))
 
         elif style == "latex":
             # generate a table that can be used in the release-report
@@ -163,6 +195,13 @@ class EvaluationView(BaseHandler):
 
             # send reply
             self.render("file.html", contents=out)
+
+        ####logger
+        #logger.removeHandler(rbhandler)
+        #rbhandler.close()
+        ####logger
+
+        #self.finish()
 
 
 def get_column_formatters(df):

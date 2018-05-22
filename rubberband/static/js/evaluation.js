@@ -185,29 +185,36 @@ $('button#ipet-eval-button').click(function (e) {
 
     // construct url
     evalurl = "/eval/" + evalid + idlist + "&default=" + defaultrun + "&tolerance=" + tol;
-    $.ajax({
-        type: "GET",
-        url: evalurl,
-        success:function(data) {
-            hide_modal();
-            setButtonsDisabled(false);
-            datadict = JSON.parse(data);
-            for(var key in datadict) {
-                if (key == "buttons") {
-                    continue;
-                }
-                var el = document.createElement("div");
-                el.innerHTML = datadict[key];
-                document.getElementById(key).replaceWith(el);
-            }
-            formatIpetTable();
-            $("div.ipet-long-toolbar").html(datadict["buttons"]);
-        },
-        error:function(data){
-            display_modal("Something went wrong.");
-            setButtonsDisabled(false);
-        }
-    });
+    //$.ajax({
+    //    type: "GET",
+    //    url: evalurl,
+    //    success:function(data) {
+    //        hide_modal();
+    //        setButtonsDisabled(false);
+    //        datadict = JSON.parse(data);
+    //        for(var key in datadict) {
+    //            if (key == "buttons") {
+    //                continue;
+    //            }
+    //            var el = document.createElement("div");
+    //            el.innerHTML = datadict[key];
+    //            document.getElementById(key).replaceWith(el);
+    //        }
+    //        formatIpetTable();
+    //        $("div.ipet-long-toolbar").html(datadict["buttons"]);
+    //    },
+    //    error:function(data){
+    //        display_modal("Something went wrong.");
+    //        setButtonsDisabled(false);
+    //    }
+    //});
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', evalurl);
+  xhr.send();
+
+  setInterval(function() {
+    console.log(xhr.responseText);
+  });
 });
 
 $('button#ipet-eval-latex-button').click(function (e) {
