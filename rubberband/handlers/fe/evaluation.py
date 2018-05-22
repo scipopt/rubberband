@@ -15,27 +15,29 @@ import json
 import string
 
 ####logging
-#import logging
-#from logging import StreamHandler
-#logger = logging.getLogger(__name__)
+import logging
+from logging import StreamHandler
 ####logging
 
-#class RBHandler(StreamHandler):
-#
-#    def __init__(self, handle):
-#        StreamHandler.__init__(self)
-#        self.rbhandle = handle
-#
-#    def flush(self):
-#        self.rbhandle.flush()
-#
-#    def emit(self, record):
-#        msg = self.format(record)
-#        self.rbhandle.write(msg)
-#        self.flush()
-#
-#    def __repr__(self):
-#        return "rb handler ({}, {})".format(name, level)
+class RBHandler(StreamHandler):
+
+    def __init__(self, handle):
+        print("init rbhandler")
+        StreamHandler.__init__(self)
+        self.rbhandle = handle
+
+    def flush(self):
+        print("flush")
+        self.rbhandle.flush()
+
+    def emit(self, record):
+        msg = self.format(record)
+        print("emit", msg)
+        self.rbhandle.write(msg)
+        self.flush()
+
+    def __repr__(self):
+        return "rb handler ({}, {})".format(name, level)
 
 class EvaluationView(BaseHandler):
     """Request handler caring about the evaluation of sets of TestRuns."""
@@ -76,13 +78,14 @@ class EvaluationView(BaseHandler):
 
         # evaluate with ipet
         ####logger
-        #rbhandler = RBHandler(self)
+        ipetlogger = logging.getLogger("ipet")
+        rbhandler = RBHandler(self)
 
-        #rbhandler.setLevel(logging.INFO)
-        #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        #rbhandler.setFormatter(formatter)
+        rbhandler.setLevel(logging.DEBUG)
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        rbhandler.setFormatter(formatter)
 
-        #logger.addHandler(rbhandler)
+        ipetlogger.addHandler(rbhandler)
         ####logger
 
         ex = setup_experiment(testruns)
@@ -197,11 +200,11 @@ class EvaluationView(BaseHandler):
             self.render("file.html", contents=out)
 
         ####logger
-        #logger.removeHandler(rbhandler)
-        #rbhandler.close()
+        ipetlogger.removeHandler(rbhandler)
+        rbhandler.close()
         ####logger
 
-        #self.finish()
+        self.finish()
 
 
 def get_column_formatters(df):

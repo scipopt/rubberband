@@ -170,7 +170,6 @@ $('div#summary').on('click', 'button#ipet-long-filter-button', function (e) {
 $('button#ipet-eval-button').click(function (e) {
     getData(e);
     tol = getTolerance();
-    console.log(tol);
     display_modal("Please wait, generating table");
 
     // get data from url
@@ -213,8 +212,9 @@ $('button#ipet-eval-button').click(function (e) {
   xhr.send();
 
   setInterval(function() {
-    console.log(xhr.responseText);
-  });
+    console.log("new request"+xhr.responseText);
+  }, 1000);
+
 });
 
 $('button#ipet-eval-latex-button').click(function (e) {
