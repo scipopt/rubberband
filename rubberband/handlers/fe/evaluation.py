@@ -56,6 +56,7 @@ class EvaluationView(BaseHandler):
 
         # setup logger
         if style is None:
+
             ipetlogger = logging.getLogger("ipet")
             rbhandler = RBLogHandler(self)
 
@@ -77,6 +78,7 @@ class EvaluationView(BaseHandler):
 
         # None style is default
         if style is None:
+
             # add filtergroup buttons to ipet long table
             fg_buttons_str, longtable["Filtergroups"] = generate_filtergroup_buttons(longtable, ev)
 
@@ -86,6 +88,9 @@ class EvaluationView(BaseHandler):
             # convert to html and get style
             html_long, style_long = table_to_html(longtable, ev, add_class="ipet-long-table")
             html_agg, style_agg = table_to_html(aggtable, ev, add_class="ipet-aggregated-table")
+
+            ipetlogger.removeHandler(rbhandler)
+            rbhandler.close()
 
             # get substitutions dictionary
             repres = setup_substitutions_dict(testruns)
@@ -111,10 +116,7 @@ class EvaluationView(BaseHandler):
                     checked=default_id,
                     tablename="ipet-legend-table").decode("utf-8")
 
-            ipetlogger.removeHandler(rbhandler)
-            rbhandler.close()
-
-            # send reply
+            # send evaluated data
             mydict = {"ipet-legend-table": results_table,
                       "ipet-eval-result": html_tables,
                       "buttons": fg_buttons_str}
@@ -175,6 +177,8 @@ class EvaluationView(BaseHandler):
                 out = out.replace(k, v)
 
             out = insert_into_latex(out, self.get_rb_url())
+
+            # send reply
             self.render("file.html", contents=out)
 
 
