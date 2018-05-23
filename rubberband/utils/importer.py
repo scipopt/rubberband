@@ -261,11 +261,16 @@ class ResultClient(object):
             # assume that a testrun is all run with the same lpsolver
             v = most_frequent_value(data, 'LPSolver')
             lp_data = v.split(" ")
+            lp_solver_name = ""
+            lp_solver_version = ""
             try:
                 lp_solver_name = lp_data[0]
                 lp_solver_version = " ".join(lp_data[1:])
             except:
                 pass
+        else:
+            lp_solver_name = None
+            lp_solver_version = None
 
         if "SpxGitHash" in data.keys():
             lp_solver_githash = most_frequent_value(data, "SpxGitHash")

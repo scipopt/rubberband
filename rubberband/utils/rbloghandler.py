@@ -23,7 +23,8 @@ class RBLogHandler(StreamHandler):
         rawname = "rbhandler{}{}".format(time.time(), handle)
         self.name = hashlib.md5(bytes(rawname, 'utf-8')).hexdigest()
         self.rbhandle = handle
-        self.rbwrite(self.name)
+        self.rbhandle.write(self.name)
+        self.rbwrite("Fetching data from elasticsearch.")
 
     def flush(self):
         """Flush the emitted output."""
@@ -40,7 +41,7 @@ class RBLogHandler(StreamHandler):
         """
         msg = self.format(record)
         if "Validation information provided:" not in msg:
-            self.rbwrite(msg + "\n")
+            self.rbwrite(msg)
 
     def rbwrite(self, msg):
         """
@@ -51,7 +52,7 @@ class RBLogHandler(StreamHandler):
         msg : str
             output to write
         """
-        self.rbhandle.write(msg)
+        self.rbhandle.write(msg + "\n")
         self.flush()
 
     def close(self):

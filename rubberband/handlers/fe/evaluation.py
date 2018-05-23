@@ -34,6 +34,22 @@ class EvaluationView(BaseHandler):
         Writes latex version of ipet-agg-table via file.html if style option in url is `latex`,
         else it writes ipet-long-table and ipet-agg-table as json
         """
+        # default and implicit style is ipetevaluation. if given latex, generate a table in the
+        # style of the release report
+        style = self.get_argument("style", None)
+
+        # setup logger
+        if style is None:
+
+            ipetlogger = logging.getLogger("ipet")
+            rbhandler = RBLogHandler(self)
+
+            rbhandler.setLevel(logging.INFO)
+            formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
+            rbhandler.setFormatter(formatter)
+
+            ipetlogger.addHandler(rbhandler)
+
         # get evalfile
         evalfile = IPET_EVALUATIONS[int(eval_id)]
 
@@ -47,24 +63,8 @@ class EvaluationView(BaseHandler):
         # read defaultgroup
         default_id = self.get_argument("default", testrunids[0])
 
-        # default and implicit style is ipetevaluation. if given latex, generate a table in the
-        # style of the release report
-        style = self.get_argument("style", None)
-
         # get testruns and default
         testruns = get_testruns(testrunids)
-
-        # setup logger
-        if style is None:
-
-            ipetlogger = logging.getLogger("ipet")
-            rbhandler = RBLogHandler(self)
-
-            rbhandler.setLevel(logging.INFO)
-            formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
-            rbhandler.setFormatter(formatter)
-
-            ipetlogger.addHandler(rbhandler)
 
         # evaluate with ipet
         ex = setup_experiment(testruns)
