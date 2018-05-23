@@ -6,7 +6,6 @@ routes = [
     # The following Views all inherit from BaseHandler (in base.py)
     # Frontend views
     (r"/", fe.MainView),
-    #(r"/test", fe.TestView),
     (r"/visualize", fe.VisualizeView),
     (r"/compare", fe.CompareView),
     (r"/help", fe.HelpView),

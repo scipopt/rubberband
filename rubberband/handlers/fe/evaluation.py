@@ -6,6 +6,7 @@ from .base import BaseHandler
 from rubberband.constants import IPET_EVALUATIONS, FORMAT_DATETIME_SHORT, \
         NONE_DISPLAY, ALL_SOLU
 from rubberband.models import TestSet
+from rubberband.utils import RBLogHandler
 
 from ipet import Experiment, TestRun
 from ipet.evaluation import IPETEvaluation
@@ -13,31 +14,8 @@ import pandas as pd
 
 import json
 import string
-
-####logging
 import logging
-from logging import StreamHandler
-####logging
 
-class RBHandler(StreamHandler):
-
-    def __init__(self, handle):
-        print("init rbhandler")
-        StreamHandler.__init__(self)
-        self.rbhandle = handle
-
-    def flush(self):
-        print("flush")
-        self.rbhandle.flush()
-
-    def emit(self, record):
-        msg = self.format(record)
-        print("emit", msg)
-        self.rbhandle.write(msg)
-        self.flush()
-
-    def __repr__(self):
-        return "rb handler ({}, {})".format(name, level)
 
 class EvaluationView(BaseHandler):
     """Request handler caring about the evaluation of sets of TestRuns."""
@@ -76,18 +54,18 @@ class EvaluationView(BaseHandler):
         # get testruns and default
         testruns = get_testruns(testrunids)
 
+        # setup logger
+        if style is None:
+            ipetlogger = logging.getLogger("ipet")
+            rbhandler = RBLogHandler(self)
+
+            rbhandler.setLevel(logging.INFO)
+            formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
+            rbhandler.setFormatter(formatter)
+
+            ipetlogger.addHandler(rbhandler)
+
         # evaluate with ipet
-        ####logger
-        ipetlogger = logging.getLogger("ipet")
-        rbhandler = RBHandler(self)
-
-        rbhandler.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-        rbhandler.setFormatter(formatter)
-
-        ipetlogger.addHandler(rbhandler)
-        ####logger
-
         ex = setup_experiment(testruns)
         ev = setup_evaluation(evalfile["path"], ALL_SOLU, tolerance)
 
@@ -99,7 +77,6 @@ class EvaluationView(BaseHandler):
 
         # None style is default
         if style is None:
-
             # add filtergroup buttons to ipet long table
             fg_buttons_str, longtable["Filtergroups"] = generate_filtergroup_buttons(longtable, ev)
 
@@ -134,11 +111,14 @@ class EvaluationView(BaseHandler):
                     checked=default_id,
                     tablename="ipet-legend-table").decode("utf-8")
 
-            # send evaluated data
+            ipetlogger.removeHandler(rbhandler)
+            rbhandler.close()
+
+            # send reply
             mydict = {"ipet-legend-table": results_table,
                       "ipet-eval-result": html_tables,
                       "buttons": fg_buttons_str}
-            #self.write(json.dumps(mydict))
+            self.write(json.dumps(mydict))
 
         elif style == "latex":
             # generate a table that can be used in the release-report
@@ -195,16 +175,7 @@ class EvaluationView(BaseHandler):
                 out = out.replace(k, v)
 
             out = insert_into_latex(out, self.get_rb_url())
-
-            # send reply
             self.render("file.html", contents=out)
-
-        ####logger
-        ipetlogger.removeHandler(rbhandler)
-        rbhandler.close()
-        ####logger
-
-        self.finish()
 
 
 def get_column_formatters(df):
