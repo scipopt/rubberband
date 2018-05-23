@@ -6,6 +6,7 @@ from .base import BaseHandler
 from rubberband.constants import IPET_EVALUATIONS, FORMAT_DATETIME_SHORT, \
         NONE_DISPLAY, ALL_SOLU
 from rubberband.models import TestSet
+from rubberband.utils import RBLogHandler
 
 from ipet import Experiment, TestRun
 from ipet.evaluation import IPETEvaluation
@@ -13,6 +14,7 @@ import pandas as pd
 
 import json
 import string
+import logging
 
 
 class EvaluationView(BaseHandler):
@@ -52,6 +54,18 @@ class EvaluationView(BaseHandler):
         # get testruns and default
         testruns = get_testruns(testrunids)
 
+        # setup logger
+        if style is None:
+
+            ipetlogger = logging.getLogger("ipet")
+            rbhandler = RBLogHandler(self)
+
+            rbhandler.setLevel(logging.INFO)
+            formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
+            rbhandler.setFormatter(formatter)
+
+            ipetlogger.addHandler(rbhandler)
+
         # evaluate with ipet
         ex = setup_experiment(testruns)
         ev = setup_evaluation(evalfile["path"], ALL_SOLU, tolerance)
@@ -74,6 +88,9 @@ class EvaluationView(BaseHandler):
             # convert to html and get style
             html_long, style_long = table_to_html(longtable, ev, add_class="ipet-long-table")
             html_agg, style_agg = table_to_html(aggtable, ev, add_class="ipet-aggregated-table")
+
+            ipetlogger.removeHandler(rbhandler)
+            rbhandler.close()
 
             # get substitutions dictionary
             repres = setup_substitutions_dict(testruns)
