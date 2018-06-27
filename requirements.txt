@@ -7,7 +7,7 @@ lxml==4.0.0
 numpy==1.13.0
 pandas==0.21.0
 pytest==3.0.2
-python-gitlab==0.14
+python-gitlab==1.5.1
 requests==2.10.0
 requests-toolbelt==0.7.0
 scipy==0.17.0
