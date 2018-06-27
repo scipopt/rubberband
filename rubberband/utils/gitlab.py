@@ -43,7 +43,7 @@ def get_username(query_string):
         username
     """
     client = Gitlab(options.gitlab_url, options.gitlab_private_token)
-    authors = client.users.search(query_string)
+    authors = client.users.list(search=query_string)
 
     if len(authors) < 1:
         return query_string
