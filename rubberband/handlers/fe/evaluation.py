@@ -132,7 +132,7 @@ class EvaluationView(BaseHandler):
                 if i in df.columns:
                     colindex = i
 
-            cols = [c for c in df.columns if (c in ['Group', colindex, '_time_'] or
+            cols = [c for c in df.columns if (c in ['Group', colindex, '_solved_'] or
                 c.startswith("N_") or c.startswith("T_")) and not c.endswith(")p")]
 
             cols1 = [c for c in cols if c.endswith("Q") or c in ['Group', colindex]]
@@ -143,7 +143,7 @@ class EvaluationView(BaseHandler):
 
             # groups in rows
             rows = ['clean', 'affected', '[0,tilim]', '[1,tilim]', '[10,tilim]', '[100,tilim]',
-                    '[1000,tilim]',
+                    '[1000,tilim]', 'all-optimal'
                     'diff-timeouts', 'MMM compl (387)', 'Cor@l (349)', 'continuous', 'integer']
 
             df_rel = df_rel.pivot_table(index=['Group'], columns=[colindex]).swaplevel(
@@ -264,7 +264,7 @@ def get_replacement_dict(cols, colindex):
             repl[" " + i + " "] = " nodes "
         if i.startswith("T_"):
             repl[" " + i + " "] = " time "
-    repl["_time_"] = "timeout"
+    repl["_solved_"] = "solved"
     repl["Group"] = "Subset"
     repl["NaN"] = "  -"
     repl["nan"] = "  -"
@@ -284,6 +284,7 @@ def get_replacement_dict(cols, colindex):
     repl['[100,tilim]'] = "\\bracket{100}{tilim}"
     repl['[1000,tilim]'] = "\\bracket{1000}{tilim}"
     repl['diff-timeouts'] = "\\difftimeouts"
+    repl['all-optimal'] = "\\alloptimal"
     repl['MMM compl (387)'] = "\\cmidrule{1-10}\n\\miplibs       "
     repl['Cor@l (349)'] = "\\coral     "
     repl['- & \multi'] = "  & \multi"
