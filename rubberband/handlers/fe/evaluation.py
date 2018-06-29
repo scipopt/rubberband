@@ -143,7 +143,7 @@ class EvaluationView(BaseHandler):
 
             # groups in rows
             rows = ['clean', 'affected', '[0,tilim]', '[1,tilim]', '[10,tilim]', '[100,tilim]',
-                    '[1000,tilim]', 'all-optimal'
+                    '[1000,tilim]', 'all-optimal',
                     'diff-timeouts', 'MMM compl (387)', 'Cor@l (349)', 'continuous', 'integer']
 
             df_rel = df_rel.pivot_table(index=['Group'], columns=[colindex]).swaplevel(
