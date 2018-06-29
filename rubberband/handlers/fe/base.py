@@ -12,6 +12,17 @@ from rubberband.constants import NONE_DISPLAY, INFINITY_KEYS, \
 class BaseHandler(RequestHandler):
     """Custom overrides."""
 
+    def get_rb_base_url(self):
+        """
+        Url where the rubberband instance lives.
+
+        Returns
+        -------
+        str
+            the rubberband url
+        """
+        return self.request.protocol + "://" + self.request.host
+
     def get_rb_url(self):
         """
         Url where the rubberband instance lives.
@@ -21,7 +32,7 @@ class BaseHandler(RequestHandler):
         str
             the rubberband url
         """
-        return self.request.protocol + "://" + self.request.host + self.request.uri
+        return self.get_rb_base_url() + self.request.uri
 
     def get_current_user(self):
         """

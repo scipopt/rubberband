@@ -58,7 +58,8 @@ class EvaluationView(BaseHandler):
             tolerance = 1e-6
 
         # read testrunids
-        testrunids = self.get_argument("testruns").split(",")
+        testrun_ids = self.get_argument("testruns")
+        testrunids = testrun_ids.split(",")
 
         # read defaultgroup
         default_id = self.get_argument("default", testrunids[0])
@@ -143,8 +144,8 @@ class EvaluationView(BaseHandler):
 
             # groups in rows
             rows = ['clean', 'affected', '[0,tilim]', '[1,tilim]', '[10,tilim]', '[100,tilim]',
-                    '[1000,tilim]', 'all-optimal',
-                    'diff-timeouts', 'MMM compl (387)', 'Cor@l (349)', 'continuous', 'integer']
+                    '[1000,tilim]', 'diff-timeouts', 'all-optimal',
+                    'MMM compl (387)', 'Cor@l (349)', 'continuous', 'integer']
 
             df_rel = df_rel.pivot_table(index=['Group'], columns=[colindex]).swaplevel(
                     axis=1).sort_index(axis=1, level=0, sort_remaining=True, ascending=False)
@@ -176,7 +177,10 @@ class EvaluationView(BaseHandler):
             for k, v in repl.items():
                 out = out.replace(k, v)
 
-            out = insert_into_latex(out, self.get_rb_url())
+            tridstr = ",".join([tr for tr in testrunids if tr != default_id])
+            baseurl = self.get_rb_base_url()
+            summary_url = "{}/result/{}?compare={}#summary".format(baseurl, default_id, tridstr)
+            out = insert_into_latex(out, summary_url)
 
             # send reply
             self.render("file.html", contents=out)
