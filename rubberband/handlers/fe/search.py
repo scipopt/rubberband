@@ -28,9 +28,10 @@ class SearchView(BaseHandler):
         """
         query = self.fill_query()
         results = search(query)
-        exclude = self.get_argument("exclude_testset", default=None)
+        exclude = self.get_argument("exclude_testsets", default=None)
         if exclude:
-            results = [r for r in results if r.meta.id != exclude]
+            exclude = exclude.split(",")
+            results = [r for r in results if r.meta.id not in exclude]
 
         self.write(self.render_string("results_table.html", tablename="search-result",
             results=results, checkboxes=True))

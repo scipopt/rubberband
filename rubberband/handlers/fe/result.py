@@ -35,10 +35,10 @@ class ResultView(BaseHandler):
         # get data associated with TestSet, save in parent.children[]
         parent.load_children()
 
-        compare = self.get_argument("compare", default=[])
+        comparelist = self.get_argument("compare", default=None)
 
-        if compare:
-            compare_ids = compare.split(",")
+        if comparelist:
+            compare_ids = comparelist.split(",")
             compare = load_testsets(compare_ids)
             for c in compare:
                 c.load_children()
@@ -78,7 +78,7 @@ class ResultView(BaseHandler):
                 radios=True, checked=parent.meta.id,
                 tablename="ipet-legend-table")
         self.render("result_view.html", file=parent, page_title="Evaluate", compare=compare,
-                    sets=sets, meta=meta, ipet_legend_table=ilt,
+                    sets=sets, meta=meta, ipet_legend_table=ilt, comparelist=comparelist,
                     rendered_results_table=rrt, fileoptions=fileoptions,
                     downloadzip=downloadziplink, evals=IPET_EVALUATIONS)
 

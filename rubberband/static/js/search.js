@@ -8,10 +8,20 @@ function updateResultsTable() {
     $.each( form_data, function( i, field ) {
         request_data[field.name] = field.value;
     });
+    exclude = new Array();
     sb = $("#search-base").serializeArray();
     if (sb != "") {
-        request_data["exclude_testset"] = sb[0].value;
+        console.log("add");
+        exclude.push(sb[0].value);
     }
+    ec = $(".exclude-compare").serializeArray();
+    if (ec != "") {
+      for (i = 0; i < ec.length; i++) {
+        console.log("add");
+        exclude.push(ec[i].value);
+      }
+    }
+    request_data["exclude_testsets"] = exclude.join(",");
     $.ajax({
         type: "POST",
         url: "search",

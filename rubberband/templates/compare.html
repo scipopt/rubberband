@@ -8,6 +8,9 @@
 
     <h4>Base Test Run</h4>
     <input id="search-base" name="base" value="{{base.meta.id}}" type="hidden" />
+    {% for c in compareids %}
+      <input class="exclude-compare" name="{{c}}" value="{{c}}" type="hidden" />
+    {% end %}
     {% raw rendered_results_table %}
 
     <button type="submit" class="btn btn-primary">Compare to these</button>
