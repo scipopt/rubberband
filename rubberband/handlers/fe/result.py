@@ -35,6 +35,7 @@ class ResultView(BaseHandler):
         # get data associated with TestSet, save in parent.children[]
         parent.load_children()
 
+        compare = []
         comparelist = self.get_argument("compare", default=None)
 
         if comparelist:
