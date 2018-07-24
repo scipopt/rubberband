@@ -46,8 +46,8 @@ $(function() {
 $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
 });
-// if compare is in query string, then we are in the compare view
-if (window.location.search.indexOf("compare") >= 0) {
+// if compare is in query string, then we are in the compare view but only in a comparison to exactly one
+if ((window.location.search.indexOf("compare") >= 0) && !(window.location.valueOf("compare").toString().includes(","))) {
   /* red = new Color(245, 50, 50);
   green = new Color(50, 245, 50); */
   dark_gray = new Color(160, 160, 160);
@@ -141,14 +141,16 @@ function colorateCells() {
       // determine if tooltip is string or number
       var element = $(this.node())[0];
       if (element.attributes["title"] !== undefined) {
+          // these are the compare values, one value or many separated by '\n'.
+          // currently we only do this for one compare value
           var other_values_str = element.attributes["title"].value;
           var values = Array(element.textContent);
           Array.prototype.push.apply(values, other_values_str.split("\n"));
           var rgb;
           if (element.attributes["invert"] !== undefined) {
-            rgb = getRGB(values, true);
+            rgb = getRGB(element.attributes["class"].value, values, true);
           } else {
-            rgb = getRGB(values, false);
+            rgb = getRGB(element.attributes["class"].value, values, false);
           }
           if (rgb) {
             element.style.backgroundColor = "rgb(" + rgb.getColorString() + ")";
@@ -160,7 +162,7 @@ function colorateCells() {
 /*
  * Get an array of values, and translate that to into an RGB array.
  */
-function getRGB(arr_values, invert) {
+function getRGB(valclass, arr_values, invert) {
   var contains_floats = false;
   var floatValues = Array();
   for (var i = 0; i < arr_values.length; i++) {
@@ -177,7 +179,7 @@ function getRGB(arr_values, invert) {
       return null;
     } else {
       // compute the appropriate color
-      return computeRGB(floatValues, invert);
+      return computeRGB(valclass, floatValues, invert);
     }
   } else if (arr_values.allValuesSame()) {
       return null;
@@ -187,13 +189,19 @@ function getRGB(arr_values, invert) {
   }
 }
 
-function computeRGB(arr_values, invert) {
+function computeRGB(valclass, arr_values, invert) {
+  console.log("valclass", valclass);
   // The first value of arr_values is the principle value for compare view
 
   // compute mean of the compare values
   var sum = 0.0;
   var arr_length = arr_values.length;
-  for( var i = 0; i < arr_length; i++ ){
+  for( var i = 0; i < arr_length; i++ ) {
+    if (valclass.includes("Time")) {
+      arr_values[i] = arr_values[i]+1;
+    } else if (valclass.includes("Nodes")) {
+      arr_values[i] = arr_values[i]+100;
+    }
     sum += arr_values[i];
   }
   var mean = sum/(arr_length);
