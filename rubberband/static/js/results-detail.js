@@ -47,7 +47,10 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
     $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
 });
 // if compare is in query string, then we are in the compare view but only in a comparison to exactly one
-if ((window.location.search.indexOf("compare") >= 0) && !(window.location.valueOf("compare").toString().includes(","))) {
+//if ((window.location.search.indexOf("compare") >= 0) && !(window.location.valueOf("compare").toString().includes(","))) {
+
+// if compare is in query string, then we are in the compare view
+if (window.location.search.indexOf("compare") >= 0) {
   /* red = new Color(245, 50, 50);
   green = new Color(50, 245, 50); */
   dark_gray = new Color(160, 160, 160);
