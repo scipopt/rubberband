@@ -29,7 +29,7 @@ class CompareView(BaseHandler):
         options["defaults"]["test_set"] = base.test_set
         options["defaults"]["mode"] = base.mode
 
-        rrt = self.render_string("results_table.html", results=[base]+compares, tablename="base")
+        rrt = self.render_string("results_table.html", results=[base] + compares, tablename="base")
         self.render("compare.html", page_title="Compare", base=base, compareids=compareids,
                 search_options=options, rendered_results_table=rrt)
 

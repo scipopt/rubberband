@@ -193,71 +193,93 @@ function getRGB(valclass, arr_values, invert) {
 }
 
 function computeRGB(valclass, arr_values, invert) {
-  console.log("valclass", valclass);
   // The first value of arr_values is the principle value for compare view
+  // don't color dual and primal bounds
+  if (valclass.includes("Bound")) {
+    return;
+  }
 
-  // compute mean of the compare values
-  var sum = 0.0;
+  // shift the values by 1 or 100 if time or nodes column
   var arr_length = arr_values.length;
-  for( var i = 0; i < arr_length; i++ ) {
-    if (valclass.includes("Time")) {
+  if (valclass.includes("Time")) {
+    for( var i = 0; i < arr_length; i++ ) {
       arr_values[i] = arr_values[i]+1;
-    } else if (valclass.includes("Nodes")) {
+    }
+  } else if (valclass.includes("Nodes")) {
+    for( var i = 0; i < arr_length; i++ ) {
       arr_values[i] = arr_values[i]+100;
     }
-    sum += arr_values[i];
   }
-  var mean = sum/(arr_length);
-
-  var sum_of_squares = 0.0;
-  for( var i = 0; i < arr_length; i++ ){
-    sum_of_squares += (arr_values[i]-mean) * (arr_values[i]-mean);
-  }
-  var variance = Math.sqrt(sum_of_squares/(arr_length));
-  var percentage = variance/mean;
 
   var largest = Math.max(...arr_values.slice(1));
   var smallest = Math.min(...arr_values.slice(1));
   var value = arr_values[0];
 
-  if ( (smallest < 0 && largest > 0) || smallest == 0 || largest == 0) {
-    return Interpolate(dark_gray, percentage);
+  var factor = 1;
+  // in case we only have two values, the base and one compare value
+  // largest and smallest compare values are equal
+  // devide the smaller by the larger value, so that factor is in [0,1]
+  if ( smallest != 0 && largest != 0 && value != 0 ) {
+    if (value < smallest) {
+      factor = value/smallest;
+    } else if (value > largest) {
+      factor = largest/value;
+    }
+  }
+  factor = 1-factor;
+
+  var relstddev = 0;
+  if (arr_length > 2) {
+    // in case we have more than two values we compute the mean
+    var sum = 0.0;
+    var arr_length = arr_values.length;
+    for( var i = 0; i < arr_length; i++ ) {
+      sum += arr_values[i];
+    }
+    var mean = sum/(arr_length);
+
+    // ... compute the standard deviation and relative standard deviation
+    var sum_of_squares = 0.0;
+    for( var i = 0; i < arr_length; i++ ){
+      sum_of_squares += Math.pow( (arr_values[i]-smallest), 2);
+    }
+
+    var stddeviation = Math.pow(sum_of_squares/(arr_length), 1/2);
+    relstddev = stddeviation/smallest;
   }
 
-  if (invert) {
-    var tmp = smallest;
-    smallest = - largest;
-    largest = - tmp;
-    value = - value;
+  // if one of the values is zero we cannot compare
+  if ( smallest == 0 || largest == 0 || value == 0) {
+    return Interpolate(dark_gray, relstddev);
   }
 
+  // finally, decide the color:
   if (value < smallest) {
-      percentage = (smallest - value)/smallest;
+    // if the value is better than all others
+    return Interpolate(green, factor);
   } else if (value > largest) {
-      percentage = (value - smallest)/smallest;
-  }
-  if (largest < value) {
-    return Interpolate(red, percentage);
-  } else if (smallest > value) {
-    return Interpolate(green, percentage);
+    // if the value is worse than all others
+    return Interpolate(red, factor);
   } else {
-    return Interpolate(dark_gray, percentage);
+    // otherwise we do not give a color
+    return Interpolate(dark_gray, relstddev);
   }
 }
 
-function Interpolate(colorBase, percentage) {
-  if (percentage >= 1) {
+function Interpolate(colorBase, factor) {
+  if (factor >= 1) {
     return colorBase;
   }
   else {
-    percentage = percentage * 100;
-    if (percentage < 7) {
-        percentage = 7;
+    factor = factor * 100;
+    // threshold what the human eye can see
+    if (factor < 7) {
+        factor = 7;
     }
     var end_color = colorBase.getColors();
-    var r = interpolate(255, end_color.r, 100, percentage);
-    var g = interpolate(255, end_color.g, 100, percentage);
-    var b = interpolate(255, end_color.b, 100, percentage);
+    var r = interpolate(255, end_color.r, 100, factor);
+    var g = interpolate(255, end_color.g, 100, factor);
+    var b = interpolate(255, end_color.b, 100, factor);
     return new Color(r, g, b);
   }
 }
