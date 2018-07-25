@@ -69,6 +69,33 @@ function formatIpetTable() {
             leftColumns: 2,
         }
     });
+    $('#ipet-long-table').on( 'draw.dt', function () {
+      data = ipetlongtable.columns( 3 ).data().sort().join( "<br>" );
+      data2 = ipetlongtable.columns().header();
+
+      // get data from dataframe
+      coldata = ipetlongtable.columns( 3 ).data()[0];
+      // convert all strings to numbers
+      for(var i=0; i<coldata.length;i++) coldata[i] = +coldata[i];
+
+      Highcharts.chart('chart', {
+          chart: {
+              type: 'column',
+          },
+          title: {
+              text: 'Area chart with negative values'
+          },
+          yAxis: {
+              type: 'logarithmic'
+          },
+          credits: {
+              enabled: false
+          },
+          series: [{
+              data: coldata,
+          }]
+      });
+    });
 };
 
 function setButtonsDisabled(stat) {

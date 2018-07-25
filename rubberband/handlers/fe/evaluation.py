@@ -583,6 +583,7 @@ def table_to_html(df, ev, add_class="", border=0):
 
     tableclasses = add_class + " ipet-table data-table compact"
     treetable.set("class", tableclasses)
+    treetable.set("id", add_class)
 
     return treetable, treestyle
 
