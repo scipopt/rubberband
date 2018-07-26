@@ -83,6 +83,12 @@ class EvaluationView(BaseHandler):
             # add filtergroup buttons to ipet long table
             fg_buttons_str, longtable["Filtergroups"] = generate_filtergroup_buttons(longtable, ev)
 
+            # get substitutions dictionary
+            repres = setup_substitutions_dict(testruns)
+
+            col_select = get_column_selectors(longtable)
+            col_select = replace_in_str(col_select, repres["short"])
+
             # add id column to longtable
             longtable.insert(0, "id", range(1, len(longtable) + 1))
 
@@ -92,9 +98,6 @@ class EvaluationView(BaseHandler):
 
             ipetlogger.removeHandler(rbhandler)
             rbhandler.close()
-
-            # get substitutions dictionary
-            repres = setup_substitutions_dict(testruns)
 
             # postprocessing
             html_long = process_ipet_table(html_long, repres["short"], add_ind=False) + \
@@ -120,7 +123,7 @@ class EvaluationView(BaseHandler):
             # send evaluated data
             mydict = {"ipet-legend-table": results_table,
                       "ipet-eval-result": html_tables,
-                      "buttons": fg_buttons_str}
+                      "buttons": fg_buttons_str + col_select}
             self.write(json.dumps(mydict))
 
         elif style == "latex":
@@ -464,10 +467,16 @@ def process_ipet_table(table, repres, add_ind=False):
     # render to string and make the dataTable fit the width
     htmltable = html.tostring(table).decode("utf-8")
     # replace ids and so on
-    for k, v in repres.items():
-        htmltable = htmltable.replace(k, v)
+    htmltable = replace_in_str(htmltable, repres)
     htmltable = htmltable.replace("nan", NONE_DISPLAY)
     return htmltable
+
+
+def replace_in_str(rstring, repres):
+    """Replace keys by values of repres in rstring."""
+    for k, v in repres.items():
+        rstring = rstring.replace(k, v)
+    return rstring
 
 
 def get_letters(quantity):
@@ -583,7 +592,7 @@ def table_to_html(df, ev, add_class="", border=0):
 
     tableclasses = add_class + " ipet-table data-table compact"
     treetable.set("class", tableclasses)
-    treetable.set("id", add_class)
+    treetable.set("id", tableclasses)
 
     return treetable, treestyle
 
@@ -677,7 +686,7 @@ def generate_filtergroup_buttons(table, evaluation):
     """
     table = table.copy()
     table["Filtergroups"] = "|all|"
-    buttons_str = 'Show filtergroups: <div id="ipet-long-filter-buttons" class="btn-group" role="group">' # noqa
+    buttons_str = '<div class="col-xs-9">Show filtergroups: <div id="ipet-long-filter-buttons" class="btn-group" role="group">' # noqa
 
     for fg in evaluation.getActiveFilterGroups():
         table["Newfiltergroup"] = ""
@@ -704,5 +713,22 @@ def generate_filtergroup_buttons(table, evaluation):
         # update buttons_str
         buttons_str = buttons_str + newbutton
 
-    buttons_str = buttons_str + '</div>'
+    buttons_str = buttons_str + '</div></div>'
     return buttons_str, table["Filtergroups"]
+
+
+def get_column_selectors(table):
+    """Construct a html selector field for the data column headers."""
+    # add column selector
+    col_select = '<div class="col-xs-3"><select id="selectcolumn" class="form-control">'
+    # 0 is name, 1 is id
+    if type(table.index == pd.RangeIndex):
+        colcount = 2
+    else:
+        colcount = 1 + len(table.index[0])
+    for c in table.columns:
+        if "Filtergroups" not in c:
+            col_select = col_select + '<option value="{}">{}</option>'.format(colcount, c)
+        colcount = colcount + 1
+    col_select = col_select + '</select></div>'
+    return col_select
