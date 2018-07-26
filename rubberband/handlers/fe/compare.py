@@ -20,9 +20,11 @@ class CompareView(BaseHandler):
 
         compare_list = self.get_argument("compare", None)
         compares = []
-        compareids = compare_list.split(",")
-        for i in compareids:
-            compares.append(TestSet.get(id=i))
+        compareids = []
+        if compare_list:
+            compareids = compare_list.split(",")
+            for i in compareids:
+                compares.append(TestSet.get(id=i))
 
         options["defaults"] = {}
         # preselect base testset

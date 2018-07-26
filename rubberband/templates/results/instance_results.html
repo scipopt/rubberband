@@ -2,7 +2,7 @@
   <div class="row">
     <h3 class="tab-title">Details</h3>
     <div class="tab-buttons">
-      <a href="/compare?base={{file.meta.id}}&compare={{comparelist}}" class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="add comparison runs"><span class="glyphicon glyphicon-plus h3-icon-leftalign"></span></a>
+      <a href="/compare?base={{ file.meta.id }}{% if comparelist is not None %}&compare={{ comparelist }}{% end %}" class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="add comparison runs"><span class="glyphicon glyphicon-plus h3-icon-leftalign"></span></a>
       {% if fileoptions[".out"] %}
       <a href="/file/{{file.meta.id}}" data-toggle="tooltip" data-placement="top" title="view log file" class="bs-tooltip"><span class="glyphicon glyphicon-info-sign h3-icon-leftalign"></span></a>
       {% end %}
