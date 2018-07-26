@@ -720,7 +720,7 @@ def generate_filtergroup_buttons(table, evaluation):
 def get_column_selectors(table):
     """Construct a html selector field for the data column headers."""
     # add column selector
-    col_select = '<div class="col-xs-3"><select id="selectcolumn" class="form-control">'
+    col_select = '<div class="col-xs-3">Select a column for the plot:<select id="selectcolumn" class="form-control">' # noqa
     # 0 is name, 1 is id
     if type(table.index == pd.RangeIndex):
         colcount = 2

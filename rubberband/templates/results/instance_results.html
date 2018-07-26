@@ -52,16 +52,18 @@
   </div>
   <h4>How do I interpret the comparison view?</h4>
   <p>
-  The compare view shows the same data as the Result Summary view, but for multiple test runs.
+  The color of the cell represents how the value for that particular instance and compares.
 
-  The color of the cell represents how the relative distance to the that particular instance and metric compares.
-  Green means that the baserun is better than (all) the comparison(s), red means that it is worse (than all comparisons).
-  The intensity corresponds to the quotient of the value to the bound:
-  Green corresponds to the quotient of the (smallest) comparison value and the basevalue;
-  Red corresponds to the quotient of the (largest) comparison value and the basevalue.
-  A grey cell indicates uncomparable values (and in the multicomparison view the magnitude of the relative standard deviation).
+  A green cell indicates that the value of the baserun is better than all the comparisons, red means that it is the worse than all the others.
+  The color intensity corresponds to the quotient of the basevalue to the nearest comparison value.
 
-  The color intensities in nodes and time columns are computed after a shift of 100 and 1 respectively.
+  For green cells the nearest comparison value is the smallest of the comparisons;
+  For red cells the nearest comparison value is the largest of the comparisons;
+
+  A grey cell indicates uncomparable values.
+  In a comparison of more than two testruns, the grey scale value is chosen according to the magnitude of the relative standard deviation.
+
+  The color intensities in nodes and time columns are computed after a shift of 100 nodes and 1 second, respectively.
   </p>
 
 <!-- loader -->
