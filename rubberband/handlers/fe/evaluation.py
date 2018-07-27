@@ -722,10 +722,10 @@ def get_column_selectors(table):
     # add column selector
     col_select = '<div class="col-xs-3">Select a column for the plot:<select id="selectcolumn" class="form-control">' # noqa
     # 0 is name, 1 is id
-    if type(table.index == pd.RangeIndex):
-        colcount = 2
-    else:
+    if type(table.index) == pd.MultiIndex:
         colcount = 1 + len(table.index[0])
+    else:
+        colcount = 2
     for c in table.columns:
         if "Filtergroups" not in c:
             col_select = col_select + '<option value="{}">{}</option>'.format(colcount, c)

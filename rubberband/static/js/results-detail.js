@@ -194,20 +194,21 @@ function getRGB(valclass, arr_values, invert) {
 
 function computeRGB(valclass, arr_values, invert) {
   // The first value of arr_values is the principle value for compare view
-  // don't color dual and primal bounds
-  if (valclass.includes("Bound")) {
-    return;
-  }
-
-  // shift the values by 1 or 100 if time or nodes column
   var arr_length = arr_values.length;
   if (valclass.includes("Time")) {
+    // shift the time values by 1 second
     for( var i = 0; i < arr_length; i++ ) {
       arr_values[i] = arr_values[i]+1;
     }
   } else if (valclass.includes("Nodes")) {
+    // shift the node values by 100 nodes
     for( var i = 0; i < arr_length; i++ ) {
       arr_values[i] = arr_values[i]+100;
+    }
+  } else if (valclass.includes("Bound")) {
+    // for dual and primal bounds calculate with the absolute values
+    for( var i = 0; i < arr_length; i++ ) {
+      arr_values[i] = Math.abs(arr_values[i]);
     }
   }
 
@@ -228,29 +229,14 @@ function computeRGB(valclass, arr_values, invert) {
   }
   factor = 1-factor;
 
-  var relstddev = 0;
-  if (arr_length > 2) {
-    // in case we have more than two values we compute the mean
-    var sum = 0.0;
-    var arr_length = arr_values.length;
-    for( var i = 0; i < arr_length; i++ ) {
-      sum += arr_values[i];
-    }
-    var mean = sum/(arr_length);
-
-    // ... compute the standard deviation and relative standard deviation
-    var sum_of_squares = 0.0;
-    for( var i = 0; i < arr_length; i++ ){
-      sum_of_squares += Math.pow( (arr_values[i]-smallest), 2);
-    }
-
-    var stddeviation = Math.pow(sum_of_squares/(arr_length), 1/2);
-    relstddev = stddeviation/smallest;
-  }
-
   // if one of the values is zero we cannot compare
   if ( smallest == 0 || largest == 0 || value == 0) {
-    return Interpolate(dark_gray, relstddev);
+    return Interpolate(dark_gray, 0.9);
+  }
+
+  // color dual and primal bounds in shades of grey
+  if (valclass.includes("Bound")) {
+    return Interpolate(dark_gray, factor);
   }
 
   // finally, decide the color:
@@ -261,7 +247,26 @@ function computeRGB(valclass, arr_values, invert) {
     // if the value is worse than all others
     return Interpolate(red, factor);
   } else {
-    // otherwise we do not give a color
+    // otherwise we do not give a color but a shade of gray
+    var relstddev = 0;
+    if (arr_length > 2) {
+      // in case we have more than two values we compute the mean
+      var sum = 0.0;
+      var arr_length = arr_values.length;
+      for( var i = 0; i < arr_length; i++ ) {
+        sum += arr_values[i];
+      }
+      var mean = sum/(arr_length);
+
+      // ... compute the standard deviation and relative standard deviation
+      var sum_of_squares = 0.0;
+      for( var i = 0; i < arr_length; i++ ){
+        sum_of_squares += Math.pow( (arr_values[i]-smallest), 2);
+      }
+
+      var stddeviation = Math.pow(sum_of_squares/(arr_length), 1/2);
+      relstddev = stddeviation/smallest;
+    }
     return Interpolate(dark_gray, relstddev);
   }
 }
@@ -273,8 +278,8 @@ function Interpolate(colorBase, factor) {
   else {
     factor = factor * 100;
     // threshold what the human eye can see
-    if (factor < 7) {
-        factor = 7;
+    if (factor < 10) {
+        factor = 10;
     }
     var end_color = colorBase.getColors();
     var r = interpolate(255, end_color.r, 100, factor);

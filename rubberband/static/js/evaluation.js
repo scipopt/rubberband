@@ -22,6 +22,7 @@ function get_selected_column() {
   if (selectedcol == undefined){
     selectedcol = 2;
   }
+  console.log("selectedcol "+selectedcol);
   return selectedcol;
 }
 
@@ -126,7 +127,12 @@ function formatIpetTable() {
     }
   });
   initialize_chart();
+  $('#ipet-long-table').on( 'draw.dt', function () {
+    console.log("event draw.id");
+    redraw_chart();
+  });
   $('table.ipet-long-table').on( 'draw.dt', function () {
+    console.log("event draw.class")
     redraw_chart();
   });
 };
