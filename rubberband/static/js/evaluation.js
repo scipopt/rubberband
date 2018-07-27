@@ -10,7 +10,8 @@ button3.disabled = false;
 button4.disabled = false;
 var ipetlongtable;
 var ipetaggtable;
-var chart;
+var logchart;
+var plainchart;
 
 modal = document.getElementById("info-modal");
 evalid = "";
@@ -40,37 +41,36 @@ function get_chart_data() {
   return coldata;
 }
 
-function redraw_chart() {
+function redraw_charts() {
   coldata = get_chart_data();
-  chart.series[0].setData(coldata);
+  plainchart.series[0].setData(coldata);
+  coldata = get_chart_data();
+  logchart.series[0].setData(coldata);
 }
 
-function initialize_chart() {
+function initialize_charts() {
   coldata = get_chart_data();
   selectedcolumn = get_selected_column();
-  chart = Highcharts.chart('chart', {
-    chart: {
-      type: 'column',
-    },
-    title: {
-      text: null,
-    },
+  logchart = Highcharts.chart('logchart', {
+    chart: { type: 'column', },
+    exporting: { fallbackToExportServer: false },
+    title: { text: null, },
     yAxis: {
       type: 'logarithmic',
-      plotLines: [{
-        color: 'black',
-        value: 1,
-        width: 2,
-      }],
+      plotLines: [{ color: 'black', value: 1, width: 2, }],
     },
-    credits: {
-      enabled: false
+    credits: { enabled: false },
+    series: [{ name: 'value', showInLegend: false, data: coldata, }]
+  });
+  plainchart = Highcharts.chart('plainchart', {
+    chart: { type: 'column', },
+    exporting: { fallbackToExportServer: false },
+    title: { text: null, },
+    yAxis: {
+      plotLines: [{ color: 'black', value: 1, width: 2, }],
     },
-    series: [{
-      name: 'value',
-      showInLegend: false,
-      data: coldata,
-    }]
+    credits: { enabled: false },
+    series: [{ name: 'value', showInLegend: false, data: coldata, }]
   });
 }
 
@@ -126,14 +126,14 @@ function formatIpetTable() {
       leftColumns: 2,
     }
   });
-  initialize_chart();
+  initialize_charts();
   $('#ipet-long-table').on( 'draw.dt', function () {
     console.log("event draw.id");
-    redraw_chart();
+    redraw_charts();
   });
   $('table.ipet-long-table').on( 'draw.dt', function () {
     console.log("event draw.class")
-    redraw_chart();
+    redraw_charts();
   });
 };
 
@@ -315,5 +315,5 @@ $('button#ipet-eval-show-log').click(function (e) {
 });
 
 $('div#summary').on('click', 'select#selectcolumn', function (e) {
-  redraw_chart();
+  redraw_charts();
 });
