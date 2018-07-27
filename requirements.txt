@@ -1,4 +1,4 @@
--e git+https://github.com/GregorCH/ipet.git@c3d1ab856ad672b98e67806f9071e8624d2d99ce#egg=ipet
+-e git+https://github.com/GregorCH/ipet.git@de432c125485039b5629188fac2d6bc7757329b9#egg=ipet
 click==6.6
 elasticsearch==2.3.0
 elasticsearch-dsl==2.2.0
