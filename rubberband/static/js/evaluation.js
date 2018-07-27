@@ -273,6 +273,7 @@ $('button#ipet-eval-download-button').click(function (e) {
 
 $('button#ipet-eval-button').click(function (e) {
   evalurl = getEvalUrl(e);
+  fillModal("Evaluating");
 
   var xhr = new XMLHttpRequest();
   xhr.open('GET', evalurl);
