@@ -75,7 +75,9 @@ class EvaluationView(BaseHandler):
         set_defaultgroup(ev, ex, default_id)
 
         # do evaluation
+        self.write('a')
         longtable, aggtable = ev.evaluate(ex)
+        self.write('b')
 
         # None style is default
         if style is None:
