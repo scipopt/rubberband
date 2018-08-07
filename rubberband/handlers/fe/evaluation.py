@@ -563,21 +563,25 @@ def table_to_html(df, ev, add_class="", border=0):
         html object of table and corresponding style.
     """
     formatters = ev.getColumnFormatters(df)
+    df = ev.sortDataFrame(df)
 
+    all_columns = df.columns
     l = 0
-    if isinstance(df.columns[0], tuple):
-        l = len(df.columns[0]) - 1
+    if isinstance(all_columns[0], tuple):
+        l = len(all_columns[0]) - 1
 
+    highlight_cols = []
     if l == 0:
-        highlight_cols = [c for c in df.columns
-                if (c.startswith("_") and c.endswith("_")) or c.endswith("Q")]
-        p_cols = [c for c in df.columns if c.endswith(")p")]
+        for col in ev.getActiveColumns():
+            if col.getCompareMethod() is not None:
+                highlight_cols += [c for c in all_columns if col.hasCompareColumn(c)]
+        highlight_cols += [c for c in all_columns if (c.startswith("_") and c.endswith("_"))]
     else:
-        highlight_cols = [c for c in df.columns
-                if (c[l].startswith("_") and c[l].endswith("_")) or c[l].endswith("Q")]
-        p_cols = [c for c in df.columns if c[l].endswith(")p")]
-    for p in p_cols:
-        formatters[p] = lambda x: "%.3f" % x
+        for col in ev.getActiveColumns():
+            if col.getCompareMethod() is not None:
+                highlight_cols += [c for c in all_columns if col.hasCompareColumn(c[l])]
+        highlight_cols += [c for c in all_columns if (c[l].startswith("_") and c[l].endswith("_"))]
+
     # apply formatters styles
     styler = df.style.format(formatters).\
         applymap(align_elems)
