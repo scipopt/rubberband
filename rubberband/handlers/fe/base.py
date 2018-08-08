@@ -70,30 +70,39 @@ class BaseHandler(RequestHandler):
         else:
             return None
 
-    def write_error(self, status_code, msg="", **kwargs):
+    def write_error(self, status_code=400, **kwargs):
         """
         Send an error page back to the user.
+
+        This needs to be overwritten for error handling.
 
         Parameters
         ----------
         status_code : int
             The status code of the error to be written.
-        msg : str
-            The message to be printed (default "").
         kwargs : keyword arguments
             keyword arguments for `traceback.format_exception`
         """
-        if status_code == 400:
-            self.render("400.html", msg=msg)
-            return
-        if status_code == 404:
-            #  'Simply render the template to a string and pass it to self.write'
-            self.render("404.html")
-            return
-        else:
-            msg = "\n".join(traceback.format_exception(*kwargs["exc_info"]))
-            self.render("500.html", msg=msg)
-            return
+        err_cls, err, tb = kwargs['exc_info']
+        try:
+            log_message = err.log_message
+        except:
+            log_message = "Something went wrong"
+
+        reason = kwargs.get('reason', "Error")
+
+        if status_code < 500:
+            if status_code == 400:
+                reason = "Bad Request"
+            elif status_code == 404:
+                reason = "Not Found"
+        if status_code >= 500:
+            log_message = "\n".join(traceback.format_exception(*kwargs["exc_info"]))
+            if status_code == 500:
+                reason = "Internal Server Error"
+
+        self.render("error.html", code=status_code, reason=reason, msg=log_message)
+        return
 
     def get_template_namespace(self):
         """Return a dictionary to be used as the default template namespace.

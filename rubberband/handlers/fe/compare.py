@@ -2,6 +2,7 @@
 from .base import BaseHandler
 from rubberband.models import TestSet
 from rubberband.handlers.fe.search import get_options
+from tornado.web import HTTPError
 
 
 class CompareView(BaseHandler):
@@ -16,6 +17,8 @@ class CompareView(BaseHandler):
         options = get_options()
 
         base_id = self.get_argument("base", None)
+        if base_id is None:
+            raise HTTPError(status_code=400, log_message="Missing id for base run.")
         base = TestSet.get(id=base_id)
 
         compare_list = self.get_argument("compare", None)
@@ -50,11 +53,10 @@ class CompareView(BaseHandler):
 
         base = self.get_argument("base", None)
         if base is not None and len(compares) == 1:
-            self.write_error(400, msg="Please select at least 1 Testrun to compare to.")
-            return
+            raise HTTPError(status_code=400, msg="Please select at least 1 Testrun to compare to.")
         elif base is None and len(compares) <= 1:
-            self.write_error(400, msg="Please select at least 2 Testruns to compare.")
-            return
+            raise HTTPError(status_code=400, log_message="Please select at least 2 Testruns to compare.")
+
         # base is identified via meta id as one of the comparison TestSets
         if base:
             compares.remove("base")

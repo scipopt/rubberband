@@ -1,5 +1,5 @@
 """Contains RequestHandlers for Webinterface (fe for FrontEnd)."""
-from .fourohfour import FourOhFourView  # noqa
+from .error import ErrorView # noqa
 from .compare import CompareView  # noqa
 from .instance import InstanceView, InstanceNamesEndpoint, InstanceEndpoint  # noqa
 from .file import FileView  # noqa

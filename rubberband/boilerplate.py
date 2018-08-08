@@ -8,7 +8,7 @@ from elasticsearch import Elasticsearch
 from elasticsearch_dsl.connections import connections
 
 from rubberband.routes import routes
-from rubberband.handlers.fe import FourOhFourView
+from rubberband.handlers.fe import ErrorView
 
 # define options that server.py can read from
 define("port", default=8888, help="Port to run tornado on.")
@@ -75,7 +75,7 @@ def make_app(project_root):
         "static_path": os.path.join(project_root, "static"),
         "template_path": os.path.join(project_root, "templates"),
         "cookie_secret": options.cookie_secret,
-        "default_handler_class": FourOhFourView,
+        "default_handler_class": ErrorView,
         "logger": loggr,
     }
 
