@@ -46,7 +46,8 @@
     {% end %}
     <button type="submit" class="btn btn-success" id="startStatsQuery">Go!</button>
 </form>
-<div class="row top-buffer">
+
+<div class="row headline">
 {% if hasattr(file, "stats") %}
 <h4>Matched Instances</h4>
 <p>{{ ", ".join(file.matched) }}</p>

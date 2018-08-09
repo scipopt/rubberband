@@ -19,10 +19,6 @@ class ResultView(BaseHandler):
         ----------
         parent_id
             Rubberband id of parent
-
-        Returns
-        -------
-
         """
         # parent id is the first argument: meta id of TestSet
         if not parent_id:

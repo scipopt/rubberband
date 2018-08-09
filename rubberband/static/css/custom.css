@@ -4,17 +4,13 @@
 
 body {
     font-family: 'Fira Mono', sans-serif;
-    font-size: 12px;
-}
-
-.rb-btn-group {
-    width: 15em;
-    display: grid;
+    font-size: 16px;
+    padding-top: 5rem;
 }
 
 /* Move down content because we have a fixed navbar that is 50px tall */
-.top-buffer {
-  padding-top: 50px;
+.headline {
+  padding: 3rem 1.5rem;
 }
 
 p.exclusions {
@@ -319,4 +315,12 @@ input.fieldValue {
 
 .slider {
   width: 90% !important;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+p {
+  font-size: 1rem;
 }

@@ -2,8 +2,8 @@
 updateResultsTable();
 
 function updateResultsTable() {
-    // get formdata by selecting element with id 'search-form'
-    form_data = $("#search-form").serializeArray();
+    // get formdata by selecting element with id 'form-search'
+    form_data = $("#form-search").serializeArray();
     request_data = {};
     $.each( form_data, function( i, field ) {
         request_data[field.name] = field.value;
@@ -36,9 +36,10 @@ function updateResultsTable() {
 
 function fillResultTable(data) {
     // fill resultTable with data,
-    // while data should be a htmlstring that just has to be poured into the right container
+    // where data should be a htmlstring that just has to be poured into the right container
     //$("#results-table").replaceWith(data);
     $("#results-table").html(data);
+
     tmp = $("#search-result");
     $.fn.dataTable.moment( 'D. MMM YYYY, HH:mm' );
     if (tmp[0].tagName == "TABLE") {
@@ -59,6 +60,6 @@ $("#search-button").click(function() {
 });
 
 $("#reset-search-button").click(function() {
-    $("#search-form")[0].reset();
+    $("#form-search")[0].reset();
     $("#search-button").click();
 });

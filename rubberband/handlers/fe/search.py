@@ -13,11 +13,11 @@ class SearchView(BaseHandler):
         Answer to GET requests.
 
         The initial search view, possibly prefilled with query string options.
-        Renders `search_form.html`.
+        Renders `search.html`.
         """
         options = get_options()
 
-        self.render("search_form.html", page_title="Search", search_options=options)
+        self.render("search.html", page_title="Search", search_options=options)
 
     def post(self):
         """
