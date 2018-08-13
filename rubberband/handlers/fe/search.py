@@ -16,7 +16,6 @@ class SearchView(BaseHandler):
         Renders `search.html`.
         """
         options = get_options()
-
         self.render("search.html", page_title="Search", search_options=options)
 
     def post(self):

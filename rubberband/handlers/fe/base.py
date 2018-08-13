@@ -72,19 +72,6 @@ class BaseHandler(RequestHandler):
         #else:
         #    return None
 
-    #def write_error(self, status_code, msg="", **kwargs):
-    #    if status_code == 400:
-    #        self.render("error.html", msg=msg, page_title="")
-    #        return
-    #    if status_code == 404:
-    #        #  'Simply render the template to a string and pass it to self.write'
-    #        self.render("error.html", page_title="")
-    #        return
-    #    else:
-    #        msg = "\n".join(traceback.format_exception(*kwargs["exc_info"]))
-    #        self.render("error.html", msg=msg, page_title="")
-    #    return
-
     def write_error(self, status_code=400, **kwargs):
         """
         Send an error page back to the user.
@@ -144,8 +131,12 @@ class BaseHandler(RequestHandler):
             get_objsen=self.get_objsen,
             are_equivalent=self.are_equivalent,
             options=options,
+
             page_title='Error',
             status_code='404', # error code
+            checkboxes = False,
+            radiobuttons = False,
+            tablename = 'results-table',
         )
 
         # additional ui modules

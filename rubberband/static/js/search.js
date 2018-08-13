@@ -1,6 +1,4 @@
 
-updateResultsTable();
-
 function updateResultsTable() {
     // get formdata by selecting element with id 'form-search'
     form_data = $("#form-search").serializeArray();
@@ -62,4 +60,8 @@ $("#search-button").click(function() {
 $("#reset-search-button").click(function() {
     $("#form-search")[0].reset();
     $("#search-button").click();
+});
+
+$(document).ready(function(){
+  updateResultsTable();
 });

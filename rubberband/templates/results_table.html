@@ -1,36 +1,13 @@
-{% try %}
-    {% set radio = radios %}
-{% except NameError %}
-    {% set radio = False %}
-{% end %}
-{% try %}
-    {% set checkbox = checkboxes %}
-{% except NameError %}
-    {% set checkbox = False %}
-{% end %}
-{% try %}
-    {% set name = tablename %}
-{% except NameError %}
-    {% set name = 'results-table' %}
-{% end %}
-{% try %}
-    {% set repres = representation %}
-{% except NameError %}
-    {% set repres = False %}
-{% end %}
 
 {% if results %}
-<table id="{{ name }}" class="table-hover compact data-table" width="100%">
+<table id="{{ tablename }}" class="table-hover compact data-table" width="100%">
   <thead>
     <tr>
-      {% if radio %}
+      {% if radiobuttons %}
       <th>Default</th>
       {% end %}
-      {% if checkbox %}
+      {% if checkboxes %}
       <th></th>
-      {% end %}
-      {% if repres %}
-      <th>RubberbandId</th>
       {% end %}
       <th></th>
       <th>Solver</th>
@@ -51,18 +28,15 @@
   <tbody>
   {% for r in results %}
   <tr data-url='result/{{ r.meta.id }}'>
-    {% if radio %}
+    {% if radiobuttons %}
     <td><input type="radio" name="base" value="{{ r.meta.id }}"
     {% if r.meta.id == checked %}
     checked
     {% end %}
     ><input name="{{ r.meta.id }}" hidden></td>
     {% end %}
-    {% if checkbox %}
+    {% if checkboxes %}
     <td><input type="checkbox" name="{{ r.meta.id }}"></td>
-    {% end %}
-    {% if repres %}
-    <td> {{ representation[r.id] }} </td>
     {% end %}
     <td><a href="/result/{{ r.meta.id }}">Details</a></td>
     <td>{{ format_attr(r, "solver") }} {{ format_attr(r, "solver_version") }}</td>
@@ -83,7 +57,7 @@
   </tbody>
 </table>
 {% else %}
-<div id="{{ name }}">
+<div id="{{ tablename }}">
   No results found for given query.
 </div>
 {% end %}
