@@ -1,5 +1,6 @@
 """Contains RequestHandlers for Webinterface (fe for FrontEnd)."""
 from .error import ErrorView # noqa
+from .user import UserView # noqa
 from .compare import CompareView  # noqa
 from .instance import InstanceView, InstanceNamesEndpoint, InstanceEndpoint  # noqa
 from .file import FileView  # noqa

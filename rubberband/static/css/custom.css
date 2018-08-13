@@ -4,7 +4,7 @@
 
 body {
     font-family: 'Fira Mono', sans-serif;
-    font-size: 16px;
+    font-family: 'Fira Sans', sans-serif;
     padding-top: 5rem;
 }
 
@@ -32,7 +32,7 @@ table {
   padding-bottom: 10px;
   border-bottom: 1px solid #eee;
 }
-
+/*
 pre {
     display: block;
     max-height: 80vh;
@@ -42,7 +42,7 @@ pre {
     white-space: pre !important;
     background-color: lightgray;
 }
-
+*/
 div.ipet-long-toolbar {
   margin-bottom: 5px;
 }
@@ -232,7 +232,7 @@ span.h3-icon-leftalign {
 .page-header-wrapper.results .page-header {
   float: left;
 }
-
+/*
 #resultNavTabs {
   width: 100%;
   padding-top: 7px;
@@ -248,7 +248,7 @@ span.h3-icon-leftalign {
   margin-top: -1px;
   z-index: -1;
 }
-
+*/
 /* Results Page Settings */
 .tab-title {
 }
@@ -297,10 +297,23 @@ input.fieldValue {
   width: 90% !important;
 }
 
+h1 {
+  margin-bottom: 2.5rem !important;
+}
+
 h2 {
+  margin-bottom: 1rem !important;
   font-size: 1.5rem;
 }
 
 p {
   font-size: 1rem;
+}
+
+fieldset {
+  width: 100%;
+}
+
+span.important {
+  color: #e83e8c;
 }

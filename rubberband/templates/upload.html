@@ -1,52 +1,82 @@
 {% extends "narrow.html" %}
+
+<!------------------ body -------------->
+{% block content %}
+<form class="alert alert-secondary" method="POST" name="fileUpload" enctype="multipart/form-data">
+  <h2>Upload logfiles:</h2>
+  <fieldset>
+    <div class="row">
+      <div class="form-group row col-12">
+        <p class="col-8">Please select a set of logfiles for upload: <code>*.out</code>, <code>*.err</code>, <code>*.set</code> and <code>*.meta.</code>
+        The collection should contain exactly one logfile.</p>
+        <div class="row custom-file col-4">
+          <label class="custom-file-label" for="validatedCustomFile">Choose file...</label>
+          <input class="custom-file-input" type="file" id="validatedCustomFile" name="resultFiles" multiple>
+        </div>
+      </div>
+
+      <div class="form-group row col-12">
+        <label class="col-4"><span class="important">Optional:</span> Specify a comma separated list of tags to more easily find this run in the future.</label>
+        <input type="text" class="form-control col-8" name="tags" id="tagsInput" placeholder="enforelax, repairheuristics, SAP, etc">
+      </div>
+      <div class="form-group row col-12">
+        <label class="col-4"><span class="important">Optional:</span> Provide an expiration date for this TestRun. </label>
+        <input class="form-control col-8 datetimepicker" name="expirationdate" autocomplete="on">
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="form-group row col-12 col-sm-6 col-md-4 col-xl-3" role="group">
+    <button type="submit" class="btn btn-primary col">Upload</button>
+  </div>
+</form>
+
+<div class="alert alert-info">
+  <div class="col">
+  <pre>
+  <code>
+  Processing 1
+  Processing 1
+  Processing 1
+  Processing 1
+  Processing 1
+  Processing 1
+  </code>
+  </pre>
+
+  <p><a href="blah">urlurlurl</a></p>
+  </div>
+</div>
+
+{% if msgs %}
+<div class="alert alert-info">
+  <div class="col">
+  <pre><code>
+    {% for m in msgs %}
+    Processing {{ m }}
+      {% for i in msgs[m] %}
+      {{ i }}
+      {% end %}
+    {% end %}
+  </code></pre>
+
+    {% if resulturl %}
+    <p><a href="{{ resulturl }}">{{ resulturl }}</a></p>
+    {% end %}
+  </div>
+</div>
+{% end %}
+{% end %}
+
+<!------------------ extra css -------------->
 {% block extra_css%}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
 {% end %}
+
+<!------------------ extra js -------------->
 {% block extra_js %}
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="/static/js/initdatetime.js"></script>
 {% end %}
-{% block body %}
-<div class="row">
-  <form method="POST" name="fileUpload" enctype="multipart/form-data">
-    <p>Please select a set of logfiles for upload: <code>*.out</code>, <code>*.err</code>, <code>*.set</code> and <code>*.meta.</code>
-    The collection should contain exactly one logfile.</p>
-    <div class="row">
-      <fieldset class="form-group col-md-6">
-        <input type="file" id="uploadFiles" name="resultFiles" multiple>
-      </fieldset>
-    </div>
-    <div class="row">
-      <p>Optional: Specify a comma separated list of tags to more easily find this run in the future.</p>
-      <fieldset class="form-group col-md-6">
-        <input type="text" class="form-control" name="tags" id="tagsInput" placeholder="enforelax, repairheuristics, SAP, etc">
-      </fieldset>
-    </div>
-    <div class="row">
-      <p>Optional: Provide an expiration date for this TestRun. </p>
-      <fieldset class="form-group col-md-6">
-        <input class="form-control datetimepicker" name="expirationdate" autocomplete="off">
-      </fieldset>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
-</div>
-{% if msgs %}
-<div class="row row-buffered">
-  <div class="panel panel-default">
-    <div class="panel-body">
-      {% for m in msgs %}
-      <p>Processing {{ m }}</p>
-      {% for i in msgs[m] %}
-      <p>{{ i }}</p>
-      {% end %}
-      {% end %}
-      {% if resulturl %}
-      <p><a href="{{ resulturl }}">{{ resulturl }}</a></p>
-      {% end %}
-    </div>
-  </div>
-</div>
-{% end %}
-{% end %}
+

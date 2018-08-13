@@ -1,0 +1,13 @@
+{% extends "narrow.html" %}
+
+<!------------------ body -------------->
+{% block content %}
+
+  <h2>Your current basket:</h2>
+
+  {% for i in mycookies %}
+  {{ i }} is {{ mycookies[i] }}
+  <br />
+  {% end %}
+
+{% end %}

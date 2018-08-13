@@ -6,8 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-    <!-- Fira Mono Font -->
+    <!-- Fira Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Fira+Mono" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
@@ -40,6 +41,7 @@
                 Search<span class="sr-only">(current)</span>
               </a>
             </li>
+            <!--
             {% if options.gitlab_url %}
             <li class="nav-item">
               <a class="nav-link" href="/visualize">
@@ -48,6 +50,7 @@
               </a>
             </li>
             {% end %}
+            -->
             <li class="nav-item">
               <a class="nav-link" href="/upload">
                 <span class="fa fa-upload" aria-hidden="true"></span>
@@ -61,14 +64,22 @@
             </li>
           </ul>
 
+          <ul class="navbar-nav md-mr-auto rb-navbar">
+            <li class="nav-item">
+              <a class="nav-link" href="/user">
+                <span class="fa fa-user" aria-hidden="true"></span>
+                {{ current_user }}
+              </a>
+            </li>
+          </ul>
         </div>
-      </div>
+			</div>
     </nav>
 
     <main role="main" class="main">
       <div class="{% block bodyclass %}{% end %}">
 
-        <h1 class="page-header mb-5">{{ page_title }}</h1>
+        <h1 class="page-header">{{ page_title }}</h1>
 
         {% block body %}
         {% end %}

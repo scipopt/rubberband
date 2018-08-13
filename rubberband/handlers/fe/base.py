@@ -64,11 +64,13 @@ class BaseHandler(RequestHandler):
         str
             The value of the cookie.
         """
-        if not self.settings["debug"]:
-            cookie_val = self.request.cookies.get(name).value
-            return cookie_val
-        else:
-            return None
+        cookie_val = self.request.cookies.get(name).value
+        return cookie_val
+        #if not self.settings["debug"]:
+        #    cookie_val = self.request.cookies.get(name).value
+        #    return cookie_val
+        #else:
+        #    return None
 
     #def write_error(self, status_code, msg="", **kwargs):
     #    if status_code == 400:
