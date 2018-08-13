@@ -19,7 +19,6 @@
     {% end %}
 
     <link rel="stylesheet" href="/static/css/custom.css">
-    <link rel="stylesheet" href="/static/css/custom.scss">
     <link rel="icon" href="/favicon.ico" />
   </head>
 
@@ -34,11 +33,8 @@
         </button>
 
         <div class="collapse navbar-collapse" id="rb-mobile-navbar">
-          <ul class="nav navbar-nav-rb navbar-nav">
-          </ul>
-
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
+          <ul class="navbar-nav mr-auto rb-navbar">
+            <li class="nav-item">
               <a class="nav-link" href="/search">
                 <span class="fa fa-search" aria-hidden="true"></span>
                 Search<span class="sr-only">(current)</span>
@@ -70,10 +66,14 @@
     </nav>
 
     <main role="main" class="main">
+      <div class="{% block bodyclass %}{% end %}">
 
-      {% block body %}
-      {% end %}
+        <h1 class="page-header mb-5">{{ page_title }}</h1>
 
+        {% block body %}
+        {% end %}
+
+      </div>
     </main>
 
     <!-- JavaScript at end to decrease pageload time
@@ -85,6 +85,6 @@
     {% block extra_js %}
     {% end %}
 
-    <script type="text/javascript" src="/static/js/activeTab.js"></script>
+    <script type="text/javascript" src="/static/js/navbar.js"></script>
   </body>
 </html>

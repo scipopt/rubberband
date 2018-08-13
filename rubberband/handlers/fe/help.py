@@ -11,5 +11,4 @@ class HelpView(BaseHandler):
 
         Renders `help.html`.
         """
-        # The logfiles are not stored in integer/runlogs
         self.render("help.html", page_title="Help")

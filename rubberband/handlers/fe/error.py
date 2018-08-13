@@ -1,12 +1,15 @@
 """Contains ErrorView."""
 from .base import BaseHandler
-from tornado.web import ErrorHandler
+from tornado.web import HTTPError
 
 
-class ErrorView(BaseHandler, ErrorHandler):
-    """
-    Request handler handling the errors pages.
+class ErrorView(BaseHandler):
+    """Request handler handling the error pages."""
 
-    write_error is defined in BaseHandler, the rest is done by ErrorHandler
-    """
-    pass
+    def prepare(self):
+        """
+        Always gets called before answering to a spectific request.
+
+        Raises an HTTPError
+        """
+        raise HTTPError(404)

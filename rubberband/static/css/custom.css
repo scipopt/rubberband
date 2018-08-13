@@ -40,6 +40,7 @@ pre {
     word-break: normal !important;
     word-wrap: normal !important;
     white-space: pre !important;
+    background-color: lightgray;
 }
 
 div.ipet-long-toolbar {
@@ -74,27 +75,6 @@ td {
 .sidebar {
   display: none;
   width: 10%;
-}
-
-/* Sidebar navigation */
-.navbar-nav-rb {
-
-}
-.navbar-nav-rb > li > a {
-  padding-right: 20px;
-  padding-left: 20px;
-  color: #fff;
-}
-a.navbar-brand:hover,
-.navbar-nav-rb > li > a:hover {
-    background-color: inherit;
-    color: #000;
-}
-.navbar-nav-rb > .active > a,
-.navbar-nav-rb > .active > a:hover,
-.navbar-nav-rb > .active > a:focus {
-  background-color: #fff;
-  color: #000;
 }
 
 /*

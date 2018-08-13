@@ -70,11 +70,25 @@ class BaseHandler(RequestHandler):
         else:
             return None
 
+    #def write_error(self, status_code, msg="", **kwargs):
+    #    if status_code == 400:
+    #        self.render("error.html", msg=msg, page_title="")
+    #        return
+    #    if status_code == 404:
+    #        #  'Simply render the template to a string and pass it to self.write'
+    #        self.render("error.html", page_title="")
+    #        return
+    #    else:
+    #        msg = "\n".join(traceback.format_exception(*kwargs["exc_info"]))
+    #        self.render("error.html", msg=msg, page_title="")
+    #    return
+
     def write_error(self, status_code=400, **kwargs):
         """
         Send an error page back to the user.
 
-        This needs to be overwritten for error handling.
+        This needs to be overwritten for error handling,
+        as it gets called when a handler raises an HTTPError.
 
         Parameters
         ----------
@@ -83,25 +97,20 @@ class BaseHandler(RequestHandler):
         kwargs : keyword arguments
             keyword arguments for `traceback.format_exception`
         """
-        err_cls, err, tb = kwargs['exc_info']
-        try:
-            log_message = err.log_message
-        except:
-            log_message = "Something went wrong"
-
         reason = kwargs.get('reason', "Error")
 
-        if status_code < 500:
-            if status_code == 400:
-                reason = "Bad Request"
-            elif status_code == 404:
-                reason = "Not Found"
-        if status_code >= 500:
-            log_message = "\n".join(traceback.format_exception(*kwargs["exc_info"]))
-            if status_code == 500:
-                reason = "Internal Server Error"
+        log_message = "\n".join(traceback.format_exception(*kwargs["exc_info"]))
 
-        self.render("error.html", code=status_code, reason=reason, msg=log_message)
+        if status_code == 400:
+            reason = "Bad Request"
+        elif status_code == 403:
+            reason = "Forbidden"
+        elif status_code == 404:
+            reason = "Not Found"
+        elif status_code == 500:
+            reason = "Internal Server Error"
+
+        self.render("error.html", status_code=status_code, page_title=reason, msg=log_message)
         return
 
     def get_template_namespace(self):
@@ -112,8 +121,12 @@ class BaseHandler(RequestHandler):
         The results of this method will be combined with additional
         defaults in the `tornado.template` module and keyword arguments
         to `render` or `render_string`.
+
+        Define default values for templates.
         """
-        namespace = dict(
+        namespace = super(BaseHandler, self).get_template_namespace()
+
+        name_space = dict(
             handler=self,
             request=self.request,
             current_user=self.current_user,
@@ -129,10 +142,13 @@ class BaseHandler(RequestHandler):
             get_objsen=self.get_objsen,
             are_equivalent=self.are_equivalent,
             options=options,
+            page_title='Error',
+            status_code='404', # error code
         )
 
         # additional ui modules
         namespace.update(self.ui)
+        namespace.update(name_space)
 
         return namespace
 
