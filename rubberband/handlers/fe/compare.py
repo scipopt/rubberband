@@ -12,31 +12,9 @@ class CompareView(BaseHandler):
         """
         Answer to GET requests.
 
-        Renders `compare.html`.
+        Redirects to search view.
         """
-        options = get_options()
-
-        base_id = self.get_argument("base", None)
-        if base_id is None:
-            raise HTTPError(status_code=400, log_message="Missing id for base run.")
-        base = TestSet.get(id=base_id)
-
-        compare_list = self.get_argument("compare", None)
-        compares = []
-        compareids = []
-        if compare_list:
-            compareids = compare_list.split(",")
-            for i in compareids:
-                compares.append(TestSet.get(id=i))
-
-        options["defaults"] = {}
-        # preselect base testset
-        options["defaults"]["test_set"] = base.test_set
-        options["defaults"]["mode"] = base.mode
-
-        rrt = self.render_string("results_table.html", results=[base] + compares, tablename="base")
-        self.render("compare.html", page_title="Compare", base=base, compareids=compareids,
-                search_options=options, rendered_results_table=rrt)
+        self.redirect("search", status=301)
 
     def post(self):
         """

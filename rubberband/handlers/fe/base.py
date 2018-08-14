@@ -64,13 +64,25 @@ class BaseHandler(RequestHandler):
         str
             The value of the cookie.
         """
-        cookie_val = self.request.cookies.get(name).value
-        return cookie_val
-        #if not self.settings["debug"]:
-        #    cookie_val = self.request.cookies.get(name).value
-        #    return cookie_val
-        #else:
-        #    return None
+        if self.settings["debug"] and name == "_oauth2_proxy":
+            return None
+        else:
+            cookie_val = self.cookies.get(name).value
+            return cookie_val
+
+    def clear_all_cookies(self):
+        for i in self.cookies:
+            self.clear_cookie(i)
+
+    def get_all_cookies(self):
+        mycookies = {}
+        for i in self.cookies:
+            val = self.get_cookie(i)
+            if val == "":
+                self.clear_cookie(i)
+            else:
+                mycookies[i] = val
+        return mycookies
 
     def write_error(self, status_code=400, **kwargs):
         """

@@ -196,9 +196,6 @@ tbody > tr.hover > th,
 .chart-title {
     font-size: 1.5rem;
 }
-.navbar-brand {
-    color: #f5f5f5;
-}
 
 span.menu-glyphicon {
     padding-right: 15px;
@@ -303,11 +300,6 @@ h1 {
 
 h2 {
   margin-bottom: 1rem !important;
-  font-size: 1.5rem;
-}
-
-p {
-  font-size: 1rem;
 }
 
 fieldset {

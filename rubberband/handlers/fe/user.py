@@ -11,12 +11,11 @@ class UserView(BaseHandler):
 
         Renders `help.html`.
         """
-        mycookies = {}
+        #self.set_cookie("one", "uno")
+        #self.set_cookie("two", "dos")
 
-        self.set_cookie("one", "uno")
-        self.set_cookie("two", "dos")
+        self.clear_all_cookies()
 
-        mycookies["one"] = self.get_cookie("one")
-        mycookies["two"] = self.get_cookie("two")
+        self.render("basket.html", mycookies=self.get_all_cookies(), page_title="Personal space")
 
-        self.render("basket.html", mycookies=mycookies, page_title="Personal space")
+

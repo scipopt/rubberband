@@ -25,7 +25,9 @@ function updateResultsTable() {
         url: "search",
         // get request_data from search form
         data: request_data,
-        success: function (data){fillResultTable(data);},
+        success: function (data){
+          fillResultTable(data);
+        },
         error:function(){
             alert("Something went wrong.");
         }
@@ -33,28 +35,29 @@ function updateResultsTable() {
 }
 
 function fillResultTable(data) {
-    // fill resultTable with data,
-    // where data should be a htmlstring that just has to be poured into the right container
-    //$("#results-table").replaceWith(data);
-    $("#results-table").html(data);
+  // fill resultTable with data,
+  // where data should be a htmlstring that just has to be poured into the right container
+  //$("#results-table").replaceWith(data);
+  $("#results-table").html(data);
 
-    tmp = $("#search-result");
-    $.fn.dataTable.moment( 'D. MMM YYYY, HH:mm' );
-    if (tmp[0].tagName == "TABLE") {
-        tmp.DataTable({
-            scrollY: '80vh',
-            scrollX: true,
-            scroller: true,
-            scrollCollapse: true,
-            paging: false,
-            searching: false,
-        });
-    }
+  tmp = $("#search-result");
+  $.fn.dataTable.moment( 'D. MMM YYYY, HH:mm' );
+  if (tmp[0].tagName == "TABLE") {
+      tmp.DataTable({
+          scrollY: '80vh',
+          scrollX: true,
+          scroller: true,
+          scrollCollapse: true,
+          paging: false,
+          searching: false,
+      });
+  }
+  update_all_stars();
 }
 
 $("#search-button").click(function() {
-    // on click on search-button, please update the resultstable according to the search fields
-    updateResultsTable();
+  // on click on search-button, please update the resultstable according to the search fields
+  updateResultsTable();
 });
 
 $("#reset-search-button").click(function() {

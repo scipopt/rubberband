@@ -100,27 +100,39 @@
         <label class="col-form-label col-4" for="resultnumber-input">Number of results</label>
         <input class="form-control col-8" name="limit" id="resultnumber-input" value="100" type="number">
       </div>
+    </div>
   </fieldset>
-  <div class="form-group row col-12 col-sm-6 col-md-4 col-xl-3" role="group">
-    <button id="search-button" type="button" class="btn btn-primary col">Search</button>
-    <button id="reset-search-button" type="button" class="btn btn-danger col">Reset</button>
+  <div class="form-group row col-12 col-sm-12 col-md-8 col-xl-3" role="group">
+    <button id="search-button" type="button" class="btn btn-primary col-6">Search</button>
+    <button id="reset-search-button" type="button" class="btn btn-danger col-6">Reset</button>
   </div>
 </form>
 
 
 <form id="compare" name="compareform" action="/compare" method="post">
 
-  <h2>Compare to</h2>
-  <div id="compare-to-table">
-    Placeholder
+  <div class="rb-btn-group col-12 row alert alert-info">
+    <label class="col-sm-6 col-md-8 col-xl-10">Compare selected Testruns?</label>
+    <button type="submit" class="btn btn-primary col-sm-6 col-md-4 col-xl-2">Compare</button>
   </div>
 
-  <div class="rb-btn-group">
-    <button type="submit" class="btn btn-primary">Compare</button>
+  {% if starred_table %}
+  <h3>Starred</h3>
+  <div id="starred-table">
+    {{ starred_table }}
   </div>
+  {% end %}
 
+  {% if compare_table %}
+  <h3>Compares</h3>
+  <div id="compares-table">
+    {{ compare_table }}
+  </div>
+  {% end %}
+
+  <h3>Search result</h3>
   <div id="results-table">
-    Placeholder
+    Couldn't find results for given query.
   </div>
 
 </form>
