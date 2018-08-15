@@ -20,26 +20,41 @@
 <script type="text/javascript" src="/static/js/evaluation.js"></script>
 {% end %}
 
-{% block title %}
-<div class='page-header-wrapper results'>
-  <h1 class="page-header">{{ page_title }}</h1>
-  <ul id="resultNavTabs" role="tablist" class="nav nav-tabs nav-justified">
-    <li role="presentation" class="active"><a data-toggle="tab" aria-controls="results" role="tab" href="#details">Details</a></li>
-    <li role="presentation" class=""><a data-toggle="tab" aria-controls="stats" role="tab" href="#summary">Summary</a></li>
-    <li role="presentation" class=""><a data-toggle="tab" aria-controls="meta" role="tab" href="#meta">Meta</a></li>
-    <li role="presentation" class=""><a data-toggle="tab" aria-controls="settings" role="tab" href="#settings">Settings</a></li>
-  </ul>
-</div>
-{% end %}
-
 {% block body %}
 <div>
-  <br>
-  <div class="tab-content">
-    {% include "results/instance_results.html" %}
-    {% include "results/statistics.html" %}
-    {% include "results/meta.html" %}
-    {% include "results/settings.html" %}
-  </div>
+  <ul id="resultNavTabs" class="nav nav-tabs row" role="tablist">
+    <!-- <span class="d-none d-sm-block"> -->
+    <li class="nav-item col-3 active">
+      <a aria-selected="true" aria-controls="details" role="tab" href="" class="nav-link d-none d-sm-block " data-toggle="tab" data-target="#details">
+      <span class="fa fa-database"></span> Details</a>
+      <a aria-selected="true" aria-controls="details" role="tab" href="" class="d-block d-sm-none nav-link" data-toggle="tab" data-target="#details">
+      <span class="fa fa-database"></span></a>
+    </li>
+    <li class="nav-item col-3">
+      <a aria-selected="false" aria-controls="summary" role="tab" href="" class="d-none d-sm-block nav-link" data-toggle="tab" data-target="#summary">
+      <span class="fa fa-calculator"></span> Summary</a>
+      <a aria-selected="false" aria-controls="summary" role="tab" href="" class="d-block d-sm-none nav-link" data-toggle="tab" data-target="#summary">
+      <span class="fa fa-calculator"><span></a>
+    </li>
+    <li class="nav-item col-3">
+      <a aria-selected="false" aria-controls="meta" role="tab" href="" class="d-none d-sm-block nav-link" data-toggle="tab" data-target="#meta">
+      <span class="fa fa-cogs"></span> Meta</a>
+      <a aria-selected="false" aria-controls="meta" role="tab" href="" class="d-block d-sm-none nav-link" data-toggle="tab" data-target="#meta">
+      <span class="fa fa-cogs"></span></a>
+    </li>
+    <li class="nav-item col-3">
+      <a aria-selected="false" aria-controls="settings" role="tab" href="" class="d-none d-sm-block nav-link" data-toggle="tab" data-target="#settings">
+      <span class="fa fa-sliders-h"></span> Settings</a>
+      <a aria-selected="false" aria-controls="settings" role="tab" href="" class="d-block d-sm-none nav-link" data-toggle="tab" data-target="#settings">
+      <span class="fa fa-sliders-h"></span></a></a>
+    </li>
+  </ul>
+</div>
+
+<div id="resultNavTabsContent" class="tab-content">
+  {% include "results/res_view_details.html" %}
+  {% include "results/res_view_summary.html" %}
+  {% include "results/res_view_meta.html" %}
+  {% include "results/res_view_settings.html" %}
 </div>
 {% end %}

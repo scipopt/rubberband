@@ -79,7 +79,9 @@
     <main role="main" class="main">
       <div class="{% block bodyclass %}{% end %}">
 
+        {% if page_title %}
         <h1 class="page-header">{{ page_title }}</h1>
+        {% end %}
 
         {% block body %}
         {% end %}

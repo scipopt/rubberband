@@ -144,7 +144,7 @@ class BaseHandler(RequestHandler):
             are_equivalent=self.are_equivalent,
             options=options,
 
-            page_title='Error',
+            page_title=None,
             status_code='404', # error code
             checkboxes = False,
             radiobuttons = False,

@@ -2,46 +2,51 @@
 
 <!------------------ body -------------->
 {% block content %}
-<form class="alert alert-secondary" method="POST" name="fileUpload" enctype="multipart/form-data">
+<div class="alert alert-secondary" method="POST" name="fileUpload" enctype="multipart/form-data">
   <h2>Upload logfiles:</h2>
-  <fieldset>
-    <div class="row">
-      <div class="form-group row col-12">
-        <p class="col-12">Please select a set of logfiles for upload: <code>*.out</code>, <code>*.err</code>, <code>*.set</code> and <code>*.meta.</code>
-        The collection should contain exactly one logfile.</p>
-        <div class="col-12">
-          <div class="row custom-file col-12">
-            <label class="custom-file-label" for="validatedCustomFile">Choose file...</label>
-            <input class="custom-file-input" type="file" id="validatedCustomFile" name="resultFiles" multiple>
-          </div>
+  <form>
+    <fieldset>
+
+      <div class="form-group">
+        <p>Please select a set of logfiles for upload:
+          <code>*.out</code>,
+          <code>*.err</code>,
+          <code>*.set</code> and
+          <code>*.meta.</code>
+          The collection should contain exactly one logfile.
+        </p>
+        <div class="custom-file">
+          <label class="custom-file-label" for="validatedCustomFile">Choose file...</label>
+          <input class="custom-file-input" type="file" id="validatedCustomFile" name="resultFiles" multiple>
         </div>
       </div>
 
-      <div class="form-group row col-12">
-        <label class="col-12"><span class="important">Optional:</span> Specify a comma separated list of tags to more easily find this run in the future.</label>
-        <div class="col-12">
-          <input type="text" class="form-control" name="tags" id="tagsInput" placeholder="enforelax, repairheuristics, SAP, etc">
-        </div>
+      <div class="form-group">
+        <label>
+          <span class="important">Optional:</span> Specify a comma separated list of tags to more easily find this run in the future.
+        </label>
+        <input type="text" class="form-control" name="tags" id="tagsInput" placeholder="enforelax, repairheuristics, SAP, etc">
       </div>
 
-      <div class="form-group row col-12">
-        <label class="col-12"><span class="important">Optional:</span> Provide an expiration date for this TestRun. </label>
-
-        <div class="input-group date col-12" id="datetimepicker" data-target-input="nearest">
+      <div class="form-group">
+        <label>
+          <span class="important">Optional:</span> Provide an expiration date for this TestRun.
+        </label>
+        <div class="input-group date" id="datetimepicker" data-target-input="nearest">
           <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker" name="expirationdate"/>
           <div class="input-group-append" data-target="#datetimepicker" data-toggle="datetimepicker">
-              <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
           </div>
         </div>
-
       </div>
-    </div>
-  </fieldset>
 
-  <div class="form-group row col-12 col-sm-6 col-md-4 col-xl-3" role="group">
-    <button type="submit" class="btn btn-primary col">Upload</button>
-  </div>
-</form>
+    </fieldset>
+
+    <div class="form-group btn-group" role="group">
+      <button type="submit" class="btn btn-primary">Upload</button>
+    </div>
+  </form>
+</div>
 
 {% if msgs %}
 <div class="alert alert-info">

@@ -74,7 +74,7 @@ class ResultView(BaseHandler):
         ilt = self.render_string("results_table.html", results=[parent] + compare,
                 radios=True, checked=parent.meta.id,
                 tablename="ipet-legend-table")
-        self.render("result_view.html", file=parent, page_title="Evaluate", compare=compare,
+        self.render("result_view.html", file=parent, compare=compare,
                     sets=sets, meta=meta, ipet_legend_table=ilt, comparelist=comparelist,
                     rendered_results_table=rrt, fileoptions=fileoptions,
                     downloadzip=downloadziplink, evals=IPET_EVALUATIONS)

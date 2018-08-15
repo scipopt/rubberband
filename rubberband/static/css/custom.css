@@ -27,12 +27,12 @@ table {
 /*
  * Global add-ons
  */
-
+/*
 .sub-header {
   padding-bottom: 10px;
   border-bottom: 1px solid #eee;
 }
-/*
+
 pre {
     display: block;
     max-height: 80vh;
@@ -52,10 +52,6 @@ div.ipet-long-toolbar {
  */
 .navbar-fixed-top {
   border: 0;
-}
-
-.row {
-  margin-bottom: 10px;
 }
 
 .tooltip-inner {
@@ -88,67 +84,6 @@ td {
 
 .main .page-header {
   margin-top: 0;
-}
-
-
-/*
- * Placeholder dashboard ideas
- */
-
-.placeholders {
-  margin-bottom: 30px;
-  text-align: center;
-}
-.placeholders h4 {
-  margin-bottom: 0;
-}
-.placeholder {
-  margin-bottom: 20px;
-}
-.placeholder img {
-  display: inline-block;
-  border-radius: 50%;
-}
-
-/*
- * Loading icon
- */
-
-.glyphicon-refresh-animate {
-    -animation: spin .7s infinite linear;
-    -ms-animation: spin .7s infinite linear;
-    -webkit-animation: spinw .7s infinite linear;
-    -moz-animation: spinm .7s infinite linear;
-}
-
-div#loading-icon span.glyphicon {
-    padding-right: 0px;
-    margin-top: 100px;
-    font-size: 2.0em;
-}
-
-div#loading-icon {
-    height: 200px;
-}
-
-@keyframes spin {
-    from { transform: scale(1) rotate(0deg);}
-    to { transform: scale(1) rotate(360deg);}
-}
-
-@-webkit-keyframes spinw {
-    from { -webkit-transform: rotate(0deg);}
-    to { -webkit-transform: rotate(360deg);}
-}
-
-@-moz-keyframes spinm {
-    from { -moz-transform: rotate(0deg);}
-    to { -moz-transform: rotate(360deg);}
-}
-
-
-form {
-    margin-top: 15px;
 }
 
 th,
@@ -197,72 +132,8 @@ tbody > tr.hover > th,
     font-size: 1.5rem;
 }
 
-span.menu-glyphicon {
-    padding-right: 15px;
-}
-
-.row-buffered {
-    margin-top: 30px;
-    margin-bottom: 30px;
-}
-
-.row {
-    margin-left:0px;
-    margin-right:0px;
-}
-
-span.h3-icon-leftalign {
-    float: right;
-}
-
-/* Results Page */
-/* Results Page Header */
-
-.page-header-wrapper.results {
-  position: relative;
-}
-
-.page-header-wrapper.results h1 {
-  border: none;
-}
-
-.page-header-wrapper.results .page-header {
-  float: left;
-}
-/*
-#resultNavTabs {
-  width: 100%;
-  padding-top: 7px;
-}
-
-#resultNavTabs::after {
-  position: absolute;
-  content: ' ';
-  width: 100%;
-  height: 1px;
-  background-color: #ddd;
-  left: 0;
-  margin-top: -1px;
-  z-index: -1;
-}
-*/
-/* Results Page Settings */
-.tab-title {
-}
-
-.tab-buttons {
-  width: 100%;
-  margin-top: 20px;
-  text-align: right;
-  font-size: 24px;
-}
-
 .tab-buttons > a {
-  display: inline-block;
-}
-
-.tab-buttons .glyphicon {
-  padding: 0 7px;
+  font-size: 1.3rem;
 }
 
 td.highlighted-cell {
@@ -270,7 +141,7 @@ td.highlighted-cell {
 }
 
 a.bs-tooltip {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 /* Statistics Tab */
@@ -308,4 +179,8 @@ fieldset {
 
 span.important {
   color: #e83e8c;
+}
+
+#resultNavTabs {
+  margin-bottom: 1rem;
 }
