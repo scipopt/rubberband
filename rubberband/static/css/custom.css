@@ -8,55 +8,21 @@ body {
     padding-top: 5rem;
 }
 
+table {
+  font-size: 0.85rem;
+}
+
 /* Move down content because we have a fixed navbar that is 50px tall */
 .headline {
   padding: 3rem 1.5rem;
 }
 
 p.exclusions {
-    text-align: left;
+  font-family: monospace;
 }
 
-table {
-    word-wrap: break-word;
-    margin-top: 15px;
-    font-family: monospace;
-    border: none;
-}
-
-/*
- * Global add-ons
- */
-/*
-.sub-header {
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
-}
-
-pre {
-    display: block;
-    max-height: 80vh;
-    overflow: scroll;
-    word-break: normal !important;
-    word-wrap: normal !important;
-    white-space: pre !important;
-    background-color: lightgray;
-}
-*/
 div.ipet-long-toolbar {
   margin-bottom: 5px;
-}
-/*
- * Top navigation
- * Hide default border to remove 1px line.
- */
-.navbar-fixed-top {
-  border: 0;
-}
-
-.tooltip-inner {
-  white-space: pre-wrap;
-  text-align: left;
 }
 
 td {
@@ -86,14 +52,21 @@ td {
   margin-top: 0;
 }
 
+.rb-table-data {
+  font-size: 1rem;
+  word-wrap: break-word;
+  font-family: monospace;
+  border: none;
+}
+
 th,
-.data-table {
+.rb-table-data {
     white-space: nowrap;
 }
-.data-table .number {
+.rb-table-data .number {
     text-align: right;
 }
-.data-table .text {
+.rb-table-data .text {
     text-align: left;
 }
 th.col_heading {
@@ -110,6 +83,10 @@ tbody > tr.hover > th,
 
 .datatables_wrapper {
     margin-top:20px;
+}
+
+.dataTables_info {
+  text-align: left;
 }
 
 .dataTables_filter {
@@ -130,10 +107,6 @@ tbody > tr.hover > th,
 
 .chart-title {
     font-size: 1.5rem;
-}
-
-.tab-buttons > a {
-  font-size: 1.3rem;
 }
 
 td.highlighted-cell {
@@ -162,7 +135,11 @@ input.fieldValue {
 .quick .toggle-group { transition: none; -webkit-transition: none; }
 
 .slider {
-  width: 90% !important;
+  width: 100% !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  border-bottom: 1px solid #aaa;
 }
 
 h1 {
@@ -183,4 +160,23 @@ span.important {
 
 #resultNavTabs {
   margin-bottom: 1rem;
+}
+
+.rb-details-tab-buttons  {
+  font-size: 1.5rem;
+  margin-bottom: -2.4rem;
+  margin-right: 0rem;
+}
+
+.rb-testrun-table {
+  margin-bottom: 1rem;
+  overflow: auto;
+}
+
+.rb-buttons {
+  margin: .3rem 0rem .3rem 0rem;
+}
+
+a {
+  color: darkblue;
 }

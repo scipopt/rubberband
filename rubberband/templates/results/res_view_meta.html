@@ -1,191 +1,185 @@
 <div aria-labelledby="meta-tab" role="tabpanel" class="tab-pane fade" id="meta">
 
-  <div class="row">
-    <h3>Meta information</h3>
-  </div>
+  <!-- headline ==================================================================== -->
   {% if len(compare) >= 1 %}
-  <div class="tab-buttons">
+  <div class="rb-details-tab-buttons row justify-content-end">
+
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="" title="toggle settings">
+      <span class='fa fa-eye'></span><span class='fa fa-eye-slash'></span></a>
+
+    <!-- TODO -->
     <i title='Show/Hide rows with equal data' class='bs-tooltip'>
       <input id="toggle-meta" data-toggle="toggle" data-on="<i class='glyphicon glyphicon-eye-open'></i>" data-off="<i class='glyphicon glyphicon-eye-close'></i>" data-style="quick" data-size="small" type="checkbox">
     </i>
+
   </div>
   {% end %}
-  <div class="row">
+  <h2 class="rb-details-tab-title">Meta information</h2>
+  <!-- end headline ==================================================================== -->
+
+  <div class="rb-testrun-table">
+
+    <!-- table ==================================================================== -->
     <table class="meta-table table table-hover table-bordered" width="100%">
-    <thead>
-    <tr>
-      <th>Field</th>
-      <th>Base</th>
-      {% for f in compare %}
-      <th>Compare</th>
-      {% end %}
-    </tr>
-    </thead>
-    <tbody>
-    <tr{% if are_equivalent([file]+compare, "number_instances") %} class="toggle_meta_hide" {% end %}>
-        <td>Number of instances</td>
-	{% for f in [file] + compare %}
-	<td><a href="/result/{{f.meta.id}}">{{ len(f.children.to_dict().keys()) }}</td>
-	{% end %}
-    </tr>
-    <tr>
-        <td>Original Filename</td>
-	{% for f in [file] + compare %}
-	<td><a href="/file/{{f.meta.id}}">{{ format_attr(f, "filename") }}</a></td>
-	{% end %}
-    </tr>
-    <tr{% if are_equivalent([file]+compare, "git_commit_author") %} class="toggle_meta_hide" {% end %}>
-        <td>Commit Author</td>
-	{% for f in [file] + compare %}
-	<td>{% if f.git_commit_author %}
-        <a href="{{ options.gitlab_url }}/u/{{ format_attr(f, 'git_commit_author') }}">{{ format_attr(f, "git_commit_author") }}</a>
-	{% else %}
-	{{ format_attr(f, "git_commit_author") }}
-	{% end %}
-	{% end %}
-	</td>
-    </tr>
-    <tr{% if are_equivalent([file]+compare, "git_hash") %} class="toggle_meta_hide" {% end %}>
-        <td>Commit Hash</td>
-	{% for f in [file] + compare %}
-	<td>{% if options.gitlab_url %}
-        <a href="{{ options.gitlab_url }}/integer/{{ f.solver }}/commit/{{f.git_hash }}">{{ f.git_hash }}</a>
-	{% else %}
-	{{ format_attr(file, "git_hash") }}
-	{% end %}
-	{% end %}
-	</td>
-    </tr>
-    <tr{% if are_equivalent([file]+compare, "git_commit_timestamp") %} class="toggle_meta_hide" {% end %}>
-  <td>Commit Timestamp</td>
-	{% for f in [file] + compare %}
-	<td>{{ format_attr(f, "git_commit_timestamp") }}</td>
-	{% end %}
-    </tr>
-    <tr{% if are_equivalent([file]+compare, "git_dirty_hash") %} class="toggle_meta_hide" {% end %}>
-	<td>Dirty Hash?</td>
-	{% for f in [file] + compare %}
-	<td>{{ format_attr(f, "git_dirty_hash") }}</td>
-	{% end %}
-    </tr>
-    <tr{% if are_equivalent([file]+compare, "upload_timestamp") %} class="toggle_meta_hide" {% end %}>
-        <td>Upload Timestamp</td>
-	{% for f in [file] + compare %}
-	<td>{{ format_attr(f, "upload_timestamp")}}</td>
-	{% end %}
-    </tr>
-    <tr{% if are_equivalent([file]+compare, "uploader") %} class="toggle_meta_hide" {% end %}>
-      <td>Uploader</td>
-	{% for f in [file] + compare %}
-	<td>{{ format_attr(f, "uploader") }}</td>
-	{% end %}
-    </tr>
-    <tr{% if are_equivalent([file]+compare, "index_timestamp") %} class="toggle_meta_hide" {% end %}>
-        <td>Latest Import</td>
-	{% for f in [file] + compare %}
-	<td>{{ format_attr(f, "index_timestamp")}}</td>
-	{% end %}
-    </tr>
-    <tr{% if are_equivalent([file]+compare, "run_initiator") %} class="toggle_meta_hide" {% end %}>
-        <td>Latest Importer</td>
-	{% for f in [file] + compare %}
-	<td>{{ format_attr(f, "run_initiator") }}</td>
-	{% end %}
-    </tr>
-    <tr{% if are_equivalent([file]+compare, "lp_solver_version") and are_equivalent([file]+compare, "lp_solver") %} class="toggle_meta_hide" {% end %}>
-        <td>LP Solver</td>
-	{% for f in [file] + compare %}
-	<td>{{ format_attr(f, ["lp_solver", "lp_solver_version"]) }}</td>
-	{% end %}
-    </tr>
-    <tr{% if are_equivalent([file]+compare, "lp_solver_githash") %} class="toggle_meta_hide" {% end %}>
-        <td>LP Solver Githash</td>
-	{% for f in [file] + compare %}
-	<td>{{ format_attr(f, "lp_solver_githash") }}</td>
-	{% end %}
-    </tr>
-    <tr{% if are_equivalent([file]+compare, "mode") %} class="toggle_meta_hide" {% end %}>
-        <td>Mode</td>
-	{% for f in [file] + compare %}
-	<td>{{ format_attr(f, "mode") }}</td>
-	{% end %}
-    </tr>
-    <tr{% if are_equivalent([file]+compare, "os") and are_equivalent([file]+compare, "architecture") %} class="toggle_meta_hide" {% end %}>
-        <td>OS</td>
-	{% for f in [file] + compare %}
-	<td>{{ format_attr(f, ["os", "architecture"]) }}</td>
-	{% end %}
-    </tr>
-    <tr{% if are_equivalent([file]+compare, "run_environment") %} class="toggle_meta_hide" {% end %}>
-        <td>Hostname</td>
-	{% for f in [file] + compare %}
-	<td>{{ format_attr(f, "run_environment") }}</td>
-	{% end %}
-    </tr>
-    <tr{% if are_equivalent([file]+compare, "settings_short_name") %} class="toggle_meta_hide" {% end %}>
-        <td>Settings Name</td>
-	{% for f in [file] + compare %}
-	<td>{{ format_attr(f, "settings_short_name") }}</td>
-	{% end %}
-    </tr>
-    <tr{% if are_equivalent([file]+compare, "solver") and are_equivalent([file]+compare, "solver_version") %} class="toggle_meta_hide" {% end %}>
-        <td>Solver</td>
-	{% for f in [file] + compare %}
-	<td>{{ format_attr(f, ["solver", "solver_version"]) }}</td>
-	{% end %}
-    </tr>
-    <tr{% if are_equivalent([file]+compare, "tags") %} class="toggle_meta_hide" {% end %}>
-        <td>Tags</td>
-	{% for f in [file] + compare %}
-	<td>{{ format_attr(f, "tags") }}</td>
-	{% end %}
-    </tr>
-    <tr{% if are_equivalent([file]+compare, "test_set") %} class="toggle_meta_hide" {% end %}>
-        <td>Testset</td>
-	{% for f in [file] + compare %}
-	<td>{{ format_attr(f, "test_set") }}</td>
-	{% end %}
-    </tr>
-    <tr{% if are_equivalent([file]+compare, "time_mod") %} class="toggle_meta_hide" {% end %}>
-        <td>Timelimit</td>
-	{% for f in [file] + compare %}
-	<td>{{ format_attr(f, "time_mod") }}</td>
-	{% end %}
-    </tr>
-    <tr{% if are_equivalent([file]+compare, "expirationdate") %} class="toggle_meta_hide" {% end %}>
-        <td>Expirationdate</td>
-	{% for f in [file] + compare %}
-	<td>{{ format_attr(f, "expirationdate") }}</td>
-	{% end %}
-    </tr>
-  </table>
+
+      <thead><tr>
+        <th>Field</th>
+        <th>Base</th>
+        {% for f in compare %}
+          <th>Compare</th>
+        {% end %}
+      </tr></thead>
+
+      <tbody>
+        <tr{% if are_equivalent([file]+compare, "number_instances") %} class="toggle_meta_hide" {% end %}>
+          <td>Number of instances</td>
+          {% for f in [file] + compare %}
+            <td><a href="/result/{{f.meta.id}}">{{ len(f.children.to_dict().keys()) }}</td>
+          {% end %}
+        </tr><tr>
+          <td>Original Filename</td>
+          {% for f in [file] + compare %}
+            <td><a href="/file/{{f.meta.id}}">{{ format_attr(f, "filename") }}</a></td>
+          {% end %}
+        </tr><tr{% if are_equivalent([file]+compare, "git_commit_author") %} class="toggle_meta_hide" {% end %}>
+          <td>Commit Author</td>
+          {% for f in [file] + compare %}
+            <td>{% if f.git_commit_author %}
+                <a href="{{ options.gitlab_url }}/u/{{ format_attr(f, 'git_commit_author') }}">{{ format_attr(f, "git_commit_author") }}</a>
+                {% else %}
+                {{ format_attr(f, "git_commit_author") }}
+                {% end %}
+          {% end %}
+          </td>
+        </tr><tr{% if are_equivalent([file]+compare, "git_hash") %} class="toggle_meta_hide" {% end %}>
+          <td>Commit Hash</td>
+          {% for f in [file] + compare %}
+            <td>{% if options.gitlab_url %}
+                <a href="{{ options.gitlab_url }}/integer/{{ f.solver }}/commit/{{f.git_hash }}">{{ f.git_hash }}</a>
+                {% else %}
+                {{ format_attr(file, "git_hash") }}
+          {% end %}
+          </td>
+          {% end %}
+        </tr><tr{% if are_equivalent([file]+compare, "git_commit_timestamp") %} class="toggle_meta_hide" {% end %}>
+          <td>Commit Timestamp</td>
+          {% for f in [file] + compare %}
+          <td>{{ format_attr(f, "git_commit_timestamp") }}</td>
+          {% end %}
+        </tr><tr{% if are_equivalent([file]+compare, "git_dirty_hash") %} class="toggle_meta_hide" {% end %}>
+          <td>Dirty Hash?</td>
+          {% for f in [file] + compare %}
+          <td>{{ format_attr(f, "git_dirty_hash") }}</td>
+          {% end %}
+        </tr><tr{% if are_equivalent([file]+compare, "upload_timestamp") %} class="toggle_meta_hide" {% end %}>
+          <td>Upload Timestamp</td>
+          {% for f in [file] + compare %}
+          <td>{{ format_attr(f, "upload_timestamp")}}</td>
+          {% end %}
+        </tr><tr{% if are_equivalent([file]+compare, "uploader") %} class="toggle_meta_hide" {% end %}>
+          <td>Uploader</td>
+          {% for f in [file] + compare %}
+          <td>{{ format_attr(f, "uploader") }}</td>
+          {% end %}
+        </tr><tr{% if are_equivalent([file]+compare, "index_timestamp") %} class="toggle_meta_hide" {% end %}>
+          <td>Latest Import</td>
+          {% for f in [file] + compare %}
+          <td>{{ format_attr(f, "index_timestamp")}}</td>
+          {% end %}
+        </tr><tr{% if are_equivalent([file]+compare, "run_initiator") %} class="toggle_meta_hide" {% end %}>
+          <td>Latest Importer</td>
+          {% for f in [file] + compare %}
+          <td>{{ format_attr(f, "run_initiator") }}</td>
+          {% end %}
+        </tr><tr{% if are_equivalent([file]+compare, "lp_solver_version") and are_equivalent([file]+compare, "lp_solver") %} class="toggle_meta_hide" {% end %}>
+          <td>LP Solver</td>
+          {% for f in [file] + compare %}
+          <td>{{ format_attr(f, ["lp_solver", "lp_solver_version"]) }}</td>
+          {% end %}
+        </tr><tr{% if are_equivalent([file]+compare, "lp_solver_githash") %} class="toggle_meta_hide" {% end %}>
+          <td>LP Solver Githash</td>
+          {% for f in [file] + compare %}
+          <td>{{ format_attr(f, "lp_solver_githash") }}</td>
+          {% end %}
+        </tr><tr{% if are_equivalent([file]+compare, "mode") %} class="toggle_meta_hide" {% end %}>
+          <td>Mode</td>
+          {% for f in [file] + compare %}
+          <td>{{ format_attr(f, "mode") }}</td>
+          {% end %}
+        </tr><tr{% if are_equivalent([file]+compare, "os") and are_equivalent([file]+compare, "architecture") %} class="toggle_meta_hide" {% end %}>
+          <td>OS</td>
+          {% for f in [file] + compare %}
+          <td>{{ format_attr(f, ["os", "architecture"]) }}</td>
+          {% end %}
+        </tr><tr{% if are_equivalent([file]+compare, "run_environment") %} class="toggle_meta_hide" {% end %}>
+          <td>Hostname</td>
+          {% for f in [file] + compare %}
+          <td>{{ format_attr(f, "run_environment") }}</td>
+          {% end %}
+        </tr><tr{% if are_equivalent([file]+compare, "settings_short_name") %} class="toggle_meta_hide" {% end %}>
+          <td>Settings Name</td>
+          {% for f in [file] + compare %}
+          <td>{{ format_attr(f, "settings_short_name") }}</td>
+          {% end %}
+        </tr><tr{% if are_equivalent([file]+compare, "solver") and are_equivalent([file]+compare, "solver_version") %} class="toggle_meta_hide" {% end %}>
+          <td>Solver</td>
+          {% for f in [file] + compare %}
+          <td>{{ format_attr(f, ["solver", "solver_version"]) }}</td>
+          {% end %}
+        </tr><tr{% if are_equivalent([file]+compare, "tags") %} class="toggle_meta_hide" {% end %}>
+          <td>Tags</td>
+          {% for f in [file] + compare %}
+          <td>{{ format_attr(f, "tags") }}</td>
+          {% end %}
+        </tr><tr{% if are_equivalent([file]+compare, "test_set") %} class="toggle_meta_hide" {% end %}>
+          <td>Testset</td>
+          {% for f in [file] + compare %}
+          <td>{{ format_attr(f, "test_set") }}</td>
+          {% end %}
+        </tr><tr{% if are_equivalent([file]+compare, "time_mod") %} class="toggle_meta_hide" {% end %}>
+          <td>Timelimit</td>
+          {% for f in [file] + compare %}
+          <td>{{ format_attr(f, "time_mod") }}</td>
+          {% end %}
+        </tr><tr{% if are_equivalent([file]+compare, "expirationdate") %} class="toggle_meta_hide" {% end %}>
+          <td>Expirationdate</td>
+          {% for f in [file] + compare %}
+          <td>{{ format_attr(f, "expirationdate") }}</td>
+          {% end %}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+    <!-- end table ==================================================================== -->
 
   <p>
-  The above data is gathered from data parsed by IPET, additional data given via .meta file and gitlab, possibly from the filename if it contains information.
+  The above data is gathered from data parsed by IPET, additional data given via .meta file and gitlab, possibly from the filename if it contains information which is not found in the ipet data.
   </p>
 
-  <h3>Data from .meta file.</h3>
-  <table class="meta-table table table-hover table-bordered" width="100%">
-  <thead>
-  <tr>
-    <th>Field</th>
-    <th>Base</th>
-    {% for f in compare %}
-    <th>Compare</th>
-    {% end %}
-  </tr>
-  </thead>
-  <tbody>
-    {% for k in meta %}
-    <tr{% if are_equivalent([f.metadata for f in [file]+compare], "expirationdate") %} class="toggle_meta_hide" {% end %}>
-      <td>{{ k }}</td>
-  {% for f in [file] + compare %}
-  <td>{{ format_attr(f.metadata, k) }}</td>
-  {% end %}
-    </tr>
-    {% end %}
-  </tbody>
-  </table>
+  <div class="rb-testrun-table">
+    <h3>Data from .meta file.</h3>
+    <table class="meta-table table table-hover table-bordered" width="100%">
+
+      <thead><tr>
+        <th>Field</th>
+        <th>Base</th>
+        {% for f in compare %}
+          <th>Compare</th>
+        {% end %}
+      </tr></thead>
+
+      <tbody>
+        {% for k in meta %}
+          <tr{% if are_equivalent([f.metadata for f in [file]+compare], "expirationdate") %} class="toggle_meta_hide" {% end %}>
+          <td>{{ k }}</td>
+          {% for f in [file] + compare %}
+            <td>{{ format_attr(f.metadata, k) }}</td>
+          {% end %}
+          </tr>
+        {% end %}
+      </tbody>
+
+    </table>
 
   </div>
-  </div>
+</div>

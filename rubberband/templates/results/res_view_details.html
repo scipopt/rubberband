@@ -1,63 +1,81 @@
 <div aria-labelledby="details-tab" role="tabpanel" class="tab-pane fade active show" id="details">
-  <div class="row">
-    <h3 class="tab-title col-12 col-sm-3 col-md-4 col-xl-6">Details</h3>
-    <div class="tab-buttons col-12 col-sm-9 col-md-8 col-xl-6 text-right">
-      <a class="bs-tooltip col-sm-2" data-toggle="tooltip" data-placement="top" href="/compare?base={{ file.meta.id }}{% if comparelist is not None %}&compare={{ comparelist }}{% end %}" title="add comparison runs">
-        <span class="fa fa-plus"></span></a>
-      {% if fileoptions[".out"] %}
-      <a class="bs-tooltip col-sm-2" data-toggle="tooltip" data-placement="top" href="/file/{{file.meta.id}}" title="view log file">
-        <span class="fa fa-info-circle"></span></a>
-      {% end %}
-      {% if fileoptions[".meta"] %}
-      <a class="bs-tooltip col-sm-2" data-toggle="tooltip" data-placement="top" href="/file/{{file.meta.id}}?ftype=.meta" title="view meta file">
-        <span class="fa fa-paperclip"></span></a>
-      {% end %}
-      {% if fileoptions[".err"] %}
-      <a class="bs-tooltip col-sm-2" data-toggle="tooltip" data-placement="top" href="/file/{{file.meta.id}}?ftype=.err" title="view error file">
-        <span class="fa fa-exclamation-circle"></span></a>
-      {% end %}
-      <a class="bs-tooltip col-sm-2" data-toggle="modal"   data-placement="top" href="" data-target="#downloadSummaryOptions" title="download results">
-        <span class="fa fa-file-download" ></span></a>
-      <a class="bs-tooltip col-sm-2" data-toggle="modal"   data-placement="top" href="" data-target="#deleteResultModal" title="delete result">
-        <span class="fa fa-trash-alt"></span></a>
-      {% if fileoptions[".out"] %}
-      <a class="bs-tooltip col-sm-2" data-toggle="modal"   data-placement="top" href="" data-target="#reimportResultModal" title="reimport result">
-        <span class="fa fa-redo"></span></a>
-      {% end %}
-      {% if fileoptions[".out"] or fileoptions[".meta"] or fileoptions[".err"] %}
-      <a class="bs-tooltip col-sm-2" data-toggle="tooltip" data-placement="top" href="{{ downloadzip }}" title="download zip archive">
-        <span class="fa fa-gift"></span></a>
-      {% end %}
+
+  <!-- headline ==================================================================== -->
+  <div class="rb-details-tab-buttons row justify-content-end">
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/compare?base={{ file.meta.id }}{% if comparelist is not None %}&compare={{ comparelist }}{% end %}" title="add comparison runs">
+      <span class="fa fa-plus"></span></a>
+    {% if fileoptions[".out"] %}
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/file/{{file.meta.id}}" title="view log file">
+      <span class="fa fa-info-circle"></span></a>
+    {% end %}
+    {% if fileoptions[".meta"] %}
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/file/{{file.meta.id}}?ftype=.meta" title="view meta file">
+      <span class="fa fa-paperclip"></span></a>
+    {% end %}
+    {% if fileoptions[".err"] %}
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/file/{{file.meta.id}}?ftype=.err" title="view error file">
+      <span class="fa fa-exclamation-circle"></span></a>
+    {% end %}
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="modal"   data-placement="top" href="" data-target="#downloadSummaryOptions" title="download results">
+      <span class="fa fa-file-download" ></span></a>
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="modal"   data-placement="top" href="" data-target="#deleteResultModal" title="delete result">
+      <span class="fa fa-trash-alt"></span></a>
+    {% if fileoptions[".out"] %}
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="modal"   data-placement="top" href="" data-target="#reimportResultModal" title="reimport result">
+      <span class="fa fa-redo"></span></a>
+    {% end %}
+    {% if fileoptions[".out"] or fileoptions[".meta"] or fileoptions[".err"] %}
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="{{ downloadzip }}" title="download zip archive">
+      <span class="fa fa-gift"></span></a>
+    {% end %}
+  </div>
+  <h2 class="rb-details-tab-title">Details</h2>
+  <!-- end headline ==================================================================== -->
+
+  {% if compare %}
+  <form action="/compare" method="post">
+  {% end %}
+
+  <h3>Testruns</h3>
+
+  {% if compare %}
+    <div class="alert alert-info">
+      <div class="row">
+        <label class="col-form-label col">Change comparison base?</label>
+        <div class="col">
+          <button type="submit" class="btn btn-primary float-right">Submit</button>
+        </div>
+      </div>
     </div>
+  {% end %}
+
+  <div class="rb-testrun-table">
+    {% raw rendered_results_table %}
   </div>
 
   {% if compare %}
-    <form action="/compare" method="post">
-      <div class="btn-toolbar col-12 alert alert-info">
-        <label class="col-sm-6 col-md-8 col-xl-10">Change comparison base.</label>
-        <button type="submit" class="btn btn-primary col-sm-6 col-md-4 col-xl-2">Submit</button>
-      </div>
-    {% end %}
-      <h4>Testruns</h4>
-      {% raw rendered_results_table %}
-    {% if compare %}
-    </form>
+  </form>
   {% end %}
 
   {% if sets.get("difference") %}
-  <h4>Exclusions</h4>
-  <p>The following {{ len(sets["difference"]) }} instances are not present in all of the compared test sets, and have therefore been ommitted from the table below:</p>
-  <p>{{", ".join(sets['difference'])}}</p>
+    <h3>Exclusions</h3>
+    <div id="exclusions">
+      <p>The following {{ len(sets["difference"]) }} instances are not present in all of the compared test sets, and have therefore been ommitted from the table below:</p>
+      <p class="exclusions">{{", ".join(sets['difference'])}}</p>
+    </div>
   {% end %}
-  <div class="row datatables-content">
-    <table class="results-table compact table-hover data-table" width="100%">
-    {% if compare %}
-    {% include "compare_res.html" %}
-    {% else %}
-    {% include "res.html" %}
-    {% end %}
-    </table>
-  </div>
+
+    <h3>Detailed data</h3>
+    <div class="rb-testrun-table datatables-content">
+      <table class="results-table compact table-hover rb-table-data" width="100%">
+      {% if compare %}
+      {% include "compare_res.html" %}
+      {% else %}
+      {% include "res.html" %}
+      {% end %}
+      </table>
+    </div>
+
   <h4>How do I interpret the comparison view?</h4>
   <p>
   The color of the cell represents how the value for that particular instance compares.

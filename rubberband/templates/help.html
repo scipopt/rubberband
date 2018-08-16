@@ -3,16 +3,14 @@
 <!------------------ body -------------->
 {% block content %}
 
-<h2>What is Rubberband?</h2>
-<p>
-Rubberband is a flexible web view and analysis platform for solver log files of mathematical optimization software, backed by Elasticsearch.
-</p>
-
-<h2>Where do i report errors and other issues?</h2>
-<p>
-Rubberband is a project developed on GitHub, you can post your issue
-<a href="https://github.com/ambros-gleixner/rubberband/issues">here</a>.
-<!--<a href="https://git.zib.de/optimization/rubberband/issues">Here.</a>-->
-</p>
+  {% for (question, answer) in questions.items() %}
+    <h2>
+      <span class="fa fa-caret-right large"></span>
+      {% raw question %}
+    </h2>
+    <p>
+      {% raw answer %}
+    </p>
+  {% end %}
 
 {% end %}

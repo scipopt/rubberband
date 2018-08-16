@@ -24,25 +24,25 @@
 <div>
   <ul id="resultNavTabs" class="nav nav-tabs row" role="tablist">
     <!-- <span class="d-none d-sm-block"> -->
-    <li class="nav-item col-3 active">
+    <li class="nav-item col-3 active text-nowrap">
       <a aria-selected="true" aria-controls="details" role="tab" href="" class="nav-link d-none d-sm-block " data-toggle="tab" data-target="#details">
       <span class="fa fa-database"></span> Details</a>
       <a aria-selected="true" aria-controls="details" role="tab" href="" class="d-block d-sm-none nav-link" data-toggle="tab" data-target="#details">
       <span class="fa fa-database"></span></a>
     </li>
-    <li class="nav-item col-3">
-      <a aria-selected="false" aria-controls="summary" role="tab" href="" class="d-none d-sm-block nav-link" data-toggle="tab" data-target="#summary">
-      <span class="fa fa-calculator"></span> Summary</a>
-      <a aria-selected="false" aria-controls="summary" role="tab" href="" class="d-block d-sm-none nav-link" data-toggle="tab" data-target="#summary">
+    <li class="nav-item col-3 text-nowrap">
+      <a aria-selected="false" aria-controls="evaluation" role="tab" href="" class="d-none d-sm-block nav-link" data-toggle="tab" data-target="#evaluation">
+      <span class="fa fa-calculator"></span> Evaluation</a>
+      <a aria-selected="false" aria-controls="evaluation" role="tab" href="" class="d-block d-sm-none nav-link" data-toggle="tab" data-target="#evaluation">
       <span class="fa fa-calculator"><span></a>
     </li>
-    <li class="nav-item col-3">
+    <li class="nav-item col-3 text-nowrap">
       <a aria-selected="false" aria-controls="meta" role="tab" href="" class="d-none d-sm-block nav-link" data-toggle="tab" data-target="#meta">
       <span class="fa fa-cogs"></span> Meta</a>
       <a aria-selected="false" aria-controls="meta" role="tab" href="" class="d-block d-sm-none nav-link" data-toggle="tab" data-target="#meta">
       <span class="fa fa-cogs"></span></a>
     </li>
-    <li class="nav-item col-3">
+    <li class="nav-item col-3 text-nowrap">
       <a aria-selected="false" aria-controls="settings" role="tab" href="" class="d-none d-sm-block nav-link" data-toggle="tab" data-target="#settings">
       <span class="fa fa-sliders-h"></span> Settings</a>
       <a aria-selected="false" aria-controls="settings" role="tab" href="" class="d-block d-sm-none nav-link" data-toggle="tab" data-target="#settings">
@@ -53,7 +53,7 @@
 
 <div id="resultNavTabsContent" class="tab-content">
   {% include "results/res_view_details.html" %}
-  {% include "results/res_view_summary.html" %}
+  {% include "results/res_view_evaluation.html" %}
   {% include "results/res_view_meta.html" %}
   {% include "results/res_view_settings.html" %}
 </div>

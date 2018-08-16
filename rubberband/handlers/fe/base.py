@@ -143,6 +143,8 @@ class BaseHandler(RequestHandler):
             get_objsen=self.get_objsen,
             are_equivalent=self.are_equivalent,
             options=options,
+            # to get a random number, used to reload css everytime, for debugging
+            rand=datetime.now(),
 
             page_title=None,
             status_code='404', # error code

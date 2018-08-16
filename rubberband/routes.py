@@ -17,7 +17,6 @@ routes = [
     (r"/result/(?P<parent_id>[^\/]+)", fe.ResultView),
     (r"/result/(?P<parent_id>[^\/]+)/instance/?(?P<child_id>[^\/]+)?", fe.InstanceView),
     (r"/file/(?P<file_id>[^\/]+)", fe.FileView),
-    (r"/statistics/(?P<parent_id>[^\/]+)", fe.StatisticsView),
     (r"/search", fe.SearchView),
     (r"/upload", fe.UploadView),
     (r"/download?(?P<arg>[^\/]+)", fe.DownloadView),
