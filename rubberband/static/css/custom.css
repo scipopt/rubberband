@@ -5,7 +5,7 @@
 body {
     font-family: 'Fira Mono', sans-serif;
     font-family: 'Fira Sans', sans-serif;
-    padding-top: 5rem;
+    padding-top: 3.5rem;
 }
 
 table {
@@ -139,9 +139,7 @@ input.fieldValue {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  /*
-  border-bottom: 1px solid #aaa;
-  */
+  border-bottom: 1px solid #eeeeee;
 }
 
 h1 {
@@ -185,5 +183,5 @@ span.important {
 }
 
 a {
-  color: darkblue;
+  color: steelblue;
 }
