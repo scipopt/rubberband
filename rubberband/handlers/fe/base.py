@@ -151,6 +151,9 @@ class BaseHandler(RequestHandler):
             checkboxes = False,
             radiobuttons = False,
             tablename = 'results-table',
+            modalheading = "",
+            modalbody = "",
+            modalfooter = "",
         )
 
         # additional ui modules

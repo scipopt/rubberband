@@ -7,7 +7,8 @@ function formatInstanceResults() {
         scrollY: '80vh',
         scroller: true,
         scrollCollapse: true,
-        paging: false
+        paging: false,
+        dom: 'frtip',
     });
 }
 

@@ -36,15 +36,7 @@ function toggle_tr_cookie(tr_id) {
 
 function update_tr_star_single(target, favorited) {
   target = $(target);
-  if (favorited) {
-    target.addClass("fa");
-    target.removeClass("far");
-    //console.log("zwei ");
-  } else {
-    target.addClass("far");
-    target.removeClass("fa");
-    //console.log("eins");
-  }
+  target.toggleClass("fa far");
 }
 
 function update_all_stars() {

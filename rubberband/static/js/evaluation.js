@@ -125,6 +125,7 @@ function formatIpetTable() {
     fixedColumns:   {
       leftColumns: 2,
     }
+    dom: 'frtip',
   });
   initialize_charts();
   $('#ipet-long-table').on( 'draw.dt', function () {

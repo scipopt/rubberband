@@ -4,23 +4,21 @@
   {% if file.settings %}
   <div class="rb-details-tab-buttons row justify-content-end">
 
-    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="" title="toggle settings">
-      <span class='fa fa-eye'></span><span class='fa fa-eye-slash'></span></a>
-
-    <!-- TODO -->
-    <i title='Show/Hide rows with equal data' class='bs-tooltip'>
-    <input id="toggle-settings" data-toggle="toggle" data-on="<i class='fa fa-eye'></i>" data-off="<i class='fa fa-eye-slash'></i>" data-style="quick" data-size="small" type="checkbox">
-    </i>
+    <span class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" title="Show/Hide rows with equal data">
+      <span id="toggle-settings" class='fa fa-eye-slash'></span></span>
 
     <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/file/{{file.meta.id}}?ftype=.set" title="view settings file" >
-    <span class="fa fa-exclamation-triangle"></span></a>
+      <span class="fa fa-exclamation-triangle"></span></a>
 
     <a class="bs-tooltip ml-2 mr-2" data-toggle="modal"   data-placement="top" href="" data-target="#downloadSettingsOptions" title="download settings">
-    <span class="fa fa-download"></span></a>
+      <span class="fa fa-download"></span></a>
+
 
   </div>
+  {% end %}
   <h2 class="rb-details-tab-title">Settings</h2>
   <!-- end headline ==================================================================== -->
+  {% if file.settings %}
 
   <div class="rb-testrun-table">
 
@@ -38,7 +36,7 @@
 
       <tbody>
         {% for i in file.settings %}
-          <tr{% if are_equivalent([f.settings_default for f in [file]+compare]+[f.settings for f in [file]+compare], i) %} class="toggle_settings_hide" {% end %}>
+          <tr{% if are_equivalent([f.settings_default for f in [file]+compare]+[f.settings for f in [file]+compare], i) %} class="toggle-settings-hide" {% end %}>
             <td>{{ i }}</td>
             <td>{{ format_attr(file.settings, i) }}</td>
             {% for c in compare %}
@@ -53,28 +51,16 @@
   </div>
 
   <!-- Modal -->
-  <div class="modal fade" id="downloadSettingsOptions" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="myModalLabel">Download Formats</h4>
-        </div>
-        <div class="modal-body">
-        <ul>
-          <li><a href="/file/{{file.meta.id}}?download=true&ftype=.set&format=raw" download="{{ file.get_filename(ending='.set') }}">plaintext</a></li>
-          <li><a href="/file/{{file.meta.id}}?download=true&ftype=.set&format=gzip" download="{{ file.get_filename(ending='.set') }}.gz">gzip</a></li>
-          <li><a href="/file/{{file.meta.id}}?download=true&ftype=.set&format=json" download="{{ file.get_filename(ending='.set') }}.json">json</a></li>
-          <li>csv (coming soon!)</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
+  {% module Template("modal.html", id="downloadSettingsOptions", modalheading="Download Formats", modalbody='''
+  <ul>
+    <li><a href="/file/{{file.meta.id}}?download=true&ftype=.set&format=raw" download="{{ file.get_filename(ending='.set') }}">plaintext</a></li>
+    <li><a href="/file/{{file.meta.id}}?download=true&ftype=.set&format=gzip" download="{{ file.get_filename(ending='.set') }}.gz">gzip</a></li>
+    <li><a href="/file/{{file.meta.id}}?download=true&ftype=.set&format=json" download="{{ file.get_filename(ending='.set') }}.json">json</a></li>
+    <li>csv (coming soon!)</li>
+  </ul>
+  ''') %}
 
 {% else %}
-  <div class="row">
-    <p>No settings :(</p>
-  </div>
+  <p>No settings file found.</p>
 {% end %}
 </div>

@@ -1,13 +1,12 @@
 Array.prototype.allValuesSame = function() {
-
-    for(var i = 1; i < this.length; i++)
-    {
-        if(this[i] !== this[0])
-            return false;
+  for(var i = 1; i < this.length; i++) {
+    if(this[i] !== this[0]) {
+      return false;
     }
-
-    return true;
+  }
+  return true;
 }
+
 var table;
 var meta_table;
 var settings_table;
@@ -16,35 +15,14 @@ formatMetaTable();
 formatSettingsTable();
 $(".bs-tooltip").tooltip();
 $("a.bs-popover").popover();
-$("#toggle-settings").bootstrapToggle()
-$(function() {
-    $("#toggle-settings").change(function() {
-        var elements = $(".toggle_settings_hide");
-        var displaystyle = "";
-        if ($(this).prop('checked')) {
-            displaystyle = "none";
-        }
-        for(var i=0; i<elements.length; i++){
-            elements[i].style.display = displaystyle;
-        }
-    })
-})
-$("#toggle-meta").bootstrapToggle()
-$(function() {
-    $("#toggle-meta").change(function() {
-        var elements = $(".toggle_meta_hide");
-        var displaystyle = "";
-        if ($(this).prop('checked')) {
-            displaystyle = "none";
-        }
-        for(var i=0; i<elements.length; i++){
-            elements[i].style.display = displaystyle;
-        }
-    })
-})
+
+function redraw_datatables() {
+  $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+}
+
 /* adjust tables */
 $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+  redraw_datatables();
 });
 // if compare is in query string, then we are in the compare view but only in a comparison to exactly one
 //if ((window.location.search.indexOf("compare") >= 0) && !(window.location.valueOf("compare").toString().includes(","))) {
@@ -68,6 +46,7 @@ function formatMetaTable() {
         scroller: true,
         scrollCollapse: true,
         paging: false,
+        dom: 'frtip',
     });
 }
 
@@ -78,6 +57,7 @@ function formatSettingsTable() {
         scroller: true,
         scrollCollapse: true,
         paging: false,
+        dom: 'frtip',
     });
 }
 
@@ -90,7 +70,8 @@ function formatResultTables() {
         paging: false,
         columnDefs: [
             { type: 'any-number', targets: 'number' },
-        ]
+        ],
+        dom: 'frtip',
     });
 
     $('.nav-tabs').stickyTabs();
@@ -320,3 +301,25 @@ function Color(_r, _g, _b) {
         return r + "," + g + "," + b;
     };
 }
+
+$(document).ready(function(){
+  toggle_ids = ["toggle-meta", "toggle-settings"];
+
+  for (i = 0; i < toggle_ids.length; i++) {
+    toggle_id = toggle_ids[i];
+    var elements = $("."+toggle_id+"-hide");
+    $('span#' + toggle_id).click(function (e) {
+      $(this).toggleClass("fa-eye-slash fa-eye");
+
+      var displaystyle = "";
+      if ($(this).hasClass('fa-eye')) {
+          displaystyle = "none";
+      }
+      for(var i=0; i<elements.length; i++){
+          elements[i].style.display = displaystyle;
+      }
+      redraw_datatables();
+    });
+  }
+});
+

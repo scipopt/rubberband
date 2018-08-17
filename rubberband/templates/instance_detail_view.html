@@ -1,11 +1,8 @@
-{% extends "base.html" %}
-{% block extra_css %}
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css"/>
-{% end %}
-{% block extra_js %}
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+{% extends "wide.html" %}
+
 <script type="text/javascript" src="/static/js/instance_detail.js"></script>
 {% end %}
+
 {% block body %}
   <div class="row">
     <h3 class="tab-title">{{ result.instance_name }}</h3>
@@ -44,27 +41,25 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="downloadInstanceOptions" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Download Formats</h4>
-      </div>
-      <div class="modal-body">
+{% module Template("modal.html", id="downloadInstanceOptions", modalheading="Download Formats", modalbody='''
 	<h5>Full Content</h5>
-        <ul>
+  <ul>
 		<li><a href="/file/{{ result.meta.parent }}?download=true&ftype=.out&format=raw&instance={{ result.meta.id }}" download="{{result.instance_name}}.txt">plaintext</a></li>
 		<li><a href="/file/{{ result.meta.parent }}?download=true&ftype=.out&format=json&instance={{ result.meta.id }}" download="{{result.instance_name}}.json">json</a></li>
 	 <li>csv (coming soon!)</li>
-        </ul>
+  </ul>
 	<h5>Selection</h5>
 	<ul>
 	  <li>json (coming soon!)</li>
 	  <li>csv (coming soon!)</li>
 	</ul>
-      </div>
-    </div>
-  </div>
-</div>
+''') %}
+
 {% end %}
+
+{% block extra_css %}
+{% incldue datatables_css.html %}
+{% end %}
+
+{% block extra_js %}
+{% incldue datatables_core_js.html %}

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <title>Rubberband
-        {% if page_title %} - {{ page_title }}{% end %}
+      {% if page_title %} - {{ page_title }}{% end %}
     </title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -12,17 +12,16 @@
     <link href="https://fonts.googleapis.com/css?family=Fira+Mono" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Fira+Sans" rel="stylesheet">
 
-    <!-- Bootstrap core CSS -->
+    <!--Bootstrap core CSS -->
     {% include "includes/bootstrap_css.html" %}
 
     <!-- for icons use font-awesome -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    {% include "includes/font_awesome_css.html" %}
 
     {% block extra_css %}
     {% end %}
 
-    <!-- Force to reload css every time -->
-    <link rel="stylesheet" href="/static/css/custom.css?v={{ rand }}">
+    <link rel="stylesheet" href="/static/css/custom.css">
     <link rel="icon" href="/favicon.ico" />
   </head>
 
@@ -41,19 +40,15 @@
             <li class="nav-item">
               <a class="nav-link" href="/search">
                 <span class="fa fa-search" aria-hidden="true"></span>
-                Search<span class="sr-only">(current)</span>
-              </a>
+                Search<span class="sr-only">(current)</span></a>
             </li>
-            <!--
             {% if options.gitlab_url %}
             <li class="nav-item">
               <a class="nav-link" href="/visualize">
                 <span class="fa fa-chart-bar" aria-hidden="true"></span>
-                Visualize
-              </a>
+                Visualize</a>
             </li>
             {% end %}
-            -->
             <li class="nav-item">
               <a class="nav-link" href="/upload">
                 <span class="fa fa-upload" aria-hidden="true"></span>
@@ -62,8 +57,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/help">
                 <span class="fa fa-question" aria-hidden="true"></span>
-                Help
-              </a>
+                Help</a>
             </li>
           </ul>
 
@@ -71,8 +65,7 @@
             <li class="nav-item">
               <a class="nav-link" href="/user">
                 <span class="fa fa-user" aria-hidden="true"></span>
-                {{ current_user }}
-              </a>
+                {{ current_user }}</a>
             </li>
           </ul>
         </div>
