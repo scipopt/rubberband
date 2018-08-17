@@ -124,7 +124,7 @@ function formatIpetTable() {
     paging:         false,
     fixedColumns:   {
       leftColumns: 2,
-    }
+    },
     dom: 'frtip',
   });
   initialize_charts();

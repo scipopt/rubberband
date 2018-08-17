@@ -36,7 +36,7 @@
 
       <tbody>
         {% for i in file.settings %}
-          <tr{% if are_equivalent([f.settings_default for f in [file]+compare]+[f.settings for f in [file]+compare], i) %} class="toggle-settings-hide" {% end %}>
+          <tr{% if are_equivalent([f.settings_default for f in [file]+compare]+[f.settings for f in [file]+compare], i) %} class="rb-identical-vals toggle-settings-hide" {% end %}>
             <td>{{ i }}</td>
             <td>{{ format_attr(file.settings, i) }}</td>
             {% for c in compare %}

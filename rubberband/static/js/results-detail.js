@@ -302,24 +302,24 @@ function Color(_r, _g, _b) {
     };
 }
 
+function construct_toggle(toggle_id) {
+  $('span#' + toggle_id).click(function (e) {
+    $(this).toggleClass("fa-eye-slash fa-eye");
+
+    var displaystyle = "";
+    if ($(this).hasClass('fa-eye')) {
+      displaystyle = "none";
+    }
+
+    var elements = $("." + toggle_id + "-hide");
+    for(var i=0; i<elements.length; i++){
+      elements[i].style.display = displaystyle;
+    }
+    redraw_datatables();
+  });
+}
 $(document).ready(function(){
-  toggle_ids = ["toggle-meta", "toggle-settings"];
-
-  for (i = 0; i < toggle_ids.length; i++) {
-    toggle_id = toggle_ids[i];
-    var elements = $("."+toggle_id+"-hide");
-    $('span#' + toggle_id).click(function (e) {
-      $(this).toggleClass("fa-eye-slash fa-eye");
-
-      var displaystyle = "";
-      if ($(this).hasClass('fa-eye')) {
-          displaystyle = "none";
-      }
-      for(var i=0; i<elements.length; i++){
-          elements[i].style.display = displaystyle;
-      }
-      redraw_datatables();
-    });
-  }
+  construct_toggle("toggle-settings");
+  construct_toggle("toggle-meta");
 });
 
