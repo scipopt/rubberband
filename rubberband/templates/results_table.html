@@ -29,14 +29,15 @@
   {% for r in results %}
   <tr data-url='result/{{ r.meta.id }}'>
     {% if radiobuttons %}
-    <td><input type="radio" name="base" value="{{ r.meta.id }}"
+    <td><input class="rb-tr-radiobutton" type="radio" name="base" value="{{ r.meta.id }}"
     {% if r.meta.id == checked %}
     checked
     {% end %}
     ><input name="{{ r.meta.id }}" hidden></td>
+    <!-- TODO two inputs? -->
     {% end %}
     {% if checkboxes %}
-    <td><input type="checkbox" name="{{ r.meta.id }}"></td>
+    <td><input class="rb-tr-checkbox" type="checkbox" name="{{ r.meta.id }}"></td>
     {% end %}
     <td><a href="/result/{{ r.meta.id }}"><span class="fa fa-info-circle"></span></a></td>
     <td><span class="far fa-star rb-tr-star" name="{{ r.meta.id }}"></span></td>

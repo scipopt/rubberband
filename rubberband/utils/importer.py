@@ -700,9 +700,12 @@ def most_frequent_value(data, key):
     value
     """
     if key not in data.keys():
-        return None
+        msg = "Missing key {} in data.".format("key")
+        self._log_failure(msg)
+        raise Exception(msg)
     d = data[key]
     count = {}
     for v in d.values():
         count[v] = count.get(v, 0) + 1
+    count.pop("nan")
     return max(count, key=count.get)

@@ -52,7 +52,8 @@ function fillResultTable(data) {
           searching: false,
       });
   }
-  update_all_stars();
+  // method from static/js/testruns.js
+  init_all_stars();
 }
 
 $("#search-button").click(function() {

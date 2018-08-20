@@ -123,14 +123,14 @@
 
 {% if starred_table %}
 <h3>Starred</h3>
-<div id="starred-table">
+<div id="starred-table" class="rb-testrun-table">
   {% raw starred_table %}
 </div>
 {% end %}
 
 {% if compare_table %}
 <h3>Compares</h3>
-<div id="compares-table">
+<div id="compares-table" class="rb-testrun-table">
   {% raw compare_table %}
 </div>
 {% end %}
@@ -154,8 +154,9 @@
 {% include "includes/moment_js.html" %}
 {% include "includes/datatables_js.html" %}
 
-<script type="text/javascript" src="/static/js/clickableRow.js"></script>
-<script type="text/javascript" src="/static/js/search.js"></script>
+<script type="text/javascript" src="/static/js/testruns.js"></script>
+<script type="text/javascript" src="/static/js/fill-search-query.js"></script>
 <script type="text/javascript" src="/static/js/compare.js"></script>
+<script type="text/javascript" src="/static/js/search.js"></script>
 {% end %}
 

@@ -118,7 +118,7 @@ class EvaluationView(BaseHandler):
             results_table = self.render_string("results_table.html",
                     results=testruns,
                     representation=repres["template"],
-                    radios=True,
+                    radiobuttons=True,
                     checked=default_id,
                     tablename="ipet-legend-table").decode("utf-8")
 

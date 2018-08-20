@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <title>Rubberband
-      {% if page_title %} - {{ page_title }}{% end %}
+      {% if page_title is not None %} - {{ page_title }}{% end %}
     </title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -75,7 +75,7 @@
     <main role="main" class="main">
       <div class="{% block bodyclass %}{% end %}">
 
-        {% if page_title %}
+        {% if page_title is not None %}
         <h1 class="page-header">{{ page_title }}</h1>
         {% end %}
 
@@ -93,6 +93,5 @@
     {% end %}
 
     <script type="text/javascript" src="/static/js/navbar.js"></script>
-    <script type="text/javascript" src="/static/js/cookies.js"></script>
   </body>
 </html>

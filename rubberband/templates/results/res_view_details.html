@@ -2,7 +2,7 @@
 
   <!-- headline ==================================================================== -->
   <div class="rb-details-tab-buttons row justify-content-end">
-    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/compare?base={{ file.meta.id }}{% if comparelist is not None %}&compare={{ comparelist }}{% end %}" title="add comparison runs">
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/search?base={{ file.meta.id }}{% if comparelist is not None %}&compare={{ comparelist }}{% end %}" title="add comparison runs">
       <span class="fa fa-plus"></span></a>
     {% if fileoptions[".out"] %}
     <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/file/{{file.meta.id}}" title="view log file">

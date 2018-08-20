@@ -50,7 +50,7 @@ class BaseHandler(RequestHandler):
         else:
             return "debug"
 
-    def get_cookie(self, name="_oauth2_proxy"):
+    def get_cookie(self, name="_oauth2_proxy", default=None):
         """
         Get the cookie from the request.
 
@@ -67,8 +67,11 @@ class BaseHandler(RequestHandler):
         if self.settings["debug"] and name == "_oauth2_proxy":
             return None
         else:
-            cookie_val = self.cookies.get(name).value
-            return cookie_val
+            cookie = self.cookies.get(name)
+            if cookie is not None:
+                return cookie.value
+            else:
+                return default
 
     def clear_all_cookies(self):
         for i in self.cookies:
@@ -151,9 +154,9 @@ class BaseHandler(RequestHandler):
             checkboxes = False,
             radiobuttons = False,
             tablename = 'results-table',
-            modalheading = "",
-            modalbody = "",
-            modalfooter = "",
+            modalheading = None,
+            modalbody = None,
+            modalfooter = None,
         )
 
         # additional ui modules

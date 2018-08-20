@@ -3,19 +3,19 @@
     <div class="modal-content">
 
       <div class="modal-header">
-        <h5>{{ modalheading }}</h5>
+        <h5>{% if modalheading is not None %}{{ modalheading }}{% else %}{% end %}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
 
-      {% if modalbody != "" %}
+      {% if modalbody is not None %}
       <div class="modal-body">
         {% raw modalbody %}
       </div>
       {% end %}
 
-      {% if modalfooter != "" %}
+      {% if modalfooter is not None %}
       <div class="modal-footer">
         {% raw modalfooter %}
       </div>
