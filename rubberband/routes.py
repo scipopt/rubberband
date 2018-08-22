@@ -6,22 +6,23 @@ routes = [
     # The following Views all inherit from BaseHandler (in base.py)
     # Frontend views
     (r"/", fe.MainView),
-    (r"/visualize", fe.VisualizeView),
     (r"/compare", fe.CompareView),
-    (r"/help", fe.HelpView),
-    (r"/user", fe.UserView),
-    # for typeahead in visualize.js
-    (r"/instances/names", fe.InstanceNamesEndpoint),
-    # for typeahead in statistic.js
-    (r"/instances/?(?P<parent_id>[^\/]+)", fe.InstanceEndpoint),
-    (r"/result/(?P<parent_id>[^\/]+)", fe.ResultView),
-    (r"/result/(?P<parent_id>[^\/]+)/instance/?(?P<child_id>[^\/]+)?", fe.InstanceView),
-    (r"/file/(?P<file_id>[^\/]+)", fe.FileView),
-    (r"/search", fe.SearchView),
-    (r"/upload", fe.UploadView),
+    (r"/display/(?P<mode>[^\/]+)/(?P<id>[^\/]+)", fe.DisplayView),
     (r"/download?(?P<arg>[^\/]+)", fe.DownloadView),
     (r"/eval/(?P<eval_id>[^\/]+)", fe.EvaluationView),
-    (r"/display/(?P<mode>[^\/]+)/(?P<id>[^\/]+)", fe.DisplayView),
+    (r"/file/(?P<file_id>[^\/]+)", fe.FileView),
+    (r"/help", fe.HelpView),
+    (r"/result/(?P<parent_id>[^\/]+)", fe.ResultView),
+    (r"/result/(?P<parent_id>[^\/]+)/instance/?(?P<child_id>[^\/]+)?", fe.InstanceView),
+    (r"/search", fe.SearchView),
+    (r"/statistics/(?P<parent_id>[^\/]+)", fe.StatisticsView),
+    (r"/upload", fe.UploadView),
+    (r"/user", fe.UserView),
+    (r"/visualize", fe.VisualizeView),
+
+    # for typeahead in visualize.js
+    (r"/instances/names", fe.InstanceNamesEndpoint),
+
     # API Endpoints
     (r"/api/upload/async", api.UploadAsyncEndpoint),
     (r"/api/upload", api.UploadEndpoint),

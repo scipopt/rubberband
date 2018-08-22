@@ -12,16 +12,21 @@
 <div id="ipet-eval-result">
 
   {% if aggregated_table %}
+  <h3>IPET aggregated table</h3>
   <div id="ipet-eval-result-aggregated">
     {% raw aggregated_table %}
   </div>
   {% end %}
-  <hr />
+
   {% if long_table %}
 
-  <div id="plainchart" class="col-xs-6" style="width:50%; height:400px;"></div>
-  <div id="logchart" class="col-xs-6" style="width:50%; height:400px;"></div>
+  <h3>Visualization of selected column in IPET long table</h3>
+  <div class="row">
+    <div id="plainchart" class="col-12 col-md-6" style="height:400px;"></div>
+    <div id="logchart" class="col-12 col-md-6" style="height:400px;"></div>
+  </div>
 
+  <h3>IPET long table</h3>
   <div id="ipet-eval-result-long">
     {% raw long_table %}
   </div>

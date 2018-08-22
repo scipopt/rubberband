@@ -4,14 +4,14 @@
   {% if file.settings %}
   <div class="rb-details-tab-buttons row justify-content-end">
 
-    <span class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" title="Show/Hide rows with equal data">
+    <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="tooltip" data-placement="top" title="Show/Hide rows with equal data">
       <span id="toggle-settings" class='fa fa-eye-slash'></span></span>
 
     <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/file/{{file.meta.id}}?ftype=.set" title="view settings file" >
       <span class="fa fa-exclamation-triangle"></span></a>
 
-    <a class="bs-tooltip ml-2 mr-2" data-toggle="modal"   data-placement="top" href="" data-target="#downloadSettingsOptions" title="download settings">
-      <span class="fa fa-download"></span></a>
+    <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="modal"   data-placement="top" data-target="#downloadSettingsOptions" title="download settings">
+      <span class="fa fa-download"></span></span>
 
 
   </div>
@@ -23,7 +23,7 @@
   <div class="rb-testrun-table">
 
     <!-- table ==================================================================== -->
-    <table class="settings-table table table-bordered table-hover" width="100%">
+    <table class="settings-table table-hover table table-bordered" width="100%">
 
       <thead><tr>
         <th>Setting name</th>

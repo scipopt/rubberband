@@ -2,35 +2,58 @@
 
 <!------------------ body -------------->
 {% block body %}
+
+{% if compare %}
+  <form action="/compare" method="post">
+{% end %}
+
+  <!-- headline ==================================================================== -->
+  <div class="rb-details-tab-buttons row justify-content-end">
+
+    {% if compare %}
+    <button type="submit" class="bs-tooltip ml-2 mr-2 rb-btn-as-link" data-placement="top" title="change comparison base">
+      <span class="fa fa-random" ></span></button>
+    {% end %}
+
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/search?base={{ file.meta.id }}{% if comparelist is not None %}&compare={{ comparelist }}{% end %}" title="add comparison runs">
+      <span class="fa fa-plus"></span></a>
+
+    <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="modal"   data-placement="top" data-target="#downloadSummaryOptions" title="download results">
+      <span class="fa fa-file-download" ></span></span>
+
+    {% if fileoptions[".out"] or fileoptions[".meta"] or fileoptions[".err"] %}
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="{{ downloadzip }}" title="download files as zip archive">
+      <span class="fa fa-gift"></span></a>
+    {% end %}
+
+  </div>
+
+  <h2 data-toggle="collapse" href="#rb-legend-table" role="button" class="rb-details-tab-title rb-collapser">Testrun{% if compare %}s{% end %} <span class="fa fa-angle-down small"></span></h2>
+
+  <!-- end headline ==================================================================== -->
+
+  <div class="rb-testrun-table collapse show" id="rb-legend-table">
+    {% raw rendered_results_table %}
+  </div>
+
+{% if compare %}
+</form>
+{% end %}
+
+<!-- tabs line ==================================================================== -->
 <div>
   <ul id="resultNavTabs" class="nav nav-tabs row" role="tablist">
-    <!-- <span class="d-none d-sm-block"> -->
+    {% for (title, icon, anchor) in [["Details", "database", "details"], ["Evaluation", "calculator", "evaluation"], ["Meta", "cogs", "meta"], ["Settings", "sliders-h", "settings"]] %}
     <li class="nav-item col-3 active text-nowrap">
-      <a aria-selected="true" aria-controls="details" role="tab" href="" class="nav-link d-none d-sm-block " data-toggle="tab" data-target="#details">
-      <span class="fa fa-database"></span> Details</a>
-      <a aria-selected="true" aria-controls="details" role="tab" href="" class="d-block d-sm-none nav-link" data-toggle="tab" data-target="#details">
-      <span class="fa fa-database"></span></a>
+      <a aria-selected="true" aria-controls="{{ title }}" role="tab" href="" class="nav-link d-none d-sm-block " data-toggle="tab" data-target="#{{ anchor }}">
+        <span class="fa fa-{{ icon }}"></span> {{ title }}</a>
+      <a aria-selected="true" aria-controls="{{ title }}" role="tab" href="" class="d-block d-sm-none nav-link" data-toggle="tab" data-target="#{{ anchor }}">
+        <span class="fa fa-{{ icon }}"></span></a>
     </li>
-    <li class="nav-item col-3 text-nowrap">
-      <a aria-selected="false" aria-controls="evaluation" role="tab" href="" class="d-none d-sm-block nav-link" data-toggle="tab" data-target="#evaluation">
-      <span class="fa fa-calculator"></span> Evaluation</a>
-      <a aria-selected="false" aria-controls="evaluation" role="tab" href="" class="d-block d-sm-none nav-link" data-toggle="tab" data-target="#evaluation">
-      <span class="fa fa-calculator"><span></a>
-    </li>
-    <li class="nav-item col-3 text-nowrap">
-      <a aria-selected="false" aria-controls="meta" role="tab" href="" class="d-none d-sm-block nav-link" data-toggle="tab" data-target="#meta">
-      <span class="fa fa-cogs"></span> Meta</a>
-      <a aria-selected="false" aria-controls="meta" role="tab" href="" class="d-block d-sm-none nav-link" data-toggle="tab" data-target="#meta">
-      <span class="fa fa-cogs"></span></a>
-    </li>
-    <li class="nav-item col-3 text-nowrap">
-      <a aria-selected="false" aria-controls="settings" role="tab" href="" class="d-none d-sm-block nav-link" data-toggle="tab" data-target="#settings">
-      <span class="fa fa-sliders-h"></span> Settings</a>
-      <a aria-selected="false" aria-controls="settings" role="tab" href="" class="d-block d-sm-none nav-link" data-toggle="tab" data-target="#settings">
-      <span class="fa fa-sliders-h"></span></a></a>
-    </li>
+    {% end %}
   </ul>
 </div>
+<!-- end tabs line ==================================================================== -->
 
 <div id="resultNavTabsContent" class="tab-content">
   {% include "results/res_view_details.html" %}
@@ -38,6 +61,25 @@
   {% include "results/res_view_meta.html" %}
   {% include "results/res_view_settings.html" %}
 </div>
+
+<!-- Modals =========================================== -->
+
+<!-- Download Modal -->
+{% module Template("modal.html", id="downloadSummaryOptions", modalheading="Download Formats", modalbody='''
+  <h6>Full Results</h6>
+  <ul>
+    <li><a href="/file/{{file.meta.id}}?download=true&ftype=.out&format=raw" download="{{ file.get_filename(ending='.out') }}">plaintext</a></li>
+    <li><a href="/file/{{file.meta.id}}?download=true&ftype=.out&format=gzip" download="{{ file.get_filename(ending='.out') }}.gz">gzip</a></li>
+    <li><a href="/file/{{file.meta.id}}?download=true&ftype=.out&format=json" download="{{ file.get_filename(ending='.out') }}.json">json</a></li>
+    <li>csv (coming soon!)</li>
+  </ul>
+  <h6>Summary Results</h6>
+  <ul>
+    <li>json (coming soon!)</li>
+    <li>csv (coming soon!)</li>
+  </ul>
+''') %}
+
 {% end %}
 
 <!------------------ extra css -------------->
@@ -54,9 +96,9 @@
 {% include "includes/datatables_js.html" %}
 {% include "includes/highcharts_js.html" %}
 
-<script type="text/javascript" src="/static/js/testruns.js"></script>
 <script type="text/javascript" src="/static/js/jquery.stickytabs.js"></script>
 <script type="text/javascript" src="/static/js/results-detail.js"></script>
 <script type="text/javascript" src="/static/js/evaluation.js"></script>
+<script type="text/javascript" src="/static/js/testruns.js"></script>
 {% end %}
 

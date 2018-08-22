@@ -3,7 +3,7 @@
 <!------------------ body -------------->
 {% block content %}
 <div class="alert alert-secondary">
-  <h2>Search for testruns:</h2>
+  <h4>Search for testruns:</h4>
   <form id="form-search">
     <fieldset class="pr-3">
       <div class="row">
@@ -121,17 +121,17 @@
   </div>
 </div>
 
-{% if starred_table %}
-<h3>Starred</h3>
-<div id="starred-table" class="rb-testrun-table">
-  {% raw starred_table %}
+{% if compare_table %}
+<h3 data-toggle="collapse" href="#compares-table" role="button" class="rb-collapser">Comparison Testruns<span class="fa fa-angle-down small float-right p-2"></span></h3>
+<div id="compares-table" class="rb-testrun-table collapse show">
+  {% raw compare_table %}
 </div>
 {% end %}
 
-{% if compare_table %}
-<h3>Compares</h3>
-<div id="compares-table" class="rb-testrun-table">
-  {% raw compare_table %}
+{% if starred_table %}
+<h3 data-toggle="collapse" href="#starred-table" role="button" class="rb-collapser">Starred Testruns<span class="fa fa-angle-down small float-right p-2"></span></h3>
+<div id="starred-table" class="rb-testrun-table collapse">
+  {% raw starred_table %}
 </div>
 {% end %}
 

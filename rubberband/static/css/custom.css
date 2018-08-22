@@ -29,20 +29,6 @@ td {
   word-break: break-all;
 }
 
-/*
- * Sidebar
- */
-
-/* Hide for mobile, show later */
-.sidebar {
-  display: none;
-  width: 10%;
-}
-
-/*
- * Main content
- */
-
 .main {
   padding: 20px;
   width: 100%;
@@ -59,38 +45,34 @@ td {
   border: none;
 }
 
-th,
-.rb-table-data {
+th, .rb-table-data {
     white-space: nowrap;
 }
+
 .rb-table-data .number {
     text-align: right;
 }
+
 .rb-table-data .text {
     text-align: left;
 }
+
 th.col_heading {
     text-align: right;
 }
+
 th.row_heading {
     text-align: left;
 }
+
 tbody > tr.hover > td,
 tbody > tr.hover > th,
 .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
     background-color: #bdf !important;
 }
-
+/*
 .datatables_wrapper {
     margin-top:20px;
-}
-
-.dataTables_info {
-  text-align: left;
-}
-
-.dataTables_filter {
-    float: left !important;
 }
 
 .DTFC_LeftBodyLiner {
@@ -101,12 +83,24 @@ tbody > tr.hover > th,
     background-color: white;
 }
 
-.one-chart {
-  padding: 20px;
+.dataTables_info {
+  text-align: left;
+}
+*/
+
+/* Datatables styles */
+.dataTables_filter {
+  /* move datatables search field to the left */
+  float: left !important;
 }
 
+.one-chart {
+  /* highcharts */
+  padding: 20px;
+}
 .chart-title {
-    font-size: 1.5rem;
+  /* highcharts */
+  font-size: 1.5rem;
 }
 
 td.highlighted-cell {
@@ -116,23 +110,6 @@ td.highlighted-cell {
 a.bs-tooltip {
   cursor: pointer;
 }
-
-/* Statistics Tab */
-
-input.fieldKey {
-    width: 5%;
-}
-
-select.comparator {
-    width: 10px;
-}
-
-input.fieldValue {
-    width: 5%;
-}
-
-/* Toggle buttons */
-.quick .toggle-group { transition: none; -webkit-transition: none; }
 
 .slider {
   width: 100% !important;
@@ -154,7 +131,7 @@ fieldset {
   width: 100%;
 }
 
-span.important {
+span.important, p.rb-warning {
   color: #e83e8c;
 }
 
@@ -174,7 +151,7 @@ span.important {
 }
 
 .rb-buttons {
-  margin: .3rem 0rem .3rem 0rem;
+  margin: .5rem 0rem .5rem 0rem;
 }
 
 .rb-identical-vals {
@@ -182,6 +159,30 @@ span.important {
   background-color: #f3f3f3;
 }
 
-a {
+/* ---- links -------------- */
+
+button.rb-btn-as-link {
+  /* make button look like link */
+  color: steelblue;
+
+  background: none !important;
+  border: none;
+  padding: 0 !important;
+  font: inherit;
+  cursor: pointer;
+  -webkit-appearance: none;
+}
+
+a, .rb-link {
+  /* make clickable text, that is not a link, look like one*/
   color: steelblue;
 }
+
+a:hover, .rb-link:hover, button.rb-btn-as-link:hover {
+  /* make non-link text hoverable */
+  color: red;
+}
+
+.rb-collapser {
+}
+/* ---- end links -------------- */
