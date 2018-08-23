@@ -74,13 +74,6 @@ function formatResultTables() {
         dom: 'frtip',
     });
 
-    $('.nav-tabs').stickyTabs();
-
-    $('#resultNavTabs a').click(function (e) {
-          e.preventDefault()
-          $(this).tab('show')
-    });
-
     $('button#delete-result').click(function (e) {
         e.preventDefault()
         $.ajax({

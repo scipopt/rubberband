@@ -46,25 +46,25 @@
     </div>
   {% end %}
 
-</div>
+  <!-- Modals =========================================== -->
+  {% if not compare %}
 
-<!-- Modals =========================================== -->
-{% if not compare %}
-
-  <!-- Delete Result Modal -->
-  {% module Template("modal.html", id="deleteResultModal", modalheading="Delete Testrun?", modalbody='''
-    <p>Are you sure that you want to delete this result?</p>
-  ''', modalfooter='''
-    <button type="button" id="delete-result" class="btn btn-danger">Yes! I know what I'm doing.</button>
-  ''') %}
-
-  {% if fileoptions[".out"] %}
-    <!-- Reimport Result Modal -->
-    {% module Template("modal.html", id="reimportResultModal", modalheading="Reimport Testrun?", modalbody='''
-      <p>Are you sure that you want to reimport this result?</p>
+    <!-- Delete Result Modal -->
+    {% module Template("modal.html", id="deleteResultModal", modalheading="Delete Testrun?", modalbody='''
+      <p>Are you sure that you want to delete this result?</p>
     ''', modalfooter='''
-      <button type="button" id="reimport-result" class="btn btn-danger">Yes! I know what I'm doing.</button>
+      <button type="button" id="delete-result" class="btn btn-danger">Yes! I know what I'm doing.</button>
     ''') %}
 
+    {% if fileoptions[".out"] %}
+      <!-- Reimport Result Modal -->
+      {% module Template("modal.html", id="reimportResultModal", modalheading="Reimport Testrun?", modalbody='''
+        <p>Are you sure that you want to reimport this result?</p>
+      ''', modalfooter='''
+        <button type="button" id="reimport-result" class="btn btn-danger">Yes! I know what I'm doing.</button>
+      ''') %}
+
+    {% end %}
   {% end %}
-{% end %}
+</div>
+

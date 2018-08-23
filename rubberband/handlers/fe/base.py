@@ -326,7 +326,7 @@ class BaseHandler(RequestHandler):
         bool
         """
         if len(sets) <= 1:
-            return True
+            return False
 
         if attr == "number_instances":
             l = [len(ts.children.to_dict().keys()) for ts in sets]
