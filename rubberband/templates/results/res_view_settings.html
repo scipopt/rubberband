@@ -51,16 +51,18 @@
   </div>
 
   <!-- Modal -->
-  {% module Template("modal.html", id="downloadSettingsOptions", modalheading="Download Formats", modalbody='''
+  {% set modalbody_settings_download='''
   <ul>
-    <li><a href="/file/{{file.meta.id}}?download=true&ftype=.set&format=raw" download="{{ file.get_filename(ending='.set') }}">plaintext</a></li>
-    <li><a href="/file/{{file.meta.id}}?download=true&ftype=.set&format=gzip" download="{{ file.get_filename(ending='.set') }}.gz">gzip</a></li>
-    <li><a href="/file/{{file.meta.id}}?download=true&ftype=.set&format=json" download="{{ file.get_filename(ending='.set') }}.json">json</a></li>
+    <li><a href="/file/{id}?download=true&ftype=.set&format=raw" download="{name}">plaintext</a></li>
+    <li><a href="/file/{id}?download=true&ftype=.set&format=gzip" download="{name}.gz">gzip</a></li>
+    <li><a href="/file/{id}?download=true&ftype=.set&format=json" download="{name}.json">json</a></li>
     <li>csv (coming soon!)</li>
   </ul>
-  ''') %}
+  '''.format( id=file.meta.id, name=file.get_filename(ending='.set') ) %}
 
-{% else %}
+  {% module Template("modal.html", id="downloadSettingsOptions", modalheading="Download Formats", modalbody=modalbody_settings_download) %}
+
+  {% else %}
   <p>No settings file found.</p>
-{% end %}
+  {% end %}
 </div>

@@ -44,11 +44,13 @@
 <div>
   <ul id="resultNavTabs" class="nav nav-tabs row" role="tablist">
     {% for (title, icon, anchor) in [["Details", "database", "details"], ["Evaluation", "calculator", "evaluation"], ["Meta", "cogs", "meta"], ["Settings", "sliders-h", "settings"]] %}
-    <li class="nav-item col-3 active text-nowrap">
-      <a aria-selected="true" aria-controls="{{ title }}" role="tab" href="" class="nav-link d-none d-sm-block {% if anchor == "details" %} active {% end %}" data-toggle="tab" data-target="#{{ anchor }}">
-        <span class="fa fa-{{ icon }}"></span> {{ title }}</a>
-      <a aria-selected="true" aria-controls="{{ title }}" role="tab" href="" class="d-block d-sm-none nav-link {% if anchor == "details" %} active {% end %}" data-toggle="tab" data-target="#{{ anchor }}">
-        <span class="fa fa-{{ icon }}"></span></a>
+    <li class="nav-item col-3 active">
+      <a aria-selected="true" aria-controls="{{ title }}" role="tab" href="" class="text-nowrap nav-link {% if anchor == "details" %} active {% end %}" data-toggle="tab" data-target="#{{ anchor }}">
+        <span class="d-block d-sm-none fa fa-{{ icon }}"></span>
+        <div class="d-none d-sm-block">
+          <span class="fa fa-{{ icon }}"></span> {{ title }}
+        </div>
+      </a>
     </li>
     {% end %}
   </ul>
@@ -65,7 +67,20 @@
 <!-- Modals =========================================== -->
 
 <!-- Download Modal -->
-{% set modalbody_download= '<h6>Full Results</h6>\n <ul>\n <li><a href="/file/{id}?download=true&ftype=.out&format=raw" download="{name}">plaintext</a></li>\n <li><a href="/file/{id}?download=true&ftype=.out&format=gzip" download="{name}.gz">gzip</a></li>\n <li><a href="/file/{id}?download=true&ftype=.out&format=json" download="{name}.json">json</a></li> \n <li>csv (coming soon!)</li>\n </ul>\n <h6>Summary Results</h6>\n <ul>\n <li>json (coming soon!)</li>\n <li>csv (coming soon!)</li>\n </ul>'.format( id=file.meta.id, name=file.get_filename(ending='.out') ) %}
+{% set modalbody_download= '''
+<h6>Full Results</h6>
+<ul>
+  <li><a href="/file/{id}?download=true&ftype=.out&format=raw" download="{name}">plaintext</a></li>
+  <li><a href="/file/{id}?download=true&ftype=.out&format=gzip" download="{name}.gz">gzip</a></li>
+  <li><a href="/file/{id}?download=true&ftype=.out&format=json" download="{name}.json">json</a></li>
+  <li>csv (coming soon!)</li>
+</ul>
+<h6>Summary Results</h6>
+<ul>
+  <li>json (coming soon!)</li>
+  <li>csv (coming soon!)</li>
+</ul>
+'''.format( id=file.meta.id, name=file.get_filename(ending='.out') ) %}
 
 {% module Template("modal.html", id="downloadSummaryOptions", modalheading="Download Formats", modalbody=modalbody_download) %}
 
