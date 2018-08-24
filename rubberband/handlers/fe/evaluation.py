@@ -75,9 +75,7 @@ class EvaluationView(BaseHandler):
         set_defaultgroup(ev, ex, default_id)
 
         # do evaluation
-        self.write('a')
         longtable, aggtable = ev.evaluate(ex)
-        self.write('b')
 
         # None style is default
         if style is None:
@@ -88,8 +86,11 @@ class EvaluationView(BaseHandler):
             # get substitutions dictionary
             repres = setup_substitutions_dict(testruns)
 
+            # TODO delete
             col_select = get_column_selectors(longtable)
             col_select = replace_in_str(col_select, repres["short"])
+
+            cols_dict = get_columns_dict(longtable, repres["short"])
 
             # add id column to longtable
             longtable.insert(0, "id", range(1, len(longtable) + 1))
@@ -107,12 +108,12 @@ class EvaluationView(BaseHandler):
             html_agg = process_ipet_table(html_agg, repres["long"], add_ind=True) + \
                 html.tostring(style_agg).decode("utf-8")
 
-            print(html_long, html_agg)
             # render to strings
             html_tables = self.render_string("results/evaluation.html",
                     ipet_long_table=html_long,
-                    ipet_aggregated_table=html_agg).decode("utf-8")
-            print(html_tables)
+                    ipet_aggregated_table=html_agg,
+                    columns=cols_dict).decode("utf-8")
+            # TODO cols
 
             # sort testruns by their representation and render table
             testruns = sorted(testruns,
@@ -725,6 +726,7 @@ def generate_filtergroup_buttons(table, evaluation):
     return buttons_str, table["Filtergroups"]
 
 
+# TODO delete
 def get_column_selectors(table):
     """Construct a html selector field for the data column headers."""
     # add column selector
@@ -740,3 +742,18 @@ def get_column_selectors(table):
         colcount = colcount + 1
     col_select = col_select + '</select></div>'
     return col_select
+
+
+def get_columns_dict(table, replace):
+    """Construct a dictionary with column headers and ids, also replace given by replace dict."""
+    # 0 is name, 1 is id
+    if type(table.index) == pd.MultiIndex:
+        colcount = 1 + len(table.index[0])
+    else:
+        colcount = 2
+    cols = {}
+    for c in table.columns:
+        if "Filtergroups" not in c:
+            cols[colcount] = replace_in_str(str(c), replace)
+        colcount = colcount + 1
+    return cols
