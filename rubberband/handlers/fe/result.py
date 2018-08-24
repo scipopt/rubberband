@@ -71,11 +71,11 @@ class ResultView(BaseHandler):
 
         rrt = self.render_string("results_table.html", results=[parent] + compare,
                 checked=parent.meta.id, radiobuttons=(len(compare) > 0))
-        ilt = self.render_string("results_table.html", results=[parent] + compare,
-                radiobuttons=True, checked=parent.meta.id,
-                tablename="ipet-legend-table")
+        iot = self.render_string("results_table.html", results=[parent] + compare,
+                radiobuttons=True, checked=parent.meta.id)
         self.render("result_view.html", file=parent, compare=compare,
-                    sets=sets, meta=meta, ipet_legend_table=ilt, comparelist=comparelist,
+                    sets=sets, meta=meta, rb_ipet_options_testrun_table=iot,
+                    comparelist=comparelist,
                     rendered_results_table=rrt, fileoptions=fileoptions,
                     downloadzip=downloadziplink, evals=IPET_EVALUATIONS)
 

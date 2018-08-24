@@ -157,6 +157,8 @@ class BaseHandler(RequestHandler):
             modalheading = None,
             modalbody = None,
             modalfooter = None,
+            ipet_long_table = None,
+            ipet_aggregated_table = None,
         )
 
         # additional ui modules

@@ -1,6 +1,6 @@
 
 {% if results %}
-<table id="{{ tablename }}" class="table-hover compact rb-table-data" width="100%">
+<table {% if tablename %}id="{{ tablename }}"{% end %} class="table-hover compact rb-table-data" width="100%">
   <thead>
     <tr>
       {% if radiobuttons %}

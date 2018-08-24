@@ -58,8 +58,8 @@
 <!-- end tabs line ==================================================================== -->
 
 <div id="resultNavTabsContent" class="tab-content">
-  {% include "results/res_view_evaluation.html" %}
   {% include "results/res_view_details.html" %}
+  {% include "results/res_view_evaluation.html" %}
   {% include "results/res_view_meta.html" %}
   {% include "results/res_view_settings.html" %}
 </div>
@@ -88,15 +88,11 @@
 
 <!------------------ extra css -------------->
 {% block extra_css %}
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.2/css/bootstrap-slider.css" rel="stylesheet">
-
 {% include "includes/datatables_css.html" %}
 {% end %}
 
 <!------------------ extra js -------------->
 {% block extra_js %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.2/bootstrap-slider.js"></script>
-
 {% include "includes/datatables_js.html" %}
 {% include "includes/highcharts_js.html" %}
 

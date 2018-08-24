@@ -102,6 +102,9 @@ tbody > tr.hover > th,
   /* highcharts */
   font-size: 1.5rem;
 }
+.chart {
+  height: 500px;
+}
 
 td.highlighted-cell {
   background: #ff4d4d;
@@ -137,6 +140,9 @@ span.important, p.rb-warning {
 
 #resultNavTabs {
   margin-bottom: 1rem;
+}
+
+.rb-details-tab-title {
 }
 
 .rb-details-tab-buttons  {
@@ -184,5 +190,22 @@ a:hover, .rb-link:hover, button.rb-btn-as-link:hover {
 }
 
 .rb-collapser {
+  /* collapsible elements show a clickable cursor */
+  cursor: pointer;
 }
+
+.fa-angle-down {
+  /* collapsible elements have this angle, make it more visible by making it red */
+  color: red;
+}
+
 /* ---- end links -------------- */
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+    background: black; /* color */
+}
+
+.slider::-moz-range-thumb {
+    background: black; /* color */
+}

@@ -107,10 +107,12 @@ class EvaluationView(BaseHandler):
             html_agg = process_ipet_table(html_agg, repres["long"], add_ind=True) + \
                 html.tostring(style_agg).decode("utf-8")
 
+            print(html_long, html_agg)
             # render to strings
             html_tables = self.render_string("results/evaluation.html",
                     ipet_long_table=html_long,
                     ipet_aggregated_table=html_agg).decode("utf-8")
+            print(html_tables)
 
             # sort testruns by their representation and render table
             testruns = sorted(testruns,
@@ -120,11 +122,11 @@ class EvaluationView(BaseHandler):
                     representation=repres["template"],
                     radiobuttons=True,
                     checked=default_id,
-                    tablename="ipet-legend-table").decode("utf-8")
+                    tablename="rb-ipet-options-testrun-table").decode("utf-8")
 
             # send evaluated data
-            mydict = {"ipet-legend-table": results_table,
-                      "ipet-eval-result": html_tables,
+            mydict = {"rb-ipet-options-testrun-table": results_table,
+                      "rb-ipet-eval-result": html_tables,
                       "buttons": fg_buttons_str + col_select}
             self.write(json.dumps(mydict))
 

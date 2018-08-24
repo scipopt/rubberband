@@ -92,15 +92,16 @@ function formattol(val) {
 }
 
 function hideModal() {
-  modal.style.display = "none";
+  $(modal).modal("hide");
 };
 
 function showModal() {
-  modal.style.display = "block";
+  $(modal).modal("show");
 };
 
 // format ipet tables
 function formatIpetTable() {
+  console.log("formatting");
   ipetlongtable = $('table.ipet-long-table').DataTable({
     columnDefs: [{ targets: [-1],
       searchable: true,
@@ -179,11 +180,13 @@ function getEvalUrl(e) {
 
 // ######################## clickable elements
 
+/* TODO
 $('#eval-tolerance-slider').slider({
   formatter: function(val) {
     return formattol(val);
   }
 });
+*/
 
 $('div#summary').on('click', 'button#ipet-long-filter-button', function (e) {
   fg_name = this.innerHTML;
@@ -286,9 +289,8 @@ $('button#ipet-eval-button').click(function (e) {
       if (key == "buttons") {
         continue;
       }
-      var el = document.createElement("div");
-      el.innerHTML = datadict[key];
-      document.getElementById(key).replaceWith(el);
+      var targetel = document.getElementById(key)
+      targetel.innerHTML = datadict[key];
     }
     formatIpetTable();
     $("div.ipet-long-toolbar").html(datadict["buttons"]);
