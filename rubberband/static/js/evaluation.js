@@ -294,6 +294,11 @@ $('button#ipet-eval-button').click(function (e) {
     }
     formatIpetTable();
     $("div.ipet-long-toolbar").html(datadict["buttons"]);
+
+    $('#rb-ipet-eval-result').on('shown.bs.collapse', function(e) {
+      console.log("collapse");
+      redraw_datatables();
+    });
   },
     xhr.onerror = function(e) {
       setButtonsDisabled(false);
