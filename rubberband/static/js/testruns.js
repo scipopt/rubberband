@@ -110,7 +110,6 @@ $('form#compare').on('change', 'input.rb-tr-checkbox', function (e) {
 // ======================================================
 // when document is ready do ...
 $(document).ready(function(){
-  console.log(document.cookie);
   init_all_stars();
   select_all_compares();
 });

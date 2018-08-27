@@ -10,7 +10,7 @@
   <!-- end headline ==================================================================== -->
 
   <!-- eval form ==================================================================== -->
-  <div class="alert alert-secondary">
+  <div class="alert alert-info">
     <form id="ipet-eval-form">
 
       <h4 data-toggle="collapse" href="#rb-ipet-eval-advanced-options" role="button" class="rb-details-tab-title rb-collapser">Advanced Options<span class="fa fa-angle-down small float-right p-2"></span></h4>
@@ -25,7 +25,7 @@
           <div class="col-12 col-sm-12 col-md-10 col-lg-8 col-xl-6">
             <div class="form-group row align-items-center">
 
-              <label class="col-form-label col-6">Adjust feasibility tolerance:</label>
+              <label class="col-6">Adjust feasibility tolerance:</label>
               <div class="col-6">
                 <input class="custom-range slider" id="eval-tolerance-slider" type="range" value="-6" min="-9" max="-3" step="1">
               </div>
@@ -41,7 +41,7 @@
         <div class="col-12 col-sm-12 col-md-10 col-lg-8 col-xl-6">
           <div class="form-group row">
 
-            <label class="col-form-label col-6">Select an IPET evaluation:</label>
+            <label class="col-6">Select an IPET evaluation:</label>
             <div class="col-6">
               <select class="form-control" name="ipet-eval-file" id="ipet-eval-file-select">
                 {% for id,e in evals.items() %}

@@ -24,6 +24,7 @@ function redraw_datatables() {
 $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
   redraw_datatables();
 });
+
 // if compare is in query string, then we are in the compare view but only in a comparison to exactly one
 //if ((window.location.search.indexOf("compare") >= 0) && !(window.location.valueOf("compare").toString().includes(","))) {
 

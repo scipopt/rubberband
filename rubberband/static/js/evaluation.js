@@ -23,7 +23,6 @@ function get_selected_column() {
   if (selectedcol == undefined){
     selectedcol = 2;
   }
-  console.log("selectedcol "+selectedcol);
   return selectedcol;
 }
 
@@ -101,7 +100,6 @@ function showModal() {
 
 // format ipet tables
 function formatIpetTable() {
-  console.log("formatting");
   ipetlongtable = $('table.ipet-long-table').DataTable({
     columnDefs: [{ targets: [-1],
       searchable: true,
@@ -130,11 +128,9 @@ function formatIpetTable() {
   });
   initialize_charts();
   $('#ipet-long-table').on( 'draw.dt', function () {
-    console.log("event draw.id");
     redraw_charts();
   });
   $('table.ipet-long-table').on( 'draw.dt', function () {
-    console.log("event draw.class")
     redraw_charts();
   });
 };
@@ -296,7 +292,6 @@ $('button#ipet-eval-button').click(function (e) {
     $("div.ipet-long-toolbar").html(datadict["buttons"]);
 
     $('#rb-ipet-eval-result').on('shown.bs.collapse', function(e) {
-      console.log("collapse");
       redraw_datatables();
     });
   },

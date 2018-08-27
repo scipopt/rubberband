@@ -9,13 +9,11 @@ function updateResultsTable() {
     exclude = new Array();
     sb = $("#search-base").serializeArray();
     if (sb != "") {
-        console.log("add");
         exclude.push(sb[0].value);
     }
     ec = $(".exclude-compare").serializeArray();
     if (ec != "") {
       for (i = 0; i < ec.length; i++) {
-        console.log("add");
         exclude.push(ec[i].value);
       }
     }

@@ -33,7 +33,6 @@ if (form.length) {
   $.each(params, function( key, value ) {
     if (value !== "" && key != "base" && key != "compare")  {
       var domElem = $(`[name="${key}"]`).get(0)
-      console.log(key + " " + value);
       var elemType = domElem.tagName.toLowerCase()
       if (elemType == "select") {
         $(`[name="${key}"] option[value="${value}"]`).attr("selected", "selected");

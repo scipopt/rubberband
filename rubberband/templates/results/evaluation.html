@@ -25,43 +25,54 @@
 
   <div class="row collapse show" id="ipet-eval-result-plot">
 
-    <div class="col-12 col-sm-8 col-md-6 col-lg-4">
-      <div class="alert alert-secondary">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+      <div class="alert alert-info">
         <h4>Visualize columns from IPET long table</h4>
         <form id="rb-plot-form">
-          <div class="form-group col-12">
-            <input type="radio" name="plottype" value="column" checked />Columnplot
-            <input type="radio" name="plottype" value="scatter" />Scatterplot
+
+          <div class="form-group" id="rb-plot-type-select">
+            <select class="custom-select" id="rb-plot-type">
+              <option value="column" selected>Columnplot</option>
+              <option value="scatter">Scatterplot</option>
+            </select>
           </div>
 
-          <div class="form-group col-12">
-            <label class="col-form-label" for="plotx-select">X-Axis</label>
+          <div id="custom-plot-form-x">
+            <h4>X-Axis</h4>
+
             <select class="custom-select" name="plotx" id="plotx-select">
               {% for id, name in columns.items() %}
               <option value="{{ id }}">{{ name }}</option>
               {% end %}
             </select>
-            <input type="checkbox" name="plotxlog" value="xlogarithmic" />Logarithmic?
+
+            <div class="form-group custom-control custom-checkbox">
+              <input type="checkbox" class="form-check-input" id="plotx-log">
+              <label class="form-check-label" for="plotx-log">Logarithmic</label>
+            </div>
           </div>
 
-          <div class="form-group col-12">
-            <label class="col-form-label" for="plotx-select">X-Axis</label>
-            <label class="col-form-label" for="ploty-select">Y-Axis</label>
+          <div id="custom-plot-form-y" style="display:none">
+            <h4>Y-Axis</h4>
+
             <select class="custom-select" name="ploty" id="ploty-select">
               {% for id, name in columns.items() %}
               <option value="{{ id }}">{{ name }}</option>
               {% end %}
             </select>
-            <input type="checkbox" name="plotylog" value="ylogarithmic" />Logarithmic?
+
+            <div class="form-group custom-control custom-checkbox">
+              <input type="checkbox" class="form-check-input" id="ploty-log">
+              <label class="form-check-label" for="ploty-log">Logarithmic</label>
+            </div>
           </div>
 
-          <button type="button" class="btn btn-primary" id="search-button">Plot</button>
+          <button type="button" class="btn btn-primary" id="rb-custom-plot-button">Plot</button>
         </form>
       </div>
     </div>
 
-
-    <div id="scatterplot" class="col-12 col-sm-4 col-md-6 col-lg-8 chart">
+    <div id="customplot" class="col-12 col-sm-6 col-md-8 col-lg-9 chart">
     </div>
 
   </div>
