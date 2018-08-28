@@ -10,8 +10,6 @@ button3.disabled = false;
 button4.disabled = false;
 var ipetlongtable;
 var ipetaggtable;
-var logchart;
-var plainchart;
 
 modal = document.getElementById("info-modal");
 evalid = "";
@@ -24,53 +22,6 @@ function get_selected_column() {
     selectedcol = 2;
   }
   return selectedcol;
-}
-
-function get_chart_data() {
-  selectedrows = ipetlongtable.rows({filter:'applied', sort:'applied'})[0];
-  selectedcol = get_selected_column();
-  data = ipetlongtable.data();
-
-  coldata = Array();
-
-  // get data from dataframe
-  for(var i=0; i<selectedrows.length;i++) {
-    coldata[i] = [data[selectedrows[i]][0], +data[selectedrows[i]][selectedcol]];
-  }
-  return coldata;
-}
-
-function redraw_charts() {
-  coldata = get_chart_data();
-  plainchart.series[0].setData(coldata);
-  coldata = get_chart_data();
-  logchart.series[0].setData(coldata);
-}
-
-function initialize_charts() {
-  coldata = get_chart_data();
-  selectedcolumn = get_selected_column();
-  logchart = Highcharts.chart('logchart', {
-    chart: { type: 'column', },
-    exporting: { fallbackToExportServer: false },
-    title: { text: null, },
-    yAxis: {
-      type: 'logarithmic',
-      plotLines: [{ color: 'black', value: 1, width: 2, }],
-    },
-    credits: { enabled: false },
-    series: [{ name: 'value', showInLegend: false, data: coldata, }]
-  });
-  plainchart = Highcharts.chart('plainchart', {
-    chart: { type: 'column', },
-    exporting: { fallbackToExportServer: false },
-    title: { text: null, },
-    yAxis: {
-      plotLines: [{ color: 'black', value: 1, width: 2, }],
-    },
-    credits: { enabled: false },
-    series: [{ name: 'value', showInLegend: false, data: coldata, }]
-  });
 }
 
 function processResponse(data, pos) {
@@ -125,13 +76,6 @@ function formatIpetTable() {
       leftColumns: 2,
     },
     dom: 'frtip',
-  });
-  initialize_charts();
-  $('#ipet-long-table').on( 'draw.dt', function () {
-    redraw_charts();
-  });
-  $('table.ipet-long-table').on( 'draw.dt', function () {
-    redraw_charts();
   });
 };
 
@@ -294,13 +238,13 @@ $('button#ipet-eval-button').click(function (e) {
     $('#rb-ipet-eval-result').on('shown.bs.collapse', function(e) {
       redraw_datatables();
     });
-  },
-    xhr.onerror = function(e) {
-      setButtonsDisabled(false);
-    }
+  };
+  xhr.onerror = function(e) {
+    setButtonsDisabled(false);
+  };
   xhr.onprogress = function(e) {
     fillModal(processResponse(xhr.responseText,1));
-  }
+  };
   xhr.send();
 });
 
@@ -315,8 +259,4 @@ $('button#info-modal-close').click(function (e) {
 
 $('button#ipet-eval-show-log').click(function (e) {
   showModal();
-});
-
-$('div#summary').on('click', 'select#selectcolumn', function (e) {
-  redraw_charts();
 });

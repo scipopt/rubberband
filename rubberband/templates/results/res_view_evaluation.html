@@ -74,8 +74,9 @@
   </div>
 
   {% if sets.get("difference") %}
-  <h3>Exclusions</h3>
-  <div>
+
+  <h3 data-toggle="collapse" href="#rb-result-exclusions" role="button" class="rb-collapser">Exclusions<span class="fa fa-angle-down small float-right p-2"></span></h3>
+  <div id="rb-result-exclusions" class="collapse">
     <p>
     The following {{ len(sets["difference"]) }} instances are not present in all of the compared test sets, and have therefore been ommitted from the tables below:
     </p><p class="exclusions">

@@ -1,30 +1,16 @@
 {% if ipet_aggregated_table is not None %}
 <h3 data-toggle="collapse" href="#ipet-eval-result-aggregated" role="button" class="rb-collapser">IPET aggregated table
   <span class="fa fa-angle-down small float-right p-2"></span></h3>
-<div class="collapse" id="ipet-eval-result-aggregated">
+<div class="collapse show" id="ipet-eval-result-aggregated">
   {% raw ipet_aggregated_table %}
 </div>
 {% end %}
 
 {% if ipet_long_table is not None %}
-  <h3 data-toggle="collapse" href="#ipet-eval-result-long" role="button" class="rb-collapser">IPET long table
-    <span class="fa fa-angle-down small float-right p-2"></span></h3>
-  <div class="collapse" id="ipet-eval-result-long">
-    {% raw ipet_long_table %}
-  </div>
-
-  <h3 data-toggle="collapse" href="#ipet-eval-result-charts" role="button" class="rb-collapser">Visualization of IPET long table.
-    <span class="fa fa-angle-down small float-right p-2"></span></h3>
-  <div class="row collapse" id="ipet-eval-result-charts">
-    <div id="plainchart" class="col-12 col-md-6 chart"></div>
-    <div id="logchart" class="col-12 col-md-6 chart"></div>
-  </div>
-
-  <h3 data-toggle="collapse" href="#ipet-eval-result-plot" role="button" class="rb-collapser">User defined plot of IPET long table
+  <h3 data-toggle="collapse" href="#ipet-eval-result-plot" role="button" class="rb-collapser">Plot
     <span class="fa fa-angle-down small float-right p-2"></span></h3>
 
-  <div class="row collapse show" id="ipet-eval-result-plot">
-
+  <div class="row collapse" id="ipet-eval-result-plot">
     <div class="col-12 col-sm-6 col-md-4 col-lg-3">
       <div class="alert alert-info">
         <h4>Visualize columns from IPET long table</h4>
@@ -73,7 +59,13 @@
     </div>
 
     <div id="customplot" class="col-12 col-sm-6 col-md-8 col-lg-9 chart">
+      <!-- custom plot -->
     </div>
+  </div>
 
+  <h3 data-toggle="collapse" href="#ipet-eval-result-long" role="button" class="rb-collapser">IPET long table
+    <span class="fa fa-angle-down small float-right p-2"></span></h3>
+  <div class="collapse" id="ipet-eval-result-long">
+    {% raw ipet_long_table %}
   </div>
 {% end %}

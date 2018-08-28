@@ -14,20 +14,17 @@ function get_plot_data() {
 
   // get data from dataframe
   if (rb_plot_type === "scatter") {
-    console.log("scatter");
     for(var i=0; i<selectedrows.length;i++) {
-      coldata[i] = [{
-        x: +data[selectedrows[i]][xdata],
-        y: +data[selectedrows[i]][ydata],
-        name: data[selectedrows[i]][0],
-      }];
-      console.log(coldata[i]);
+      var x_dat = +data[selectedrows[i]][xdata];
+      var y_dat = +data[selectedrows[i]][ydata];
+      var name_dat = data[selectedrows[i]][0];
+      if ((x_dat != 0) && (y_dat != 0)) {
+        coldata.push({ x: x_dat, y: y_dat, name: name_dat });
+      }
     }
   } else {
-    console.log("column");
     for(var i=0; i<selectedrows.length;i++) {
-      coldata[i] = [data[selectedrows[i]][0], +data[selectedrows[i]][selectedcol]];
-      console.log(coldata[i]);
+      coldata[i] = [data[selectedrows[i]][0], +data[selectedrows[i]][xdata]];
     }
   }
   return coldata;
@@ -42,7 +39,7 @@ function plot_custom_chart() {
 
   customplot = Highcharts.chart("customplot", {
     chart: {
-      type: rb_plot_type,
+      type: ((rb_plot_type === "scatter") ? 'scatter' : 'column'),
     },
     exporting: { fallbackToExportServer: false },
     title: { text: null, },
@@ -62,23 +59,22 @@ function plot_custom_chart() {
       },
       xAxis: {
         type: ((xlogarithmic) ? 'logarithmic' : 'linear'),
+        gridLineWidth: 1,
       },
       yAxis: {
         type: ((ylogarithmic) ? 'logarithmic' : 'linear'),
-      }
+      },
     });
   } else { // 'column' plot
     customplot.update({
+      chart: {
+        zoomType: 'x',
+      },
       yAxis: {
         type: ((xlogarithmic) ? 'logarithmic' : 'linear'),
       },
     });
   }
-
-}
-
-function update_user_plot() {
-  plot.series[0].setData(coldata);
 }
 
 function show_hide_y_select() {
