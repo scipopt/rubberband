@@ -317,6 +317,7 @@ class BaseHandler(RequestHandler):
     def are_equivalent(self, sets, attr):
         """
         Decide if the data in attr is the same in all TestSets.
+        Skip values that don't exist.
 
         Parameters
         ----------
@@ -339,9 +340,15 @@ class BaseHandler(RequestHandler):
                     return False
             return True
 
-        old = self.format_attr(sets[0], attr)
-        for ts in sets[1:]:
-            new = self.format_attr(ts, attr)
-            if old != new:
-                return False
-        return True
+        vals = [getattr(ts, attr, None) for ts in sets]
+        print(attr)
+        print(vals)
+        nonzeros = [val for val in vals if val is not None]
+        print(nonzeros)
+        try:
+            unique_nonzeros = set(nonzeros) # this does not work for lists
+        except TypeError:
+            nonzeros = [','.join(val) for val in vals if val is not None]
+            unique_nonzeros = set(nonzeros)
+
+        return (len(unique_nonzeros)==1)

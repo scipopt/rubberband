@@ -23,13 +23,15 @@
   <div class="rb-testrun-table">
 
     <!-- table ==================================================================== -->
-    <table class="settings-table table-hover table table-bordered" width="100%">
+    <table class="settings-table table-hover table-sm table-borderless" width="100%">
 
       <thead><tr>
         <th>Setting name</th>
         <th>Run value</th>
         {% for c in compare %}
-          <th>Compare</th>
+          {% if c.settings %}
+            <th>Compare</th>
+          {% end %}
         {% end %}
         <th>Default value</th>
       </tr></thead>
@@ -40,7 +42,9 @@
             <td>{{ i }}</td>
             <td>{{ format_attr(file.settings, i) }}</td>
             {% for c in compare %}
-            <td>{{ format_attr(c.settings, i) }}</td>
+              {% if c.settings %}
+                <td>{{ format_attr(c.settings, i) }}</td>
+              {% end %}
             {% end %}
             <td>{{ format_attr(file.settings_default, i) }}</td>
           </tr>

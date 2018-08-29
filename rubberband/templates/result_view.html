@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "wide.html" %}
 
 <!------------------ body -------------->
 {% block body %}
@@ -15,11 +15,11 @@
       <span class="fa fa-random" ></span></button>
     {% end %}
 
-    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/search?base={{ file.meta.id }}{% if comparelist is not None %}&compare={{ comparelist }}{% end %}" title="add comparison runs">
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/search?base={{ file.meta.id }}{% if comparelist is not None %}&compare={{ comparelist }}{% end %}" title="add/remove comparison runs">
       <span class="fa fa-plus"></span></a>
 
     <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="modal"   data-placement="top" data-target="#downloadSummaryOptions" title="download results">
-      <span class="fa fa-file-download" ></span></span>
+      <span class="fa fa-download" ></span></span>
 
     {% if fileoptions[".out"] or fileoptions[".meta"] or fileoptions[".err"] %}
     <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="{{ downloadzip }}" title="download files as zip archive">
@@ -41,20 +41,18 @@
 {% end %}
 
 <!-- tabs line ==================================================================== -->
-<div>
-  <ul id="resultNavTabs" class="nav nav-tabs row" role="tablist">
-    {% for (title, icon, anchor) in [["Details", "database", "details"], ["Evaluation", "calculator", "evaluation"], ["Meta", "cogs", "meta"], ["Settings", "sliders-h", "settings"]] %}
-    <li class="nav-item col-3 active">
-      <a aria-selected="true" aria-controls="{{ title }}" role="tab" href="" class="text-nowrap nav-link {% if anchor == "details" %} active {% end %}" data-toggle="tab" data-target="#{{ anchor }}">
-        <span class="d-block d-sm-none fa fa-{{ icon }}"></span>
-        <div class="d-none d-sm-block">
-          <span class="fa fa-{{ icon }}"></span> {{ title }}
-        </div>
-      </a>
-    </li>
-    {% end %}
-  </ul>
-</div>
+<ul id="resultNavTabs" class="nav nav-tabs row" role="tablist">
+  {% for (title, icon, anchor) in [["Details", "database", "details"], ["Evaluation", "calculator", "evaluation"], ["Meta", "cogs", "meta"], ["Settings", "sliders-h", "settings"]] %}
+  <li class="nav-item col-3 active">
+    <a aria-selected="true" aria-controls="{{ title }}" role="tab" href="" class="text-nowrap nav-link {% if anchor == "details" %} active {% end %}" data-toggle="tab" data-target="#{{ anchor }}">
+      <span class="d-block d-sm-none fa fa-{{ icon }}"></span>
+      <div class="d-none d-sm-block">
+        <span class="fa fa-{{ icon }}"></span> {{ title }}
+      </div>
+    </a>
+  </li>
+  {% end %}
+</ul>
 <!-- end tabs line ==================================================================== -->
 
 <div id="resultNavTabsContent" class="tab-content">
@@ -84,6 +82,7 @@
 
 {% module Template("modal.html", id="downloadSummaryOptions", modalheading="Download Formats", modalbody=modalbody_download) %}
 
+<!------------------ end body -------------->
 {% end %}
 
 <!------------------ extra css -------------->
@@ -96,6 +95,7 @@
 {% include "includes/datatables_js.html" %}
 {% include "includes/highcharts_js.html" %}
 
+<script src="/static/js/color.js"></script>
 <script src="/static/js/results-detail.js"></script>
 <script src="/static/js/evaluation.js"></script>
 <script src="/static/js/testruns.js"></script>

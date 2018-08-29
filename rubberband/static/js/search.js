@@ -1,3 +1,4 @@
+var search_results_table; // datatable for #search-results table
 
 function updateResultsTable() {
     // get formdata by selecting element with id 'form-search'
@@ -35,33 +36,32 @@ function updateResultsTable() {
 function fillResultTable(data) {
   // fill resultTable with data,
   // where data should be a htmlstring that just has to be poured into the right container
-  //$("#results-table").replaceWith(data);
-  $("#results-table").html(data);
+  $("#search-table").html(data);
 
-  tmp = $("#search-result");
-  $.fn.dataTable.moment( 'D. MMM YYYY, HH:mm' );
-  if (tmp[0].tagName == "TABLE") {
-      tmp.DataTable({
-          scrollY: '80vh',
-          scrollX: true,
-          scroller: true,
-          scrollCollapse: true,
-          paging: false,
-          searching: false,
-      });
+  search_results = $("#search-result");
+
+  $.fn.dataTable.moment( 'D. MMM YYYY, HH:mm' ); // set date format for tables
+
+  if (search_results[0].tagName == "TABLE") { // if search result is empty then the tagName is 'DIV'
+    search_results_table = search_results.DataTable({
+      scrollY: '80vh',
+      scrollX: true,
+      scroller: true,
+      scrollCollapse: true,
+      paging: false,
+      searching: false,
+    });
   }
   // method from static/js/testruns.js
   init_all_stars();
 }
 
-$("#search-button").click(function() {
-  // on click on search-button, please update the resultstable according to the search fields
-  updateResultsTable();
-});
+// on click on search-button, update the resultstable according to the search fields
+$("#search-button").click( updateResultsTable );
 
 $("#reset-search-button").click(function() {
-    $("#form-search")[0].reset();
-    $("#search-button").click();
+  $("#form-search")[0].reset();
+  $("#search-button").click();
 });
 
 $(document).ready(function(){

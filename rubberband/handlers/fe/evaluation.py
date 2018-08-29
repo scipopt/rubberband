@@ -599,7 +599,7 @@ def table_to_html(df, ev, add_class="", border=0):
     treetable = tree.find(".//table")
     treetable.set("width", "100%")
 
-    tableclasses = add_class + " ipet-table rb-table-data compact"
+    tableclasses = add_class + " ipet-table rb-table-data table-sm table-borderless"
     treetable.set("class", tableclasses)
     treetable.set("id", tableclasses)
 

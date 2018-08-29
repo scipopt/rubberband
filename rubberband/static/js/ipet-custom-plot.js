@@ -1,4 +1,4 @@
-// ipetlongtable defined in static/js/evaluation.js
+var sqrt2 = Math.sqrt(2);// ipetlongtable defined in static/js/evaluation.js
 
 var customplot; // user defined plot
 
@@ -19,7 +19,14 @@ function get_plot_data() {
       var y_dat = +data[selectedrows[i]][ydata];
       var name_dat = data[selectedrows[i]][0];
       if ((x_dat != 0) && (y_dat != 0)) {
-        coldata.push({ x: x_dat, y: y_dat, name: name_dat });
+        //TODO
+        dist = (x_dat - y_dat)/sqrt2;
+        coldata.push({
+          x: x_dat,
+          y: y_dat,
+          name: name_dat,
+          color: interpolate_color(color_red, color_green, dist)
+        });
       }
     }
   } else {
@@ -93,7 +100,7 @@ $('#rb-ipet-eval-result').on('click', '#rb-custom-plot-button', function(e) {
   plot_custom_chart();
 });
 
-$('#rb-ipet-eval-result').on('click', '#rb-plot-type-select', function(e) {
+$('#rb-ipet-eval-result').on('change', '#rb-plot-type-select', function(e) {
   // listen to `plot` button on ipet result page
   show_hide_y_select()
 });

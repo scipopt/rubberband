@@ -1,6 +1,6 @@
 
 {% if results %}
-<table {% if tablename %}id="{{ tablename }}"{% end %} class="table-hover compact rb-table-data" width="100%">
+<table {% if tablename %}id="{{ tablename }}"{% end %} class="table-hover table-sm table-borderless rb-table-data" width="100%">
   <thead>
     <tr>
       {% if radiobuttons %}
@@ -28,7 +28,7 @@
   </thead>
   <tbody>
   {% for r in results %}
-  <tr data-url='result/{{ r.meta.id }}'>
+  <tr class="rb-testrun" data-name="{{ r.meta.id }}">
     {% if radiobuttons %}
     <td><input class="rb-tr-radiobutton" type="radio" name="base" value="{{ r.meta.id }}"
     {% if r.meta.id == checked %}

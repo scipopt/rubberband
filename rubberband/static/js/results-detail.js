@@ -30,13 +30,6 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
 
 // if compare is in query string, then we are in the compare view
 if (window.location.search.indexOf("compare") >= 0) {
-  /* red = new Color(245, 50, 50);
-  green = new Color(50, 245, 50); */
-  dark_gray = new Color(160, 160, 160);
-  gray = new Color(200, 200, 200);
-  white = new Color(255, 255, 255);
-  red = new Color(240, 40, 150);
-  green = new Color(130, 200, 30);
   colorateCells();
 }
 
@@ -63,7 +56,7 @@ function formatSettingsTable() {
 }
 
 function formatResultTables() {
-    table = $('.results-table').DataTable({
+    table = $('#details-table').DataTable({
         scrollY: '80vh',
         scrollX: true,
         scroller: true,
@@ -73,6 +66,7 @@ function formatResultTables() {
             { type: 'any-number', targets: 'number' },
         ],
         dom: 'frtip',
+      autoWidth: false,
     });
 
     $('button#delete-result').click(function (e) {
@@ -126,9 +120,9 @@ function colorateCells() {
           Array.prototype.push.apply(values, other_values_str.split("\n"));
           var rgb;
           if (element.attributes["invert"] !== undefined) {
-            rgb = getRGB(element.attributes["class"].value, values, true);
+            rgb = getRGBColor(element.attributes["class"].value, values, true);
           } else {
-            rgb = getRGB(element.attributes["class"].value, values, false);
+            rgb = getRGBColor(element.attributes["class"].value, values, false);
           }
           if (rgb) {
             element.style.backgroundColor = "rgb(" + rgb.getColorString() + ")";
@@ -137,10 +131,8 @@ function colorateCells() {
   })
 }
 
-/*
- * Get an array of values, and translate that to into an RGB array.
- */
-function getRGB(valclass, arr_values, invert) {
+// Get an array of values, and translate that to into an RGB array.
+function getRGBColor(valclass, arr_values, invert) {
   var contains_floats = false;
   var floatValues = Array();
   for (var i = 0; i < arr_values.length; i++) {
@@ -157,17 +149,17 @@ function getRGB(valclass, arr_values, invert) {
       return null;
     } else {
       // compute the appropriate color
-      return computeRGB(valclass, floatValues, invert);
+      return computeColor(valclass, floatValues, invert);
     }
   } else if (arr_values.allValuesSame()) {
       return null;
   } else {
     // mix of floats and strings, or different strings
-    return gray;
+    return color_gray;
   }
 }
 
-function computeRGB(valclass, arr_values, invert) {
+function computeColor(valclass, arr_values, invert) {
   // The first value of arr_values is the principle value for compare view
   var arr_length = arr_values.length;
   if (valclass.includes("Time")) {
@@ -206,21 +198,21 @@ function computeRGB(valclass, arr_values, invert) {
 
   // if one of the values is zero we cannot compare
   if ( smallest == 0 || largest == 0 || value == 0) {
-    return Interpolate(dark_gray, 0.9);
+    return getBackgroundColor(color_dark_gray, 0.9);
   }
 
   // color dual and primal bounds in shades of grey
   if (valclass.includes("Bound")) {
-    return Interpolate(dark_gray, factor);
+    return getBackgroundColor(color_dark_gray, factor);
   }
 
   // finally, decide the color:
   if (value < smallest) {
     // if the value is better than all others
-    return Interpolate(green, factor);
+    return getBackgroundColor(color_green, factor);
   } else if (value > largest) {
     // if the value is worse than all others
-    return Interpolate(red, factor);
+    return getBackgroundColor(color_red, factor);
   } else {
     // otherwise we do not give a color but a shade of gray
     var relstddev = 0;
@@ -242,58 +234,8 @@ function computeRGB(valclass, arr_values, invert) {
       var stddeviation = Math.pow(sum_of_squares/(arr_length), 1/2);
       relstddev = stddeviation/smallest;
     }
-    return Interpolate(dark_gray, relstddev);
+    return getBackgroundColor(color_dark_gray, relstddev);
   }
-}
-
-function Interpolate(colorBase, factor) {
-  if (factor >= 1) {
-    return colorBase;
-  }
-  else {
-    factor = factor * 100;
-    // threshold what the human eye can see
-    if (factor < 10) {
-        factor = 10;
-    }
-    var end_color = colorBase.getColors();
-    var r = interpolate(255, end_color.r, 100, factor);
-    var g = interpolate(255, end_color.g, 100, factor);
-    var b = interpolate(255, end_color.b, 100, factor);
-    return new Color(r, g, b);
-  }
-}
-
-// does math
-function interpolate(start, end, steps, count) {
-  var s = start,
-      e = end,
-      final = s + (((e - s) / steps) * count);
-  return Math.floor(final);
-}
-
-// Class to manage an rgb color
-function Color(_r, _g, _b) {
-    var r, g, b;
-    var setColors = function(_r, _g, _b) {
-        r = _r;
-        g = _g;
-        b = _b;
-    };
-
-    setColors(_r, _g, _b);
-    this.getColors = function() {
-        var colors = {
-            r: r,
-            g: g,
-            b: b
-        };
-        return colors;
-    };
-
-    this.getColorString = function() {
-        return r + "," + g + "," + b;
-    };
 }
 
 function construct_toggle(toggle_id) {
@@ -312,6 +254,7 @@ function construct_toggle(toggle_id) {
     redraw_datatables();
   });
 }
+
 $(document).ready(function(){
   construct_toggle("toggle-settings");
   construct_toggle("toggle-meta");

@@ -15,7 +15,7 @@
   <div class="rb-testrun-table">
 
     <!-- table ==================================================================== -->
-    <table class="meta-table table-hover table table-bordered" width="100%">
+    <table class="meta-table table-hover table-borderless table-sm" width="100%">
       <thead><tr>
         <th>Field</th>
         <th>Base</th>
@@ -28,7 +28,7 @@
         <tr{% if are_equivalent([file]+compare, "number_instances") %} class="rb-identical-vals toggle-meta-hide" {% end %}>
           <td>Number of instances</td>
           {% for f in [file] + compare %}
-            <td><a href="/result/{{f.meta.id}}">{{ len(f.children.to_dict().keys()) }}></a></td>
+            <td><a href="/result/{{f.meta.id}}">{{ len(f.children.to_dict().keys()) }}</a></td>
           {% end %}
         </tr><tr>
           <td>Original Filename</td>
@@ -152,7 +152,7 @@
 
   <div class="rb-testrun-table">
     <h3>Data from .meta file.</h3>
-    <table class="meta-table table-hover table table-bordered" width="100%">
+    <table class="meta-table table-hover table-sm table-borderless" width="100%">
 
       <thead><tr>
         <th>Field</th>

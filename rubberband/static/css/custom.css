@@ -1,32 +1,21 @@
-/*
- * Base structure
- */
+/* Base structure */
 
 body {
-    font-family: 'Fira Mono', sans-serif;
-    font-family: 'Fira Sans', sans-serif;
-    padding-top: 3.5rem;
-}
-
-table {
-  font-size: 0.85rem;
-}
-
-/* Move down content because we have a fixed navbar that is 50px tall */
-.headline {
-  padding: 3rem 1.5rem;
+  /*background-color: ghostwhite;*/
+  /* main body */
+  font-family: 'Fira Mono', sans-serif;
+  font-family: 'Fira Sans', sans-serif;
+  /* Move content down because we have a fixed navbar that is 50px tall */
+  padding-top: 3.5rem;
 }
 
 p.exclusions {
+  /* exclusions text in monospace */
   font-family: monospace;
 }
 
 div.ipet-long-toolbar {
   margin-bottom: 5px;
-}
-
-td {
-  word-break: break-all;
 }
 
 .main {
@@ -38,55 +27,31 @@ td {
   margin-top: 0;
 }
 
-.rb-table-data {
-  font-size: 1rem;
-  word-wrap: break-word;
-  font-family: monospace;
-  border: none;
-}
-
-th, .rb-table-data {
-    white-space: nowrap;
-}
-
-.rb-table-data .number {
-    text-align: right;
-}
-
-.rb-table-data .text {
-    text-align: left;
-}
-
 th.col_heading {
-    text-align: right;
+  text-align: right;
 }
 
 th.row_heading {
-    text-align: left;
+  text-align: left;
+}
+
+.rb-table-data {
+  white-space: nowrap;
+}
+
+.rb-table-data .number {
+  text-align: right;
+}
+
+.rb-table-data .text {
+  text-align: left;
 }
 
 tbody > tr.hover > td,
 tbody > tr.hover > th,
 .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
-    background-color: #bdf !important;
+  background-color: #bdf !important;
 }
-/*
-.datatables_wrapper {
-    margin-top:20px;
-}
-
-.DTFC_LeftBodyLiner {
-    overflow-x: hidden;
-}
-
-.DTFC_Cloned {
-    background-color: white;
-}
-
-.dataTables_info {
-  text-align: left;
-}
-*/
 
 /* Datatables styles */
 .dataTables_filter {
@@ -94,20 +59,31 @@ tbody > tr.hover > th,
   float: left !important;
 }
 
-.one-chart {
-  /* highcharts */
-  padding: 20px;
-}
-.chart-title {
-  /* highcharts */
-  font-size: 1.5rem;
-}
-.chart {
-  height: 500px;
+.dataTables_wrapper {
+  font-family: monospace;
 }
 
-td.highlighted-cell {
-  background: #ff4d4d;
+.DTFC_LeftBodyLiner {
+  /* fixed column works badly with font changed to monospace */
+  border-right: 1px solid black;
+  overflow-x: hidden;
+}
+
+.dataTables_info {
+  /* info line at bottom: align to the left */
+  text-align: left !important;
+}
+
+/* end datatable styles */
+
+.one-chart {
+  /* charts on visualize page */
+  padding: 20px;
+}
+
+.chart {
+  /* highcharts */
+  height: 500px;
 }
 
 a.bs-tooltip {
@@ -118,8 +94,13 @@ a.bs-tooltip {
   width: 100% !important;
 }
 
+thead, .dataTables_scrollHead {
+  /*background-color: #d1ecf1;*/
+  border-bottom: 1px solid #0c5460 !important;
+}
+
 h1, h2, h3, h4, h5, h6 {
-  border-bottom: 1px solid #eeeeee;
+  border-bottom: 1px solid #eeeeee !important;
 }
 
 h1 {
@@ -152,6 +133,7 @@ span.important, p.rb-warning {
 }
 
 .rb-testrun-table {
+  font-family: monospace;
   margin-bottom: 1rem;
   overflow: auto;
 }
@@ -169,7 +151,7 @@ span.important, p.rb-warning {
 
 button.rb-btn-as-link {
   /* make button look like link */
-  color: steelblue;
+  color: #0c5460;
 
   background: none !important;
   border: none;
@@ -181,7 +163,7 @@ button.rb-btn-as-link {
 
 a, .rb-link {
   /* make clickable text, that is not a link, look like one*/
-  color: steelblue;
+  color: #0c5460;
 }
 
 a:hover, .rb-link:hover, button.rb-btn-as-link:hover {
@@ -208,4 +190,10 @@ a:hover, .rb-link:hover, button.rb-btn-as-link:hover {
 
 .slider::-moz-range-thumb {
     background: black; /* color */
+}
+
+.rb-wrap-table {
+  /* wrapping for tables */
+  word-break: break-word;
+  vertical-align: top;
 }
