@@ -86,18 +86,17 @@ class EvaluationView(BaseHandler):
             # get substitutions dictionary
             repres = setup_substitutions_dict(testruns)
 
-            # TODO delete
-            col_select = get_column_selectors(longtable)
-            col_select = replace_in_str(col_select, repres["short"])
-
             cols_dict = get_columns_dict(longtable, repres["short"])
 
             # add id column to longtable
             longtable.insert(0, "id", range(1, len(longtable) + 1))
 
             # convert to html and get style
-            html_long, style_long = table_to_html(longtable, ev, add_class="ipet-long-table")
-            html_agg, style_agg = table_to_html(aggtable, ev, add_class="ipet-aggregated-table")
+            add_classes = " ".join([self.rb_dt_borderless, self.rb_dt_compact]) # style for table
+            html_long, style_long = table_to_html(longtable, ev, html_id="ipet-long-table",
+                    add_class=add_classes)
+            html_agg, style_agg = table_to_html(aggtable, ev, html_id="ipet-aggregated-table",
+                    add_class=add_classes)
 
             ipetlogger.removeHandler(rbhandler)
             rbhandler.close()
@@ -113,7 +112,6 @@ class EvaluationView(BaseHandler):
                     ipet_long_table=html_long,
                     ipet_aggregated_table=html_agg,
                     columns=cols_dict).decode("utf-8")
-            # TODO cols
 
             # sort testruns by their representation and render table
             testruns = sorted(testruns,
@@ -128,7 +126,7 @@ class EvaluationView(BaseHandler):
             # send evaluated data
             mydict = {"rb-ipet-options-testrun-table": results_table,
                       "rb-ipet-eval-result": html_tables,
-                      "buttons": fg_buttons_str + col_select}
+                      "buttons": fg_buttons_str }
             self.write(json.dumps(mydict))
 
         elif style == "latex":
@@ -187,8 +185,8 @@ class EvaluationView(BaseHandler):
 
             tridstr = ",".join([tr for tr in testrunids if tr != default_id])
             baseurl = self.get_rb_base_url()
-            summary_url = "{}/result/{}?compare={}#summary".format(baseurl, default_id, tridstr)
-            out = insert_into_latex(out, summary_url)
+            evaluation_url = "{}/result/{}?compare={}#evaluation".format(baseurl, default_id, tridstr)
+            out = insert_into_latex(out, evaluation_url)
 
             # send reply
             self.render("file.html", contents=out)
@@ -387,6 +385,8 @@ def setup_substitutions_dict(testruns):
     # for long table, for aggregated (short) table and for the results_table (template)
     repres = {"long": {}, "short": {}, "template": {}}
 
+    # repres["short"]["RubberbandId"] = "" # do we want this in the long table head?
+
     # substitutions in both tables
     for k in ["long", "short"]:
         repres[k]["GitHash"] = "Commit"
@@ -448,7 +448,7 @@ def process_ipet_table(table, repres, add_ind=False):
     str
         The html table as a string.
     """
-    # split rowspan cells from the tables to enable js datatable
+    # split rowspan cells from the tables body to enable js datatable
     table_rows = [e for e in table.find(".//tbody").iter() if e.tag == "tr" or e.tag == "th"]
     groupcount = 1
     oldtext = ""
@@ -549,7 +549,7 @@ def align_elems(s):
     return 'text-align: %s' % align
 
 
-def table_to_html(df, ev, add_class="", border=0):
+def table_to_html(df, ev, html_id="", add_class=""):
     """
     Convert an ipet table to an html table, also gives a style.
 
@@ -557,8 +557,7 @@ def table_to_html(df, ev, add_class="", border=0):
     ----------
     df : pandas.dataframe
     ev : ipet.evaluation
-    add_class : str
-    border : int
+    html_id : str
 
     Returns
     -------
@@ -597,11 +596,11 @@ def table_to_html(df, ev, add_class="", border=0):
     tree = html.fromstring(htmlstr)
     treestyle = tree.find(".//style")
     treetable = tree.find(".//table")
-    treetable.set("width", "100%")
+    treetable.set("width", "100%") # needed for datatable js plugin
 
-    tableclasses = add_class + " ipet-table rb-table-data table-sm table-borderless"
-    treetable.set("class", tableclasses)
-    treetable.set("id", tableclasses)
+    tableclasses = " ipet-table rb-table-data " + add_class
+    treetable.set("class", tableclasses) # set classes
+    treetable.set("id", html_id) # set id
 
     return treetable, treestyle
 
@@ -695,7 +694,7 @@ def generate_filtergroup_buttons(table, evaluation):
     """
     table = table.copy()
     table["Filtergroups"] = "|all|"
-    buttons_str = '<div class="col-xs-9">Show filtergroups: <div id="ipet-long-filter-buttons" class="btn-group" role="group">' # noqa
+    buttons_str = '<div id="ipet-long-filter-buttons" class="btn-group"><button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Show filtergroups</button><div class="dropdown-menu ">' # noqa
 
     for fg in evaluation.getActiveFilterGroups():
         table["Newfiltergroup"] = ""
@@ -707,7 +706,7 @@ def generate_filtergroup_buttons(table, evaluation):
             continue
 
         # construct new button string
-        newbutton = '<button id="ipet-long-filter-button" type="button" class="btn btn-sm btn-info">' + fg_name + '</button>' # noqa
+        newbutton = '<button id="ipet-long-filter-button" type="button" class="dropdown-item">' + fg_name + '</button>' # noqa
         fg_data["Newfiltergroup"] = "|{}|".format(fg_name)
 
         # update the table with the new filtergroup data
@@ -722,26 +721,8 @@ def generate_filtergroup_buttons(table, evaluation):
         # update buttons_str
         buttons_str = buttons_str + newbutton
 
-    buttons_str = buttons_str + '</div></div>'
+    buttons_str = buttons_str + '</div>'
     return buttons_str, table["Filtergroups"]
-
-
-# TODO delete
-def get_column_selectors(table):
-    """Construct a html selector field for the data column headers."""
-    # add column selector
-    col_select = '<div class="col-xs-3">Select a column for the plot:<select id="selectcolumn" class="form-control">' # noqa
-    # 0 is name, 1 is id
-    if type(table.index) == pd.MultiIndex:
-        colcount = 1 + len(table.index[0])
-    else:
-        colcount = 2
-    for c in table.columns:
-        if "Filtergroups" not in c:
-            col_select = col_select + '<option value="{}">{}</option>'.format(colcount, c)
-        colcount = colcount + 1
-    col_select = col_select + '</select></div>'
-    return col_select
 
 
 def get_columns_dict(table, replace):

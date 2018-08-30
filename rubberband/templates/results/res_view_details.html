@@ -28,13 +28,9 @@
   <h2 class="rb-details-tab-title">Detailed data</h2>
   <!-- end headline ==================================================================== -->
 
-  <div class="rb-testrun-table datatables-content">
-    <table id="details-table" class="table-sm table-borderless table-hover rb-table-data" width="100%">
-    {% if compare %}
-    {% include "compare_res.html" %}
-    {% else %}
-    {% include "res.html" %}
-    {% end %}
+  <div class="rb-table-testrun datatables-content">
+    <table id="details-table" class="{{rb_dt_compact}} {{rb_dt_borderless}} rb-table rb-table-data" width="100%">
+    {% include "details_table.html" %}
     </table>
   </div>
 

@@ -6,11 +6,24 @@ from tornado.options import options
 import traceback
 
 from rubberband.constants import NONE_DISPLAY, INFINITY_KEYS, \
-        INFINITY_MASK, INFINITY_DISPLAY, FORMAT_DATETIME_SHORT
+        INFINITY_MASK, INFINITY_DISPLAY, FORMAT_DATETIME_SHORT, DT_STYLE
 
 
 class BaseHandler(RequestHandler):
     """Custom overrides."""
+
+    if DT_STYLE=="bs4":
+        # bootstrap4
+        rb_dt_compact = "table-sm"
+        rb_dt_borderless = "table-borderless"
+        rb_dt_bordered = "table-bordered"
+        rb_dt_table = "table"
+    elif DT_STYLE=="std":
+        # default datatable style
+        rb_dt_compact = "compact"
+        rb_dt_borderless = ""
+        rb_dt_bordered = ""
+        rb_dt_table = ""
 
     def get_rb_base_url(self):
         """
@@ -145,6 +158,8 @@ class BaseHandler(RequestHandler):
             format_attrs=self.format_attrs,
             get_objsen=self.get_objsen,
             are_equivalent=self.are_equivalent,
+            shorten_str=self.shorten_str,
+            get_link=self.get_link,
             options=options,
             # to get a random number, used to reload css everytime, for debugging
             rand=datetime.now(),
@@ -159,6 +174,12 @@ class BaseHandler(RequestHandler):
             modalfooter = None,
             ipet_long_table = None,
             ipet_aggregated_table = None,
+            rb_dt_style = DT_STYLE,
+
+            rb_dt_compact = self.rb_dt_compact,
+            rb_dt_borderless = self.rb_dt_borderless,
+            rb_dt_bordered = self.rb_dt_bordered,
+            rb_dt_table = self.rb_dt_table,
         )
 
         # additional ui modules
@@ -287,6 +308,22 @@ class BaseHandler(RequestHandler):
                 pass
         return 0
 
+    def get_link(self, href, text, length=30):
+        """
+        get a link with shortened text to href and full text as title
+        """
+        link = '<a href="{}" title="{}">{}</a>'.format(href, text, self.shorten_str(text, length))
+        return link
+
+    def shorten_str(self, string, length=30):
+        """
+        Shorten a string to the given length.
+        """
+        if len(string) <= length:
+            return string
+        else:
+            return "{}...{}".format(string[:length-10], string[-10:])
+
     def format_attrs(self, objs, attr, inst_name):
         """
         Return sorted attribute (attr) of an instance (inst_name) from multiple TestSets (objs).
@@ -341,14 +378,11 @@ class BaseHandler(RequestHandler):
             return True
 
         vals = [getattr(ts, attr, None) for ts in sets]
-        print(attr)
-        print(vals)
         nonzeros = [val for val in vals if val is not None]
-        print(nonzeros)
         try:
             unique_nonzeros = set(nonzeros) # this does not work for lists
         except TypeError:
             nonzeros = [','.join(val) for val in vals if val is not None]
             unique_nonzeros = set(nonzeros)
 
-        return (len(unique_nonzeros)==1)
+        return (len(unique_nonzeros)<=1)

@@ -41,3 +41,5 @@ FORMAT_DATE = "%Y-%m-%d"
 FORMAT_DATETIME_LONG = "%B %d, %Y %H:%M"
 FORMAT_DATETIME_SHORT = "%d. %b %Y, %H:%M"
 FORMAT_DATETIME = "%Y-%m-%d %H:%M:%S"
+
+DT_STYLE = "std" # bs4 or std

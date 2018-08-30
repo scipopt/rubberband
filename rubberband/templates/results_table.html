@@ -1,6 +1,6 @@
 
 {% if results %}
-<table {% if tablename %}id="{{ tablename }}"{% end %} class="table-hover table-sm table-borderless rb-table-data" width="100%">
+<table {% if tablename %}id="{{ tablename }}"{% end %} class="nowrap rb-table {{rb_dt_compact}} {{rb_dt_borderless}} rb-table-data" width="100%">
   <thead>
     <tr>
       {% if radiobuttons %}

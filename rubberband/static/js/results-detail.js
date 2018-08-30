@@ -45,7 +45,7 @@ function formatMetaTable() {
 }
 
 function formatSettingsTable() {
-    settings_table = $('.settings-table').DataTable({
+    settings_table = $('#settings-table').DataTable({
         scrollY: '80vh',
         scrollX: true,
         scroller: true,
@@ -56,53 +56,54 @@ function formatSettingsTable() {
 }
 
 function formatResultTables() {
-    table = $('#details-table').DataTable({
-        scrollY: '80vh',
-        scrollX: true,
-        scroller: true,
-        scrollCollapse: true,
-        paging: false,
-        columnDefs: [
-            { type: 'any-number', targets: 'number' },
-        ],
-        dom: 'frtip',
-      autoWidth: false,
-    });
+  table = $('#details-table').DataTable({
+    scrollY: '80vh',
+    scrollX: true,
+    scroller: true,
+    scrollCollapse: true,
+    paging: false,
+    columnDefs: [
+      { type: 'any-number', targets: 'number' },
+      { targets: 0, }
+    ],
+    dom: 'frtip',
+    autoWidth: false,
+  });
 
-    $('button#delete-result').click(function (e) {
-        e.preventDefault()
-        $.ajax({
-           type: "DELETE",
-           url: "/result/" + end[2],
-           success: function (data){ window.location.href = "/search";},
-           error:function(){
-               alert("Something went wrong.");
-           }
-        });
+  $('button#delete-result').click(function (e) {
+    e.preventDefault()
+    $.ajax({
+      type: "DELETE",
+      url: "/result/" + end[2],
+      success: function (data){ window.location.href = "/search";},
+      error:function(){
+        alert("Something went wrong.");
+      }
     });
+  });
 
-    $('button#reimport-result').click(function (e) {
-        e.preventDefault()
-        button = document.getElementById("reimport-result")
-        button.disabled = true;
-        currurl = window.location.href;
-        $.ajax({
-           type: "PUT",
-           url: "/result/" + end[2],
-           success: function (data){
-              alert("Reimport complete");
-              window.location.href = currurl;
-           },
-           error:function(){
-               alert("Something went wrong.");
-           }
-        });
+  $('button#reimport-result').click(function (e) {
+    e.preventDefault()
+    button = document.getElementById("reimport-result")
+    button.disabled = true;
+    currurl = window.location.href;
+    $.ajax({
+      type: "PUT",
+      url: "/result/" + end[2],
+      success: function (data){
+        alert("Reimport complete");
+        window.location.href = currurl;
+      },
+      error:function(){
+        alert("Something went wrong.");
+      }
     });
+  });
 
-    $('a[href="#settings-filtered"]').click(function (e) {
-      e.preventDefault();
-      $("tr.default-value").remove();
-    });
+  $('a[href="#settings-filtered"]').click(function (e) {
+    e.preventDefault();
+    $("tr.default-value").remove();
+  });
 }
 
 /*

@@ -3,7 +3,7 @@ $("a.bs-tooltip").tooltip();
 formatInstanceResults();
 
 function formatInstanceResults() {
-  $('.instance-result').DataTable({
+  $('#instance-result').DataTable({
     scrollY: '80vh',
     scrollX: true,
     scroller: true,

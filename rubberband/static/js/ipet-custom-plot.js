@@ -19,7 +19,7 @@ function get_plot_data() {
       var y_dat = +data[selectedrows[i]][ydata];
       var name_dat = data[selectedrows[i]][0];
       if ((x_dat != 0) && (y_dat != 0)) {
-        dist = (x_dat - y_dat)/Math.max(x_dat, y_dat);
+        dist = 1.0*(x_dat - y_dat)/Math.max(x_dat, y_dat);
         if (dist > 0) {
           color = interpolateColor(color_gray, color_green, dist);
         } else {
@@ -100,12 +100,13 @@ function show_hide_y_select() {
 }
 
 // ------------------ listeners
-$('#rb-ipet-eval-result').on('click', '#rb-custom-plot-button', function(e) {
-  // listen to `plot` button on ipet result page
-  plot_custom_chart();
-});
-
-$('#rb-ipet-eval-result').on('change', '#rb-plot-type-select', function(e) {
-  // listen to `plot` button on ipet result page
-  show_hide_y_select()
+$(document).ready(function() {
+  $('#rb-ipet-eval-result').on('change', '#rb-plot-type-select', function(e) {
+    // listen to plot type select in plot form
+    show_hide_y_select();
+  });
+  $('#rb-ipet-eval-result').on('change', '#rb-plot-form', function(e) {
+    // listen to plot form
+    plot_custom_chart();
+  });
 });

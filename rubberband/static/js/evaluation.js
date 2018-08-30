@@ -51,10 +51,10 @@ function showModal() {
 
 // format ipet tables
 function formatIpetTable() {
-  ipetlongtable = $('table.ipet-long-table').DataTable({
-    columnDefs: [{ targets: [-1],
-      searchable: true,
-      visible: false, } ],
+  ipetlongtable = $('table#ipet-long-table').DataTable({
+    columnDefs: [
+      { targets: [-1], searchable: true, visible: false, },
+    ],
     scrollY: '80vh',
     scrollX: true,
     scroller: true,
@@ -65,8 +65,9 @@ function formatIpetTable() {
     },
     order: [1, "desc"],
     dom: '<"ipet-long-toolbar">frtip',
+
   });
-  ipetaggtable = $('table.ipet-aggregated-table').DataTable({
+  ipetaggtable = $('table#ipet-aggregated-table').DataTable({
     scrollY: '80vh',
     scrollX: true,
     scroller: true,
@@ -77,6 +78,10 @@ function formatIpetTable() {
     },
     dom: 'frtip',
   });
+
+  // plot_custom_chart defined in ipet-custom-plot.js
+  ipetlongtable.on('search.dt', plot_custom_chart);
+  ipetlongtable.on('order.dt', plot_custom_chart);
 };
 
 function setButtonsDisabled(stat) {
@@ -128,7 +133,8 @@ $('#eval-tolerance-slider').slider({
 });
 */
 
-$('div#summary').on('click', 'button#ipet-long-filter-button', function (e) {
+$('div#evaluation').on('click', 'button#ipet-long-filter-button', function (e) {
+  console.log();
   fg_name = this.innerHTML;
   // The '|' are for avoiding trouble with substrings
   ipetlongtable.search("|"+fg_name+"|").draw()
@@ -137,7 +143,7 @@ $('div#summary').on('click', 'button#ipet-long-filter-button', function (e) {
 $(document).on({
   mouseenter: function () {
     trIndex = $(this).index()+3;
-    $("table.ipet-long-table").each(function(index) {
+    $("table#ipet-long-table").each(function(index) {
       row = $(this).find("tr:eq("+trIndex+")")
       row.addClass("hover");
       row.each(function(index) {
@@ -148,7 +154,7 @@ $(document).on({
   },
   mouseleave: function () {
     trIndex = $(this).index()+3;
-    $("table.ipet-long-table").each(function(index) {
+    $("table#ipet-long-table").each(function(index) {
       row = $(this).find("tr:eq("+trIndex+")")
       row.removeClass("hover");
       row.each(function(index) {
@@ -157,12 +163,12 @@ $(document).on({
       });
     });
   }
-}, "table.ipet-long-table tbody tr");
+}, "table#ipet-long-table tbody tr");
 
 $(document).on({
   mouseenter: function () {
     trIndex = $(this).index()+2;
-    $("table.ipet-aggregated-table").each(function(index) {
+    $("table#ipet-aggregated-table").each(function(index) {
       row = $(this).find("tr:eq("+trIndex+")")
       row.addClass("hover");
       row.each(function(index) {
@@ -173,7 +179,7 @@ $(document).on({
   },
   mouseleave: function () {
     trIndex = $(this).index()+2;
-    $("table.ipet-aggregated-table").each(function(index) {
+    $("table#ipet-aggregated-table").each(function(index) {
       row = $(this).find("tr:eq("+trIndex+")")
       row.removeClass("hover");
       row.each(function(index) {
@@ -182,7 +188,7 @@ $(document).on({
       });
     });
   }
-}, "table.ipet-aggregated-table tbody tr");
+}, "table#ipet-aggregated-table tbody tr");
 
 window.onclick = function(event) {
   if (event.target == modal) {

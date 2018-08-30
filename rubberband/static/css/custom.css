@@ -14,10 +14,6 @@ p.exclusions {
   font-family: monospace;
 }
 
-div.ipet-long-toolbar {
-  margin-bottom: 5px;
-}
-
 .main {
   padding: 20px;
   width: 100%;
@@ -49,14 +45,25 @@ th.row_heading {
 
 tbody > tr.hover > td,
 tbody > tr.hover > th,
-.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+.rb-table tbody tr:hover td, .rb-table tbody tr:hover th {
   background-color: #bdf !important;
+}
+
+.rb-table-testrun {
+  font-family: monospace;
+  margin-bottom: 1rem;
+  overflow: auto;
 }
 
 /* Datatables styles */
 .dataTables_filter {
   /* move datatables search field to the left */
   float: left !important;
+}
+
+div.ipet-long-toolbar {
+  /* in evaluated long table datatable*/
+  float: right !important;
 }
 
 .dataTables_wrapper {
@@ -89,10 +96,12 @@ a.bs-tooltip {
   width: 100% !important;
 }
 
-thead, .dataTables_scrollHead {
   /*background-color: #d1ecf1;*/
+/*
+thead, .dataTables_scrollHead {
   border-bottom: 1px solid #0c5460 !important;
 }
+*/
 
 h1, h2, h3, h4, h5, h6 {
   border-bottom: 1px solid #eeeeee !important;
@@ -127,19 +136,13 @@ span.important, p.rb-warning {
   margin-right: 0rem;
 }
 
-.rb-testrun-table {
-  font-family: monospace;
-  margin-bottom: 1rem;
-  overflow: auto;
-}
-
 .rb-buttons {
   margin: .5rem 0rem .5rem 0rem;
 }
 
 .rb-identical-vals {
   color: #666666;
-  background-color: #f3f3f3;
+  background-color: #f3f3f3 !important;
 }
 
 /* ---- links -------------- */
