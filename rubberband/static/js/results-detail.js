@@ -125,7 +125,7 @@ function colorateCells() {
             rgb = getRGBColor(element.attributes["class"].value, values, false);
           }
           if (rgb) {
-            element.style.backgroundColor = "rgb(" + rgb.getColorString() + ")";
+            element.style.backgroundColor = rgb.getColorString();
           }
       }
   })

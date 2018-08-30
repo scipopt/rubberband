@@ -13,7 +13,7 @@ function Color(red, green, blue) {
     };
 
     this.getColorString = function() {
-        return r + "," + g + "," + b;
+        return "rgb(" + r + "," + g + "," + b + ")";
     };
 }
 
@@ -52,11 +52,12 @@ function interpolate(start, end, steps, count) {
 
 // Custom defined colors:
 /*
-color_red = new Color(245, 50, 50);
-color_green = new Color(50, 245, 50);
+color_red       = new Color(245,  50,  50);
+color_green     = new Color( 50, 245,  50);
 */
+color_black     = new Color(  0,   0,   0);
 color_dark_gray = new Color(160, 160, 160);
-color_gray = new Color(200, 200, 200);
-color_white = new Color(255, 255, 255);
-color_red = new Color(240, 40, 150);
-color_green = new Color(130, 200, 30);
+color_gray      = new Color(200, 200, 200);
+color_white     = new Color(255, 255, 255);
+color_red       = new Color(240,  40, 150);
+color_green     = new Color(130, 200,  30);

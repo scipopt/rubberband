@@ -81,11 +81,6 @@ tbody > tr.hover > th,
   padding: 20px;
 }
 
-.chart {
-  /* highcharts */
-  height: 500px;
-}
-
 a.bs-tooltip {
   cursor: pointer;
 }

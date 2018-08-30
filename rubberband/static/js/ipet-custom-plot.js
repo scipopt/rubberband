@@ -1,4 +1,4 @@
-var sqrt2 = Math.sqrt(2);// ipetlongtable defined in static/js/evaluation.js
+// ipetlongtable defined in static/js/evaluation.js
 
 var customplot; // user defined plot
 
@@ -19,13 +19,17 @@ function get_plot_data() {
       var y_dat = +data[selectedrows[i]][ydata];
       var name_dat = data[selectedrows[i]][0];
       if ((x_dat != 0) && (y_dat != 0)) {
-        //TODO
-        dist = (x_dat - y_dat)/sqrt2;
+        dist = (x_dat - y_dat)/Math.max(x_dat, y_dat);
+        if (dist > 0) {
+          color = interpolateColor(color_gray, color_green, dist);
+        } else {
+          color = interpolateColor(color_gray, color_red, -dist);
+        }
         coldata.push({
           x: x_dat,
           y: y_dat,
           name: name_dat,
-          color: interpolate_color(color_red, color_green, dist)
+          color: color.getColorString(),
         });
       }
     }
@@ -47,6 +51,7 @@ function plot_custom_chart() {
   customplot = Highcharts.chart("customplot", {
     chart: {
       type: ((rb_plot_type === "scatter") ? 'scatter' : 'column'),
+      height: (9/16*100)+'%', // 16:9 ratio
     },
     exporting: { fallbackToExportServer: false },
     title: { text: null, },
@@ -104,4 +109,3 @@ $('#rb-ipet-eval-result').on('change', '#rb-plot-type-select', function(e) {
   // listen to `plot` button on ipet result page
   show_hide_y_select()
 });
-
