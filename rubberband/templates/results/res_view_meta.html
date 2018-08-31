@@ -33,7 +33,9 @@
         </tr><tr>
           <td>Original Filename</td>
           {% for f in [file] + compare %}
-            <td><a href="/file/{{f.meta.id}}">{{ format_attr(f, "filename") }}</a></td>
+            <td>
+              {% raw get_link("/file/{}".format(f.meta.id), format_attr(f, "filename"), 20, 15) %}
+            </td>
           {% end %}
         </tr><tr{% if are_equivalent([file]+compare, "git_commit_author") %} class="rb-identical-vals toggle-meta-hide" {% end %}>
           <td>Commit Author</td>
@@ -48,12 +50,13 @@
         </tr><tr{% if are_equivalent([file]+compare, "git_hash") %} class="rb-identical-vals toggle-meta-hide" {% end %}>
           <td>Commit Hash</td>
           {% for f in [file] + compare %}
-            <td>{% if options.gitlab_url %}
-                <a href="{{ options.gitlab_url }}/integer/{{ f.solver }}/commit/{{f.git_hash }}">{{ f.git_hash }}</a>
-                {% else %}
-                {{ format_attr(file, "git_hash") }}
-          {% end %}
-          </td>
+            <td>
+              {% if options.gitlab_url %}
+              {% raw get_link("{}/integer/{}/commit/{}".format(options.gitlab_url, f.solver, f.git_hash), f.git_hash, 10, 3) %}
+              {% else %}
+              {{ format_attr(file, "git_hash") }}
+              {% end %}
+            </td>
           {% end %}
         </tr><tr{% if are_equivalent([file]+compare, "git_commit_timestamp") %} class="rb-identical-vals toggle-meta-hide" {% end %}>
           <td>Commit Timestamp</td>

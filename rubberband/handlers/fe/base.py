@@ -6,7 +6,8 @@ from tornado.options import options
 import traceback
 
 from rubberband.constants import NONE_DISPLAY, INFINITY_KEYS, \
-        INFINITY_MASK, INFINITY_DISPLAY, FORMAT_DATETIME_SHORT, DT_STYLE
+        INFINITY_MASK, INFINITY_DISPLAY, FORMAT_DATETIME_LONG, DT_STYLE
+from rubberband.utils.helpers import shorten_str, get_link, shortening_span
 
 
 class BaseHandler(RequestHandler):
@@ -158,8 +159,9 @@ class BaseHandler(RequestHandler):
             format_attrs=self.format_attrs,
             get_objsen=self.get_objsen,
             are_equivalent=self.are_equivalent,
-            shorten_str=self.shorten_str,
-            get_link=self.get_link,
+            shorten_str=shorten_str,
+            shortening_span=shortening_span,
+            get_link=get_link,
             options=options,
             # to get a random number, used to reload css everytime, for debugging
             rand=datetime.now(),
@@ -172,6 +174,7 @@ class BaseHandler(RequestHandler):
             modalheading = None,
             modalbody = None,
             modalfooter = None,
+            representation = None,
             ipet_long_table = None,
             ipet_aggregated_table = None,
             rb_dt_style = DT_STYLE,
@@ -267,7 +270,7 @@ class BaseHandler(RequestHandler):
                 if attr in ["Iterations"]:
                     return int(value)
                 if attr.endswith("_timestamp") or attr.endswith("expirationdate"):
-                    return datetime.strftime(value, FORMAT_DATETIME_SHORT)
+                    return datetime.strftime(value, FORMAT_DATETIME_LONG)
                 if isinstance(value, str):
                     return value
                 if isinstance(value, Iterable):
@@ -307,22 +310,6 @@ class BaseHandler(RequestHandler):
             except:
                 pass
         return 0
-
-    def get_link(self, href, text, length=30):
-        """
-        get a link with shortened text to href and full text as title
-        """
-        link = '<a href="{}" title="{}">{}</a>'.format(href, text, self.shorten_str(text, length))
-        return link
-
-    def shorten_str(self, string, length=30):
-        """
-        Shorten a string to the given length.
-        """
-        if len(string) <= length:
-            return string
-        else:
-            return "{}...{}".format(string[:length-10], string[-10:])
 
     def format_attrs(self, objs, attr, inst_name):
         """

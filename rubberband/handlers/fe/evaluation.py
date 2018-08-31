@@ -7,6 +7,7 @@ from rubberband.constants import IPET_EVALUATIONS, FORMAT_DATETIME_SHORT, \
         NONE_DISPLAY, ALL_SOLU
 from rubberband.models import TestSet
 from rubberband.utils import RBLogHandler
+from rubberband.utils.helpers import shorten_str
 
 from ipet import Experiment, TestRun
 from ipet.evaluation import IPETEvaluation
@@ -85,6 +86,10 @@ class EvaluationView(BaseHandler):
 
             # get substitutions dictionary
             repres = setup_substitutions_dict(testruns)
+            for i,j in repres.items():
+                print(i)
+                for k,l in j.items():
+                    print("{} -> {}".format(k,l))
 
             cols_dict = get_columns_dict(longtable, repres["short"])
 
@@ -121,12 +126,12 @@ class EvaluationView(BaseHandler):
                     representation=repres["template"],
                     radiobuttons=True,
                     checked=default_id,
-                    tablename="rb-ipet-options-testrun-table").decode("utf-8")
+                    tablename="rb-legend-table").decode("utf-8")
 
             # send evaluated data
-            mydict = {"rb-ipet-options-testrun-table": results_table,
+            mydict = {"rb-legend": results_table,
                       "rb-ipet-eval-result": html_tables,
-                      "buttons": fg_buttons_str }
+                      "rb-ipet-buttons": fg_buttons_str }
             self.write(json.dumps(mydict))
 
         elif style == "latex":
@@ -350,15 +355,14 @@ def get_rbid_representation(testrun, mode="extended"):
     str
         representation
     """
+    ts = ""
+    ts_time = ""
     if testrun.git_commit_timestamp:
         ts = "(" + datetime.strftime(testrun.git_commit_timestamp, FORMAT_DATETIME_SHORT) + ")"
         ts_time = datetime.strftime(testrun.git_commit_timestamp, "%Y%m%d%H%M%S")
-    else:
-        ts_time = ""
-        ts = ""
 
     if mode == "readable":
-        rbid_repres = " " + testrun.settings_short_name + " " + ts
+        rbid_repres = " " + shorten_str(testrun.settings_short_name, 15, 5) + " " + ts
     else:  # if mode == "extended"
         rbid_repres = ts_time + testrun.settings_short_name + testrun.id
 
@@ -385,26 +389,24 @@ def setup_substitutions_dict(testruns):
     # for long table, for aggregated (short) table and for the results_table (template)
     repres = {"long": {}, "short": {}, "template": {}}
 
-    # repres["short"]["RubberbandId"] = "" # do we want this in the long table head?
-
     # substitutions in both tables
     for k in ["long", "short"]:
         repres[k]["GitHash"] = "Commit"
 
-    for t in testruns:
-        if t.git_commit_timestamp:
-            ts = "(" + datetime.strftime(t.git_commit_timestamp, FORMAT_DATETIME_SHORT) + ")"
+    for tr in testruns:
+        if tr.git_commit_timestamp:
+            ts = "(" + datetime.strftime(tr.git_commit_timestamp, FORMAT_DATETIME_SHORT) + ")"
         else:
             ts = ""
 
-        extended_rbid = get_rbid_representation(t, "extended")
-        readable_rbid = get_rbid_representation(t, "readable")
+        extended_rbid = get_rbid_representation(tr, "extended")
+        readable_rbid = get_rbid_representation(tr, "readable")
 
         for k in ["long", "short"]:
-            repres[k][t.git_hash] = ts
+            repres[k][tr.git_hash] = ts
 
         repres["long"][extended_rbid] = readable_rbid
-        repres["template"][extended_rbid] = t.id
+        repres["template"][extended_rbid] = tr.id
 
     count = 0
 

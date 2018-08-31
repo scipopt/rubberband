@@ -102,7 +102,7 @@ function getData(e) {
   // get data from form
   form_data = $("#ipet-eval-form").serializeArray();
   evalid = $("#ipet-eval-file-select").val();
-  defaultrun = $("#ipet-eval-form input[type='radio']:checked").val();
+  defaultrun = $("#rb-legend-table input[type='radio']:checked").val();
 };
 
 function getEvalUrl(e) {
@@ -232,14 +232,14 @@ $('button#ipet-eval-button').click(function (e) {
     data = processResponse(xhr.responseText, 2);
     datadict = JSON.parse(data);
     for(var key in datadict) {
-      if (key == "buttons") {
+      if (key == "rb-ipet-buttons") {
         continue;
       }
       var targetel = document.getElementById(key)
       targetel.innerHTML = datadict[key];
     }
     formatIpetTable();
-    $("div.ipet-long-toolbar").html(datadict["buttons"]);
+    $("div.ipet-long-toolbar").html(datadict["rb-ipet-buttons"]);
 
     $('#rb-ipet-eval-result').on('shown.bs.collapse', function(e) {
       redraw_datatables();

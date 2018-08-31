@@ -70,12 +70,9 @@ class ResultView(BaseHandler):
             fileoptions[ftype] = (file_contents is not None)
 
         rrt = self.render_string("results_table.html", results=[parent] + compare,
-                checked=parent.meta.id, radiobuttons=(len(compare) > 0))
-        iot = self.render_string("results_table.html", results=[parent] + compare,
-                radiobuttons=True, checked=parent.meta.id)
+                tablename="rb-legend-table", checked=parent.meta.id, radiobuttons=True)
         self.render("result_view.html", file=parent, compare=compare,
-                    sets=sets, meta=meta, rb_ipet_options_testrun_table=iot,
-                    comparelist=comparelist,
+                    sets=sets, meta=meta, comparelist=comparelist,
                     rendered_results_table=rrt, fileoptions=fileoptions,
                     downloadzip=downloadziplink, evals=IPET_EVALUATIONS)
 

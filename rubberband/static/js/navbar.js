@@ -9,5 +9,5 @@ function set_active_tab(route) {
 }
 
 function goBack() {
-    window.history.back();
+  window.history.back();
 }

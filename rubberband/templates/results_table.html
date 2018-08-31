@@ -9,6 +9,7 @@
       {% if checkboxes %}
       <th></th>
       {% end %}
+      {% if representation is not None %} <th>Representation</th> {% end %}
       <th></th>
       <!-- <th><span class="fa fa-star-half-alt"></span></th> -->
       <th></th>
@@ -40,6 +41,7 @@
     {% if checkboxes %}
     <td><input class="rb-tr-checkbox" type="checkbox" name="{{ r.meta.id }}"></td>
     {% end %}
+    {% if representation is not None %} <td> {{ representation[r.id] }} </td> {% end %}
     <td><a href="/result/{{ r.meta.id }}"><span class="fa fa-info-circle"></span></a></td>
     <td><span class="far fa-star rb-tr-star" name="{{ r.meta.id }}"></span></td>
     <td>{{ format_attr(r, "solver") }} {{ format_attr(r, "solver_version") }}</td>

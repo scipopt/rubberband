@@ -1,25 +1,27 @@
 {% if file.solver == "GENIOS" %}
-{% set cols = [{"name": "MemRatio", "type": "number"}] %}
+{% set add_cols = [{"name": "MemRatio", "short": "Mem",  "type": "number"}] %}
 {% else %}
-{% set cols = [{"name": "Status", "type": "text"}] %}
+{% set add_cols = [{"name": "Status",   "short": "Stat", "type": "text"}] %}
 {% end %}
+{% set cols = [
+  {"name": "Instance Name", "short": "Inst", "type": "text"},
+  {"name": "Type", "short": "Type", "type": "text"},
+  {"name": "Original Cons", "short": "OCons", "type": "number"},
+  {"name": "Original Vars", "short": "OVars", "type": "number"},
+  {"name": "Presolved Cons", "short": "PCons", "type": "number"},
+  {"name": "Presolved Vars", "short": "PVars", "type": "number"},
+  {"name": "Dual Bound", "short": "DB", "type": "number"},
+  {"name": "Primal Bound", "short": "PB", "type": "number"},
+  {"name": "Gap", "short": "Gap", "type": "number"},
+  {"name": "Iterations", "short": "Iter", "type": "number"},
+  {"name": "Nodes", "short": "Nodes", "type": "number"},
+  {"name": "Solving Time", "short": "Time", "type": "number"},
+  {"name": "Total Time", "short": "TTime", "type": "number"},
+  ] %}
     <thead>
       <tr>
-      <th class="text">Instance Name</th>
-      <th class="text">Type</th>
-      <th class="number">Original Cons</th>
-      <th class="number">Original Vars</th>
-      <th class="number">Presolved Cons</th>
-      <th class="number">Presolved Vars</th>
-      <th class="number">Dual Bound</th>
-      <th class="number">Primal Bound</th>
-      <th class="number">Gap %</th>
-      <th class="number">Iterations</th>
-      <th class="number">Nodes</th>
-      <th class="number">Solving Time</th>
-      <th class="number">Total Time</th>
-      {% for i in cols %}
-      <th class="{{ i["type"] }}">{{ i["name"] }}</th>
+      {% for i in cols + add_cols %}
+        <th class="{{ i["type"] }}">{% raw shortening_span(i["name"], i["short"]) %}</th>
       {% end %}
       </tr>
     </thead>
@@ -29,10 +31,9 @@
       <tr>
 
         {% if compare %}
-        <!-- <td><a href="/result/{{ file.meta.id }}/instance/{{ r.meta.id }}?compare={{ ",".join([c.meta.id for c in compare]) }}">{{ shorten_str(r.instance_name) }}</a></td> -->
           <td>
             {% set href="/result/{fileid}/instance/{rid}?compare={compare}".format(fileid=file.meta.id, rid=r.meta.id, compare=','.join([c.meta.id for c in compare])) %}
-            {% raw get_link(href, r.instance_name) %}
+            {% raw get_link(href, r.instance_name, 20, 7) %}
           </td>
         {% else %}
           <td><a href="/result/{{ file.meta.id }}/instance/{{ r.meta.id }}">{{ r.instance_name }}</a></td>
@@ -50,7 +51,7 @@
 
         {% end %}
 
-        {% for i in cols %}
+        {% for i in add_cols %}
 
           {% if compare %}
             <td title="{{ format_attrs(compare, i["name"], name) }}" class="{{ format_type(r, i["name"]) }} {{ i["name"] }}">{{ format_attr(r, i["name"]) }}</td>

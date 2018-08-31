@@ -20,19 +20,6 @@ function redraw_datatables() {
   $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
 }
 
-/* adjust tables */
-$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-  redraw_datatables();
-});
-
-// if compare is in query string, then we are in the compare view but only in a comparison to exactly one
-//if ((window.location.search.indexOf("compare") >= 0) && !(window.location.valueOf("compare").toString().includes(","))) {
-
-// if compare is in query string, then we are in the compare view
-if (window.location.search.indexOf("compare") >= 0) {
-  colorateCells();
-}
-
 function formatMetaTable() {
     meta_table = $('.meta-table').DataTable({
         scrollY: '80vh',
@@ -66,6 +53,9 @@ function formatResultTables() {
       { type: 'any-number', targets: 'number' },
       { targets: 0, }
     ],
+    fixedColumns:   {
+      leftColumns: 1,
+    },
     dom: 'frtip',
     autoWidth: false,
   });
@@ -260,4 +250,22 @@ $(document).ready(function(){
   construct_toggle("toggle-settings");
   construct_toggle("toggle-meta");
 });
+
+// when window is resized
+$(window).resize(function(){
+  redraw_datatables();
+});
+
+/* adjust tables */
+$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
+  redraw_datatables();
+});
+
+// if compare is in query string, then we are in the compare view but only in a comparison to exactly one
+//if ((window.location.search.indexOf("compare") >= 0) && !(window.location.valueOf("compare").toString().includes(","))) {
+
+// if compare is in query string, then we are in the compare view
+if (window.location.search.indexOf("compare") >= 0) {
+  colorateCells();
+}
 
