@@ -1,156 +1,44 @@
-/* Base structure */
 
-body {
-  /*background-color: ghostwhite;*/
-  /* main body */
+/* ---- general -------------- */
+body { /* main body */
   font-family: 'Fira Mono', sans-serif;
   font-family: 'Fira Sans', sans-serif;
-  /* Move content down because we have a fixed navbar that is 50px tall */
-  padding-top: 3.5rem;
+  padding-top: 3.5rem; /* Move content down because we have a fixed navbar that is 50px tall */
 }
-
-p.exclusions {
-  /* exclusions text in monospace */
-  font-family: monospace;
-}
-
 .main {
   padding: 20px;
   width: 100%;
 }
-
-.main .page-header {
-  margin-top: 0;
-}
-
-th.col_heading {
-  text-align: right;
-}
-
-th.row_heading {
-  text-align: left;
-}
-
-.rb-table-data {
-  white-space: nowrap;
-}
-
-.rb-table-data .number {
-  text-align: right;
-}
-
-.rb-table-data .text {
-  text-align: left;
-}
-
-tbody > tr.hover > td,
-tbody > tr.hover > th,
-.rb-table tbody tr:hover td, .rb-table tbody tr:hover th {
-  background-color: #bdf !important;
-}
-
-.rb-table-testrun {
-  font-family: monospace;
-  margin-bottom: 1rem;
-  overflow: auto;
-}
-
-/* Datatables styles */
-.dataTables_filter {
-  /* move datatables search field to the left */
-  float: left !important;
-}
-
-div.ipet-long-toolbar {
-  /* in evaluated long table datatable*/
-  float: right !important;
-}
-
-.dataTables_wrapper {
-  font-family: monospace;
-}
-
-.DTFC_LeftBodyLiner {
-  /* fixed column works badly with font changed to monospace */
-  border-right: 1px solid black;
-  overflow-x: hidden;
-}
-
-.dataTables_info {
-  /* info line at bottom: align to the left */
-  text-align: left !important;
-}
-
-/* end datatable styles */
-
-.one-chart {
-  /* charts on visualize page */
-  padding: 20px;
-}
-
-a.bs-tooltip {
-  cursor: pointer;
-}
-
-.slider {
-  width: 100% !important;
-}
-
-  /*background-color: #d1ecf1;*/
-/*
-thead, .dataTables_scrollHead {
-  border-bottom: 1px solid #0c5460 !important;
-}
-*/
-
-h1, h2, h3, h4, h5, h6 {
-  border-bottom: 1px solid #eeeeee !important;
-}
-
-h1 {
-  margin-bottom: 2.5rem !important;
-}
-
-h2 {
-  margin-bottom: 1rem !important;
-}
-
 fieldset {
   width: 100%;
 }
+/* ---- end general -------------- */
 
+/* ---- headlines -------------- */
+h1, h2, h3, h4, h5, h6 {
+  border-bottom: 1px solid #eeeeee !important;
+}
+h1 {
+  margin-bottom: 2.5rem !important;
+}
+h2 {
+  margin-bottom: 1rem !important;
+}
+/* ---- end headlines -------------- */
+
+/* ---- text -------------- */
+p.exclusions {
+  /* exclusions text in monospace */
+  font-family: monospace;
+}
 span.important, p.rb-warning {
   color: #e83e8c;
 }
-
-#resultNavTabs {
-  margin-bottom: 1rem;
-}
-
-.rb-details-tab-title {
-}
-
-.rb-details-tab-buttons  {
-  font-size: 1.5rem;
-  margin-bottom: -2.4rem;
-  margin-right: 0rem;
-}
-
-.rb-buttons {
-  margin: .5rem 0rem .5rem 0rem;
-}
-
-.rb-identical-vals {
-  color: #666666;
-  background-color: #f3f3f3 !important;
-}
+/* ---- end text -------------- */
 
 /* ---- links -------------- */
-
-button.rb-btn-as-link {
-  /* make button look like link */
+button.rb-btn-as-link { /* make button look like link */
   color: #0c5460;
-
   background: none !important;
   border: none;
   padding: 0 !important;
@@ -158,40 +46,107 @@ button.rb-btn-as-link {
   cursor: pointer;
   -webkit-appearance: none;
 }
-
-a, .rb-link {
-  /* make clickable text, that is not a link, look like one*/
+a {
+  cursor: pointer;
   color: #0c5460;
 }
-
-a:hover, .rb-link:hover, button.rb-btn-as-link:hover {
-  /* make non-link text hoverable */
+.rb-link {/* make nonlink clickable text look like link */
+  color: #0c5460 !important;
+}
+a:hover {
   color: red;
 }
-
-.rb-collapser {
-  /* collapsible elements show a clickable cursor */
+.rb-link:hover, button.rb-btn-as-link:hover {/* make non-link text hoverable */
+  color: red !important;
+}
+.rb-collapser { /* collapsible elements show a clickable cursor */
   cursor: pointer;
 }
-
-.fa-angle-down {
-  /* collapsible elements have this angle, make it more visible by making it red */
+.fa-angle-down { /* collapsible elements have this angle, make it more visible by making it red */
   color: red;
 }
-
 /* ---- end links -------------- */
 
-/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+/* ---- result view tabs bars -------------- */
+#resultNavTabs {
+  margin-bottom: 1rem;
+}
+.rb-details-tab-buttons  {
+  font-size: 1.5rem;
+  margin-bottom: -2.4rem;
+  margin-right: 0rem;
+}
+/* ---- end result view tabs bars -------------- */
+
+/* ---- slider -------------- */
+.slider {
+  width: 100% !important;
+}
 .slider::-webkit-slider-thumb {
-    background: black; /* color */
+    background: black;
 }
-
 .slider::-moz-range-thumb {
-    background: black; /* color */
+    background: black;
 }
+/* ---- end slider -------------- */
 
+/* ---- tables -------------- */
+th.col_heading {
+  text-align: right;
+}
+th.row_heading {
+  text-align: left;
+}
+.rb-table-data {
+  white-space: nowrap;
+}
+.rb-table-data .number {
+  text-align: right;
+}
+.rb-table-data .text {
+  text-align: left;
+}
+tbody > tr.hover > td,
+tbody > tr.hover > th,
+.rb-table tbody tr:hover td,
+.rb-table tbody tr:hover th {
+  background-color: #bdf !important;
+}
+.rb-table-testrun {
+  font-family: monospace;
+  margin-bottom: 1rem;
+  overflow: auto;
+}
 .rb-wrap-table {
   /* wrapping for tables */
   word-break: break-word;
   vertical-align: top;
+}
+.rb-identical-vals {
+  color: #666666;
+  background-color: #f3f3f3 !important;
+}
+/* ---- end tables -------------- */
+
+/* ---- datatables -------------- */
+.dataTables_filter { /* move datatables search field to the left */
+  float: left !important;
+}
+div.ipet-long-toolbar { /* in evaluated long table datatable*/
+  float: right !important;
+}
+.dataTables_wrapper {
+  font-family: monospace;
+}
+.DTFC_LeftBodyLiner { /* fixed column works badly with font changed to monospace */
+  border-right: 1px solid black;
+  overflow-x: hidden;
+}
+.dataTables_info { /* info line at bottom: align to the left */
+  text-align: left !important;
+}
+/* ---- end datatables -------------- */
+
+.one-chart { /* charts on visualize page */
+  padding: 20px;
 }
