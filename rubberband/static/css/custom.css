@@ -142,11 +142,12 @@ div.ipet-long-toolbar { /* in evaluated long table datatable*/
   border-right: 1px solid black;
   overflow-x: hidden;
 }
-.dataTables_info { /* info line at bottom: align to the left */
-  text-align: left !important;
+.dt-buttons {
+  align: right;
 }
 /* ---- end datatables -------------- */
 
 .one-chart { /* charts on visualize page */
   padding: 20px;
 }
+

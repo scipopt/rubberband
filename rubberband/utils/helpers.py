@@ -3,8 +3,9 @@ def shortening_span(text, short):
     """
     get a span with text that shortenes itself on small screens (use in table column headers)
     """
-    return '''<span class="d-block d-xl-none" title="{longtext}">{shorttext}</span>
-    <span class="d-none d-xl-block">{longtext}</span>'''.format(longtext=text, shorttext=short)
+    return '''<span class="d-none d-xl-block">{longtext}</span>
+    <span class="d-block d-xl-none" title="{longtext}">{shorttext}</span>
+    '''.format(longtext=text, shorttext=short)
 
 def get_link(href, text, length=30, end=10):
     """

@@ -7,10 +7,10 @@ Array.prototype.allValuesSame = function() {
   return true;
 }
 
-var table;
+var details_table;
 var meta_table;
 var settings_table;
-formatResultTables();
+formatDetailsTable();
 formatMetaTable();
 formatSettingsTable();
 $(".bs-tooltip").tooltip();
@@ -42,8 +42,8 @@ function formatSettingsTable() {
     });
 }
 
-function formatResultTables() {
-  table = $('#details-table').DataTable({
+function formatDetailsTable() {
+  details_table = $('#details-table').DataTable({
     scrollY: '80vh',
     scrollX: true,
     scroller: true,
@@ -56,7 +56,7 @@ function formatResultTables() {
     fixedColumns:   {
       leftColumns: 1,
     },
-    dom: 'frtip',
+    dom: 'f<"rb-details-toolbar">rtip',
     autoWidth: false,
   });
 
@@ -97,10 +97,10 @@ function formatResultTables() {
 }
 
 /*
- * Colorate the result table cells for the compare view
+ * Colorate the details table cells for the compare view
  */
 function colorateCells() {
-    table.cells().every( function () {
+    details_table.cells().every( function () {
       // determine if tooltip is string or number
       var element = $(this.node())[0];
       if (element.attributes["title"] !== undefined) {
@@ -246,9 +246,32 @@ function construct_toggle(toggle_id) {
   });
 }
 
+function add_columns_toggle() {
+  var toolbar = $('.rb-details-toolbar');
+  toolbar.addClass("float-right");
+  var out = '<label class="col-form-label text-left">Toggle columns:<select id="rb-details-select" class="custom-select"></label>';
+  for (colindex = 1; colindex < details_table.columns().count(); colindex = colindex+1) {
+    column = details_table.column(colindex);
+    coltitle = $(column.header()).text().split('\n')[0]
+    out = out+'<option value="'+colindex+'">'+coltitle+"</option>";
+  }
+  out = out+"</select>";
+
+  $('.rb-details-toolbar').html(out);
+  $('#rb-details-select').on('change', function(e) {
+    colindex = this.value;
+    currcol = details_table.column(colindex);
+    currcol.visible( !currcol.visible() );
+  });
+
+  $('#details-table_filter label').addClass("col-form-label text-left");
+  $('#details-table_filter label input').addClass("m-0 form-control");
+}
+
 $(document).ready(function(){
   construct_toggle("toggle-settings");
   construct_toggle("toggle-meta");
+  add_columns_toggle();
 });
 
 // when window is resized

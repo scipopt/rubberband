@@ -15,7 +15,7 @@ class BaseHandler(RequestHandler):
 
     if DT_STYLE=="bs4":
         # bootstrap4
-        rb_dt_compact = "table-sm"
+        rb_dt_compact = "table-condensed"
         rb_dt_borderless = "table-borderless"
         rb_dt_bordered = "table-bordered"
         rb_dt_table = "table"
