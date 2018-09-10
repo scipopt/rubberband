@@ -123,14 +123,14 @@
 
 {% if compare_table %}
 <h3 data-toggle="collapse" href="#compares-table" role="button" class="rb-collapser">Comparison Testruns<span class="fa fa-angle-down small float-right p-2"></span></h3>
-<div id="compares-table" class="rb-table-testrun collapse show">
+<div id="compares-table" class="rb-testrun-table collapse show">
   {% raw compare_table %}
 </div>
 {% end %}
 
 {% if starred_table %}
 <h3 data-toggle="collapse" href="#starred-table" role="button" class="rb-collapser">Starred Testruns<span class="fa fa-angle-down small float-right p-2"></span></h3>
-<div id="starred-table" class="rb-table-testrun collapse">
+<div id="starred-table" class="rb-testrun-table collapse">
   {% raw starred_table %}
 </div>
 {% end %}

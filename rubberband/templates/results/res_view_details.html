@@ -38,7 +38,7 @@
     <h3>Exclusions</h3>
     <div id="exclusions">
       <p>The following {{ len(sets["difference"]) }} instances are not present in all of the compared test sets, and have therefore been ommitted from the table above:</p>
-      <p class="exclusions">{{", ".join(sets['difference'])}}</p>
+      <p class="monospace">{{", ".join(sets['difference'])}}</p>
     </div>
   {% end %}
 

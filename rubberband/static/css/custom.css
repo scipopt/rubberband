@@ -27,7 +27,7 @@ h2 {
 /* ---- end headlines -------------- */
 
 /* ---- text -------------- */
-p.exclusions {
+p.monospace {
   /* exclusions text in monospace */
   font-family: monospace;
 }
@@ -91,6 +91,9 @@ a:hover {
 /* ---- end slider -------------- */
 
 /* ---- tables -------------- */
+table {
+  font-family: monospace;
+}
 th.col_heading {
   text-align: right;
 }
@@ -113,7 +116,6 @@ tbody > tr.hover > th,
   background-color: #bdf !important;
 }
 .rb-table-testrun {
-  font-family: monospace;
   margin-bottom: 1rem;
   overflow: auto;
 }
@@ -135,15 +137,16 @@ tbody > tr.hover > th,
 div.ipet-long-toolbar { /* in evaluated long table datatable*/
   float: right !important;
 }
-.dataTables_wrapper {
-  font-family: monospace;
-}
 .DTFC_LeftBodyLiner { /* fixed column works badly with font changed to monospace */
   border-right: 1px solid black;
   overflow-x: hidden;
 }
 .dt-buttons {
   align: right;
+}
+/* custom datatable toolbar elements */
+.rb-dt-custom {
+  margin-top: 0.5rem;
 }
 /* ---- end datatables -------------- */
 

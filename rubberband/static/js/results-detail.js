@@ -248,14 +248,14 @@ function construct_toggle(toggle_id) {
 
 function add_columns_toggle() {
   var toolbar = $('.rb-details-toolbar');
-  toolbar.addClass("float-right");
-  var out = '<label class="col-form-label text-left">Toggle columns:<select id="rb-details-select" class="custom-select"></label>';
+  toolbar.addClass("float-right rb-dt-custom");
+  var out = '<label class="col-form-label text-left">Toggle columns:<select id="rb-details-select" class="custom-select">';
   for (colindex = 1; colindex < details_table.columns().count(); colindex = colindex+1) {
     column = details_table.column(colindex);
     coltitle = $(column.header()).text().split('\n')[0]
     out = out+'<option value="'+colindex+'">'+coltitle+"</option>";
   }
-  out = out+"</select>";
+  out = out+"</select></label>";
 
   $('.rb-details-toolbar').html(out);
   $('#rb-details-select').on('change', function(e) {

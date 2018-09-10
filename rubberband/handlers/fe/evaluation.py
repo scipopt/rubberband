@@ -82,7 +82,7 @@ class EvaluationView(BaseHandler):
         if style is None:
 
             # add filtergroup buttons to ipet long table
-            fg_buttons_str, longtable["Filtergroups"] = generate_filtergroup_buttons(longtable, ev)
+            fg_buttons_str, longtable["Filtergroups"] = generate_filtergroup_selector(longtable, ev)
 
             # get substitutions dictionary
             repres = setup_substitutions_dict(testruns)
@@ -678,9 +678,9 @@ def set_defaultgroup(evaluation, experiment, testrun_id):
     evaluation.set_defaultgroup(defaultgroup_string)
 
 
-def generate_filtergroup_buttons(table, evaluation):
+def generate_filtergroup_selector(table, evaluation):
     """
-    Generate a string with html filtergroup buttons for ipet long table and and a column for table.
+    Generate a string with html filtergroup selector for ipet long table and and a column for table.
 
     Parameters
     ----------
@@ -692,11 +692,11 @@ def generate_filtergroup_buttons(table, evaluation):
     Returns
     -------
     str, pandas.Series
-        buttons and additional column
+        selector and additional column
     """
     table = table.copy()
     table["Filtergroups"] = "|all|"
-    buttons_str = '<div id="ipet-long-filter-buttons" class="btn-group"><button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Show filtergroups</button><div class="dropdown-menu ">' # noqa
+    out = '<div id="ipet-long-table-filter"><label class="col-form-label text-left">Select filtergroups:<select id="ipet-long-filter-select" class="custom-select">' # noqa
 
     for fg in evaluation.getActiveFilterGroups():
         table["Newfiltergroup"] = ""
@@ -707,8 +707,8 @@ def generate_filtergroup_buttons(table, evaluation):
         if len(fg_data) == 0:
             continue
 
-        # construct new button string
-        newbutton = '<button id="ipet-long-filter-button" type="button" class="dropdown-item">' + fg_name + '</button>' # noqa
+        # construct new option string
+        newoption = '<option value=' + fg_name + '>' + fg_name + '</option>' # noqa
         fg_data["Newfiltergroup"] = "|{}|".format(fg_name)
 
         # update the table with the new filtergroup data
@@ -720,11 +720,11 @@ def generate_filtergroup_buttons(table, evaluation):
         # update original table
         table["Filtergroups"] = newcolumn
 
-        # update buttons_str
-        buttons_str = buttons_str + newbutton
+        # update selector strin
+        out = out + newoption
 
-    buttons_str = buttons_str + '</div>'
-    return buttons_str, table["Filtergroups"]
+    out = out + '</select></label></div>'
+    return out, table["Filtergroups"]
 
 
 def get_columns_dict(table, replace):

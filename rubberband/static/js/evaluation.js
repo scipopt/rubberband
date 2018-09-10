@@ -133,9 +133,9 @@ $('#eval-tolerance-slider').slider({
 });
 */
 
-$('div#evaluation').on('click', 'button#ipet-long-filter-button', function (e) {
+$('div#evaluation').on('change', 'select#ipet-long-filter-select', function (e) {
   console.log();
-  fg_name = this.innerHTML;
+  fg_name = this.value;
   // The '|' are for avoiding trouble with substrings
   ipetlongtable.search("|"+fg_name+"|").draw()
 });
@@ -240,6 +240,13 @@ $('button#ipet-eval-button').click(function (e) {
     }
     formatIpetTable();
     $("div.ipet-long-toolbar").html(datadict["rb-ipet-buttons"]);
+    $("div.ipet-long-toolbar").addClass("float-right rb-dt-custom");
+
+    $('#ipet-aggregated-table_filter label').addClass("col-form-label text-left");
+    $('#ipet-aggregated-table_filter label input').addClass("m-0 form-control");
+
+    $('#ipet-long-table_filter label').addClass("col-form-label text-left");
+    $('#ipet-long-table_filter label input').addClass("m-0 form-control");
 
     $('#rb-ipet-eval-result').on('shown.bs.collapse', function(e) {
       redraw_datatables();
