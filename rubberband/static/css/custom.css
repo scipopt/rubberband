@@ -157,3 +157,6 @@ div.ipet-long-toolbar { /* in evaluated long table datatable*/
   padding: 20px;
 }
 
+.modal-dialog {
+  max-width: 900px;
+}

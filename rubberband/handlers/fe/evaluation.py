@@ -692,7 +692,7 @@ def generate_filtergroup_selector(table, evaluation):
     """
     table = table.copy()
     table["Filtergroups"] = "|all|"
-    out = '<div id="ipet-long-table-filter"><label class="col-form-label text-left">Select filtergroups:<select id="ipet-long-filter-select" class="custom-select">' # noqa
+    out = '<div id="ipet-long-table-filter col"><label class="col-form-label text-left">Select filtergroups:<select id="ipet-long-filter-select" class="custom-select">' # noqa
 
     for fg in evaluation.getActiveFilterGroups():
         table["Newfiltergroup"] = ""
@@ -732,7 +732,8 @@ def get_columns_dict(table, replace):
         colcount = 2
     cols = {}
     for c in table.columns:
+        c_repres = ",".join(c)
         if "Filtergroups" not in c:
-            cols[colcount] = replace_in_str(str(c), replace)
+            cols[colcount] = replace_in_str(str(c_repres), replace)
         colcount = colcount + 1
     return cols

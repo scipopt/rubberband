@@ -8,26 +8,66 @@ Array.prototype.allValuesSame = function() {
 }
 
 // ####################################### global vars
-var ipetlongtable;
-var ipetaggtable;
-
 var modal = document.getElementById("info-modal");
 
-var details_table;
-var meta_table;
-var settings_table;
-formatDetailsTable();
-formatMetaTable();
-formatSettingsTable();
-$(".bs-tooltip").tooltip();
-$("a.bs-popover").popover();
+var ipetlongtable;
+var ipetaggtable;
+var detailstable;
 
 // ####################################### functions
+function format_dt_searchfield(tableident) {
+  $(tableident+'_filter label').addClass("col-form-label text-left");
+  $(tableident+'_filter label input').addClass("m-0 form-control");
+}
+
+function construct_columns_toggle(tablename) {
+  /* add columns toggle buttons to datatable with id tableident */
+  var tableident = "#"+tablename;
+  console.log(tableident);
+  var table = $(tableident).DataTable();
+
+  var toolbar = $('.'+tablename+'-toolbar');
+  toolbar.addClass("float-right rb-dt-custom row");
+
+  var out = toolbar.html()+'<label class="col-form-label text-left col">Toggle columns:<select id="'+tablename+'-select" class="custom-select">';
+
+  ncols = table.columns().count()
+  // ipet long table has an invisible column for filtering
+  if (tablename.includes('ipet-long')) { ncols = ncols-1; }
+  for (colindex = 1; colindex < ncols; colindex = colindex+1) {
+    column = table.column(colindex);
+
+    coltitle = $(column.header()).text().split('\n')[0]
+    if (tablename.includes('ipet-long')) {
+      if (colindex == 1) {
+        coltitle = 'id';
+      } else {
+        arr = $('#'+tablename+'_wrapper .dataTables_scrollHead table thead tr th.col'+(colindex-1).toString());
+        coltitle = Array.prototype.join.call(arr.map((x,y) => $(y).text()),",")
+      }
+    }
+
+    out = out+'<option value="'+colindex+'">'+coltitle+"</option>";
+  }
+  out = out+"</select></label>";
+  toolbar.html(out);
+
+  $(tableident+'-select').on('change', function(e) {
+    colindex = this.value;
+    currcol = table.column(colindex);
+    currcol.visible( !currcol.visible() );
+  });
+
+}
+
 function formattolerance(val) {
   /* make a number 1eN from a number N */
   newval = Number("1e" + String(val));
   return newval.toExponential(0);
 }
+
+function buttonsDisable() { setButtons("disable"); }
+function buttonsEnable() { setButtons("enable"); }
 
 function setButtons(val) {
   /* enable and disable ipet eval buttons */
@@ -72,19 +112,24 @@ function processResponse(data, pos) {
   return arr[pos];
 };
 
-function fillModal(content) {
-  /* set modal contents to content */
-  setButtons("disabled");
-  modalAction("show");
-  document.getElementById("info-modal-content").innerHTML = content;
-};
+
+function modalShow() { modalAction("show"); }
+function modalHide() { modalAction("hide"); }
 
 function modalAction(action) {
   /* action can be hide and show for modal to be displayed or hidden */
-  if (action != "hide" && action != "show") {
+  if (action == "hide" || action == "show") {
     $(modal).modal(action);
+  } else {
+    return false;
   }
-  return false;
+};
+
+function fillModal(content) {
+  /* set modal contents to content */
+  buttonsDisable();
+  document.getElementById("info-modal-content").innerHTML = content;
+  modalShow();
 };
 
 function add_ipet_eventlisteners() {
@@ -98,6 +143,7 @@ function add_ipet_eventlisteners() {
   $(document).on(hoverTable(3), "table#ipet-long-table tbody tr");
 }
 
+//TODO this does not work yet
 function hoverTable(index) {
   /* method to toggle the hover class in a row */
   function toggleRow() {
@@ -119,7 +165,11 @@ function hoverTable(index) {
   }
 }
 
-function initIpetTables() {
+function redraw_datatables() {
+  $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+}
+
+function initIpetTables(ipetlongtoolbartext) {
   /* initialize ipet tables */
   ipetlongtable = $('table#ipet-long-table').DataTable({
     columnDefs: [
@@ -132,7 +182,6 @@ function initIpetTables() {
     },
     order: [1, "desc"],
     dom: '<"ipet-long-table-toolbar">frtip',
-
   });
   ipetaggtable = $('table#ipet-aggregated-table').DataTable({
     scrollY: '80vh', scrollX: true, scroller: true, scrollCollapse: true,
@@ -143,46 +192,26 @@ function initIpetTables() {
     dom: 'frtip',
   });
 
-  console.log("eins");
-  add_ipet_eventlisteners();
-  console.log("zwei");
   format_dt_searchfield('#ipet-long-table');
   format_dt_searchfield('#ipet-aggregated-table');
-  add_columns_toggle('ipet-long-table', ipetlongtable);
+
+  $('.ipet-long-table-toolbar').html(ipetlongtoolbartext);
+  construct_columns_toggle('ipet-long-table');
+  add_ipet_eventlisteners();
 };
 
-function redraw_datatables() {
-  $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+function initSimpleTable(tableident) {
+  $(tableident).DataTable({
+    scrollY: '80vh', scrollX: true, scroller: true, scrollCollapse: true,
+    paging: false,
+    dom: 'frtip',
+  });
 }
 
-function formatMetaTable() {
-    meta_table = $('.meta-table').DataTable({
-        scrollY: '80vh',
-        scrollX: true,
-        scroller: true,
-        scrollCollapse: true,
-        paging: false,
-        dom: 'frtip',
-    });
-}
-
-function formatSettingsTable() {
-    settings_table = $('#settings-table').DataTable({
-        scrollY: '80vh',
-        scrollX: true,
-        scroller: true,
-        scrollCollapse: true,
-        paging: false,
-        dom: 'frtip',
-    });
-}
-
-function formatDetailsTable() {
-  details_table = $('#details-table').DataTable({
-    scrollY: '80vh',
-    scrollX: true,
-    scroller: true,
-    scrollCollapse: true,
+function initDetailsTable(tablename) {
+  var tableident = "#"+tablename;
+  detailstable = $(tableident).DataTable({
+    scrollY: '80vh', scrollX: true, scroller: true, scrollCollapse: true,
     paging: false,
     columnDefs: [
       { type: 'any-number', targets: 'number' },
@@ -191,51 +220,56 @@ function formatDetailsTable() {
     fixedColumns:   {
       leftColumns: 1,
     },
-    dom: 'f<"rb-details-toolbar">rtip',
+    dom: 'f<"'+tablename+'-toolbar">rtip',
     autoWidth: false,
   });
 
-  $('button#delete-result').click(function (e) {
-    e.preventDefault()
-    $.ajax({
-      type: "DELETE",
-      url: "/result/" + end[2],
-      success: function (data){ window.location.href = "/search";},
-      error:function(){
-        alert("Something went wrong.");
-      }
-    });
-  });
-
-  $('button#reimport-result').click(function (e) {
-    e.preventDefault()
-    button = document.getElementById("reimport-result")
-    button.disabled = true;
-    currurl = window.location.href;
-    $.ajax({
-      type: "PUT",
-      url: "/result/" + end[2],
-      success: function (data){
-        alert("Reimport complete");
-        window.location.href = currurl;
-      },
-      error:function(){
-        alert("Something went wrong.");
-      }
-    });
-  });
-
-  $('a[href="#settings-filtered"]').click(function (e) {
-    e.preventDefault();
-    $("tr.default-value").remove();
-  });
+  /* want to be able to hide columns */
+  construct_columns_toggle(tablename);
+  /* we need to do this for tables with fixed columns by hand */
+  $(document).on(hoverTable(1), 'table#'+tablename+' tbody tr');
 }
+
+$('button#delete-result').click(function (e) {
+  e.preventDefault()
+  $.ajax({
+    type: "DELETE",
+    url: "/result/" + end[2],
+    success: function (data){ window.location.href = "/search";},
+    error:function(){
+      alert("Something went wrong.");
+    }
+  });
+});
+
+$('button#reimport-result').click(function (e) {
+  e.preventDefault()
+  button = document.getElementById("reimport-result")
+  button.disabled = true;
+  currurl = window.location.href;
+  $.ajax({
+    type: "PUT",
+    url: "/result/" + end[2],
+    success: function (data){
+      alert("Reimport complete");
+      window.location.href = currurl;
+    },
+    error:function(){
+      alert("Something went wrong.");
+    }
+  });
+});
+
+$('a[href="#settings-filtered"]').click(function (e) {
+  e.preventDefault();
+  $("tr.default-value").remove();
+});
 
 /*
  * Colorate the details table cells for the compare view
  */
 function colorateCells() {
-    details_table.cells().every( function () {
+    detailstable.cells().every( function () {
       // determine if tooltip is string or number
       var element = $(this.node())[0];
       if (element.attributes["title"] !== undefined) {
@@ -364,8 +398,8 @@ function computeColor(valclass, arr_values, invert) {
   }
 }
 
-function construct_toggle(toggle_id) {
-  $('span#' + toggle_id).click(function (e) {
+function construct_row_toggle(toggleident) {
+  $('span#' + toggleident).click(function (e) {
     $(this).toggleClass("fa-eye-slash fa-eye");
 
     var displaystyle = "";
@@ -373,7 +407,7 @@ function construct_toggle(toggle_id) {
       displaystyle = "none";
     }
 
-    var elements = $("." + toggle_id + "-hide");
+    var elements = $("." + toggleident + "-hide");
     for(var i=0; i<elements.length; i++){
       elements[i].style.display = displaystyle;
     }
@@ -381,146 +415,109 @@ function construct_toggle(toggle_id) {
   });
 }
 
-function add_columns_toggle() {
-  var toolbar = $('.rb-details-toolbar');
-  toolbar.addClass("float-right rb-dt-custom");
-  var out = '<label class="col-form-label text-left">Toggle columns:<select id="rb-details-select" class="custom-select">';
-  for (colindex = 1; colindex < details_table.columns().count(); colindex = colindex+1) {
-    column = details_table.column(colindex);
-    coltitle = $(column.header()).text().split('\n')[0]
-    out = out+'<option value="'+colindex+'">'+coltitle+"</option>";
-  }
-  out = out+"</select></label>";
-
-  $('.rb-details-toolbar').html(out);
-  $('#rb-details-select').on('change', function(e) {
-    colindex = this.value;
-    currcol = details_table.column(colindex);
-    currcol.visible( !currcol.visible() );
-  });
-
-  $('#details-table_filter label').addClass("col-form-label text-left");
-  $('#details-table_filter label input').addClass("m-0 form-control");
-}
+// ######################## on document ready
 
 $(document).ready(function(){
-  construct_toggle("toggle-settings");
-  construct_toggle("toggle-meta");
-  add_columns_toggle();
-});
+  /* init datatables */
+  initDetailsTable('details-table');
+  initSimpleTable('.meta-table, #settings-table');
+  format_dt_searchfield(".dataTables");
+  construct_row_toggle("toggle-settings");
+  construct_row_toggle("toggle-meta");
 
-// when window is resized
-$(window).resize(function(){
-  redraw_datatables();
-});
+  $(".bs-tooltip").tooltip();
+  $("a.bs-popover").popover();
 
-/* adjust tables */
-$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-  redraw_datatables();
-});
+  // when window is resized
+  $(window).resize(redraw_datatables);
 
-// if compare is in query string, then we are in the compare view but only in a comparison to exactly one
-//if ((window.location.search.indexOf("compare") >= 0) && !(window.location.valueOf("compare").toString().includes(","))) {
+  /* adjust tables */
+  $('a[data-toggle="tab"]').on('shown.bs.tab', redraw_datatables);
 
-// if compare is in query string, then we are in the compare view
-if (window.location.search.indexOf("compare") >= 0) {
-  colorateCells();
-}
+  // if compare is in query string, then we are in the compare view
+  if (window.location.search.indexOf("compare") >= 0) { colorateCells(); }
 
-// ######################## clickable elements
-
-/* TODO
-$('#eval-tolerance-slider').slider({
-  formatter: function(val) {
-    return formattolerance(val);
-  }
-});
-*/
-
-$('div#evaluation').on('change', 'select#ipet-long-filter-select', function (e) {
-  /* make long table searchable for filtergroups */
-  console.log();
-  fg_name = this.value;
-  // The '|' are for avoiding trouble with substrings
-  ipetlongtable.search("|"+fg_name+"|").draw()
-});
-
-/* hide modal on click into window */
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modalAction("hide");
-  }
-};
-
-$('button#ipet-eval-show-button').click(function (e) {
-  localdata = getData();
-
-  // construct url
-  evalurl = "/display/eval/" + localdata.form.evalid;
-  $.ajax({
-    type: "GET",
-    url: evalurl,
-    success:function(data) {
-      fillModal(data);
-      setButtons("enable");
-    },
-    error:function(data){
-      fillModal("Something went wrong.");
-      setButtons("enable");
+  /* TODO
+  $('#eval-tolerance-slider').slider({
+    formatter: function(val) {
+      return formattolerance(val);
     }
   });
-});
+  */
 
-$('button#ipet-eval-download-button').click(function (e) {
-  data = getData();
-  evalurl = "/download?evaluation=" + data.form.evalid;
-  window.location.href = evalurl;
-});
+  // ######################## clickable elements
 
-$('button#ipet-eval-button').click(function (e) {
-  evalurl = getData().url.evalurl;
-  fillModal("Evaluating");
+  $('div#evaluation').on('change', 'select#ipet-long-filter-select', function (e) {
+    /* make long table searchable for filtergroups */
+    fg_name = this.value;
+    // The '|' are for avoiding trouble with substrings
+    ipetlongtable.search("|"+fg_name+"|").draw()
+  });
 
-  var xhr = new XMLHttpRequest();
-  xhr.open('GET', evalurl);
-  xhr.onload = function() {
-    setButtons("enable");
-    data = processResponse(xhr.responseText, 2);
-    datadict = JSON.parse(data);
-    for(var key in datadict) {
-      if (key == "rb-ipet-buttons") {
-        continue;
-      }
-      var targetel = document.getElementById(key)
-      targetel.innerHTML = datadict[key];
+  /* hide modal on click into window */
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modalHide();
     }
+  };
 
-    initIpetTables();
+  $('button#ipet-eval-show-button').click(function (e) {
+    localdata = getData();
 
-    $("div.ipet-long-table-toolbar").html(datadict["rb-ipet-buttons"]);
-
-    $('#rb-ipet-eval-result').on('shown.bs.collapse', function(e) {
-      redraw_datatables();
+    // construct url
+    evalurl = "/display/eval/" + localdata.form.evalid;
+    $.ajax({
+      type: "GET",
+      url: evalurl,
+      success:function(data) {
+        fillModal(data);
+        buttonsEnable();
+      },
+      error:function(data){
+        fillModal("Something went wrong.");
+        buttonsEnable();
+      }
     });
-  };
-  xhr.onerror = function(e) {
-    setButtons("enable");
-  };
-  xhr.onprogress = function(e) {
-    fillModal(processResponse(xhr.responseText,1));
-  };
-  xhr.send();
-});
+  });
 
-$('button#ipet-eval-latex-button').click(function (e) {
-  evalurl = getData().url.evalurl + "&style=latex";
-  window.open(evalurl, "_blank");
-});
+  $('button#ipet-eval-download-button').click(function (e) {
+    data = getData();
+    evalurl = "/download?evaluation=" + data.form.evalid;
+    window.location.href = evalurl;
+  });
 
-$('button#info-modal-close').click(function (e) {
-  modalAction("hide");
-});
+  $('button#ipet-eval-button').click(function (e) {
+    evalurl = getData().url.evalurl;
+    fillModal("Evaluating");
 
-$('button#ipet-eval-show-log').click(function (e) {
-  modalAction("show");
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', evalurl);
+    xhr.onload = function() {
+      buttonsEnable();
+      data = processResponse(xhr.responseText, 2);
+      datadict = JSON.parse(data);
+      for(var key in datadict) {
+        if (key == "rb-ipet-buttons") {
+          continue;
+        }
+        var targetel = document.getElementById(key)
+        targetel.innerHTML = datadict[key];
+      }
+
+      initIpetTables(datadict["rb-ipet-buttons"]);
+      $('#rb-ipet-eval-result').on('shown.bs.collapse', redraw_datatables);
+    };
+    xhr.onerror = buttonsDisable;
+    xhr.onprogress = function(e) {
+      fillModal(processResponse(xhr.responseText,1));
+    };
+    xhr.send();
+  });
+
+  $('button#ipet-eval-latex-button').click(function (e) {
+    window.open( getData().url.evalurl + "&style=latex" , "_blank");
+  });
+
+  $('button#ipet-eval-show-log').click(modalShow);
+  $('button#info-modal-close').click(modalHide);
 });
