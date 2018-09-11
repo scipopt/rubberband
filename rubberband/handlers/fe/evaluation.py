@@ -86,10 +86,6 @@ class EvaluationView(BaseHandler):
 
             # get substitutions dictionary
             repres = setup_substitutions_dict(testruns)
-            for i,j in repres.items():
-                print(i)
-                for k,l in j.items():
-                    print("{} -> {}".format(k,l))
 
             cols_dict = get_columns_dict(longtable, repres["short"])
 

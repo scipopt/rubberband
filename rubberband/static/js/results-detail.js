@@ -7,6 +7,12 @@ Array.prototype.allValuesSame = function() {
   return true;
 }
 
+// ####################################### global vars
+var ipetlongtable;
+var ipetaggtable;
+
+var modal = document.getElementById("info-modal");
+
 var details_table;
 var meta_table;
 var settings_table;
@@ -15,6 +21,135 @@ formatMetaTable();
 formatSettingsTable();
 $(".bs-tooltip").tooltip();
 $("a.bs-popover").popover();
+
+// ####################################### functions
+function formattolerance(val) {
+  /* make a number 1eN from a number N */
+  newval = Number("1e" + String(val));
+  return newval.toExponential(0);
+}
+
+function setButtons(val) {
+  /* enable and disable ipet eval buttons */
+  var value = false;
+  if (val == "enabled") {
+    var value = true;
+  }
+  $("#ipet-eval-menu .rb-wait").each(function() {
+    this.disabled = value;
+  });
+};
+
+function getData() {
+  /* get data from eval form */
+  evalid = $("#ipet-eval-file-select").val();
+  defaultrun = $("#rb-legend-table input[type='radio']:checked").val();
+  tolerance = formattolerance( $("#eval-tolerance-slider")[0].value);
+
+  /* get data from url */
+  url = window.location.href;
+  search = window.location.search;
+  path = window.location.pathname.split("/");
+
+  // construct evaluation url
+  getstr = (url.split("compare"+'=')[1] || '').split('&')[0];
+  idlist = "?testruns=" + path[2];
+  if (getstr != "") {
+    idlist = idlist + "," + getstr;
+  }
+  evalurl = "/eval/" + evalid + idlist + "&tolerance=" + tolerance + "&default=" + defaultrun;
+
+  return {
+    form: { evalid: evalid, defaultrun: defaultrun, tolerance: tolerance, },
+    url: { full: url, search: search, path: path, evalurl: evalurl, }
+  }
+};
+
+function processResponse(data, pos) {
+  /* process the raw response of the ipet evaluation */
+  stamp = data.substring(0, 32);
+  arr = data.split(stamp);
+  return arr[pos];
+};
+
+function fillModal(content) {
+  /* set modal contents to content */
+  setButtons("disabled");
+  modalAction("show");
+  document.getElementById("info-modal-content").innerHTML = content;
+};
+
+function modalAction(action) {
+  /* action can be hide and show for modal to be displayed or hidden */
+  if (action != "hide" && action != "show") {
+    $(modal).modal(action);
+  }
+  return false;
+};
+
+function add_ipet_eventlisteners() {
+  /* add event listeners for long table */
+  // plot_custom_chart defined in ipet-custom-plot.js
+  ipetlongtable.on('search.dt', plot_custom_chart);
+  ipetlongtable.on('order.dt', plot_custom_chart);
+
+  /* hovering for ipet tables */
+  $(document).on(hoverTable(2), "table#ipet-aggregated-table tbody tr");
+  $(document).on(hoverTable(3), "table#ipet-long-table tbody tr");
+}
+
+function hoverTable(index) {
+  /* method to toggle the hover class in a row */
+  function toggleRow() {
+    /* hovering for ipet tables */
+    trIndex = $(this).index()+index;
+    $(this).parent().parent().each(function(index) {
+      row = $(this).find("tr:eq("+trIndex+")")
+      row.toggleClass("hover");
+      row.each(function(index) {
+        $(this).find("td").toggleClass("hover");
+        $(this).find("th").toggleClass("hover");
+      });
+    });
+  }
+  /* return the dictionary for the eventlisteners */
+  return {
+    mouseenter: toggleRow,
+    mouseleave: toggleRow,
+  }
+}
+
+function initIpetTables() {
+  /* initialize ipet tables */
+  ipetlongtable = $('table#ipet-long-table').DataTable({
+    columnDefs: [
+      { targets: [-1], searchable: true, visible: false, },
+    ],
+    scrollY: '80vh', scrollX: true, scroller: true, scrollCollapse: true,
+    paging:         false,
+    fixedColumns:   {
+      leftColumns: 1,
+    },
+    order: [1, "desc"],
+    dom: '<"ipet-long-table-toolbar">frtip',
+
+  });
+  ipetaggtable = $('table#ipet-aggregated-table').DataTable({
+    scrollY: '80vh', scrollX: true, scroller: true, scrollCollapse: true,
+    paging:         false,
+    fixedColumns:   {
+      leftColumns: 2,
+    },
+    dom: 'frtip',
+  });
+
+  console.log("eins");
+  add_ipet_eventlisteners();
+  console.log("zwei");
+  format_dt_searchfield('#ipet-long-table');
+  format_dt_searchfield('#ipet-aggregated-table');
+  add_columns_toggle('ipet-long-table', ipetlongtable);
+};
 
 function redraw_datatables() {
   $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
@@ -292,3 +427,100 @@ if (window.location.search.indexOf("compare") >= 0) {
   colorateCells();
 }
 
+// ######################## clickable elements
+
+/* TODO
+$('#eval-tolerance-slider').slider({
+  formatter: function(val) {
+    return formattolerance(val);
+  }
+});
+*/
+
+$('div#evaluation').on('change', 'select#ipet-long-filter-select', function (e) {
+  /* make long table searchable for filtergroups */
+  console.log();
+  fg_name = this.value;
+  // The '|' are for avoiding trouble with substrings
+  ipetlongtable.search("|"+fg_name+"|").draw()
+});
+
+/* hide modal on click into window */
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modalAction("hide");
+  }
+};
+
+$('button#ipet-eval-show-button').click(function (e) {
+  localdata = getData();
+
+  // construct url
+  evalurl = "/display/eval/" + localdata.form.evalid;
+  $.ajax({
+    type: "GET",
+    url: evalurl,
+    success:function(data) {
+      fillModal(data);
+      setButtons("enable");
+    },
+    error:function(data){
+      fillModal("Something went wrong.");
+      setButtons("enable");
+    }
+  });
+});
+
+$('button#ipet-eval-download-button').click(function (e) {
+  data = getData();
+  evalurl = "/download?evaluation=" + data.form.evalid;
+  window.location.href = evalurl;
+});
+
+$('button#ipet-eval-button').click(function (e) {
+  evalurl = getData().url.evalurl;
+  fillModal("Evaluating");
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', evalurl);
+  xhr.onload = function() {
+    setButtons("enable");
+    data = processResponse(xhr.responseText, 2);
+    datadict = JSON.parse(data);
+    for(var key in datadict) {
+      if (key == "rb-ipet-buttons") {
+        continue;
+      }
+      var targetel = document.getElementById(key)
+      targetel.innerHTML = datadict[key];
+    }
+
+    initIpetTables();
+
+    $("div.ipet-long-table-toolbar").html(datadict["rb-ipet-buttons"]);
+
+    $('#rb-ipet-eval-result').on('shown.bs.collapse', function(e) {
+      redraw_datatables();
+    });
+  };
+  xhr.onerror = function(e) {
+    setButtons("enable");
+  };
+  xhr.onprogress = function(e) {
+    fillModal(processResponse(xhr.responseText,1));
+  };
+  xhr.send();
+});
+
+$('button#ipet-eval-latex-button').click(function (e) {
+  evalurl = getData().url.evalurl + "&style=latex";
+  window.open(evalurl, "_blank");
+});
+
+$('button#info-modal-close').click(function (e) {
+  modalAction("hide");
+});
+
+$('button#ipet-eval-show-log').click(function (e) {
+  modalAction("show");
+});

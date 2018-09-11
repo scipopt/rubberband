@@ -4,6 +4,7 @@ body { /* main body */
   font-family: 'Fira Mono', sans-serif;
   font-family: 'Fira Sans', sans-serif;
   padding-top: 3.5rem; /* Move content down because we have a fixed navbar that is 50px tall */
+  min-width: 100px;
 }
 .main {
   padding: 20px;
@@ -131,8 +132,14 @@ tbody > tr.hover > th,
 /* ---- end tables -------------- */
 
 /* ---- datatables -------------- */
-.dataTables_filter { /* move datatables search field to the left */
+/* custom datatable toolbar elements */
+div.rb-dt-custom {
+  float: right !important;
+  margin-top: 0rem !important;
+}
+div.dataTables_filter { /* move datatables search field to the left */
   float: left !important;
+  margin-top: 0rem !important;
 }
 div.ipet-long-toolbar { /* in evaluated long table datatable*/
   float: right !important;
@@ -143,10 +150,6 @@ div.ipet-long-toolbar { /* in evaluated long table datatable*/
 }
 .dt-buttons {
   align: right;
-}
-/* custom datatable toolbar elements */
-.rb-dt-custom {
-  margin-top: 0.5rem;
 }
 /* ---- end datatables -------------- */
 
