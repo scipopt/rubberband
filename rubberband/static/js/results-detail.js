@@ -437,13 +437,10 @@ $(document).ready(function(){
   // if compare is in query string, then we are in the compare view
   if (window.location.search.indexOf("compare") >= 0) { colorateCells(); }
 
-  /* TODO
-  $('#eval-tolerance-slider').slider({
-    formatter: function(val) {
-      return formattolerance(val);
-    }
+  /* update the number */
+  $('#eval-tolerance-slider').on('input', function() {
+    document.getElementById('ipet-tolerance-value').innerHTML = formattolerance(this.value);
   });
-  */
 
   // ######################## clickable elements
 
