@@ -150,15 +150,12 @@ function hoverTable(index, name) {
       });
     });
   }
-  /* return the dictionary for the eventlisteners */
-  return {
-    mouseenter: toggleRow,
-    mouseleave: toggleRow,
-  }
+  return toggleRow;
 }
 
 function redraw_datatables() {
   $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+  $($.fn.dataTable.tables(true)).DataTable().fixedColumns().relayout();
 }
 
 function initIpetTables(ipetlongtoolbartext) {
@@ -219,7 +216,7 @@ function initDetailsTable(tablename) {
   /* want to be able to hide columns */
   construct_columns_toggle(tablename);
   /* we need to do this for tables with fixed columns by hand */
-  $(document).on(hoverTable(1, tablename), 'table#'+tablename+' tbody tr');
+  $(document).on('mouseenter mouseleave', 'table#'+tablename+' tbody tr', hoverTable(1, tablename));
 }
 
 $('button#delete-result').click(function (e) {
@@ -420,11 +417,13 @@ $(document).ready(function(){
   $(".bs-tooltip").tooltip();
   $("a.bs-popover").popover();
 
-  // when window is resized
-  $(window).resize(redraw_datatables);
-
   /* adjust tables */
+  /* when window is resized */
+  $(window).resize(redraw_datatables);
+  /* tab is toggled */
   $('a[data-toggle="tab"]').on('shown.bs.tab', redraw_datatables);
+  /* something is uncollapsed in evaluation tab */
+  $('#rb-ipet-eval-result').on('shown.bs.collapse', redraw_datatables);
 
   // if compare is in query string, then we are in the compare view
   if (window.location.search.indexOf("compare") >= 0) { colorateCells(); }
@@ -494,7 +493,6 @@ $(document).ready(function(){
       }
 
       initIpetTables(datadict["rb-ipet-buttons"]);
-      $('#rb-ipet-eval-result').on('shown.bs.collapse', redraw_datatables);
     };
     xhr.onerror = buttonsDisable;
     xhr.onprogress = function(e) {
@@ -511,6 +509,7 @@ $(document).ready(function(){
   $('button#info-modal-close').click(modalHide);
 
   /* hovering for ipet tables */
-  $(document).on(hoverTable(2, 'ipet-aggregated-table'), '#ipet-aggregated-table_wrapper tbody tr');
-  $(document).on(hoverTable(3, 'ipet-long-table'),       '#ipet-long-table_wrapper tbody tr');
+  /* note: by binding these to document, we don't have to wait until after the evaluation */
+  $(document).on('mouseenter mouseleave', '#ipet-aggregated-table_wrapper tbody tr', hoverTable(2, 'ipet-aggregated-table'));
+  $(document).on('mouseenter mouseleave', '#ipet-long-table_wrapper tbody tr', hoverTable(3, 'ipet-long-table'));
 });

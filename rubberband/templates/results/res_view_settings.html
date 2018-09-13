@@ -27,10 +27,19 @@
 
       <thead><tr>
         <th>Setting name</th>
-        <th>Run value</th>
-        {% for c in compare %}
-          {% if c.settings %}
-            <th>Compare</th>
+        {% if representation is not None %}
+          <th>{% raw shortening_repres_id(representation, file.id) %}</th>
+          {% for c in compare %}
+            {% if c.settings %}
+              <th>{% raw shortening_repres_id(representation, c.id) %}</th>
+            {% end %}
+          {% end %}
+        {% else %}
+          <th>Run value</th>
+          {% for c in compare %}
+            {% if c.settings %}
+              <th>Compare</th>
+            {% end %}
           {% end %}
         {% end %}
         <th>Default value</th>

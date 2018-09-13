@@ -7,7 +7,7 @@ import traceback
 
 from rubberband.constants import NONE_DISPLAY, INFINITY_KEYS, \
         INFINITY_MASK, INFINITY_DISPLAY, FORMAT_DATETIME_LONG, DT_STYLE
-from rubberband.utils.helpers import shorten_str, get_link, shortening_span
+from rubberband.utils.helpers import shorten_str, get_link, shortening_span, shortening_repres_id
 
 
 class BaseHandler(RequestHandler):
@@ -161,6 +161,7 @@ class BaseHandler(RequestHandler):
             are_equivalent=self.are_equivalent,
             shorten_str=shorten_str,
             shortening_span=shortening_span,
+            shortening_repres_id=shortening_repres_id,
             get_link=get_link,
             options=options,
             # to get a random number, used to reload css everytime, for debugging

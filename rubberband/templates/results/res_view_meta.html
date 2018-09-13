@@ -18,9 +18,16 @@
     <table class="meta-table rb-table {{rb_dt_compact}} {{rb_dt_borderless}}" width="100%">
       <thead><tr>
         <th>Field</th>
-        <th>Base</th>
-        {% for f in compare %}
-          <th>Compare</th>
+        {% if representation is not None %}
+          <th>{% raw shortening_repres_id(representation, file.id) %}</th>
+          {% for c in compare %}
+            <th>{% raw shortening_repres_id(representation, c.id) %}</th>
+          {% end %}
+        {% else %}
+          <th>Base</th>
+          {% for c in compare %}
+            <th>Compare</th>
+          {% end %}
         {% end %}
       </tr></thead>
 
@@ -159,9 +166,16 @@
 
       <thead><tr>
         <th>Field</th>
-        <th>Base</th>
-        {% for f in compare %}
-          <th>Compare</th>
+        {% if representation is not None %}
+          <th>{% raw shortening_repres_id(representation, file.id) %}</th>
+          {% for c in compare %}
+            <th>{% raw shortening_repres_id(representation, c.id) %}</th>
+          {% end %}
+        {% else %}
+          <th>Base</th>
+          {% for c in compare %}
+            <th>Compare</th>
+          {% end %}
         {% end %}
       </tr></thead>
 

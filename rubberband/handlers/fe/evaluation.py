@@ -1,21 +1,18 @@
 """Contains EvaluationView."""
-from datetime import datetime
 from lxml import html
-
-from .base import BaseHandler
-from rubberband.constants import IPET_EVALUATIONS, FORMAT_DATETIME_SHORT, \
-        NONE_DISPLAY, ALL_SOLU
-from rubberband.models import TestSet
-from rubberband.utils import RBLogHandler
-from rubberband.utils.helpers import shorten_str
-
-from ipet import Experiment, TestRun
-from ipet.evaluation import IPETEvaluation
 import pandas as pd
 
 import json
-import string
 import logging
+
+from .base import BaseHandler
+from rubberband.constants import IPET_EVALUATIONS, NONE_DISPLAY, ALL_SOLU
+from rubberband.models import TestSet
+from rubberband.utils import RBLogHandler
+from rubberband.utils.helpers import get_rbid_representation, setup_testruns_subst_dict
+
+from ipet import Experiment, TestRun
+from ipet.evaluation import IPETEvaluation
 
 
 class EvaluationView(BaseHandler):
@@ -33,7 +30,7 @@ class EvaluationView(BaseHandler):
             id of evaluation file read from url by routes.
 
         Writes latex version of ipet-agg-table via file.html if style option in url is `latex`,
-        else it writes ipet-long-table and ipet-agg-table as json
+        else it writes ipet-long-table and ipet-aggregated-table into a json dict
         """
         # default and implicit style is ipetevaluation. if given latex, generate a table in the
         # style of the release report
@@ -85,7 +82,7 @@ class EvaluationView(BaseHandler):
             fg_buttons_str, longtable["Filtergroups"] = generate_filtergroup_selector(longtable, ev)
 
             # get substitutions dictionary
-            repres = setup_substitutions_dict(testruns)
+            repres = setup_testruns_subst_dict(testruns)
 
             cols_dict = get_columns_dict(longtable, repres["short"])
 
@@ -103,10 +100,10 @@ class EvaluationView(BaseHandler):
             rbhandler.close()
 
             # postprocessing
-            html_long = process_ipet_table(html_long, repres["short"], add_ind=False) + \
-                html.tostring(style_long).decode("utf-8")
-            html_agg = process_ipet_table(html_agg, repres["long"], add_ind=True) + \
-                html.tostring(style_agg).decode("utf-8")
+            html_long = process_ipet_table(html_long, repres["short"], add_ind=False,
+                    swap=True) + html.tostring(style_long).decode("utf-8")
+            html_agg = process_ipet_table(html_agg, repres["long"], add_ind=True,
+                    swap=False) + html.tostring(style_agg).decode("utf-8")
 
             # render to strings
             html_tables = self.render_string("results/evaluation.html",
@@ -114,19 +111,8 @@ class EvaluationView(BaseHandler):
                     ipet_aggregated_table=html_agg,
                     columns=cols_dict).decode("utf-8")
 
-            # sort testruns by their representation and render table
-            testruns = sorted(testruns,
-                    key=lambda x: repres['long'][get_rbid_representation(x, "extended")])
-            results_table = self.render_string("results_table.html",
-                    results=testruns,
-                    representation=repres["template"],
-                    radiobuttons=True,
-                    checked=default_id,
-                    tablename="rb-legend-table").decode("utf-8")
-
             # send evaluated data
-            mydict = {"rb-legend": results_table,
-                      "rb-ipet-eval-result": html_tables,
+            mydict = {"rb-ipet-eval-result": html_tables,
                       "rb-ipet-buttons": fg_buttons_str }
             self.write(json.dumps(mydict))
 
@@ -333,100 +319,7 @@ def setup_experiment(testruns):
     return ex
 
 
-def get_rbid_representation(testrun, mode="extended"):
-    """
-    Get representative string for a testrun.
-
-    This is used for uniqueness and sorting
-
-    Parameters
-    ----------
-    testrun : rubberband.TestSet
-        TestSet to be represented
-    mode : str
-        ["extended", "readable"] format of representative
-
-    Returns
-    -------
-    str
-        representation
-    """
-    ts = ""
-    ts_time = ""
-    if testrun.git_commit_timestamp:
-        ts = "(" + datetime.strftime(testrun.git_commit_timestamp, FORMAT_DATETIME_SHORT) + ")"
-        ts_time = datetime.strftime(testrun.git_commit_timestamp, "%Y%m%d%H%M%S")
-
-    if mode == "readable":
-        rbid_repres = " " + shorten_str(testrun.settings_short_name, 15, 5) + " " + ts
-    else:  # if mode == "extended"
-        rbid_repres = ts_time + testrun.settings_short_name + testrun.id
-
-    return rbid_repres
-
-
-def setup_substitutions_dict(testruns):
-    """
-    Setup the substitutions dictionary for the regular view.
-
-    Parameters
-    ----------
-    testruns : list
-        a list of rubberband TestSet
-
-    Returns
-    -------
-    dict
-        dictionary of representation key value pairs
-    """
-    # get representations letters
-    letters = get_letters(len(testruns))
-
-    # for long table, for aggregated (short) table and for the results_table (template)
-    repres = {"long": {}, "short": {}, "template": {}}
-
-    # substitutions in both tables
-    for k in ["long", "short"]:
-        repres[k]["GitHash"] = "Commit"
-
-    for tr in testruns:
-        if tr.git_commit_timestamp:
-            ts = "(" + datetime.strftime(tr.git_commit_timestamp, FORMAT_DATETIME_SHORT) + ")"
-        else:
-            ts = ""
-
-        extended_rbid = get_rbid_representation(tr, "extended")
-        readable_rbid = get_rbid_representation(tr, "readable")
-
-        for k in ["long", "short"]:
-            repres[k][tr.git_hash] = ts
-
-        repres["long"][extended_rbid] = readable_rbid
-        repres["template"][extended_rbid] = tr.id
-
-    count = 0
-
-    # sort testruns by extended_rbid
-    for extended_rbid in sorted(repres["template"].keys()):
-        tid = repres["template"][extended_rbid]
-
-        # prepend a letter to the readable_rbid
-        longname = letters[count] + repres["long"][extended_rbid]
-
-        # substitute the extended_rbids with a sortable and readable name
-        repres["short"][extended_rbid] = letters[count]
-        repres["long"][extended_rbid] = longname
-
-        # in the template we need the testrun id as a key
-        repres["template"][tid] = longname
-
-        # count through the letters of the alphabet
-        count = count + 1
-
-    return repres
-
-
-def process_ipet_table(table, repres, add_ind=False):
+def process_ipet_table(table, repres, add_ind=False, swap=False):
     """
     Make some modifications to the html structure.
 
@@ -440,6 +333,8 @@ def process_ipet_table(table, repres, add_ind=False):
         Replacement dictionary, `key` -> `value`
     add_ind : bool
         Add indices to rows
+    swap : bool
+        Swap the first two rows of header
 
     Returns
     -------
@@ -480,32 +375,6 @@ def replace_in_str(rstring, repres):
     for k, v in repres.items():
         rstring = rstring.replace(k, v)
     return rstring
-
-
-def get_letters(quantity):
-    """
-    Construct an alphabetical list of letters.
-
-    Parameters
-    ----------
-    quantity : int
-        length of requested list, maximum length is 26^2.
-
-    Returns
-    -------
-    list
-
-    Example
-    -------
-    >>> 3
-    ['A', 'B', 'C']
-    >>> 29
-    ['AA', 'AB', ... , 'AZ', 'BA', 'BB']
-    """
-    letters = list(string.ascii_uppercase)
-    if quantity > 26:
-        letters = [x + y for x in letters for y in letters]
-    return letters
 
 
 def highlight_series(s):

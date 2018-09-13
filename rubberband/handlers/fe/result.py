@@ -5,6 +5,7 @@ import logging
 from .base import BaseHandler
 from rubberband.models import TestSet
 from rubberband.utils import ResultClient, write_file
+from rubberband.utils.helpers import setup_testruns_subst_dict, get_rbid_representation
 from rubberband.constants import EXPORT_FILE_TYPES, IPET_EVALUATIONS
 
 
@@ -69,12 +70,21 @@ class ResultView(BaseHandler):
             file_contents = getattr(obj, "raw")(ftype=ftype)
             fileoptions[ftype] = (file_contents is not None)
 
-        rrt = self.render_string("results_table.html", results=[parent] + compare,
-                tablename="rb-legend-table", checked=parent.meta.id, radiobuttons=True)
-        self.render("result_view.html", file=parent, compare=compare,
-                    sets=sets, meta=meta, comparelist=comparelist,
-                    rendered_results_table=rrt, fileoptions=fileoptions,
-                    downloadzip=downloadziplink, evals=IPET_EVALUATIONS)
+        # sort testruns by their representation and render table
+        # get substitutions dictionary
+        testruns = [parent] + compare
+        repres = setup_testruns_subst_dict(testruns)
+        testruns = sorted(testruns, \
+                key=lambda x: repres['long'][get_rbid_representation(x, "extended")])
+
+        rrt = self.render_string("results_table.html", results=testruns,
+                representation=repres, tablename="rb-legend-table",
+                checked=parent.meta.id, radiobuttons=True)
+
+        self.render("result_view.html", file=parent, compare=compare, sets=sets, meta=meta,
+                comparelist=comparelist, representation=repres,
+                rendered_results_table=rrt, fileoptions=fileoptions,
+                downloadzip=downloadziplink, evals=IPET_EVALUATIONS)
 
     def post(self, parent_id):
         """
