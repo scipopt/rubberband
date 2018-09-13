@@ -101,26 +101,31 @@ th.col_heading {
 th.row_heading {
   text-align: left;
 }
-.rb-table-data {
+table.rb-table-data {
   white-space: nowrap;
 }
-.rb-table-data .number {
+table.rb-table-data .number {
   text-align: right;
 }
-.rb-table-data .text {
+table.rb-table-data .text {
   text-align: left;
 }
 tbody > tr.hover > td,
 tbody > tr.hover > th,
-.rb-table tbody tr:hover td,
-.rb-table tbody tr:hover th {
+table.rb-table tbody tr:hover td,
+table.rb-table tbody tr:hover th {
   background-color: #bdf !important;
 }
-.rb-table-testrun {
-  margin-bottom: 1rem;
-  overflow: auto;
+table.rb-table td {
+  padding: 4px;
 }
-.rb-wrap-table {
+/*
+table.rb-table tbody {
+  border-top: 1px black solid;
+  border-bottom: 1px black solid;
+}
+*/
+table.rb-wrap-table {
   /* wrapping for tables */
   word-break: break-word;
   vertical-align: top;
@@ -129,6 +134,11 @@ tbody > tr.hover > th,
   color: #666666;
   background-color: #f3f3f3 !important;
 }
+div.rb-table-testrun {
+  margin-bottom: 1rem;
+  overflow: auto;
+}
+
 /* ---- end tables -------------- */
 
 /* ---- datatables -------------- */

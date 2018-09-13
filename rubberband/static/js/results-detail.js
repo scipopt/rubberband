@@ -23,7 +23,6 @@ function format_dt_searchfield(tableident) {
 function construct_columns_toggle(tablename) {
   /* add columns toggle buttons to datatable with id tableident */
   var tableident = "#"+tablename;
-  console.log(tableident);
   var table = $(tableident).DataTable();
 
   var toolbar = $('.'+tablename+'-toolbar');
@@ -89,11 +88,10 @@ function getData() {
   /* get data from url */
   url = window.location.href;
   search = window.location.search;
-  path = window.location.pathname.split("/");
 
   // construct evaluation url
   getstr = (url.split("compare"+'=')[1] || '').split('&')[0];
-  idlist = "?testruns=" + path[2];
+  idlist = "?testruns=" + path.split("/")[2];
   if (getstr != "") {
     idlist = idlist + "," + getstr;
   }
@@ -101,7 +99,7 @@ function getData() {
 
   return {
     form: { evalid: evalid, defaultrun: defaultrun, tolerance: tolerance, },
-    url: { full: url, search: search, path: path, evalurl: evalurl, }
+    url: { full: url, search: search, evalurl: evalurl, }
   }
 };
 
@@ -137,24 +135,18 @@ function add_ipet_eventlisteners() {
   // plot_custom_chart defined in ipet-custom-plot.js
   ipetlongtable.on('search.dt', plot_custom_chart);
   ipetlongtable.on('order.dt', plot_custom_chart);
-
-  /* hovering for ipet tables */
-  $(document).on(hoverTable(2), "table#ipet-aggregated-table tbody tr");
-  $(document).on(hoverTable(3), "table#ipet-long-table tbody tr");
 }
 
-//TODO this does not work yet
-function hoverTable(index) {
+function hoverTable(index, name) {
   /* method to toggle the hover class in a row */
   function toggleRow() {
     /* hovering for ipet tables */
     trIndex = $(this).index()+index;
-    $(this).parent().parent().each(function(index) {
+    $("#"+name+'_wrapper table.dataTable').each(function(index) {
       row = $(this).find("tr:eq("+trIndex+")")
       row.toggleClass("hover");
       row.each(function(index) {
         $(this).find("td").toggleClass("hover");
-        $(this).find("th").toggleClass("hover");
       });
     });
   }
@@ -227,7 +219,7 @@ function initDetailsTable(tablename) {
   /* want to be able to hide columns */
   construct_columns_toggle(tablename);
   /* we need to do this for tables with fixed columns by hand */
-  $(document).on(hoverTable(1), 'table#'+tablename+' tbody tr');
+  $(document).on(hoverTable(1, tablename), 'table#'+tablename+' tbody tr');
 }
 
 $('button#delete-result').click(function (e) {
@@ -517,4 +509,8 @@ $(document).ready(function(){
 
   $('button#ipet-eval-show-log').click(modalShow);
   $('button#info-modal-close').click(modalHide);
+
+  /* hovering for ipet tables */
+  $(document).on(hoverTable(2, 'ipet-aggregated-table'), '#ipet-aggregated-table_wrapper tbody tr');
+  $(document).on(hoverTable(3, 'ipet-long-table'),       '#ipet-long-table_wrapper tbody tr');
 });

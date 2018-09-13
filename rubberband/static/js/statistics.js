@@ -61,7 +61,7 @@ function addNewField(count) {
 
 
 function initializeTypeahead(count) {
-    var testset_id = window.location.pathname.split("/")[2];
+    var testset_id = path.split("/")[2];
     $.get('/instances/' + testset_id, function(data){
         var test_set = Object.keys(data)[0];
         var instances = Object.keys(data[test_set]);
@@ -71,19 +71,19 @@ function initializeTypeahead(count) {
 }
 
 
-function getParts(query_string) {                                                                   
-  /* utility method that parses a query string */                                                 
-  var match,                                                                                  
-  pl     = /\+/g,  // Regex for replacing addition symbol with a space                        
-  search = /([^&=]+)=?([^&]*)/g,                                                              
-  decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },                   
-  query  = query_string.substring(1);                                                         
-																								 
-  params = {};                                                                                    
-  while (match = search.exec(query))                                                              
-    params[decode(match[1])] = decode(match[2]);                                                 
-																								 
-  return params;                                                                                  
+function getParts(query_string) {
+  /* utility method that parses a query string */
+  var match,
+  pl     = /\+/g,  // Regex for replacing addition symbol with a space
+  search = /([^&=]+)=?([^&]*)/g,
+  decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+  query  = query_string.substring(1);
+
+  params = {};
+  while (match = search.exec(query))
+    params[decode(match[1])] = decode(match[2]);
+
+  return params;
 }
 
 function prefillFields() {
