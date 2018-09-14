@@ -20,6 +20,9 @@ routes = [
     (r"/user", fe.UserView),
     (r"/visualize", fe.VisualizeView),
 
+    # for typeahead in statistic.js
+    (r"/instances/?(?P<parent_id>[^\/]+)", fe.InstanceEndpoint),
+
     # for typeahead in visualize.js
     (r"/instances/names", fe.InstanceNamesEndpoint),
 

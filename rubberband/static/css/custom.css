@@ -28,7 +28,7 @@ h2 {
 /* ---- end headlines -------------- */
 
 /* ---- text -------------- */
-p.monospace {
+.monospace {
   /* exclusions text in monospace */
   font-family: monospace;
 }
@@ -166,7 +166,9 @@ div.ipet-long-toolbar { /* in evaluated long table datatable*/
 .one-chart { /* charts on visualize page */
   padding: 20px;
 }
-
 .modal-dialog {
   max-width: 900px;
+}
+.rb-ml-0 {
+  margin-left: 0px;
 }

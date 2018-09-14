@@ -1,61 +1,88 @@
-{% extends "base.html" %}
+{% extends "narrow.html" %}
+
+<!------------------ body -------------->
+{% block content %}
+<!-- headline ==================================================================== -->
+<div class="rb-details-tab-buttons row justify-content-end">
+  <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/result/{{ file.meta.id }}
+  {% if compare %}{% raw rb_join_arg([i.meta.id for i in compare], 'compare', 0) %}{% end %}" title="back to test run">
+    <span class="fa fa-backward h3-icon-leftalign"></span></a>
+
+</div>
+<h2 data-toggle="collapse" href="#rb-legend" role="button" class="rb-details-tab-title rb-collapser">Testrun{% if compare %}s{% end %} <span class="fa fa-angle-down small"></span></h2>
+<!-- end headline ==================================================================== -->
+
+<div class="rb-table-testrun collapse show" id="rb-legend">
+  {% raw rendered_results_table %}
+</div>
+
+<div class="alert alert-info">
+  <h4>Filter query:</h4>
+  <form id="statistics" name="statisticsform">
+    <fieldset>
+      <ol class="statsFormFields pl-4">
+        <li id="group1" >
+          <div class="row rb-ml-0">
+            <input autocomplete="off" type="text" class="col-5 form-control fieldKey" name="field1" placeholder="Instance Feature" required>
+            <select class="col-1 form-control comparator" name="comparator1" required>
+              <option value="==">=</option>
+              <option value="!=" >!=</option>
+              <option value="<">&lt;</option>
+              <option value="<=">&lt;=</option>
+              <option value=">">&gt;</option>
+              <option value=">=">&gt;=</option>
+            </select>
+            <input autocomplete="off" type="text" class="col-4 form-control fieldValue" name="value1" required>
+          </div>
+        </li>
+      </ol>
+    </fieldset>
+    {% if compare %}
+    <fieldset>
+    <div class="row">
+      <label class="col-6">Apply query filters to all test runs, at least one test run?</label>
+      <select class="form-control one-or-all col-3" name="oneorall" required>
+        <option value="all">All test runs</option>
+        <option value="one">One test run</option>
+      </select>
+      <input type="text" name="compare" value="{{ ",".join([c.meta.id for c in compare]) }}" hidden required>
+    </div>
+    </fieldset>
+    {% end %}
+
+    <!-- submit button ==================================================================== -->
+    <div class="btn-group" role="group">
+      <button type="submit" class="btn btn-primary" id="startStatsQuery">Go!</button>
+    </div>
+  </form>
+</div>
+
+<h2>Results</h2>
+{% if hasattr(file, "stats") %}
+  <h3 data-toggle="collapse" href="#rb-stats-matched" role="button" class="rb-details-tab-title rb-collapser">Matched Instances<span class="fa fa-angle-down small float-right p-2"></span></h3>
+  <div class="monospace collapse show" id="rb-stats-matched">
+    <p>{{ ", ".join(file.matched) }}</p>
+  </div>
+
+  {% include "results/stats_status_summary.html" %}
+  {% include "results/stats_by_status.html" %}
+{% else %}
+  <div>
+    <p>No matched instances.</p>
+  </div>
+{% end %}
+<!------------------ end body -------------->
+{% end %}
+
+<!------------------ extra css -------------->
 {% block extra_css%}
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://dc-js.github.io/dc.js/css/dc.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
 {% end %}
+
+<!------------------ extra js -------------->
 {% block extra_js %}
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.1/bootstrap3-typeahead.min.js"></script>
 <script type="text/javascript" src="/static/js/statistics.js"></script>
-{% end %}
-{% block body %}
-<div class="row">
-<h3 class="tab-title">{{ file.test_set }}</h3>
-<div class="tab-buttons">
-<a class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="back to test run" href="/result/{{ file.meta.id }}"><span class="glyphicon glyphicon-share-alt h3-icon-leftalign"></span></a>
-</div>
-</div>
-  <h4>Testruns</h4>
-  {% raw rendered_results_table %}
-
-<p>Input your desired search query below.</p>
-<form id="statistics" name="statisticsform" class="form-inline">
-  <div class="statsFormFields">
-    <div class="row" id="group1">
-      <input autocomplete="off" type="text" class="form-control fieldKey" name="field1" placeholder="Instance Feature" required>
-      <select class="form-control comparator" name="comparator1" required>
-        <option value="==">=</option>
-        <option value="!=" >!=</option>
-        <option value="<">&lt;</option>
-        <option value="<=">&lt;=</option>
-        <option value=">">&gt;</option>
-        <option value=">=">&gt;=</option>
-      </select>
-      <input autocomplete="off" type="text" class="form-control fieldValue" name="value1" required>
-    </div>
-    </div>
-    {% if compare %}
-    <div class="row-buffered">
-      <p>Should the input query apply to instances in all test runs, or instances in at least one test run?</p>
-      <select class="form-control one-or-all" name="oneorall" required>
-        <option value="all">All test runs</option>
-        <option value="one">One test run</option>
-      </select>
-    </div>
-    <input type="text" name="compare" value="{{ ",".join([c.meta.id for c in compare]) }}" hidden required>
-    {% end %}
-    <button type="submit" class="btn btn-success" id="startStatsQuery">Go!</button>
-</form>
-
-<div class="row">
-{% if hasattr(file, "stats") %}
-<h4>Matched Instances</h4>
-<p>{{ ", ".join(file.matched) }}</p>
-<h4>Filtered Solving Status</h4>
-{% include "results/stats_status_summary.html" %}
-{% include "results/stats_by_status.html" %}
-{% else %}
-<p>Nothing to see here.</p>
-{% end %}
-</div>
 {% end %}

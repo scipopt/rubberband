@@ -8,17 +8,17 @@
     <fieldset class="pr-3">
       <div class="row">
         <div class="form-group col-12 col-sm-6 col-xl-3">
-          <label class="custom-control-label">Type of data</label>
+          <label class="col-form-label">Type of data</label>
           <select class="custom-select" name="data-type">
             <option>Instance</option>
           </select>
         </div>
         <div class="form-group col-12 col-sm-6 col-xl-3">
-          <label class="custom-control-label">Data Name</label>
+          <label class="col-form-label">Data Name</label>
           <input class="custom-select typeahead" name="data-name" data-provide="typeahead" autocomplete="off" placeholder="e.g. sparse2, linking, etc">
         </div>
         <div class="form-group col-12 col-sm-6 col-xl-3">
-          <label class="custom-control-label">Start Date</label>
+          <label class="col-form-label">Start Date</label>
           <div class="input-group date" id="datetimepicker_start" data-target-input="nearest">
             <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker_start" name="start-date" autocomplete="off" value="{{ default_start_date }}" />
             <div class="input-group-append" data-target="#datetimepicker_start" data-toggle="datetimepicker">
@@ -27,7 +27,7 @@
           </div>
         </div>
         <div class="form-group col-12 col-sm-6 col-xl-3">
-          <label class="custom-control-label">End Date</label>
+          <label class="col-form-label">End Date</label>
           <div class="input-group date" id="datetimepicker_end" data-target-input="nearest">
             <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker_end" name="end-date" autocomplete="off" value="{{ default_end_date }}" />
             <div class="input-group-append" data-target="#datetimepicker_end" data-toggle="datetimepicker">

@@ -1,11 +1,10 @@
-let addButton = '<button type="button" class="btn moreFields"><span class="glyphicon glyphicon-plus"></span></button>';
-let rmButton = '<button type="button" class="btn btn-warning lessFields"><span class="glyphicon glyphicon-minus"></span></button>';
+let addButton = '<button type="button" class="btn btn-success moreFields"><span class="fa fa-plus"></span></button>';
+let rmButton = '<button type="button" class="btn btn-danger lessFields"><span class="fa fa-minus"></span></button>';
 let buttons = rmButton + "\n" + addButton;
 
 prefillFields();
 bindMoreFieldsClickHandler();
 bindLessFieldsClickHandler();
-
 
 function bindMoreFieldsClickHandler() {
     // add new filter fields, move buttons down
@@ -42,21 +41,22 @@ function bindLessFieldsClickHandler() {
 
 
 function addNewField(count) {
-    var html = `<div class="row" id="group${count}">
-      <input autocomplete="off" type="text" class="form-control fieldKey" name="field${count}" placeholder="Instance Feature" required>
-      <select class="form-control comparator" name="comparator${count}" required>
+  var html = `<li id="group${count}" >
+    <div class="row rb-ml-0">
+      <input autocomplete="off" type="text" class="col-5 form-control fieldKey" name="field${count}" placeholder="Instance Feature" required>
+      <select class="col-1 form-control comparator" name="comparator${count}" required>
         <option value="==">=</option>
-        <option value="!=" >!=</option>
+        <option value="!=">!=</option>
         <option value="<">&lt;</option>
         <option value="<=">&lt;=</option>
         <option value=">">&gt;</option>
         <option value=">=">&gt;=</option>
       </select>
-      <input autocomplete="off" type="text" class="form-control fieldValue" name="value${count}" required>
-      </div>
-      `
-    $(".statsFormFields").append(html);
-    initializeTypeahead(count);
+      <input autocomplete="off" type="text" class="col-4 form-control fieldValue" name="value${count}" required>
+    </div>
+    </li>`
+  $(".statsFormFields").append(html);
+  initializeTypeahead(count);
 }
 
 

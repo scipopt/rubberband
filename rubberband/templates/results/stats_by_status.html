@@ -1,33 +1,38 @@
+<h3 data-toggle="collapse" href="#rb-stats-detail" role="button" class="rb-collapser">Detail <span class="fa fa-angle-down small float-right p-2"></span></h3>
+<div id="rb-stats-detail" class="rb-table collapse">
 {% for status in ["all", "ok", "better", "solved not verified", "timelimit", "memorylimit", "unknown", "fail"] %}
   {% if status in file.stats %}
-    <h4>{{ status }} ({{file.stats[status].to_dict().pop("count", 0)}})</h4>
-    <table class="stats-table table table-bordered">
-      <thead>
-        <tr>
-        {% for i in file.stats[status] %}
-          <th class="col-md-2" colspan={{ len(file.stats[status][i].to_dict()) }}>{{i}}</th>
-        {% end %}
-        </tr>
-        <tr>
-        {% for i in file.stats[status] %}
-          {% for j in file.stats[status][i] %}
-            <th>{{j}}</th>
+    <h4 data-toggle="collapse" href="#rb-stats-detail-{{status}}" role="button" class="rb-collapser">{{ status }} ({{file.stats[status].to_dict().pop("count", 0)}}) <span class="fa fa-angle-down small float-right p-2"></span></h4>
+    <div id="rb-stats-detail-{{status}}" class="rb-table collapse">
+      <table class="nowrap stats-table table rb-table {{rb_dt_compact}} {{rb_dt_borderless}} rb-table-data" width="100%">
+        <thead>
+          <tr>
+          {% for i in file.stats[status] %}
+            <th colspan={{ len(file.stats[status][i].to_dict()) }}>{{i}}</th>
           {% end %}
-        {% end %}
-        </tr>
-      </thead>
-      <tbody>
-      {% for f in [file] + compare %}
-      {% set fstats = f.stats.to_dict().get(status, {}) %}
-      <tr class="bs-tooltip" data-toggle="tooltip" data-container="body" data-placement="top" title="{{ format_attr(f, 'filename') }} on {{ format_attr(f, 'git_commit_timestamp') }}" count="{{ fstats.pop('count', 0) }}">
-        {% for i in fstats %}
-          {% for j in fstats.get(i,{}) %}
-            <td>{{ fstats.get(i,{}).get(j,0) }}</td>
+          </tr>
+          <tr>
+          {% for i in file.stats[status] %}
+            {% for j in file.stats[status][i] %}
+              <th>{{j}}</th>
+            {% end %}
           {% end %}
+          </tr>
+        </thead>
+        <tbody>
+        {% for f in [file] + compare %}
+        {% set fstats = f.stats.to_dict().get(status, {}) %}
+        <tr class="bs-tooltip" data-toggle="tooltip" data-container="body" data-placement="top" title="{{ format_attr(f, 'filename') }} on {{ format_attr(f, 'git_commit_timestamp') }}" count="{{ fstats.pop('count', 0) }}">
+          {% for i in fstats %}
+            {% for j in fstats.get(i,{}) %}
+              <td>{{ fstats.get(i,{}).get(j,0) }}</td>
+            {% end %}
+          {% end %}
+          </tr>
         {% end %}
-        </tr>
-      {% end %}
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   {% end %}
 {% end %}
+</div>

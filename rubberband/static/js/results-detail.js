@@ -163,6 +163,7 @@ function initIpetTables(ipetlongtoolbartext) {
   ipetlongtable = $('table#ipet-long-table').DataTable({
     columnDefs: [
       { targets: [-1], searchable: true, visible: false, },
+      //{ targets: 0, width: '15%', },
     ],
     scrollY: '80vh', scrollX: true, scroller: true, scrollCollapse: true,
     paging:         false,
@@ -258,26 +259,26 @@ $('a[href="#settings-filtered"]').click(function (e) {
  * Colorate the details table cells for the compare view
  */
 function colorateCells() {
-    detailstable.cells().every( function () {
-      // determine if tooltip is string or number
-      var element = $(this.node())[0];
-      if (element.attributes["title"] !== undefined) {
-          // these are the compare values, one value or many separated by '\n'.
-          // currently we only do this for one compare value
-          var other_values_str = element.attributes["title"].value;
-          var values = Array(element.textContent);
-          Array.prototype.push.apply(values, other_values_str.split("\n"));
-          var rgb;
-          if (element.attributes["invert"] !== undefined) {
-            rgb = getRGBColor(element.attributes["class"].value, values, true);
-          } else {
-            rgb = getRGBColor(element.attributes["class"].value, values, false);
-          }
-          if (rgb) {
-            element.style.backgroundColor = rgb.getColorString();
-          }
+  detailstable.cells().every( function () {
+    // determine if tooltip is string or number
+    var element = $(this.node())[0];
+    if (element.attributes["title"] !== undefined) {
+      // these are the compare values, one value or many separated by '\n'.
+      // currently we only do this for one compare value
+      var other_values_str = element.attributes["title"].value;
+      var values = Array(element.textContent);
+      Array.prototype.push.apply(values, other_values_str.split("\n"));
+      var rgb;
+      if (element.attributes["invert"] !== undefined) {
+        rgb = getRGBColor(element.attributes["class"].value, values, true);
+      } else {
+        rgb = getRGBColor(element.attributes["class"].value, values, false);
       }
-  })
+      if (rgb) {
+        element.style.backgroundColor = rgb.getColorString();
+      }
+    }
+  });
 }
 
 // Get an array of values, and translate that to into an RGB array.

@@ -18,51 +18,53 @@
   {"name": "Solving Time", "short": "Time", "type": "number"},
   {"name": "Total Time", "short": "TTime", "type": "number"},
   ] %}
-    <thead>
-      <tr>
-      {% for i in cols + add_cols %}
-        <th class="{{ i["type"] }}">{% raw shortening_span(i["name"], i["short"]) %}</th>
+<table id="details-table" class="{{rb_dt_compact}} {{rb_dt_borderless}} rb-table rb-table-data" width="100%">
+  <thead>
+    <tr>
+    {% for i in cols + add_cols %}
+      <th class="{{ i["type"] }}">{% raw shortening_span(i["name"], i["short"]) %}</th>
+    {% end %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for name, r in file.children.to_dict().items() %}
+    {% if not compare or name in sets["intersection"] %}
+    <tr>
+
+      {% if compare %}
+        <td>
+          {% set href="/result/{fileid}/instance/{rid}?compare={compare}".format(fileid=file.meta.id, rid=r.meta.id, compare=','.join([c.meta.id for c in compare])) %}
+          {% raw get_link(href, r.instance_name, 20, 7) %}
+        </td>
+      {% else %}
+        <td><a href="/result/{{ file.meta.id }}/instance/{{ r.meta.id }}">{{ r.instance_name }}</a></td>
       {% end %}
-      </tr>
-    </thead>
-    <tbody>
-      {% for name, r in file.children.to_dict().items() %}
-      {% if not compare or name in sets["intersection"] %}
-      <tr>
+
+      {% set objsen = get_objsen(compare + [file], name) %}
+
+      {% for i in ["instance_type", "OriginalProblem_InitialNCons", "OriginalProblem_Vars", "PresolvedProblem_InitialNCons", "PresolvedProblem_Vars", "DualBound", "PrimalBound", "Gap", "Iterations", "Nodes", "TotalTime_solving", "SolvingTime"] %}
 
         {% if compare %}
-          <td>
-            {% set href="/result/{fileid}/instance/{rid}?compare={compare}".format(fileid=file.meta.id, rid=r.meta.id, compare=','.join([c.meta.id for c in compare])) %}
-            {% raw get_link(href, r.instance_name, 20, 7) %}
-          </td>
+          <td title="{{ format_attrs(compare, i, name) }}"{% if (i == "DualBound" and objsen > 0) or (i == "PrimalBound" and objsen < 0) %} invert="yes"{% end %} class="{{ format_type(r, i) }} {{ i }}"{% if (i == "DualBound") %} compare="{{ format_attrs(compare + [file], "PrimalBound", name) }}"{% end %}{% if (i == "PrimalBound") %} compare="{{ format_attrs(compare + [file], "DualBound", name) }}"{% end %}>{{ format_attr(r, i) }}</td>
         {% else %}
-          <td><a href="/result/{{ file.meta.id }}/instance/{{ r.meta.id }}">{{ r.instance_name }}</a></td>
+          <td class="{{ format_type(r, i) }}">{{ format_attr(r, i) }}</td>
         {% end %}
 
-        {% set objsen = get_objsen(compare + [file], name) %}
-
-        {% for i in ["instance_type", "OriginalProblem_InitialNCons", "OriginalProblem_Vars", "PresolvedProblem_InitialNCons", "PresolvedProblem_Vars", "DualBound", "PrimalBound", "Gap", "Iterations", "Nodes", "TotalTime_solving", "SolvingTime"] %}
-
-          {% if compare %}
-            <td title="{{ format_attrs(compare, i, name) }}"{% if (i == "DualBound" and objsen > 0) or (i == "PrimalBound" and objsen < 0) %} invert="yes"{% end %} class="{{ format_type(r, i) }} {{ i }}"{% if (i == "DualBound") %} compare="{{ format_attrs(compare + [file], "PrimalBound", name) }}"{% end %}{% if (i == "PrimalBound") %} compare="{{ format_attrs(compare + [file], "DualBound", name) }}"{% end %}>{{ format_attr(r, i) }}</td>
-          {% else %}
-            <td class="{{ format_type(r, i) }}">{{ format_attr(r, i) }}</td>
-          {% end %}
-
-        {% end %}
-
-        {% for i in add_cols %}
-
-          {% if compare %}
-            <td title="{{ format_attrs(compare, i["name"], name) }}" class="{{ format_type(r, i["name"]) }} {{ i["name"] }}">{{ format_attr(r, i["name"]) }}</td>
-          {% else %}
-            <td class="{{ format_type(r, i["name"]) }}">{{ format_attr(r, i["name"]) }}</td>
-          {% end %}
-
-        {% end %}
-
-      </tr>
       {% end %}
+
+      {% for i in add_cols %}
+
+        {% if compare %}
+          <td title="{{ format_attrs(compare, i["name"], name) }}" class="{{ format_type(r, i["name"]) }} {{ i["name"] }}">{{ format_attr(r, i["name"]) }}</td>
+        {% else %}
+          <td class="{{ format_type(r, i["name"]) }}">{{ format_attr(r, i["name"]) }}</td>
+        {% end %}
+
       {% end %}
-    </tbody>
+
+    </tr>
+    {% end %}
+    {% end %}
+  </tbody>
+</table>
 

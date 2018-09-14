@@ -1,7 +1,7 @@
 /* ############### global vars ############### */
-let path = window.location.pathname;
-let end = path.split("/");
-let debug = "";
+var path = window.location.pathname;
+var end = path.split("/");
+var debug = "";
 
 /* ############### functions ############### */
 
