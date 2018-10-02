@@ -2,24 +2,6 @@
 let solvedStatusesChart, optModeChart, resultsTable, resultsCount, solvingNodesChart,
     solvingTimesChart, runModesChart, tableDimension, all_data, query_params;
 
-$('.datetimepicker').datetimepicker({
-    format: 'YYYY-MM-DD'
-});
-
-initializeTypeahead();
-
-// check if url is of right format
-if (window.location.search) {
-    var parts = getParts(window.location.search);
-    if (Object.keys(parts).length == 4) {
-        query_params = parts;
-        generateCharts(parts);
-    }
-    else {
-        alert("All fields are required to execute a search!");
-    }
-}
-
 // collect names of instances for field 'data name'
 function initializeTypeahead() {
     // jquery 'get' is just a wrapper for jquery 'ajax'
@@ -74,11 +56,11 @@ function makeCharts(data) {
     $("#charts").removeAttr("hidden");
 
     // data preprocessing
-    var dateTimeFormat = d3.time.format("%Y-%m-%dT%H:%M:%S");
+    var dateTimeFormat = d3.timeFormat("%Y-%m-%dT%H:%M:%S");
     data.forEach(function(d) {
         d.git_commit_timestamp = d.git_commit_timestamp.split("+")[0];
-        d.git_commit_timestamp = dateTimeFormat.parse(d.git_commit_timestamp);
-        d.git_commit_timestamp_formatted = d.git_commit_timestamp.toDateString();
+        d.git_commit_timestamp = dateTimeFormat(d.git_commit_timestamp);
+        d.git_commit_timestamp_formatted = new Date(d.git_commit_timestamp);
     });
 
     var ndx = crossfilter(data);
@@ -152,7 +134,7 @@ function makeResultsCount(data, ndx) {
 function makeSolvingTimesChart(data, ndx) {
     solvingTimesChart = dc.scatterPlot("#solving-times");
 
-    var dateFormat= d3.time.format("%Y-%m-%d");
+    var dateFormat= d3.timeFormat("%Y-%m-%d");
     var solvingTimes = ndx.dimension(function (d) { return [d.git_commit_timestamp, d.TotalTime_solving]; });
     var solvingTimesGroup = solvingTimes.group();
 
@@ -173,20 +155,20 @@ function makeSolvingTimesChart(data, ndx) {
         .height(300)
         .dimension(solvingTimes)
         .group(solvingTimesGroup)
-        .x(d3.time.scale().domain([dateFormat.parse(query_params["start-date"]), dateFormat.parse(query_params["end-date"])]))
+        .x(d3.scaleTime().domain([dateFormat(query_params["start-date"]), dateFormat(query_params["end-date"])]))
         .yAxisPadding(padding)
         .renderHorizontalGridLines(true)
         .yAxisLabel("solving time (seconds)")
         .xAxisLabel("git commit timestamp");
 
-    solvingTimesChart.xAxis().tickFormat(d3.time.format('%b-%y'));
+    solvingTimesChart.xAxis().tickFormat(d3.timeFormat('%b-%y'));
 
 }
 
 function makeSolvingNodesChart(data, ndx) {
     solvingNodesChart = dc.scatterPlot("#solving-nodes");
 
-    var dateFormat= d3.time.format("%Y-%m-%d");
+    var dateFormat= d3.timeFormat("%Y-%m-%d");
     var solvingNodes = ndx.dimension(function (d) { return [d.git_commit_timestamp, d.Nodes]; });
     var solvingNodesGroup = solvingNodes.group();
 
@@ -207,13 +189,13 @@ function makeSolvingNodesChart(data, ndx) {
         .height(300)
         .dimension(solvingNodes)
         .group(solvingNodesGroup)
-        .x(d3.time.scale().domain([dateFormat.parse(query_params["start-date"]), dateFormat.parse(query_params["end-date"])]))
+        .x(d3.scaleTime().domain([dateFormat(query_params["start-date"]), dateFormat(query_params["end-date"])]))
         .renderHorizontalGridLines(true)
         .yAxisLabel("# solving nodes")
         .xAxisLabel("git commit timestamp")
         .yAxisPadding(padding);
 
-    solvingNodesChart.xAxis().tickFormat(d3.time.format('%b-%y'));
+    solvingNodesChart.xAxis().tickFormat(d3.timeFormat('%b-%y'));
 }
 
 function makeResultsTable(data, ndx) {
@@ -289,3 +271,22 @@ function set_active_tab(route) {
     $(`.nav-sidebar li a[href="/${route}"]`).parent("li").addClass("active");
 }
 
+// ------------------ document ready
+$(document).ready(function() {
+
+  // check if url is of right format
+  if (window.location.search) {
+    var parts = getParts(window.location.search);
+    if (Object.keys(parts).length == 4) {
+      query_params = parts;
+      generateCharts(parts);
+    }
+    else {
+      alert("All fields are required to execute a search!");
+    }
+  }
+
+  initializeTypeahead();
+  init_datetimepicker("datetimepicker_start");
+  init_datetimepicker("datetimepicker_end");
+});

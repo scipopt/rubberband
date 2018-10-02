@@ -707,5 +707,8 @@ def most_frequent_value(data, key):
     count = {}
     for v in d.values():
         count[v] = count.get(v, 0) + 1
-    count.pop("nan")
+    try:
+        count.pop("nan")
+    except:
+        pass
     return max(count, key=count.get)

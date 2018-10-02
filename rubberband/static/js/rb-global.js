@@ -16,6 +16,14 @@ function goBack() {
   window.history.back();
 }
 
+function init_datetimepicker(id) {
+  $('#'+id).datetimepicker({ format: 'YYYY-MM-DD' });
+}
+
+function jsonlog(val) {
+  console.log(JSON.stringify(val));
+}
+
 /* ############### exeuction ############### */
 
 set_active_tab(end[1]);

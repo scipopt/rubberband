@@ -40,7 +40,11 @@ class SearchView(BaseHandler):
         for i in compares:
             compare_trns.append(TestSet.get(id=i))
         for i in starred:
-            starred_trns.append(TestSet.get(id=i))
+            try:
+                starred_trns.append(TestSet.get(id=i))
+            except:
+                #TODO remove that id from starred
+                pass
         if base_id is not None:
             base = TestSet.get(id=base_id)
             compare_trns.append(base)

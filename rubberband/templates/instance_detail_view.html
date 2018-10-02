@@ -38,9 +38,9 @@
         {% for k in list(result) %}
         <tr>
           <td>{{ k.replace("_", " ") }}</td>
-          <td>{{ getattr(result, k, "--") }}</td>
+          <td>{{ format_attr(result, k) }}</td>
           {% for f in compare %}
-          <td>{{ getattr(f, k, "--") }}</td>
+          <td>{{ format_attr(f, k) }}</td>
           {% end %}
         </tr>
         {% end %}

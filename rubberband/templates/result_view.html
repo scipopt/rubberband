@@ -88,12 +88,13 @@
 <!------------------ extra css -------------->
 {% block extra_css %}
 {% include "includes/datatables_css.html" %}
+{% include "includes/dc_css.html" %}
 {% end %}
 
 <!------------------ extra js -------------->
 {% block extra_js %}
 {% include "includes/datatables_js.html" %}
-{% include "includes/highcharts_js.html" %}
+{% include "includes/dc_js.html" %}
 
 <script src="/static/js/color.js"></script>
 <script src="/static/js/results-detail.js"></script>

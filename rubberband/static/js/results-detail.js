@@ -492,8 +492,8 @@ $(document).ready(function(){
         var targetel = document.getElementById(key)
         targetel.innerHTML = datadict[key];
       }
-
       initIpetTables(datadict["rb-ipet-buttons"]);
+      initialize_custom_chart(); // from ipet-custom-plot.js
     };
     xhr.onerror = buttonsDisable;
     xhr.onprogress = function(e) {
