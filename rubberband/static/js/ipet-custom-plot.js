@@ -33,16 +33,21 @@ function initialize_custom_chart() {
   // dimensions and groups
   customplotdata.nameDim = customplotdata.data.dimension(function(d) {return d.name;});
   customplotdata.groups = {};
-  for(var xdata=1;xdata<data[0].length-1;xdata++) {// TODO
-    customplotdata.groups[xdata] = customplotdata.nameDim.group().reduceSum(function(d) {
+  for(var xdata=1;xdata<data[0].length-1;xdata++) {
+    // for logarithmic and regular plot
+    customplotdata.groups[xdata] = {};
+
+    customplotdata.groups[xdata][true] = customplotdata.nameDim.group().reduceSum(function(d) {
       n = Math.log( d[""+xdata]);
-      if (n == "NaN" || n == -Infinity) {
-        return 0;
-      } else {
-        return n;
-      }
+      if (n == "NaN" || n == -Infinity) return 0; else return n;
     });
-    jsonlog(customplotdata.groups[xdata].all());
+    customplotdata.groups[xdata][false] = customplotdata.nameDim.group().reduceSum(function(d) {
+      return d[""+xdata];
+    });
+
+    // this lines make sure that the data gets copied to crossfilter
+    customplotdata.groups[xdata][true].all();
+    customplotdata.groups[xdata][false].all();
   }
 }
 
@@ -65,31 +70,40 @@ function plot_custom_chart() {
     customplot.width(800)
       .height(600)
       .dimension(customplotdata.nameDim)
-      .group(customplotdata.groups[xdata])
+      .group(customplotdata.groups[xdata][xlogarithmic])
       .ordering(function (d) {return +d.value})
       .xAxisLabel('x')
       .renderHorizontalGridLines(true)
       .xUnits(dc.units.ordinal)
       .x(d3.scaleBand())
-      .yAxisLabel('y')
-      .title(function (d) {
-        return d.key + " " + Math.exp(d.value).toFixed(3);
-      })
-      //.y(d3.scaleLog().domain([1.1,10]))
+      .yAxisLabel('y');
+    customplot.xAxis().ticks(0)
 
-    customplot.yAxis()
-      .tickFormat(function (v) {
-        return Math.exp(v).toFixed(2);
-      })
-      .tickValues([
-        Math.log(0.001),
-        Math.log(0.01),
-        Math.log(0.1),
-        Math.log(1),
-        Math.log(10),
-        Math.log(100),
-        Math.log(1000),
-        Math.log(10000)])
+    if (xlogarithmic){
+      customplot.title(function (d) {
+          return d.key + " " + Math.exp(d.value).toPrecision(2);
+        })
+        //.y(d3.scaleLog().domain([1.1,10])) // in the future maybe this works?
+
+      customplot.yAxis()
+        .tickFormat(function (v) {
+          tickValues = [0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000];
+          for (i in tickValues) {
+            if (+Math.exp(v).toPrecision(3) == tickValues[i]) return tickValues[i];
+          }
+          return "";
+        })
+        .tickValues([
+          Math.log(0.001),
+          Math.log(0.01),
+          Math.log(0.1),
+          Math.log(1),
+          Math.log(10),
+          Math.log(100),
+          Math.log(1000),
+          Math.log(10000)]);
+    }
+
 
   }
   // render all plots on this page
