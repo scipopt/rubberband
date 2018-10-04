@@ -16,13 +16,6 @@
         <h4>Visualize columns from IPET long table</h4>
         <form id="rb-plot-form">
 
-          <div class="form-group" id="rb-plot-type-select">
-            <select class="custom-select" id="rb-plot-type">
-              <option value="column" selected>Columnplot</option>
-              <option value="scatter">Scatterplot</option>
-            </select>
-          </div>
-
           <div id="custom-plot-form-x">
             <h4>X-Axis</h4>
 
@@ -38,7 +31,7 @@
             </div>
           </div>
 
-          <div id="custom-plot-form-y" style="display:none">
+          <div id="custom-plot-form-y">
             <h4>Y-Axis</h4>
 
             <select class="custom-select" name="ploty" id="ploty-select">
@@ -56,7 +49,17 @@
       </div>
     </div>
 
-    <div id="customplot" class="col-12 col-sm-6 col-md-8 col-lg-9 chart">
+    <div id="custombarplot" class="col chart">
+      <div>
+        <span class="chart-title">Bar plot</span>
+        <a class="reset" href="javascript:customplot.bar.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+      </div>
+    </div>
+    <div id="customscatterplot" class="col chart">
+      <div>
+        <span class="chart-title">Scatter plot</span>
+        <a class="reset" href="javascript:customplot.scatter.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+      </div>
     </div>
   </div>
 
