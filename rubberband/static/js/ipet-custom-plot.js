@@ -1,18 +1,22 @@
-// ipetlongtable defined in static/js/evaluation.js
 
-var customplot = {}; // user defined plots
+// global vars
+customplot = {}; // user defined plots
+// nonglobal vars
 var cplotdata = {}; // data for user defined plots
 var tickValues = [0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000];
 
 function initialize_custom_chart() {
   // get data from dataframe
+  // ipetlongtable defined in static/js/evaluation.js
   data = ipetlongtable.data();
   coldata = Array();
-  for(var i=0; i<data.length;i++) {
+  for(var ii=0; ii<data.length; ii++) {
+    var i = ""+ii;
     entry = {
       name: data[i][0],
     };
-    for(var j=1; j<data[i].length-1;j++) {
+    for(var jj=1; jj<data[i].length-1; jj++) {
+      var j = ""+jj;
       entry[j] = +data[i][j];
     }
     coldata.push(entry);
@@ -34,21 +38,22 @@ function initialize_custom_chart() {
   cplotdata.bar = {};
   cplotdata.bar.nameDim = cplotdata.data.dimension(function(d) {return d.name;});
   cplotdata.bar.groups = {};
-  for(var xdata=1;xdata<data[0].length-1;xdata++) {
+  for(var ii=1; ii<data[0].length-1; ii++) {
+    var i = ""+ii;
     // for logarithmic and regular plot
-    cplotdata.bar.groups[xdata] = {};
+    cplotdata.bar.groups[i] = {};
 
-    cplotdata.bar.groups[xdata][true] = cplotdata.bar.nameDim.group().reduceSum(function(d) {
-      n = Math.log( d[""+xdata]);
+    cplotdata.bar.groups[i][true] = cplotdata.bar.nameDim.group().reduceSum(function(d) {
+      n = Math.log( d[i]);
       if (n == "NaN" || n == -Infinity) return 0; else return n;
     });
-    cplotdata.bar.groups[xdata][false] = cplotdata.bar.nameDim.group().reduceSum(function(d) {
-      return d[""+xdata];
+    cplotdata.bar.groups[i][false] = cplotdata.bar.nameDim.group().reduceSum(function(d) {
+      return d[i];
     });
 
     // this lines make sure that the data gets copied to crossfilter
-    cplotdata.bar.groups[xdata][true].all();
-    cplotdata.bar.groups[xdata][false].all();
+    cplotdata.bar.groups[i][true].all();
+    cplotdata.bar.groups[i][false].all();
   }
 
   //-------------------------------scatterplot
@@ -57,36 +62,36 @@ function initialize_custom_chart() {
   // initialize everything to 0 here TODO
   cplotdata.scatter.dims = {};
   cplotdata.scatter.groups = {};
-  for(var xdata=1;xdata<data[0].length-1;xdata++) {
-    cplotdata.scatter.dims[xdata] = {};
-    cplotdata.scatter.groups[xdata] = {};
-    for(var ydata=1;ydata<data[0].length-1;ydata++) {
-      cplotdata.scatter.dims[xdata][ydata] = 0;
-      cplotdata.scatter.groups[xdata][ydata] = 0;
+  for(var ii=1; ii<data[0].length-1; ii++) {
+    var i = ""+ii;
+    cplotdata.scatter.dims[i] = {};
+    cplotdata.scatter.groups[i] = {};
+    for(var jj=1; jj<data[0].length-1; jj++) {
+      var j = ""+jj;
+      cplotdata.scatter.dims[i][j] = 0;
+      cplotdata.scatter.groups[i][j] = 0;
     }
   }
 }
 
-function prepare_scatter_plot(xdata, ydata) {
-  xdata = xdata+"";
-  ydata = ydata+"";
+function prepare_scatter_plot(x, y) {
   // if already generated at some point don't do anything
-  if (cplotdata.scatter.dims[xdata][ydata] != 0) {
+  if (cplotdata.scatter.dims[x][y] != 0) {
     return;
   }
-  // generate dimension
-  cplotdata.scatter.dims[xdata][ydata] = cplotdata.data.dimension(function(d) {return [+d[xdata], +d[ydata]];});
+  // generate dimension for scatterplot
+  cplotdata.scatter.dims[x][y] = cplotdata.data.dimension(function(d) {return [+d[x], +d[y]];});
 
-  // generate group
-  cplotdata.scatter.groups[xdata][ydata] = cplotdata.scatter.dims[xdata][ydata].group().reduce(
+  // generate group for scatterplot
+  cplotdata.scatter.groups[x][y] = cplotdata.scatter.dims[x][y].group().reduce(
     function (p, v) {
-      x_dat = v[xdata];
-      y_dat = v[ydata];
+      x_dat = v[x];
+      y_dat = v[y];
       if ((x_dat != 0) && (y_dat != 0)) {
         dist = 1.0*(x_dat - y_dat)/Math.max(x_dat, y_dat);
       }
-      p[xdata] = v[xdata];
-      p[ydata] = v[ydata];
+      p[x] = v[x];
+      p[y] = v[y];
       p.color = dist;
       return p;
     },
@@ -96,14 +101,15 @@ function prepare_scatter_plot(xdata, ydata) {
     },
     function () {
       p = {}
-      p[xdata] = 0;
-      p[ydata] = 0;
+      p[x] = 0;
+      p[y] = 0;
       p.color = 0;
       return p;
     }
   );
-  //TODO
-  jsonlog(cplotdata.scatter.groups[xdata][ydata].all());
+  // this lines make sure that the data gets copied to crossfilter
+  // TODO do i need this?
+  jsonlog(cplotdata.scatter.groups[x][y].all());
 }
 
 function plot_custom_charts() {
@@ -141,7 +147,7 @@ function plot_custom_charts() {
 
     customplot.bar.yAxis()
       .tickFormat(function (v) {
-        for (i in tickValues) {
+        for (var i in tickValues) {
           if (+Math.exp(v).toPrecision(3) == tickValues[i]) return tickValues[i];
         }
         return "";
@@ -190,7 +196,7 @@ function plot_custom_charts() {
   if (xlogarithmic){
     customplot.scatter.x(d3.scaleLog().domain([Math.min(xmin, 0.01), xmax]))
       .xAxis().tickFormat(function (v) {
-        for (i in tickValues) {
+        for (var i in tickValues) {
           if (v == tickValues[i]) return tickValues[i];
         }
         return "";
@@ -202,7 +208,7 @@ function plot_custom_charts() {
   if (ylogarithmic){
     customplot.scatter.y(d3.scaleLog().domain([Math.min(xmin, 0.01), xmax]))
       .yAxis().tickFormat(function (v) {
-        for (i in tickValues) {
+        for (var i in tickValues) {
           if (v == tickValues[i]) return tickValues[i];
         }
         return "";
