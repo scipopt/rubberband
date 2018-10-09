@@ -1,7 +1,7 @@
 
 // global vars
 customplot = {}; // user defined plots
-// nonglobal vars
+// private vars
 var cplotdata = {}; // data for user defined plots
 var tickValues = [0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000];
 
@@ -10,8 +10,8 @@ function initialize_custom_chart() {
   // ipetlongtable defined in static/js/evaluation.js
   data = ipetlongtable.data();
   coldata = Array();
-  for(var ii=0; ii<data.length; ii++) {
-    var i = ""+ii;
+  for(let ii=0; ii<data.length; ii++) {
+    let i = ""+ii;
     entry = {
       name: data[i][0],
     };
@@ -38,8 +38,8 @@ function initialize_custom_chart() {
   cplotdata.bar = {};
   cplotdata.bar.nameDim = cplotdata.data.dimension(function(d) {return d.name;});
   cplotdata.bar.groups = {};
-  for(var ii=1; ii<data[0].length-1; ii++) {
-    var i = ""+ii;
+  for(let ii=1; ii<data[0].length-1; ii++) {
+    let i = ""+ii;
     // for logarithmic and regular plot
     cplotdata.bar.groups[i] = {};
 
@@ -50,10 +50,6 @@ function initialize_custom_chart() {
     cplotdata.bar.groups[i][false] = cplotdata.bar.nameDim.group().reduceSum(function(d) {
       return d[i];
     });
-
-    // this lines make sure that the data gets copied to crossfilter
-    cplotdata.bar.groups[i][true].all();
-    cplotdata.bar.groups[i][false].all();
   }
 
   //-------------------------------scatterplot
@@ -62,12 +58,12 @@ function initialize_custom_chart() {
   // initialize everything to 0 here TODO
   cplotdata.scatter.dims = {};
   cplotdata.scatter.groups = {};
-  for(var ii=1; ii<data[0].length-1; ii++) {
-    var i = ""+ii;
+  for(let ii=1; ii<data[0].length-1; ii++) {
+    let i = ""+ii;
     cplotdata.scatter.dims[i] = {};
     cplotdata.scatter.groups[i] = {};
-    for(var jj=1; jj<data[0].length-1; jj++) {
-      var j = ""+jj;
+    for(let jj=1; jj<data[0].length-1; jj++) {
+      let j = ""+jj;
       cplotdata.scatter.dims[i][j] = 0;
       cplotdata.scatter.groups[i][j] = 0;
     }
@@ -107,9 +103,6 @@ function prepare_scatter_plot(x, y) {
       return p;
     }
   );
-  // this lines make sure that the data gets copied to crossfilter
-  // TODO do i need this?
-  jsonlog(cplotdata.scatter.groups[x][y].all());
 }
 
 function plot_custom_charts() {
@@ -224,8 +217,13 @@ function plot_custom_charts() {
 
 // ------------------ listeners
 $(document).ready(function() {
+  // listen to plot form
   $('#rb-ipet-eval-result').on('change', '#rb-plot-form', function(e) {
-    // listen to plot form
+    // reset filters
+    if ((customplot.bar != undefined) && (customplot.scatter != undefined)) {
+      customplot.bar.filterAll();
+      customplot.scatter.filterAll();
+    }
     plot_custom_charts();
   });
 });
