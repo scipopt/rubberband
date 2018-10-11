@@ -14,6 +14,7 @@ function initialize_custom_chart() {
     let i = ""+ii;
     entry = {
       name: data[i][0],
+      id: +i,
     };
     for(var jj=1; jj<data[i].length-1; jj++) {
       var j = ""+jj;
@@ -36,18 +37,19 @@ function initialize_custom_chart() {
   //-------------------------------barplot
   // dimensions and groups
   cplotdata.bar = {};
-  cplotdata.bar.nameDim = cplotdata.data.dimension(function(d) {return d.name;});
+  cplotdata.iddim = cplotdata.data.dimension(function(d) {return d.id ;});
+  cplotdata.bar.namedim = cplotdata.data.dimension(function(d) {return d.name ;});
   cplotdata.bar.groups = {};
   for(let ii=1; ii<data[0].length-1; ii++) {
     let i = ""+ii;
     // for logarithmic and regular plot
     cplotdata.bar.groups[i] = {};
 
-    cplotdata.bar.groups[i][true] = cplotdata.bar.nameDim.group().reduceSum(function(d) {
+    cplotdata.bar.groups[i][true] = cplotdata.bar.namedim.group().reduceSum(function(d) {
       n = Math.log( d[i]);
       if (n == "NaN" || n == -Infinity) return 0; else return n;
     });
-    cplotdata.bar.groups[i][false] = cplotdata.bar.nameDim.group().reduceSum(function(d) {
+    cplotdata.bar.groups[i][false] = cplotdata.bar.namedim.group().reduceSum(function(d) {
       return d[i];
     });
   }
@@ -55,7 +57,7 @@ function initialize_custom_chart() {
   //-------------------------------scatterplot
   cplotdata.scatter = {};
   // for scatter plot let the dimension return [x,y] for an x-y-scatterplot
-  // initialize everything to 0 here TODO
+  // initialize everything to 0 here
   cplotdata.scatter.dims = {};
   cplotdata.scatter.groups = {};
   for(let ii=1; ii<data[0].length-1; ii++) {
@@ -88,18 +90,21 @@ function prepare_scatter_plot(x, y) {
       }
       p[x] = v[x];
       p[y] = v[y];
-      p.color = dist;
+      p.name = v.name;
+      p.color = dist.toFixed(2);
       return p;
     },
     function (p, v) {
-      p.color = 0;
+      p.color = 2;
+      p.name = "-";
       return p;
     },
     function () {
       p = {}
       p[x] = 0;
       p[y] = 0;
-      p.color = 0;
+      p.name = "-";
+      p.color = 2;
       return p;
     }
   );
@@ -110,19 +115,28 @@ function plot_custom_charts() {
   width = 600;
   height = 400;
 
-  //TODO for filtering
-  selectedrows = ipetlongtable.rows({filter:'applied', sort:'applied'})[0];
-
   // selected options
   var xlogarithmic = document.getElementById("plotx-log").checked;
   var ylogarithmic = document.getElementById("ploty-log").checked;
   var xdata = document.getElementById("plotx-select").value;
   var ydata = document.getElementById("ploty-select").value;
 
+  prepare_scatter_plot(xdata, ydata);
+
+  // undo filtering everywhere
+  //cplotdata.iddim.filterAll();//i don't think i need this // TODO
+  cplotdata.bar.namedim.filterAll();
+  cplotdata.scatter.dims[xdata][ydata].filterAll();
+  // apply filters for selected rows
+  selectedrows = ipetlongtable.rows({filter:'applied', sort:'applied'})[0];
+  cplotdata.iddim.filter(function(d) {
+    return selectedrows.indexOf(d) > -1;
+  });
+
   customplot.bar = dc.barChart("#custombarplot");
   customplot.bar.width(width)
     .height(height)
-    .dimension(cplotdata.bar.nameDim)
+    .dimension(cplotdata.bar.namedim)
     .group(cplotdata.bar.groups[xdata][xlogarithmic])
     .ordering(function (d) {return +d.value})
     .renderHorizontalGridLines(true)
@@ -154,10 +168,11 @@ function plot_custom_charts() {
         Math.log(100),
         Math.log(1000),
         Math.log(10000)]);
+  } else {
+    customplot.bar.title(function (d) {
+      return d.key + ": " + d.value;
+    })
   }
-
-  //TODO
-  prepare_scatter_plot(xdata, ydata);
 
   xmin = d3.min(cplotdata.rawdata, function (d) { return d[xdata]; })
   ymin = d3.min(cplotdata.rawdata, function (d) { return d[ydata]; })
@@ -172,10 +187,11 @@ function plot_custom_charts() {
     .symbolSize(8)
     .elasticX(true)
     .elasticY(true)
+    .brushOn(false)
     .renderHorizontalGridLines(true)
     .renderVerticalGridLines(true)
     .title(function (d) {
-      return d.key + ": " + d.value;
+      return d.value.name + ": " + d.key;
     })
     .colorAccessor(function (d) {
       return d.value.color;
@@ -183,8 +199,36 @@ function plot_custom_charts() {
     .existenceAccessor(function(d) {
       return d.value[ydata];
     })
-    .colors(d3.scaleLinear().domain([-1,1])
-      .range(["#ff0000", "#00ff00"]));
+    .colors(d3.scaleLinear()
+      .domain([
+        -1,-0.9,-0.8,-0.7,-0.6,-0.5,-0.4,-0.3,-0.2,-0.1,
+        0,
+        0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1,
+        2])
+      .range([
+        "#ff5555",//red 1.0
+        "#ee5555",//red 0.9
+        "#dd5555",//red 0.8
+        "#cc5555",//red 0.7
+        "#bb5555",//red 0.6
+        "#aa5555",//red 0.5
+        "#995555",//red 0.4
+        "#885555",//red 0.3
+        "#775555",//red 0.2
+        "#665555",//red 0.1
+        "#555555",//black
+        "#556655",//green 1.0
+        "#557755",//green 0.9
+        "#558855",//green 0.8
+        "#559955",//green 0.7
+        "#55aa55",//green 0.6
+        "#55bb55",//green 0.5
+        "#55cc55",//green 0.4
+        "#55dd55",//green 0.3
+        "#55ee55",//green 0.2
+        "#55ff55",//green 0.1
+        "#ffffff",// white
+      ]));
 
   if (xlogarithmic){
     customplot.scatter.x(d3.scaleLog().domain([Math.min(xmin, 0.01), xmax]))

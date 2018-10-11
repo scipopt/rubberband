@@ -134,7 +134,8 @@ function add_ipet_eventlisteners() {
   /* add event listeners for long table */
   // plot_custom_charts defined in ipet-custom-plot.js
   ipetlongtable.on('search.dt', plot_custom_charts);
-  ipetlongtable.on('order.dt', plot_custom_charts);
+  // for now we don't replot on order because this will have no effect on the graphs
+  //ipetlongtable.on('order.dt', plot_custom_charts);
 }
 
 function hoverTable(index, name) {
