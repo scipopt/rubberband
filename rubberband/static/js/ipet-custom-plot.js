@@ -259,6 +259,21 @@ function plot_custom_charts() {
   dc.renderAll();
 }
 
+function exportfunction(id) {
+  console.log("eins");
+  var html = d3.select("#"+id+" svg")
+    .attr('title', 'Rubberband plot')
+    .attr("version", 1.1)
+    .attr("xmlns", "http://www.w3.org/2000/svg")
+    .node().outerHTML;
+  var imgsrc = 'data:image/svg+xml;base64,'+ btoa(html);
+  var a = document.createElement("a");
+  a.download = id+"_image.svg";
+  a.href = imgsrc;
+  a.click();
+  console.log("zwei");
+}
+
 // ------------------ listeners
 $(document).ready(function() {
   // listen to plot form
@@ -269,5 +284,14 @@ $(document).ready(function() {
       customplot.scatter.filterAll();
     }
     plot_custom_charts();
+  });
+
+  $('#rb-ipet-eval-result').on('click', '#exportbarplot', function(e) {
+    console.log("click bar");
+    exportfunction("custombarplot");
+  });
+  $('#rb-ipet-eval-result').on('click', '#exportscatterplot', function(e) {
+    console.log("click scatter");
+    exportfunction("customscatterplot");
   });
 });
