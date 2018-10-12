@@ -1,4 +1,6 @@
 
+var colclasses = {};
+
 // function definitions ================================================
 
 function delete_cookie(key) {
@@ -84,6 +86,44 @@ function get_all_cookies() {
     cookies[ingredients[0]] = ingredients[1];
   }
   return cookies;
+}
+
+function init_colclasses(id, tables) {
+  for (let i in tables) {
+    $("#"+tables[i]+" table").addClass("dataTable no-footer");
+  }
+  colclasses[id] = [];
+  $($("#"+id+" thead tr")[0].children).each(function() {
+    classes = $(this).attr("class").split(" ")
+    for (let i in classes) {
+      if (classes[i].startsWith("rb-table-")) {
+        colclasses[id].push(classes[i]);
+      }
+    }
+  });
+}
+
+function align_table_columns_to(id, others) {
+  // collect the column classes
+  if (colclasses[id] === undefined) {
+    init_colclasses(id, others);
+  }
+
+  console.log(others);
+  for (let c in colclasses[id]) {
+    let rbclass = colclasses[id][c];
+    let width = $("#"+id+" th."+rbclass)[0].style["width"]
+    if (width == "0px") {
+      width = ".1px";
+    }
+
+    for (let i in others) {
+      console.log($("#"+others[i]+" th."+rbclass+", #"+others[i]+" td."+rbclass))
+      $("#"+others[i]+" th."+rbclass+", #"+others[i]+" td."+rbclass).each( function() {
+        this.style["width"] = width;
+      });
+    }
+  }
 }
 
 // ======================================================

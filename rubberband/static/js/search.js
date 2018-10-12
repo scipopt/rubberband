@@ -1,3 +1,5 @@
+// requires methods from static/js/testruns.js
+
 var search_results_table; // datatable for #search-results table
 
 function updateResultsTable() {
@@ -51,8 +53,10 @@ function fillResultTable(data) {
       paging: false,
       searching: false,
     });
+    align_table_columns_to("search-table", ["starred-table","compares-table"]);
   }
-  // method from static/js/testruns.js
+
+  // methods from static/js/testruns.js
   init_all_stars();
 }
 
@@ -63,6 +67,10 @@ $("#reset-search-button").click(function() {
   $("#form-search")[0].reset();
   $("#search-button").click();
 });
+
+window.onresize = function() {
+  align_table_columns_to("search-table", ["starred-table","compares-table"]);
+}
 
 $(document).ready(function(){
   updateResultsTable();
