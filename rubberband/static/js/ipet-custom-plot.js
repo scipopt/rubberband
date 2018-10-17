@@ -87,6 +87,8 @@ function prepare_scatter_plot(x, y) {
       y_dat = v[y];
       if ((x_dat != 0) && (y_dat != 0)) {
         dist = 1.0*(x_dat - y_dat)/Math.max(x_dat, y_dat);
+      } else {
+        dist = 0;
       }
       p[x] = v[x];
       p[y] = v[y];
@@ -179,6 +181,9 @@ function plot_custom_charts() {
   xmax = d3.max(cplotdata.rawdata, function (d) { return d[xdata]; })
   ymax = d3.max(cplotdata.rawdata, function (d) { return d[ydata]; })
 
+  var ypadding = (ymax - ymin);
+  if (ypadding){ ypadding = ypadding*.1; } else { ypadding = 1; }
+
   customplot.scatter = dc.scatterPlot("#customscatterplot");
   customplot.scatter.width(width)
     .height(height)
@@ -190,6 +195,7 @@ function plot_custom_charts() {
     .brushOn(false)
     .renderHorizontalGridLines(true)
     .renderVerticalGridLines(true)
+    .yAxisPadding(ypadding)
     .title(function (d) {
       return d.value.name + ": " + d.key;
     })
@@ -243,7 +249,7 @@ function plot_custom_charts() {
     customplot.scatter.x(d3.scaleLinear().domain([xmin,xmax]).nice());
   }
   if (ylogarithmic){
-    customplot.scatter.y(d3.scaleLog().domain([Math.min(xmin, 0.01), xmax]))
+    customplot.scatter.y(d3.scaleLog().domain([Math.min(ymin, 0.01), ymax]))
       .yAxis().tickFormat(function (v) {
         for (var i in tickValues) {
           if (v == tickValues[i]) return tickValues[i];
