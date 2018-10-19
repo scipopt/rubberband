@@ -484,6 +484,7 @@ $(document).ready(function(){
     xhr.open('GET', evalurl);
     xhr.onload = function() {
       buttonsEnable();
+      modalHide();
       data = processResponse(xhr.responseText, 2);
       datadict = JSON.parse(data);
       for(var key in datadict) {
