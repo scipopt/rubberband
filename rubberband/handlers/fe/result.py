@@ -190,7 +190,7 @@ def get_same_status(runs):
         statuses = []
         for r in runs:
             rd = r.children.to_dict()
-            if i in rd:
+            if i in rd and "Status" in rd[i]:
                 statuses.append(rd[i]["Status"])
 
         if len(statuses) == len(runs) and len(set(statuses)) == 1:
