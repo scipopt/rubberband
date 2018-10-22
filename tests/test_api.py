@@ -15,7 +15,7 @@ class GetAPITest(TestHandlerBase):
         self.assertEqual(response.code, 200)
         data = json.loads(response.body.decode("utf-8"))
         self.assertTrue(isinstance(data, list))
-        self.assertTrue(len(data) > 100)
+        self.assertTrue(len(data) > 50)
 
 
 class UploadAPITest(TestHandlerBase):
@@ -40,9 +40,9 @@ class SearchAPITest(TestHandlerBase):
         '''
         Test that the api can gracefully handle exceptions.
         '''
-        response = self.fetch("/api/search?test_set=MMM",
+        response = self.fetch("/api/search?test_set=short",
                               method="GET")
         self.assertEqual(response.code, 200)
         data = json.loads(response.body.decode("utf-8"))
         self.assertTrue(isinstance(data, list))
-        self.assertTrue(len(data), 1)
+        self.assertEqual(len(data), 3)

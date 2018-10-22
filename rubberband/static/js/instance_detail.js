@@ -4,9 +4,10 @@ formatInstanceResults();
 
 function formatInstanceResults() {
     $('.instance-result').DataTable({
-	scrollY: 500,
-	scroller: true,
-	scrollCollapse: true
+        scrollY: '80vh',
+        scroller: true,
+        scrollCollapse: true,
+        paging: false
     });
 }
 

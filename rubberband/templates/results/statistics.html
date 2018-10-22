@@ -1,23 +1,60 @@
-  <div role="tabpanel" class="tab-pane" id="stats">
+<div role="tabpanel" class="tab-pane" id="summary">
   <div class="row">
-    <h3 class="tab-title">Statistics</h3>
+    <h3 class="tab-title">Summary</h3>
     <div class="tab-buttons">
-        <a href="/statistics/{{file.meta.id}}{% if compare %}?compare={{ ",".join([c.meta.id for c in compare]) }}{% end %}" class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="custom statistics">
+      <a href="/statistics/{{file.meta.id}}{% if compare %}?compare={{ ",".join([c.meta.id for c in compare]) }}{% end %}" class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="custom statistics">
         <span class="glyphicon glyphicon-filter"></span>
       </a>
     </div>
   </div>
   <h4>Testruns</h4>
-  <ol>
-  {% for f in [file] + compare %}
-  <li>{{f.filename}} by {{ format_attr(f, "run_initiator") }} on {{ format_attr(f, "git_commit_timestamp") }}</li>
-  {% end %}
-  </ol>
+  <form id="ipet-eval-form">
+    {% raw ipet_legend_table %}
+
+    <h4>IPET Evaluations</h4>
+    <div class="form-group col-md-2">
+      <p class="text-muted">Please select an IPET evaluation file:</p>
+      <select class="form-control" name="ipet-eval-file" id="ipet-eval-file-select">
+        {% for id,e in evals.items() %}
+        <option value="{{ id }}">{{ e["name"] }}</option>
+        {% end %}
+      </select>
+    </div>
+    <div class="form-group col-md-2">
+      <p class="text-muted">Adjust feasibility tolerance: </p>
+      <input id="eval-tolerance-slider" type="text" class="form-control" value="-6" data-slider-min="-9" data-slider-max="-3" data-slider-step="1" data-slider-value="-6" data-slider-orientation="horizontal" data-slider-selection="after" data-slider-tooltip="show">
+    </div>
+    <div class="btn-group">
+      <button id="ipet-eval-button" type="button" class="btn btn-primary">Evaluate</button>
+      <button id="ipet-eval-show-log" type="button" class="btn btn-primary">Show Info Window</button>
+      <button id="ipet-eval-show-button" type="button" class="btn btn-primary">Show evalfile</button>
+      <button id="ipet-eval-download-button" type="button" class="btn btn-primary">Download evalfile</button>
+      <button id="ipet-eval-latex-button" type="button" class="btn btn-primary">Generate latex table*</button>
+    </div>
+  </form>
+  <br />
+  {% include "evaluation.html" %}
+  <p style="color:#c00">
+  * Experimental feature: Use it with "group by githash..." and make sure you are comparing two runs or two seeded/permutation runs.
+  </p>
+  <br />
+
   {% if sets.get("difference") %}
   <h4>Exclusions</h4>
-  <p>The following {{ len(sets["difference"]) }} instances are not present in all of the compared test sets, and have therefore been ommitted from the table below: {{", ".join(sets['difference'])}}</p>
+  <p>The following {{ len(sets["difference"]) }} instances are not present in all of the compared test sets, and have therefore been ommitted from the tables below:<br \>
+  <p class="exclusions">
+  {{", ".join(sets['difference'])}}</p>
+  </p>
   {% end %}
-  <div class="row">
-  {% include "stats_table.html" %}
+
+  <div>
+    <p>
+    In the IPET long table all instances are displayed. These that are only present in one testrun have a NaN in one of the columns (i.e. Time).
+    </p>
+    <p>
+    In the IPET aggregated table however only the filtergroups are displayed.
+    These take into account only instances with the highest number of occurrences, in most cases that will be the number of testruns.
+    So generally in the aggregated table you will get statistics for the instances that are present in all testruns.
+    </p>
   </div>
 </div>

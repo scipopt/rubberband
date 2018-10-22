@@ -1,3 +1,4 @@
+"""Common class to derive all rubberband api request handlers from."""
 from tornado.web import RequestHandler, HTTPError
 from tornado.options import options
 import traceback
@@ -6,10 +7,17 @@ import logging
 
 
 class BaseHandler(RequestHandler):
-    '''
-    Custom overrides.
-    '''
+    """Custom overrides."""
+
     def get_current_user(self):
+        """
+        Get the name of the User that sent the request.
+
+        Returns
+        -------
+        str
+            Current user
+        """
         if not self.settings["debug"]:
             headers = dict(self.request.headers.get_all())
             token = headers.get("X-Api-Token")
@@ -19,6 +27,16 @@ class BaseHandler(RequestHandler):
             return "debug"
 
     def write_error(self, status_code, **kwargs):
+        """
+        Send an error back to the user.
+
+        Parameters
+        ----------
+        status_code : int
+            The status code of the error to be written.
+        kwargs : keyword arguments
+            keyword arguments for `traceback.format_exception`
+        """
         if self.settings.get("serve_traceback") and "exc_info" in kwargs:
             # in debug mode, try to send a traceback
             self.set_header('Content-Type', 'text/plain')
@@ -32,7 +50,12 @@ class BaseHandler(RequestHandler):
 
 def authenticated(method):
     """
-    Decorate methods with this to require that the user to have been authenticated
+    Decorate methods with this to require that the user to have been authenticated.
+
+    Parameters
+    ----------
+    method
+        function to wrap
     """
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs):

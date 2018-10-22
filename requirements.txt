@@ -1,12 +1,15 @@
--e git+https://github.com/GregorCH/ipet.git@v008#egg=ipet
+-e git+https://github.com/GregorCH/ipet.git@3526a166ecf9a3695d3b50dbeff7829810a1d858#egg=ipet
 click==6.6
 elasticsearch==2.3.0
-elasticsearch-dsl==2.0.0
-numpy==1.11.0
-pandas==0.18.0
-pytest==3.0.2
-python-gitlab==0.14
+elasticsearch-dsl==2.2.0
+Jinja2>=2.9.6
+lxml==4.2.3
+numpy==1.14.0
+pandas==0.21.1
+pytest==3.5.0
+python-gitlab==1.5.1
 requests==2.10.0
 requests-toolbelt==0.7.0
-scipy==0.17.0
-tornado==4.3
+scipy==1.1.0
+tornado==5.1
+zipfile36==0.1.3

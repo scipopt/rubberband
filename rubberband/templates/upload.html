@@ -1,31 +1,50 @@
 {% extends "base.html" %}
+{% block extra_css%}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
+{% end %}
+{% block extra_js %}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript" src="/static/js/initdatetime.js"></script>
+{% end %}
 {% block body %}
 <div class="row">
-<form method="POST" name="fileUpload" enctype="multipart/form-data">
-    <p>Please select at least 3 files for upload: <code>*.out</code>, <code>*.err</code> and <code>*.set.</code></p>
-  <div class="form-group">
-    <input type="file" id="uploadFiles" name="resultFiles" multiple>
-  </div>
-  <div class="form-group">
-    <p>Optional: Specify a comma separated list of tags to more easily find this run in the future.</p>
-    <input type="text" class="form-control" name="tags" id="tagsInput" placeholder="enforelax, repairheuristics, SAP, etc">
-  </div>
-  <button type="submit" class="btn btn-primary">Submit</button>
-</form>
+  <form method="POST" name="fileUpload" enctype="multipart/form-data">
+    <p>Please select a set of logfiles for upload: <code>*.out</code>, <code>*.err</code>, <code>*.set</code> and <code>*.meta.</code>
+    The collection should contain exactly one logfile.</p>
+    <div class="row">
+      <fieldset class="form-group col-md-6">
+        <input type="file" id="uploadFiles" name="resultFiles" multiple>
+      </fieldset>
+    </div>
+    <div class="row">
+      <p>Optional: Specify a comma separated list of tags to more easily find this run in the future.</p>
+      <fieldset class="form-group col-md-6">
+        <input type="text" class="form-control" name="tags" id="tagsInput" placeholder="enforelax, repairheuristics, SAP, etc">
+      </fieldset>
+    </div>
+    <div class="row">
+      <p>Optional: Provide an expiration date for this TestRun. </p>
+      <fieldset class="form-group col-md-6">
+        <input class="form-control datetimepicker" name="expirationdate" autocomplete="off">
+      </fieldset>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
 </div>
 {% if msgs %}
 <div class="row row-buffered">
   <div class="panel panel-default">
     <div class="panel-body">
-    {% for m in msgs %}
-    <p>Processing {{ m }}</p>
-    {% for i in msgs[m] %}
-    <p>{{ i }}</p>
-    {% end %}
-    {% end %}
-    {% if resulturl %}
-    <p><a href="{{ resulturl }}">{{ resulturl }}</a></p>
-    {% end %}
+      {% for m in msgs %}
+      <p>Processing {{ m }}</p>
+      {% for i in msgs[m] %}
+      <p>{{ i }}</p>
+      {% end %}
+      {% end %}
+      {% if resulturl %}
+      <p><a href="{{ resulturl }}">{{ resulturl }}</a></p>
+      {% end %}
     </div>
   </div>
 </div>

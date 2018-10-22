@@ -1,0 +1,89 @@
+{% try %}
+    {% set radio = radios %}
+{% except NameError %}
+    {% set radio = False %}
+{% end %}
+{% try %}
+    {% set checkbox = checkboxes %}
+{% except NameError %}
+    {% set checkbox = False %}
+{% end %}
+{% try %}
+    {% set name = tablename %}
+{% except NameError %}
+    {% set name = 'results-table' %}
+{% end %}
+{% try %}
+    {% set repres = representation %}
+{% except NameError %}
+    {% set repres = False %}
+{% end %}
+
+{% if results %}
+<table id="{{ name }}" class="table-hover compact data-table" width="100%">
+  <thead>
+    <tr>
+      {% if radio %}
+      <th>Default</th>
+      {% end %}
+      {% if checkbox %}
+      <th></th>
+      {% end %}
+      {% if repres %}
+      <th>RubberbandId</th>
+      {% end %}
+      <th></th>
+      <th>Solver</th>
+      <th>LPSolver</th>
+      <th>Mode</th>
+      <th>Test Set</th>
+      <th>Setting</th>
+      <th>Seed</th>
+      <th>Permutation</th>
+      <th>Timelimit</th>
+      <th>Hostname</th>
+      <th>Commit Timestamp</th>
+      <th>Uploader</th>
+      <th>Date Added</th>
+      <th>Expirationdate</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for r in results %}
+  <tr data-url='result/{{ r.meta.id }}'>
+    {% if radio %}
+    <td><input type="radio" name="base" value="{{ r.meta.id }}"
+    {% if r.meta.id == checked %}
+    checked
+    {% end %}
+    ><input name="{{ r.meta.id }}" hidden></td>
+    {% end %}
+    {% if checkbox %}
+    <td><input type="checkbox" name="{{ r.meta.id }}"></td>
+    {% end %}
+    {% if repres %}
+    <td> {{ representation[r.id] }} </td>
+    {% end %}
+    <td><a href="/result/{{ r.meta.id }}">Details</a></td>
+    <td>{{ format_attr(r, "solver") }} {{ format_attr(r, "solver_version") }}</td>
+    <td>{{ format_attr(r, "lp_solver") }} {{ format_attr(r, "lp_solver_version") }}</td>
+    <td>{{ format_attr(r, "mode") }}</td>
+    <td>{{ format_attr(r, "test_set") }}</td>
+    <td>{{ format_attr(r, "settings_short_name") }}</td>
+    <td>{{ format_attr(r, "seed") }}</td>
+    <td>{{ format_attr(r, "permutation") }}</td>
+    <td>{{ format_attr(r, "time_mod") }}</td>
+    <td>{{ format_attr(r, "run_environment") }}</td>
+    <td>{{ format_attr(r, "git_commit_timestamp") }}</td>
+    <td>{{ format_attr(r, "uploader") }}</td>
+    <td>{{ format_attr(r, "upload_timestamp") }}</td>
+    <td>{{ format_attr(r, "expirationdate") }}</td>
+  </tr>
+  {% end %}
+  </tbody>
+</table>
+{% else %}
+<div id="{{ name }}">
+  No results found for given query.
+</div>
+{% end %}

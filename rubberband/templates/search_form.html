@@ -1,99 +1,137 @@
-{% extends "table_view.html" %}
+{% extends "base.html" %}
+{% block extra_css %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css"/>
+{% end %}
+{% block extra_js %}
+<script type="text/javascript" src=" https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js "></script>
+<script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/3.2.3/js/dataTables.fixedColumns.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.8.4/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.16/sorting/datetime-moment.js"></script>
+<script type="text/javascript" src="/static/js/clickableRow.js"></script>
+<script type="text/javascript" src="/static/js/search.js"></script>
+{% block extra_extra_js %}
+{% end %}
+{% end %}
+{% block body %}
 {% block search %}
-<form method="GET" name="search">
-    <p class="text-muted">
-    Currently only testset search is supported. A maximum of 100 results will be returned at a time.
-    </p>
-    <br>
-    <fieldset>
-    <div class="row">
-    <div class="form-group col-md-4">
-	<label for="testset-select">Test Set</label>
-	<select class="form-control" name="test_set" id="testset-select">
-	<option></option>
-	{% for i in search_options["test_set"] %}
-	<option value="{{i}}">{{ i }}</option>
-	{% end %}
-	</select>
-    </div>
-  <div class="form-group col-md-4">
-	<label for="runmode-select">Run Mode</label>
-	<select class="form-control" name="mode" id="runmode-select">
-	<option></option>
-	{% for i in search_options["mode"] %}
-	<option value="{{i}}">{{ i }}</option>
-	{% end %}
-	</select>
-  </div>
-  <div class="form-group col-md-4">
-	<label for="uploadername-select">Uploader Name</label>
-	<select class="form-control" name="run_initiator" id="uploadername-select">
-	<option></option>
-	{% for i in search_options["run_initiator"] %}
-	<option value="{{i}}">{{ i }}</option>
-	{% end %}
-	</select>
-  </div>
-  <div class="form-group col-md-4">
-	<label for="settingsname-select">Settings Name</label>
-	<select class="form-control" name="settings_short_name" id="settingsname-select">
-	<option></option>
-	{% for i in search_options["settings_short_name"] %}
-	  <option value="{{i}}">{{ i }}</option>
-	{% end %}
-	</select>
-  </div>
-  <div class="form-group col-md-4">
-	<label for="solver-select">Solver</label>
-	<select class="form-control" name="solver" id="solver-select">
-	<option></option>
-	{% for i in search_options["solver"] %}
-	  <option value="{{i}}">{{ i }}</option>
-	{% end %}
-	</select>
-	</select>
-  </div>
-  <div class="form-group col-md-4">
-	<label for="solverversion-select">Solver Version</label>
-	<select class="form-control" name="solver_version" id="solverversion-select">
-	<option></option>
-	{% for i in search_options["solver_version"] %}
-	 <option value="{{i}}">{{ i }}</option>
-	{% end %}
-	</select>
-  </div>
-  <div class="form-group col-md-4">
-	<label for="commithash-input">Solver Commit Hash</label>
-	<input class="form-control" name="git_hash" id="commithash-input">
-  </div>
-  <div class="form-group col-md-4">
-	<label for="lpsolver-select">LP Solver</label>
-	<select class="form-control" name="lp_solver" id="lpsolver-select">
-	<option></option>
-	{% for i in search_options["lp_solver"] %}
-	<option value="{{i}}">{{ i }}</option>
-	{% end %}
-	</select>
-  </div>
-  <div class="form-group col-md-4">
-	<label for="lpsolverversion-select">LP Solver Version</label>
-	<select class="form-control" name="lp_solver_version" id="lpsolverversion-select">
-	<option></option>
-	{% for i in search_options["lp_solver_version"] %}
-	<option value="{{i}}">{{ i }}</option>
-	{% end %}
-	</select>
-  </div>
-  <div class="form-group col-md-4">
-	<label for="tags">Tag(s)</label>
-	<input class="form-control" name="tags" id="tags">
-  </div>
-  </div>
+<form id="search-form">
+  <p class="text-muted">
+  Currently only testset search is supported. A maximum of 100 results will be returned at a time.
+  </p>
   <br>
-  <div class="row">
-  <button type="submit" class="btn btn-primary pull-right">Submit</button>
-  </div>
+  <fieldset>
+    <div class="row">
+      <div class="form-group col-md-2">
+        <label for="testset-select">Test Set</label>
+        <select class="form-control" name="test_set" id="testset-select">
+          <option></option>
+          {% for i in search_options["test_set"] %}
+          <option value="{{i}}" {% if search_options["defaults"] and search_options["defaults"]["test_set"] == i %} selected {% end %}{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
+          {% end %}
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label for="runmode-select">Run Mode</label>
+        <select class="form-control" name="mode" id="runmode-select">
+          <option></option>
+          {% for i in search_options["mode"] %}
+          <option value="{{i}}" {% if search_options["defaults"] and search_options["defaults"]["mode"] == i %} selected {% end %}{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
+          {% end %}
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label for="solver-select">Solver</label>
+        <select class="form-control" name="solver" id="solver-select">
+          <option></option>
+          {% for i in search_options["solver"] %}
+          <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
+          {% end %}
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label for="lpsolver-select">LP Solver</label>
+        <select class="form-control" name="lp_solver" id="lpsolver-select">
+          <option></option>
+          {% for i in search_options["lp_solver"] %}
+          <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
+          {% end %}
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label for="commithash-input">Solver Commit Hash</label>
+        <input class="form-control" name="git_hash" id="commithash-input">
+      </div>
+      <div class="form-group col-md-2">
+        <label for="resultnumber-input">Number of results</label>
+        <input class="form-control" name="limit" id="resultnumber-input" value="100" type="number">
+      </div>
+
+      <div class="form-group col-md-2">
+        <label for="settingsname-select">Settings Name</label>
+        <select class="form-control" name="settings_short_name" id="settingsname-select">
+          <option></option>
+          {% for i in search_options["settings_short_name"] %}
+          <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
+          {% end %}
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label for="uploadername-select">Original Uploader</label>
+        <select class="form-control" name="uploader" id="uploadername-select">
+          <option></option>
+          {% for i in search_options["uploader"] %}
+          <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
+          {% end %}
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label for="solverversion-select">Solver Version</label>
+        <select class="form-control" name="solver_version" id="solverversion-select">
+          <option></option>
+          {% for i in search_options["solver_version"] %}
+          <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
+          {% end %}
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label for="lpsolverversion-select">LP Solver Version</label>
+        <select class="form-control" name="lp_solver_version" id="lpsolverversion-select">
+          <option></option>
+          {% for i in search_options["lp_solver_version"] %}
+          <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
+          {% end %}
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label for="runenvironment-select">Hostname</label>
+        <select class="form-control" name="run_environment" id="runenvironment-select">
+          <option></option>
+          {% for i in search_options["run_environment"] %}
+          <option value="{{i}}"{% if i == "---------" %} disabled {% end %}>{{ i }}</option>
+          {% end %}
+        </select>
+      </div>
+      <div class="form-group col-md-2">
+        <label for="tags">Tag(s)</label>
+        <input class="form-control" name="tags" id="tags">
+      </div>
+    </div>
+    <br>
+    <div class="rb-btn-group">
+      <button id="reset-search-button" type="button" class="btn btn-basic">Reset Parameters</button>
+      <button id="search-button" type="button" class="btn btn-primary">Search</button>
+    </div>
   </fieldset>
 </form>
-<br>
+{% end %}
+{% block action %}
+<form action="/compare" method="post">
+<div class="rb-btn-group">
+<button type="submit" class="btn btn-primary">Compare Selected Runs</button>
+</div>
+<br />
+{% end %}
+<div id="results-table">
+</div>
+</form>
 {% end %}

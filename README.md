@@ -1,8 +1,8 @@
-[![Build Status](https://travis-ci.org/xmunoz/rubberband.svg?branch=master)](https://travis-ci.org/xmunoz/rubberband)
-
 # Rubberband
 
-A flexible LP solver log file web view and analysis tool, backed by Elasticsearch.
+[![Build Status](https://travis-ci.org/xmunoz/rubberband.svg?branch=master)](https://travis-ci.org/xmunoz/rubberband)
+
+A flexible web view and analysis platform for solver log files of mathematical optimization software, backed by Elasticsearch.
 
 - [Development](#development)
   - [Install Elasticsearch](#install-elasticsearch)
@@ -117,6 +117,16 @@ If everything went well, you should be able to open [http://127.0.0.1:8888/](htt
 
 ![rubberband screenshot](https://raw.githubusercontent.com/xmunoz/rubberband/master/rubberband-screenshot.png)
 
+## Documentation
+
+To build the documentation run the following commands from inside the virtualenvironment:
+
+```
+cd doc
+make doc
+```
+
+Now you can view the documentation by opening `doc/build/html/index.html` in your favorite webbrowser.
 
 ## Testing
 

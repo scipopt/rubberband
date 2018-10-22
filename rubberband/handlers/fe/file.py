@@ -1,3 +1,4 @@
+"""Contains FileView."""
 from tornado.web import HTTPError
 
 from rubberband.models import TestSet, Result
@@ -6,10 +7,22 @@ from .base import BaseHandler
 
 
 class FileView(BaseHandler):
-    '''
-    View or download log files or log file contents.
-    '''
+    """Request handler handling the view or download of log files or log file contents."""
+
     def get(self, file_id):
+        """
+        Answer to GET requests.
+
+        Displays file or part of file as different file types, formats, for download or plain view.
+        Options available via query string parameters.
+
+        Parameters
+        ----------
+        file_id : str
+            file to be viewed.
+
+        Renders `file.html`.
+        """
         instance_id = self.get_argument("instance", default=None)
         for_download = self.get_argument("download", default=False)
         fformat = self.get_argument("format", default="raw")
@@ -30,6 +43,9 @@ class FileView(BaseHandler):
 
         # e.g. `result.json(ftype=".set")`
         file_contents = getattr(obj, fformat)(ftype=ftype)
+
+        if file_contents is None:
+            raise HTTPError(404)
 
         if for_download:
             self.write(file_contents)

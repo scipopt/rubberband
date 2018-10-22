@@ -1,3 +1,4 @@
+"""Methods for importing a TestSet from logfiles."""
 import os
 import json
 import logging
@@ -6,114 +7,189 @@ from datetime import datetime
 import traceback
 from gitlab.exceptions import GitlabGetError
 
-from ipet import Experiment
+from ipet import Experiment, Key
+from ipet.misc import loader
 from tornado.options import options
 
 # package imports
 from rubberband.models import TestSet, Result, File
-from rubberband.constants import ALL_SOLU, FILES_DIR
+from rubberband.constants import ALL_SOLU, ADD_READERS, FORMAT_DATETIME
 from rubberband.utils import gitlab as gl
 from .stats import ImportStats
 from .hasher import generate_sha256_hash
 
-REQUIRED_FILES = set([".out", ".err"])
-OPTIONAL_FILES = set([".solu", ".set"])
+REQUIRED_FILES = set([".out"])
+OPTIONAL_FILES = set([".solu", ".err", ".set", ".meta"])
 
 
 class ResultClient(object):
-    '''
-    Upload and retrieve result files.
-    '''
+    """Organize and process retrieved files."""
 
     def __init__(self, user):
+        """
+        Create a ResultClient object for a user.
+
+        Parameters
+        ----------
+        user : str
+            current user
+        """
         if not user:
             raise Exception("Missing user when initiliazing client.")
 
         self.current_user = user
+        # here, usually __name__ is "ResultClient" opposed to "__main__"
         self.logger = logging.getLogger(__name__)
         self.logger.info("{} opened a connection to elasticsearch with the {}"
                          .format(self.current_user, type(self).__name__))
         self.tags = []
 
-    def process_files(self, paths, tags=[], remove=True):
-        '''
-        Process files, one at a time. Accepts a list.
-        '''
+    def reimport_files(self, paths, testset):
+        """
+        Reimport file bundle.
+
+        Parameters
+        ----------
+        paths : dict str
+            dictionary of filenames
+        testset : TestSet
+            already existing TestSet in Rubberband
+        """
         self.metadata = ImportStats("results")
-        total_files = len(paths)
-        self.tags = tags
-        self.remove_files = remove
-        self.logger.info("Found {} files. Beginning to parse.".format(total_files))
+        self.remove_files = True
         try:
-            self.parse_file_bundle(paths)
+            self.parse_file_bundle(paths, initial=False, testset=testset)
         except:
             self.metadata.status = "fail"
             traceback.print_exc()
 
         return self.metadata
 
-    def parse_file_bundle(self, bundle):
-        '''
-        Internal method that parses a single file bundle. The bundle is a tuple of strings (paths).
+    def process_files(self, paths, tags=[], remove=True, expirationdate=None):
+        """
+        Process filebundle and import to rubberband.
 
-        A bundle should contain the following files:
-            *.out
-            *.err
+        Parameters
+        ----------
+        paths : list str
+            list of filenames
+        tags : list
+            tags to add to TestSet (default [])
+        remove : bool
+            remove raw uploaded files from server (default True)
+        expirationdate : str in date form
+            Date after which data can be purged from elasticsearch (default: None)
+        """
+        # TODO: maybe check for reasonable expdate?
+        # This gets called by both the apiupload and the webupload
+        self.metadata = ImportStats("results")
+        total_files = len(paths)
+        self.tags = tags
+        self.remove_files = remove
+        self.logger.info("Found {} files. Beginning to parse.".format(total_files))
+        try:
+            # parsing all locally saved files
+            self.parse_file_bundle(paths, expirationdate=expirationdate)
+        except:
+            self.metadata.status = "fail"
+            traceback.print_exc()
 
-        Optionally, the bundle could also contain a .set and .solu file.
-        '''
+        return self.metadata
+
+    def parse_file_bundle(self, bundle, expirationdate=None, initial=True, testset=None):
+        """
+        Internal method that parses a single file bundle.
+
+        The bundle is a tuple of strings (paths).
+        A bundle should contain the following files: .out (.solu, .err, .set, .meta)
+
+        Parameters
+        ----------
+        bundle : list str
+            list of filenames
+        expirationdate : str in date form
+            Date after which data can be purged from elasticsearch (default: None)
+        initial : bool
+            indicate if the testset is parsed the first time or already exists (default: None)
+        testset : TestSet
+            TestSet if already existing (default: None)
+        """
         # validate and organize files
         self.files = self.validate_and_organize_files(bundle)
+
         # generate file hash
         self.file_id = generate_sha256_hash(self.files[".out"])
 
-        # check if already existing
-        found = self.file_lookup()
-        if found:
-            self.metadata.status = "found"
-            self.metadata.setUrl("/result/{}".format(found.meta.id))
-            msg = "File was previously uploaded by {} on {}. Upload aborted."\
-                  .format(found.uploader, found.index_timestamp)
-            self._log_info(msg)
-            return
+        if initial:
+            # check if already existing
+            found = self.file_lookup()
+            if found:
+                self.metadata.status = "found"
+                self.metadata.setUrl("/result/{}".format(found.meta.id))
+                msg = "File was previously uploaded by {} on {}. Upload aborted."\
+                      .format(found.get_uploader, found.index_timestamp)
+                self._log_info(msg)
+                return
 
         # parse files with ipet
-        manageables = self.get_data_from_ipet()
-        data = json.loads(manageables.data.to_json())
-        settings = manageables.getParameterData()
+        # manageable is the ipet.TestRun
+        manageable = self.get_data_from_ipet()
+        # data is the 'data' DataFrame from ipet.TestRun
+        data = json.loads(manageable.data.to_json())
+        # get the scipparameters and the defaultparameters from ipet
+        settings = manageable.getParameterData()
 
         # organize data into file_data and results
-        file_data = self.get_file_data(data, settings=settings)
+        # get data from testrun.metadatadict
+        md = manageable.getMetaData()
+        # collect data from testrun as a whole
+        file_data = self.get_file_data(data, settings=settings, expirationdate=expirationdate,
+                metadata=md)
+
         results = self.get_results_data(data)
 
-        # save the structured data in elasticsearch and in gitlab
-        self.save_structured_data(file_data, results)
-        self.backup_files()
+        # save the structured data in elasticsearch
+        self.save_structured_data(file_data, results, testset=testset)
+        if initial:
+            self.backup_files()
 
         # clean up filesystem if remove flag set
         if self.remove_files:
             for t, f in self.files.items():
-                if f:
+                if f and not f == ALL_SOLU:
                     os.remove(f)
 
         self._log_info("Finished!")
 
     def get_results_data(self, data):
-        '''
-        Denormalize ipet data
-        '''
+        """
+        Denormalize IPET data.
 
+        Parameters
+        ----------
+        data : dict dict
+            Data from IPET
+
+        Returns
+        -------
+        dict dict
+            modified data
+        """
         results = {}
         instances = data["SolvingTime"].keys()
 
         for i in instances:
-            results[i] = {"instance_name": i}
+            results[i] = {
+                    "instance_name": data[Key.ProblemName][i],
+                    "instance_id": i
+                    }
 
         for k, v in data.items():
             for instance, metric in v.items():
                 k = k.replace(".", "_")
                 results[instance][k] = metric
 
+        # extra: determine type of instance and number of iterations
         for k, v in results.items():
             results[k]["instance_type"] = _determine_type(v)
             iteration_values = [
@@ -130,9 +206,14 @@ class ResultClient(object):
         return results.values()
 
     def _log_failure(self, message):
-        '''
-        Keep track of import failures
-        '''
+        """
+        Keep track of import failures.
+
+        Parameters
+        ----------
+        message : str
+            Message to log.
+        """
         self.logger.error(message)
         if not hasattr(self, "files"):
             self.metadata.logMessage("_", message)
@@ -141,54 +222,112 @@ class ResultClient(object):
         self.metadata.fail += 1
 
     def _log_info(self, message):
-        '''
-        Keep track of import failures
-        '''
+        """
+        Keep track of import events.
+
+        Parameters
+        ----------
+        message : str
+            Message to log.
+        """
         self.logger.info(message)
         self.metadata.logMessage(self.files[".out"], message)
 
-    def get_file_data(self, data, settings=None):
-        file_keys = set(["TimeLimit", "Version", "LPSolver", "GitHash", "Solver", "mode"])
+    def get_file_data(self, data, settings=None, expirationdate=None, metadata={}):
+        """
+        Get data about file.
 
-        # logic for different solvers
-        if "LPSolver" in data:
-            lp_solver_name, lp_solver_version = list(data["LPSolver"].values())[0].split(" ")
+        Parameters
+        ----------
+        data : dict
+            data in json format from ipet
+        settings
+            Parameterdata dictionary from ipet (default: None)
+        expirationdate : str in date form
+            Date after which data can be purged from elasticsearch (default: None)
+        metadata
+            Metadata dictionary from IPET (default: {})
+        """
+        # settings is a tuple
+        # data is 'data' DataFrame from ipet.TestRun
+        # for scip these data is available
+        file_keys = set([Key.TimeLimit, Key.Version, "LPSolver", "GitHash",
+            Key.Solver, "mode", "SpxGitHash"])
+        # TODO once the ipet is up to date, use this and update the rest
+        # file_keys = set([Key.TimeLimit, Key.Version, Key.LPSolver, Key.GitHash,
+        lp_solver_name = None
+        lp_solver_version = None
+        if "LPSolver" in data.keys():
+            # assume that a testrun is all run with the same lpsolver
+            v = most_frequent_value(data, 'LPSolver')
+            lp_data = v.split(" ")
+            lp_solver_name = ""
+            lp_solver_version = ""
+            try:
+                lp_solver_name = lp_data[0]
+                lp_solver_version = " ".join(lp_data[1:])
+            except:
+                pass
         else:
             lp_solver_name = None
             lp_solver_version = None
 
+        if "SpxGitHash" in data.keys():
+            lp_solver_githash = most_frequent_value(data, "SpxGitHash")
+        else:
+            lp_solver_githash = None
+
         vs = {}
-        for i in ["mode", "TimeLimit"]:
+        for i in ["mode", Key.TimeLimit]:
             if i in data:
-                vs[i] = list(data[i].values())[0]
+                vs[i] = most_frequent_value(data, i)
 
         filename = os.path.basename(self.files[".out"])
-        rogue_string = ".zib.de"
-        file_path_clean = filename.replace(rogue_string, "")
-        fnparts = file_path_clean.split(".")
 
         file_data = {
             "filename": filename,
-            "test_set": fnparts[1],  # short, bug, etc,
-            "solver": list(data["Solver"].values())[0],
-            "solver_version": list(data["Version"].values())[0],
+            "solver": most_frequent_value(data, Key.Solver),
+            "solver_version": most_frequent_value(data, Key.Version),
             "mode": vs.get("mode"),
-            "time_limit": vs.get("TimeLimit"),
+            "time_limit": vs.get(Key.TimeLimit),
             "lp_solver": lp_solver_name,
             "lp_solver_version": lp_solver_version,
-            "settings_short_name": fnparts[-2],
-            "run_environment": fnparts[-3],
-            "opt_flag": fnparts[-5],
-            "architecture": fnparts[-7],
-            "os": fnparts[-8],
+            "lp_solver_githash": lp_solver_githash,
             "tags": self.tags,
             "index_timestamp": datetime.now(),
+            "metadata": metadata
         }
+        if expirationdate is not None:
+            file_data["expirationdate"] = expirationdate
+
+        # read the following from metadata, which is added to each problem after parsing
+        # assume that a testrun is run on all instances with the same test_set, environment,
+        # settings, opt_flag, architecture, os (etc.)
+
+        # get these via ipet metadata...
+        # TODO are these correct?
+        if self.files[".meta"] is not None:
+            mapping = {
+                    "test_set": "TstName",
+                    "settings_short_name": "Settings",
+                    "seed": "Seed",
+                    "permutation": "Permutation",
+                    "run_environment": "Queue",
+                    "opt_flag": "OptFlag",
+                    "os": "OperatingSystem",
+                    "time_factor": "TimeFactor"
+                    }
+
+            for key, tag in mapping.items():
+                if tag in metadata.keys():
+                    file_data[key] = metadata[tag]
+        else:
+            file_data.update(self.parse_info_from_filename(self.files))
 
         if options.gitlab_url:
             file_data["run_initiator"] = gl.get_username(self.current_user)
         else:
-            file_data["run_initiator"] = self.current_user.split("@")[0]
+            file_data["run_initiator"] = self.current_user
 
         if settings:
             file_data["settings"] = settings[0]
@@ -196,7 +335,7 @@ class ResultClient(object):
 
         # get data from git if it's available
         if "GitHash" in data and data["GitHash"]:
-            git_hash = list(data["GitHash"].values())[0]
+            git_hash = most_frequent_value(data, 'GitHash')
 
             if git_hash.endswith("-dirty"):
                 file_data["git_hash_dirty"] = True
@@ -229,10 +368,45 @@ class ResultClient(object):
 
         return file_data
 
+    def parse_info_from_filename(self, files):
+        """
+        Parse information from filename.
+
+        Parameters
+        ----------
+        files : dict
+            Files to parse from. Should contain ".out".
+
+        Returns
+        -------
+            dict of information about build options.
+        """
+        filename = os.path.basename(self.files[".out"])
+        rogue_string = ".zib.de"
+        file_path_clean = filename.replace(rogue_string, "")
+        fnparts = file_path_clean.split(".")
+        info = {
+                "test_set": fnparts[1],  # short, bug, etc,
+                "settings_short_name": fnparts[-2],
+                "run_environment": fnparts[-3],
+                "opt_flag": fnparts[-5],
+                "architecture": fnparts[-7],
+                "os": fnparts[-8]}
+        return info
+
     def validate_and_organize_files(self, list_of_files):
-        '''
+        """
         Ensure files are of the correct type and readable.
-        '''
+
+        Parameters
+        ----------
+        list_of_files : list
+            List of filenames.
+
+        Returns
+        -------
+            dict str of filenames that are correct and readable.
+        """
         required_files = {key: None for key in REQUIRED_FILES}
         optional_files = {key: None for key in OPTIONAL_FILES}
 
@@ -276,22 +450,50 @@ class ResultClient(object):
             self._log_failure(msg)
             raise Exception(msg)
 
+        self.logger.info("Parsing {}.".format(required_files[".out"]))
         required_files.update(optional_files)
 
         return required_files
 
-    def save_structured_data(self, file_level_data, instance_level_data):
-        '''
+    def save_structured_data(self, file_level_data, instance_level_data, testset=None):
+        """
         Save TestSet and Result model instances in Elasticsearch.
-        '''
+
+        Parameters
+        ----------
+        file_level_data : dict
+            Data about TestSet (the whole TestRun)
+        instance_level_data
+            Data of individual instances
+        testset : TestSet
+            (default: None)
+        """
         try:
             # save parent
-            f = TestSet(**file_level_data)
-            f.save()
+            if testset is None:
+                file_level_data["upload_timestamp"] = file_level_data["index_timestamp"]
+                file_level_data["uploader"] = file_level_data["run_initiator"]
+                f = TestSet(**file_level_data)
+                f.save()
+            else:
+                f = testset
+                if f.upload_timestamp is None:
+                    file_level_data["upload_timestamp"] = f.index_timestamp
+                if f.uploader is None:
+                    file_level_data["uploader"] = f.run_initiator
+                f.update(**file_level_data)
             self.testset_meta_id = f.meta.id  # save this for backup step
             # save children
             for r in instance_level_data:
                 r["_parent"] = f.meta.id
+                # TODO move this to constructor of Result model?
+                for key in ["Datetime_Start", "Datetime_End"]:
+                    try:
+                        timestamp = int(r[key])
+                        timestr = datetime.fromtimestamp(timestamp).strftime(FORMAT_DATETIME)
+                        r[key] = timestr
+                    except:
+                        pass
                 res = Result(**r)
                 res.save()
         except:
@@ -306,9 +508,7 @@ class ResultClient(object):
         self.metadata.setUrl("/result/{}".format(self.testset_meta_id))
 
     def backup_files(self):
-        '''
-        Save all of the file contents in Elasticsearch.
-        '''
+        """Save all file contents in Elasticsearch."""
         # remove solu file from checkin
         self.files.pop(".solu")
         for ftype, f in self.files.items():
@@ -338,27 +538,50 @@ class ResultClient(object):
         self._log_info("{} file bundle backed up in Elasticsearch.".format(self.files[".out"]))
 
     def get_data_from_ipet(self):
+        """
+        Import data from IPET.
+
+        Create ipet.experiment, add files and execute ipet.collectData.
+
+        Returns
+        -------
+        ipet.testrun object
+        """
         try:
-            # ipet boilerplate
             c = Experiment()
 
+            # Metafiles will be loaded automatically if they are placed next to outfiles
             c.addOutputFile(self.files[".out"])
-            c.addOutputFile(self.files[".err"])
+
+            if self.files[".err"] is not None:
+                c.addOutputFile(self.files[".err"])
 
             if self.files[".set"] is not None:
                 c.addOutputFile(self.files[".set"])
 
             if self.files[".solu"] is None:
                 msg = "No solu file found."
-                path = FILES_DIR + ALL_SOLU
+                path = ALL_SOLU
                 if os.path.isfile(path):
                     msg = "Adding SoluFile."
                     self.files[".solu"] = path
             else:
                 msg = "Adding SoluFile."
-
             self.logger.info(msg)
-            c.addSoluFile(self.files[".solu"])
+
+            if self.files[".solu"] is not None:
+                c.addSoluFile(self.files[".solu"])
+
+            path = ADD_READERS
+            if os.path.isfile(path):
+                for r in loader.loadAdditionalReaders([path]):
+                    c.readermanager.registerReader(r)
+                    self.logger.info("Added additional reader: " + r.getName())
+
+            for solver in loader.loadAdditionalSolvers():
+                c.readermanager.addSolver(solver)
+                self.logger.info("Added additional solver: " + solver.getName())
+
             c.collectData()
 
         except:
@@ -366,18 +589,21 @@ class ResultClient(object):
             self._log_failure(msg)
             raise
 
-        manageables = c.testrunmanager.getManageables()
-        if len(manageables) != 1:
-            msg = "Unexpected number of testruns. Expected 1, got: {}".format(len(manageables))
+        testruns = c.getTestRuns()
+        if len(testruns) != 1:
+            msg = "Unexpected number of testruns. Expected 1, got: {}".format(len(testruns))
             self._log_failure(msg)
             raise Exception(msg)
 
-        return manageables[0]
+        return testruns[0]
 
     def file_lookup(self):
-        '''
-        Uses the file_id (sha256 hash) to determine if a file is already existing in elasticsearch.
-        '''
+        """
+        Use the file_id (sha256 hash) to determine if a file is already existing in elasticsearch.
+
+        Return None if not found.
+        """
+        # this should not happen
         if hasattr(self, "testset_meta_id"):
             f = TestSet.get(id=self.testset_meta_id)
             return f
@@ -388,15 +614,29 @@ class ResultClient(object):
             found = list(s.execute())
             if len(found) >= 1:
                 return found[0]
+            return None
+
+        # this should not happen
         else:
             raise Exception('file_id not yet set. Lookup failed.')
 
 
 def _determine_type(inst):
-    '''
-    Determine the problem type. This code was adapted from check/check.awk
+    """
+    Determine the problem type of a given Result.
+
+    This code was adapted from check/check.awk
     Possible return values: MIQCP, MINLP, QCP, NLP, CIP, LP, BP, IP MBP, MIP
-    '''
+
+    Parameters
+    ----------
+    inst : Result
+        Result instance to determine type for.
+
+    Returns
+    -------
+    str
+    """
     initvariables = inst.get("OriginalProblem_Vars") or 0
 
     # the original problem had no variables, so parsing probably went wrong
@@ -442,3 +682,27 @@ def _determine_type(inst):
     elif (integer_variables == 0): return "MBP"
 
     else: return "MIP"
+
+
+def most_frequent_value(data, key):
+    """
+    Find most frequent value in data[key].
+
+    Parameters
+    ----------
+    data : dict
+        dictionary containing lists of values.
+    key : key
+        key to search for
+
+    Returns
+    -------
+    value
+    """
+    if key not in data.keys():
+        return None
+    d = data[key]
+    count = {}
+    for v in d.values():
+        count[v] = count.get(v, 0) + 1
+    return max(count, key=count.get)

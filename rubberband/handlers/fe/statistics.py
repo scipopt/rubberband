@@ -1,10 +1,26 @@
+"""Contains StatisticsView."""
 from .base import BaseHandler
 from .result import load_testsets, get_same_status
 from rubberband.models import TestSet
 
 
 class StatisticsView(BaseHandler):
+    """Request handler handling the custom statistics."""
+
     def get(self, parent_id):
+        """
+        Answer to GET requests.
+
+        Shows the custom statistics page, where the user can request custom statistics and sees
+        the results.
+        Can be requested prefilled with query parameters.
+        Renders `statistics.html`
+
+        Parameters
+        ----------
+        parent_id : str
+            Rubberband id for the TestSet to get statistics for.
+        """
         base = TestSet.get(id=parent_id)
 
         compare = self.get_query_argument("compare", default=[])
@@ -35,13 +51,29 @@ class StatisticsView(BaseHandler):
                     testset.load_stats(subset=instances_search)
                     testset.matched = instances_search
 
-        self.render("statistics.html", page_title="Custom Statistics", file=base, compare=compare)
+        rrt = self.render_string("results_table.html", results=[base] + compare)
+        self.render("statistics.html", page_title="Custom Statistics", file=base, compare=compare,
+                rendered_results_table=rrt)
 
 
 def find_matching(TestSetObjs, search, oneorall):
-    '''
-    Find instances that match the search criteria.
-    '''
+    """
+    Collect all Results from TestSets that match the search criteria.
+
+    Parameters
+    ----------
+    TestSetObjs
+        a set of TestSets
+    search : dict
+        dict of comparation form values, contains keys "field", "comparator", "value"
+    oneorall : str
+        in ["all", "one"], should at least one or all Results match the search criteria?
+
+    Returns
+    -------
+    list
+        the results that match the search
+    """
     all_matching = set()
     for TestSetObj in TestSetObjs:
         matching = set([])

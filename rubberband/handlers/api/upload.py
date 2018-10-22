@@ -1,3 +1,4 @@
+"""Contains UploadApiEndpoint."""
 import logging
 from tornado.escape import json_encode
 from tornado.ioloop import IOLoop
@@ -8,9 +9,17 @@ from rubberband.utils import ResultClient, write_file, sendmail
 
 
 class UploadAsyncEndpoint(BaseHandler):
+    """Request handler handling the upload by api asynchronously."""
+
     @authenticated
     @coroutine
     def put(self):
+        """
+        Answer to PUT requests.
+
+        The method that is called to upload files, spawn a callback to import_files.
+        Write json response.
+        """
         files = self.request.files.values()
         tags = self.get_argument("tags", [])
 
@@ -23,14 +32,21 @@ class UploadAsyncEndpoint(BaseHandler):
 
 
 class UploadEndpoint(BaseHandler):
+    """Request handler handling the upload by api."""
+
     @authenticated
     def put(self):
-        '''
+        """
+        Answer to PUT requests.
+
+        The method that is called to upload files, call perform_import.
         The method that rbcli calls to upload files via commandline.
-        '''
+        Write json response.
+        """
         files = self.request.files.values()
         tags = self.get_argument("tags", [])
-        results = perform_import(files, tags, self.current_user)
+        expirationdate = self.get_argument("expirationdate", None)
+        results = perform_import(files, tags, self.current_user, expirationdate=expirationdate)
 
         if results.fail:
             self.set_status(400)  # bad request
@@ -45,8 +61,26 @@ class UploadEndpoint(BaseHandler):
 
 
 @coroutine
-def import_files(paths, tags, user, url_base):
-    results = perform_import(paths, tags, user)
+def import_files(paths, tags, user, url_base, expirationdate=None):
+    """
+    Pass everything to import and report result back.
+
+    Parameters
+    ----------
+    paths : list of str
+        paths to files
+    tags : str
+        list of tags
+    user : str
+        username
+    url_base : str
+        base url for response
+    expirationdate : str
+        expirationdate
+
+    Sends an email to user after successfull import.
+    """
+    results = perform_import(paths, tags, user, expirationdate=expirationdate)
     fail = results.fail
     if fail:
         response = make_response(results.status, url_base,
@@ -59,7 +93,26 @@ def import_files(paths, tags, user, url_base):
     sendmail(response, user)
 
 
-def perform_import(files, tags, user):
+def perform_import(files, tags, user, expirationdate=None):
+    """
+    Preform the import.
+
+    Parameters
+    ----------
+    files : list of str
+        The files to be imported
+    tags : str or list
+        The tags associated to the files
+    user : str
+        The username
+    expirationdate : str
+        The expirationdate
+
+    Returns
+    -------
+    ImportStats
+        result of import
+    """
     paths = []
     for f in files:
         paths.append(write_file(f[0]["filename"], f[0]["body"]))
@@ -70,10 +123,29 @@ def perform_import(files, tags, user):
         tags = list(map(str.strip, tags))
 
     c = ResultClient(user=user)
-    return c.process_files(paths, tags=tags)
+    return c.process_files(paths, tags=tags, expirationdate=expirationdate)
 
 
 def make_response(status, url, msg="", errors=""):
+    """
+    Construct a response dictionary.
+
+    Parameters
+    ----------
+    status : str
+        Status
+    url : str
+        URL
+    msg : str
+        Message
+    errors : str
+        Errors
+
+    Returns
+    -------
+    dict
+        contains keys "status", "url", optional "msg", "errors".
+    """
     response = {
         "status": status,
         "url": url,

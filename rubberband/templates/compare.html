@@ -1,61 +1,17 @@
-{% extends "base.html" %}
-{% block extra_js %}
+{% extends "search_form.html" %}
+{% block extra_extra_js %}
 <script type="text/javascript" src="/static/js/compare.js"></script>
 {% end %}
-{% block body %}
+{% block action %}
 <div class="row">
   <form id="compare" name="compareform" method="post">
+
     <h4>Base Test Run</h4>
-    <div class="col-md-12">
-	  <input name="base" value="{{base.meta.id}}" type="hidden" />
-	  <p>{{ base.filename }} by {{ base.uploader }} on {{ format_attr(base, "git_commit_timestamp") }}</p>
-    </div>
-    <h4>Comparable Runs</h4>
-    <div class="row">
-   {% if any([choices["older"].hits.total, choices["same"].hits.total, choices["newer"].hits.total]) %}
-    {% if choices["older"].hits.total %}
-    <div class="col-md-6">
-      <label>Older Runs</label>
-      {% for c in choices["older"] %}
-      <div class="checkbox">
-	      <label class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="{{ format_attr(c, "git_commit_timestamp")}} by {{ c.uploader }}" value="{{c.meta.id}}">
-		<input type="checkbox" name="{{c.meta.id}}">{{c.filename}}
-	</label>
-      </div>
-      {% end %}
-    </div>
+    <input id="search-base" name="base" value="{{base.meta.id}}" type="hidden" />
+    {% for c in compareids %}
+      <input class="exclude-compare" name="{{c}}" value="{{c}}" type="hidden" />
     {% end %}
-    {% if choices["same"].hits.total > 1%}
-    <div class="col-md-6">
-      <label>Same Commit</label>
-      {% for c in choices["same"] %}
-      {% if c.meta.id != base.meta.id %}
-      <div class="checkbox">
-	    <label class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="{{ format_attr(c, "git_commit_timestamp")}} by {{ c.uploader }}" value="{{c.meta.id}}">
-	      <input type="checkbox" name="{{c.meta.id}}">{{c.filename}}
-	    </label>
-      </div>
-      {% end %}
-      {% end %}
-    </div>
-    {% end %}
-    {% if choices["newer"].hits.total %}
-    <div class="col-md-6">
-      <label>Newer Runs</label>
-      {% for c in choices["newer"] %}
-      <div class="checkbox">
-	    <label class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="{{ format_attr(c, "git_commit_timestamp")}} by {{ c.uploader }}" value="{{c.meta.id}}">
-	      <input type="checkbox" name="{{c.meta.id}}">{{c.filename}}
-	    </label>
-      </div>
-      {% end %}
-    </div>
-    {% end %}
-    </div>
-    <button type="submit" class="btn btn-primary">Go!</button>
-  </form>
-  {% else %}
-  <p>No comparable runs found :(</p>
-  {% end %}
-</div>
+    {% raw rendered_results_table %}
+
+    <button type="submit" class="btn btn-primary">Compare to these</button>
 {% end %}

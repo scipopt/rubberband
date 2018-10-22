@@ -1,3 +1,4 @@
+"""Mathods for sending emails."""
 import json
 import smtplib
 from email.mime.text import MIMEText
@@ -6,9 +7,16 @@ from tornado.options import options
 
 
 def sendmail(message, recipient):
-    '''
+    """
     Send an email.
-    '''
+
+    Parameters
+    ----------
+    message : str
+        Message to send.
+    recipient : str
+        Recipient of mail.
+    """
     msg = MIMEText(json.dumps(message))
 
     msg['Subject'] = "Rubberband file upload: {}".format(message["status"])

@@ -3,7 +3,10 @@
     <h3 class="tab-title">Settings</h3>
     {% if file.settings %}
     <div class="tab-buttons">
-    <a href="/file/{{file.meta.id}}?ftype=.set" class="bs-tooltip" data-placement="top" data-toggle="tooltip" title="view settings file">
+      <i title='Show/Hide rows with equal data' class='bs-tooltip'>
+        <input id="toggle-settings" data-toggle="toggle" data-on="<i class='glyphicon glyphicon-eye-open'></i>" data-off="<i class='glyphicon glyphicon-eye-close'></i>" data-style="quick" data-size="small" type="checkbox">
+      </i>
+      <a href="/file/{{file.meta.id}}?ftype=.set" class="bs-tooltip" data-placement="top" data-toggle="tooltip" title="view settings file">
       <span class="glyphicon glyphicon-info-sign"></span>
       </a>
       <a class="bs-tooltip" type="button" data-toggle="modal" data-target="#downloadSettingsOptions" title="download settings" id="download-settings-file" data-placement="top" data-toggle="tooltip">
@@ -12,7 +15,7 @@
     </div>
   </div>
   <div class="row">
-    <table class="settings-table table table-bordered">
+    <table class="settings-table table table-bordered table-hover" width="100%">
     <thead>
     <tr>
       <th>Setting name</th>
@@ -25,7 +28,7 @@
     </thead>
     <tbody>
         {% for i in file.settings %}
-	<tr>
+  <tr{% if are_equivalent([f.settings_default for f in [file]+compare]+[f.settings for f in [file]+compare], i) %} class="toggle_settings_hide" {% end %}>
 	  <td>{{ i }}</td>
 	  <td>{{ format_attr(file.settings, i) }}</td>
 	  {% for c in compare %}

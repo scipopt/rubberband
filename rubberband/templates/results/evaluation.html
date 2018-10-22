@@ -1,0 +1,30 @@
+{% try %}
+    {% set long_table = ipet_long_table %}
+{% except NameError %}
+    {% set long_table = False %}
+{% end %}
+{% try %}
+    {% set aggregated_table = ipet_aggregated_table %}
+{% except NameError %}
+    {% set aggregated_table = False %}
+{% end %}
+
+<div id="ipet-eval-result">
+
+  {% if aggregated_table %}
+  <div id="ipet-eval-result-aggregated">
+    {% raw aggregated_table %}
+  </div>
+  {% end %}
+  <hr />
+  {% if long_table %}
+
+  <div id="plainchart" class="col-xs-6" style="width:50%; height:400px;"></div>
+  <div id="logchart" class="col-xs-6" style="width:50%; height:400px;"></div>
+
+  <div id="ipet-eval-result-long">
+    {% raw long_table %}
+  </div>
+  {% end %}
+
+</div>

@@ -1,10 +1,43 @@
+"""Define constants used by rubberband."""
+
 INFINITY_KEYS = ("separating/flowcover/maxslackroot", "separating/flowcover/maxslack",
                  "heuristics/undercover/maxcoversizeconss")
 INFINITY_MASK = -1
+INFINITY = 1e+20
+INFINITY_FLOAT = float('inf')
+INFINITY_DISPLAY = 1e+20
 ZIPPED_SUFFIX = ".gz"
 FILES_DIR = "files/"
-ALL_SOLU = "all.solu"
-NONE_DISPLAY = "--"
+STATIC_FILES_DIR = FILES_DIR + "static/"
+ALL_SOLU = "instancedata/database/instancedb.sqlite3"  # or STATIC_FILES_DIR + "all.solu"
+ADD_READERS = STATIC_FILES_DIR + "additional_readers.xml"
+IPET_EVALUATIONS = {
+        0: {"path": STATIC_FILES_DIR + "eval_singleruns_exclude.xml",
+            "name": "single runs - exclude fails & aborts (standard)"},
+        1: {"path": STATIC_FILES_DIR + "eval_singleruns_include.xml",
+            "name": "single runs - include fails & aborts (standard)"},
+        2: {"path": STATIC_FILES_DIR + "eval_singleruns_punish.xml",
+            "name": "single runs - punish fails & aborts (standard)"},
+        3: {"path": STATIC_FILES_DIR + "eval_groupgithash_exclude.xml",
+            "name": "group by githash - exclude fails & aborts"},
+        4: {"path": STATIC_FILES_DIR + "eval_groupsettings_exclude.xml",
+            "name": "group by settings - exclude fails & aborts"},
+        5: {"path": STATIC_FILES_DIR + "eval_grouplpsolver_exclude.xml",
+            "name": "group by LP solver - exclude fails & aborts"},
+        6: {"path": STATIC_FILES_DIR + "eval_grouplpsolver_exclude_detailed.xml",
+            "name": "detailed view - group githash, exclude"},
+        7: {"path": STATIC_FILES_DIR + "evaluation-pure.xml",
+            "name": "pure evaluation for sap"},
+        8: {"path": STATIC_FILES_DIR + "evaluation-deco.xml",
+            "name": "deco evaluation for sap"},
+        }
+# date sorting works only with the empty NONE_DISPLAY at the moment
+NONE_DISPLAY = ""
 EXPORT_DATA_FORMATS = ("gzip", "json", "csv", "raw")
-EXPORT_FILE_TYPES = (".out", ".set", ".err")
+EXPORT_FILE_TYPES = (".out", ".set", ".err", ".meta")
 ELASTICSEARCH_INDEX = "solver-results"
+
+FORMAT_DATE = "%Y-%m-%d"
+FORMAT_DATETIME_LONG = "%B %d, %Y %H:%M"
+FORMAT_DATETIME_SHORT = "%d. %b %Y, %H:%M"
+FORMAT_DATETIME = "%Y-%m-%d %H:%M:%S"

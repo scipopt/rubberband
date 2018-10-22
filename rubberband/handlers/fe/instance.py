@@ -1,3 +1,4 @@
+"""Contains InstanceView."""
 import json
 import logging
 from elasticsearch_dsl import A
@@ -7,10 +8,23 @@ from .base import BaseHandler
 
 
 class InstanceView(BaseHandler):
-    '''
-    Single instance view
-    '''
+    """Request handler handling requests for a single instance."""
+
     def get(self, parent_id, child_id):
+        """
+        Answer to GET requests.
+
+        Get information about a single Instance, as a Result.
+
+        Parameters
+        ----------
+        parent_id : str
+            id of parent TestSet
+        child_id : str
+            id of Result
+
+        Renders `instance_detail_view.html`.
+        """
         r = Result.get(id=child_id, routing=parent_id)
         count = Result.search().filter("term", instance_name=r.instance_name).count()
 
@@ -24,11 +38,16 @@ class InstanceView(BaseHandler):
 
 
 class InstanceNamesEndpoint(BaseHandler):
+    """Get names of instances."""
+
     def get(self):
-        '''
-        Get a list of all instance names in Elasticsearch.
+        """
+        Answer to GET requests.
+
         Used for `visualize` tab instance search typeahead.
-        '''
+
+        Write a list of all instance names in Elasticsearch.
+        """
         s = Result.search()
         a = A("terms", field="instance_name", size=0)  # set size to 0 so all results are returned
         s.aggs.bucket("unique_instances", a)
@@ -42,18 +61,39 @@ class InstanceNamesEndpoint(BaseHandler):
 
 
 class InstanceEndpoint(BaseHandler):
+    """Access information about instances."""
+
     def get(self, parent_id):
-        '''
-        Return a Result with all instances attached.
-        '''
+        """
+        Answer to GET requests.
+
+        Parameters
+        ----------
+        parent_id : str
+            Id of parent TestSet
+
+        Write a Result with all instances attached.
+        """
         res = TestSet.get(id=parent_id)
         return self.write(res.json())
 
 
 def load_results(parent_ids, name):
-    '''
-    Load the instance results from the various parents.
-    '''
+    """
+    Load the instance results from the various parent TestSets.
+
+    Parameters
+    ----------
+    parent_ids : str
+        Ids of parent TestSets
+    name : str
+        Name of instance Result
+
+    Returns
+    -------
+    list
+        List of Results
+    """
     results = []
 
     for id in parent_ids:

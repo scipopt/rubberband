@@ -1,7 +1,21 @@
+"""Common methods for request handlers."""
 from rubberband.models import TestSet
 
 
 def search(query):
+    """
+    Execute a search to elasticsearch database, gives by default the 100 first results.
+
+    Parameters
+    ----------
+    query : dict
+        Search parameters
+
+    Results
+    -------
+    Response
+        elasticsearch-dsl Response object
+    """
     s = TestSet.search()
 
     if "tags" in query:
@@ -13,6 +27,7 @@ def search(query):
 
     # return 100 items unless a limit is explicitly set
     limit = query.pop("limit", None) or 100
+    limit = int(limit)
 
     for field, value in query.items():
         filter_dict = {field: value}
