@@ -11,5 +11,5 @@ python-gitlab==1.5.1
 requests==2.10.0
 requests-toolbelt==0.7.0
 scipy==1.1.0
-tornado==4.3
+tornado==5.1
 zipfile36==0.1.3
