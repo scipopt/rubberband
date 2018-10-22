@@ -51,3 +51,6 @@ nosetests.xml
 # Documentation
 doc/build
 doc/source/_modules
+
+# pytests
+.pytest_cache/
