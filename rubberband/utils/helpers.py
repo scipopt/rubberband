@@ -1,37 +1,44 @@
+"""Collection of helper functions."""
+
 from datetime import datetime
 import string
 
 from rubberband.constants import FORMAT_DATETIME_SHORT
 
+
 def shortening_repres_id(repres, key):
     """
-    get a shortening span where the text is under key in dicts repres['long'] and repres['short']
+    Shorten a span containing 'representation' with full text saved under attribute 'key'.
+
+    Get a shortening span where the text is under key in dicts repres['long'] and repres['short'].
     """
     return shortening_span(repres['long'][key], repres['short'][key])
 
+
 def shortening_span(text, short):
     """
-    get a span with text that shortenes itself on small screens (use in table column headers)
+    Get a span with text that shortenes itself on small screens.
+
+    For example used in column headers.
     """
     return '''<span class="d-none d-xl-block">{longtext}</span>
     <span class="d-block d-xl-none" title="{longtext}">{shorttext}</span>
     '''.format(longtext=text, shorttext=short)
 
+
 def get_link(href, text, length=30, end=10):
-    """
-    get a link with shortened text to href and full text as title
-    """
+    """Get a link with shortened text to href and full text as title."""
     link = '<a href="{}" title="{}">{}</a>'.format(href, text, shorten_str(text, length, end))
     return link
 
+
 def shorten_str(string, length=30, end=10):
-    """
-    Shorten a string to the given length.
-    """
+    """Shorten a string to the given length."""
     if len(string) <= length:
         return string
     else:
-        return "{}...{}".format(string[:length-end], string[-end:])
+        return "{}...{}".format(string[:length - end], string[- end:])
+
 
 def get_letters_list(quantity):
     """
@@ -57,6 +64,7 @@ def get_letters_list(quantity):
     if quantity > 26:
         letters = [x + y for x in letters for y in letters]
     return letters
+
 
 def get_rbid_representation(testrun, mode="extended"):
     """
@@ -146,8 +154,9 @@ def setup_testruns_subst_dict(testruns):
         count = count + 1
     return repres
 
+
 def rb_join_arg(l=[], identif="default", pos=0):
-    """construct url argument with identifier and l as list"""
+    """Construct url argument with identifier and l as list."""
     if l == []:
         return ""
     if pos == 0:

@@ -1,12 +1,14 @@
 <div aria-labelledby="meta-tab" role="tabpanel" class="tab-pane fade" id="meta">
 
   <!-- headline ==================================================================== -->
+  {% if len(compare) >= 1 %}
   <div class="rb-details-tab-buttons row justify-content-end">
 
     {% if len(compare) >= 1 %}
     <div class="rb-details-tab-buttons row justify-content-end">
       <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="tooltip" data-placement="top" title="Show/Hide rows with equal data">
         <span id="toggle-meta" class='fa fa-eye-slash'></span></span>
+    </div>
     {% end %}
 
     {% if fileoptions[".meta"] %}
@@ -15,6 +17,8 @@
     {% end %}
 
   </div>
+  {% end %}
+
   <h2 class="rb-details-tab-title">General information</h2>
   <!-- end headline ==================================================================== -->
 

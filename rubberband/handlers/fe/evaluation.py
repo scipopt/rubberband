@@ -90,7 +90,7 @@ class EvaluationView(BaseHandler):
             longtable.insert(0, "id", range(1, len(longtable) + 1))
 
             # convert to html and get style
-            add_classes = " ".join([self.rb_dt_borderless, self.rb_dt_compact]) # style for table
+            add_classes = " ".join([self.rb_dt_borderless, self.rb_dt_compact])  # style for table
             html_long, style_long = table_to_html(longtable, ev, html_id="ipet-long-table",
                     add_class=add_classes)
             html_agg, style_agg = table_to_html(aggtable, ev, html_id="ipet-aggregated-table",
@@ -113,7 +113,7 @@ class EvaluationView(BaseHandler):
 
             # send evaluated data
             mydict = {"rb-ipet-eval-result": html_tables,
-                      "rb-ipet-buttons": fg_buttons_str }
+                      "rb-ipet-buttons": fg_buttons_str}
             self.write(json.dumps(mydict))
 
         elif style == "latex":
@@ -172,7 +172,8 @@ class EvaluationView(BaseHandler):
 
             tridstr = ",".join([tr for tr in testrunids if tr != default_id])
             baseurl = self.get_rb_base_url()
-            evaluation_url = "{}/result/{}?compare={}#evaluation".format(baseurl, default_id, tridstr)
+            evaluation_url = "{}/result/{}?compare={}#evaluation".format(baseurl,
+                    default_id, tridstr)
             out = insert_into_latex(out, evaluation_url)
 
             # send reply
@@ -463,11 +464,11 @@ def table_to_html(df, ev, html_id="", add_class=""):
     tree = html.fromstring(htmlstr)
     treestyle = tree.find(".//style")
     treetable = tree.find(".//table")
-    treetable.set("width", "100%") # needed for datatable js plugin
+    treetable.set("width", "100%")  # needed for datatable js plugin
 
     tableclasses = " ipet-table rb-table-data " + add_class
-    treetable.set("class", tableclasses) # set classes
-    treetable.set("id", html_id) # set id
+    treetable.set("class", tableclasses)  # set classes
+    treetable.set("id", html_id)  # set id
 
     return treetable, treestyle
 

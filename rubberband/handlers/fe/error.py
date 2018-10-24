@@ -8,7 +8,7 @@ class ErrorView(BaseHandler):
 
     def prepare(self):
         """
-        Always gets called before answering to a spectific request.
+        Prepare, always gets called before answering to a specific request.
 
         Raises an HTTPError
         """

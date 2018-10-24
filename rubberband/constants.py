@@ -10,7 +10,7 @@ ZIPPED_SUFFIX = ".gz"
 FILES_DIR = "files/"
 STATIC_FILES_DIR = FILES_DIR + "static/"
 ALL_SOLU = STATIC_FILES_DIR + "all.solu"
-#ALL_SOLU = "instancedata/database/instancedb.sqlite3"
+# ALL_SOLU = "instancedata/database/instancedb.sqlite3"
 ADD_READERS = STATIC_FILES_DIR + "additional_readers.xml"
 IPET_EVALUATIONS = {
         0: {"path": STATIC_FILES_DIR + "eval_singleruns_exclude.xml",
@@ -43,4 +43,4 @@ FORMAT_DATETIME_LONG = "%d. %b %Y, %H:%M"
 FORMAT_DATETIME_SHORT = "%d. %b %y"
 FORMAT_DATETIME = "%Y-%m-%d %H:%M:%S"
 
-DT_STYLE = "std" # bs4 or std
+DT_STYLE = "std"  # datatables style 'bs4' or 'std'

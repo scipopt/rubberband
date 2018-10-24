@@ -48,7 +48,7 @@ class SearchView(BaseHandler):
         rst = self.get_testrun_table(self.get_starred_testruns(), tablename="rb-starred-table",
                 get_empty_header=True)
 
-            # render search view
+        # render search view
         self.render("search.html", page_title="Search", search_options=options,
                 compare_table=rct, starred_table=rst)
 

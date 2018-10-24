@@ -11,7 +11,6 @@ class PersonalView(BaseHandler):
 
         Renders `personal.html`.
         """
-
         rst = self.get_testrun_table(self.get_starred_testruns(), tablename="rb-starred-table",
                 checkboxes=False)
 
@@ -27,4 +26,3 @@ class PersonalView(BaseHandler):
         self.clear_all_cookies()
         next_url = "{}/personal".format(self.application.base_url)
         self.redirect(next_url)
-

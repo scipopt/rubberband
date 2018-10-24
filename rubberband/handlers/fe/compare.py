@@ -1,7 +1,5 @@
 """Contains CompareView."""
 from .base import BaseHandler
-from rubberband.models import TestSet
-from rubberband.handlers.fe.search import get_options
 from tornado.web import HTTPError
 
 
@@ -33,7 +31,8 @@ class CompareView(BaseHandler):
         if base is not None and len(compares) == 1:
             raise HTTPError(status_code=400, msg="Please select at least 1 Testrun to compare to.")
         elif base is None and len(compares) <= 1:
-            raise HTTPError(status_code=400, log_message="Please select at least 2 Testruns to compare.")
+            raise HTTPError(status_code=400,
+                    log_message="Please select at least 2 Testruns to compare.")
 
         # base is identified via meta id as one of the comparison TestSets
         if base:

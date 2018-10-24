@@ -8,19 +8,20 @@ import traceback
 from rubberband.models import TestSet
 from rubberband.constants import NONE_DISPLAY, INFINITY_KEYS, \
         INFINITY_MASK, INFINITY_DISPLAY, FORMAT_DATETIME_LONG, DT_STYLE
-from rubberband.utils.helpers import shorten_str, get_link, shortening_span, shortening_repres_id, rb_join_arg
+from rubberband.utils.helpers import shorten_str, get_link, shortening_span, \
+        shortening_repres_id, rb_join_arg
 
 
 class BaseHandler(RequestHandler):
     """Custom overrides."""
 
-    if DT_STYLE=="bs4":
+    if DT_STYLE == "bs4":
         # bootstrap4
         rb_dt_compact = "table-condensed"
         rb_dt_borderless = "table-borderless"
         rb_dt_bordered = "table-bordered"
         rb_dt_table = "table"
-    elif DT_STYLE=="std":
+    elif DT_STYLE == "std":
         # default datatable style
         rb_dt_compact = "compact"
         rb_dt_borderless = ""
@@ -89,10 +90,12 @@ class BaseHandler(RequestHandler):
                 return default
 
     def clear_all_cookies(self):
+        """Clear all cookies that are defined."""
         for i in self.cookies:
             self.clear_cookie(i)
 
     def get_all_cookies(self):
+        """Get all cookies that are defined as a dictionary."""
         mycookies = {}
         for i in self.cookies:
             val = self.get_cookie(i)
@@ -166,26 +169,24 @@ class BaseHandler(RequestHandler):
             rb_join_arg=rb_join_arg,
             get_link=get_link,
             options=options,
-            # to get a random number, used to reload css everytime, for debugging
-            rand=datetime.now(),
 
             page_title=None,
-            status_code='404', # error code
-            checkboxes = False,
-            radiobuttons = False,
-            tablename = 'results-table',
-            modalheading = None,
-            modalbody = None,
-            modalfooter = None,
-            representation = None,
-            ipet_long_table = None,
-            ipet_aggregated_table = None,
-            rb_dt_style = DT_STYLE,
+            status_code='404',  # error code
+            checkboxes=False,
+            radiobuttons=False,
+            tablename='results-table',
+            modalheading=None,
+            modalbody=None,
+            modalfooter=None,
+            representation=None,
+            ipet_long_table=None,
+            ipet_aggregated_table=None,
+            rb_dt_style=DT_STYLE,
 
-            rb_dt_compact = self.rb_dt_compact,
-            rb_dt_borderless = self.rb_dt_borderless,
-            rb_dt_bordered = self.rb_dt_bordered,
-            rb_dt_table = self.rb_dt_table,
+            rb_dt_compact=self.rb_dt_compact,
+            rb_dt_borderless=self.rb_dt_borderless,
+            rb_dt_bordered=self.rb_dt_bordered,
+            rb_dt_table=self.rb_dt_table,
         )
 
         # additional ui modules
@@ -344,6 +345,7 @@ class BaseHandler(RequestHandler):
     def are_equivalent(self, sets, attr):
         """
         Decide if the data in attr is the same in all TestSets.
+
         Skip values that don't exist.
 
         Parameters
@@ -370,12 +372,12 @@ class BaseHandler(RequestHandler):
         vals = [getattr(ts, attr, None) for ts in sets]
         nonzeros = [val for val in vals if val is not None]
         try:
-            unique_nonzeros = set(nonzeros) # this does not work for lists
+            unique_nonzeros = set(nonzeros)  # this does not work for lists
         except TypeError:
             nonzeros = [','.join(val) for val in vals if val is not None]
             unique_nonzeros = set(nonzeros)
 
-        return (len(unique_nonzeros)<=1)
+        return (len(unique_nonzeros) <= 1)
 
     def get_starred_testruns(self):
         """Get a list of the testruns that are starred by the user."""
@@ -392,7 +394,6 @@ class BaseHandler(RequestHandler):
             try:
                 testruns.append(TestSet.get(id=i))
             except:
-                #TODO remove that id from starred
                 pass
         return testruns
 
@@ -402,4 +403,4 @@ class BaseHandler(RequestHandler):
         if testruns != [] or get_empty_header:
             table = self.render_string("results_table.html", results=testruns,
                     tablename=tablename, checkboxes=checkboxes, get_empty_header=get_empty_header)
-        return table;
+        return table
