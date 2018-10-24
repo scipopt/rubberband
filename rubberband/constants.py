@@ -9,7 +9,10 @@ INFINITY_DISPLAY = 1e+20
 ZIPPED_SUFFIX = ".gz"
 FILES_DIR = "files/"
 STATIC_FILES_DIR = FILES_DIR + "static/"
-ALL_SOLU = "instancedata/database/instancedb.sqlite3"  # or STATIC_FILES_DIR + "all.solu"
+
+#ALL_SOLU = "instancedata/database/instancedb.sqlite3"
+ALL_SOLU = STATIC_FILES_DIR + "all.solu"
+
 ADD_READERS = STATIC_FILES_DIR + "additional_readers.xml"
 IPET_EVALUATIONS = {
         0: {"path": STATIC_FILES_DIR + "eval_singleruns_exclude.xml",
@@ -22,14 +25,6 @@ IPET_EVALUATIONS = {
             "name": "group by githash - exclude fails & aborts"},
         4: {"path": STATIC_FILES_DIR + "eval_groupsettings_exclude.xml",
             "name": "group by settings - exclude fails & aborts"},
-        5: {"path": STATIC_FILES_DIR + "eval_grouplpsolver_exclude.xml",
-            "name": "group by LP solver - exclude fails & aborts"},
-        6: {"path": STATIC_FILES_DIR + "eval_grouplpsolver_exclude_detailed.xml",
-            "name": "detailed view - group githash, exclude"},
-        7: {"path": STATIC_FILES_DIR + "evaluation-pure.xml",
-            "name": "pure evaluation for sap"},
-        8: {"path": STATIC_FILES_DIR + "evaluation-deco.xml",
-            "name": "deco evaluation for sap"},
         }
 # date sorting works only with the empty NONE_DISPLAY at the moment
 NONE_DISPLAY = ""
