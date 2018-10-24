@@ -18,46 +18,51 @@ function set_cookie(key, value, expiry) {
   document.cookie = key + "=" + value + ((expiry) ? "; expiry=" + expiry : "") + ";";
 };
 
-function toggle_favorited_tr(name) {
-  console.log(name);
+function favorite_action(name) {
+  let cookie_key = "starred-testruns";
+  let cookie_value = get_cookie(cookie_key);
 
-  toggle_tr_stars_by_name(name);
-  let tr_id=name;
-
-  let key = "starred-testruns";
-  let value = get_cookie(key);
-  console.log(get_cookie(key));
-
-  if (!value) {
-    set_cookie(key, tr_id);
-  } else if (value == tr_id) {
-    delete_cookie(key)
-  } else if (value.includes(tr_id + ',')) {
-    testruns = value.split(tr_id + ',');
-    set_cookie(key, testruns.join(""));
-  } else if (value.includes(',' + tr_id)) {
-    testruns = value.split(',' + tr_id);
-    set_cookie(key, testruns.join(""));
-  } else {
-    set_cookie(key, value + ',' + tr_id);
+  if (!cookie_value) { // cookie is empty
+    set_cookie(cookie_key, name);
+    process_starred_to(name, true);
+  } else if (cookie_value == name) { // cookie is `name`
+    delete_cookie(cookie_key)
+    process_starred_to(name, false);
+  } else if (cookie_value.includes(name + ',')) { // cookie contains `name,`
+    testruns = cookie_value.split(name + ',');
+    set_cookie(cookie_key, testruns.join(""));
+    process_starred_to(name, false);
+  } else if (cookie_value.includes(',' + name)) { // cookie contains `,name`
+    testruns = cookie_value.split(',' + name);
+    set_cookie(cookie_key, testruns.join(""));
+    process_starred_to(name, false);
+  } else { // cookie does not contain `name`
+    set_cookie(cookie_key, cookie_value + ',' + name);
+    process_starred_to(name, true);
   }
 }
 
-function toggle_tr_checkbox_by_name(name, checkval) {
+function process_checkbox_to(name, checkval) {
   $('input.rb-tr-checkbox[name="' + name + '"]').each(function(index) {
     this.checked = checkval
   });
 }
 
-function toggle_tr_stars_by_name(name) {
+function process_starred_to(name, is_favorited) {
   $('span.rb-tr-star[name="' + name + '"]').each(function(index) {
-    $(this).toggleClass("far fa");
+    set_star(this, is_favorited);
   });
+  if (is_favorited) {
+    child = $($('span.rb-tr-star[name="' + name + '"]')[0]).parent().parent()
+    $('#rb-starred-table').append(child.clone());
+  } else {
+    $('#rb-starred-table span.rb-tr-star[name="' + name + '"]').parent().parent().remove();
+  }
 }
 
-function init_tr_star_single(target, favorited) {
+function set_star(target, is_favorited) {
   target = $(target);
-  if (favorited) {
+  if (is_favorited) {
     target.removeClass("far");
     target.addClass("fa");
   } else {
@@ -73,14 +78,14 @@ function init_all_stars() {
   $('span.rb-tr-star').each(function(index) {
     name = this.attributes["name"].value;
     favorited = cookie.includes(name);
-    init_tr_star_single(this, favorited);
+    set_star(this, favorited);
   });
 }
 
 function select_all_compares() {
   $('#rb-compares-table input.rb-tr-checkbox').each(function(index) {
     name = this.attributes["name"].value;
-    toggle_tr_checkbox_by_name(name, true);
+    process_checkbox_to(name, true);
   });
 }
 
@@ -138,7 +143,7 @@ function align_table_columns_to(id, others) {
 //        below lines
 $('body').on('click', 'span.rb-tr-star', function (e) {
   name = e.target.attributes["name"].value;
-  toggle_favorited_tr(name);
+  favorite_action(name);
 });
 
 // -- click on checkboxes in search view
@@ -147,7 +152,7 @@ $('body').on('click', 'span.rb-tr-star', function (e) {
 $('form#compare').on('change', 'input.rb-tr-checkbox', function (e) {
   name = e.target.attributes["name"].value;
   checked_val = this.checked;
-  toggle_tr_checkbox_by_name(name, checked_val);
+  process_checkbox_to(name, checked_val);
 });
 
 // ======================================================
