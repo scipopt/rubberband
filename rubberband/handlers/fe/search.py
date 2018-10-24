@@ -15,36 +15,22 @@ class SearchView(BaseHandler):
         The initial search view, possibly prefilled with query string options.
         Renders `search.html`.
         """
-        # TODO get starred trns
-
         base_id = self.get_argument("base", None)
 
         compare_str = self.get_argument("compare", None)
-        starred_str = self.get_cookie("starred-testruns", None)
 
         # get a unique set of all needed testruns
         compares = []
-        starred = []
         compare_trns = []
-        starred_trns = []
         if compare_str:
             compares = compare_str.split(",")
-        if starred_str:
-            starred = starred_str.split(",")
         compares = set(compares)
-        starred = set(starred)
         if base_id is not None and base_id in compares:
             compares.pop(base_id)
 
         # get the testrun objects
         for i in compares:
             compare_trns.append(TestSet.get(id=i))
-        for i in starred:
-            try:
-                starred_trns.append(TestSet.get(id=i))
-            except:
-                #TODO remove that id from starred
-                pass
         if base_id is not None:
             base = TestSet.get(id=base_id)
             compare_trns.append(base)
@@ -57,15 +43,9 @@ class SearchView(BaseHandler):
             options["defaults"]["test_set"] = base.test_set
             options["defaults"]["mode"] = base.mode
 
-        # render compares table
-        rst = None
-        if starred_trns != []:
-            rst = self.render_string("results_table.html", results=starred_trns,
-                    tablename="rb-starred-table", checkboxes=True)
-        rct = None
-        if compare_trns != []:
-            rct = self.render_string("results_table.html", results=compare_trns,
-                    tablename="rb-compares-table", checkboxes=True)
+        # render compares and starred table
+        rct = self.get_testrun_table(compare_trns, tablename="rb-compares-table")
+        rst = self.get_testrun_table(self.get_starred_testruns(), tablename="rb-starred-table")
 
             # render search view
         self.render("search.html", page_title="Search", search_options=options,

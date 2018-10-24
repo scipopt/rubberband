@@ -5,6 +5,7 @@ from tornado.web import RequestHandler
 from tornado.options import options
 import traceback
 
+from rubberband.models import TestSet
 from rubberband.constants import NONE_DISPLAY, INFINITY_KEYS, \
         INFINITY_MASK, INFINITY_DISPLAY, FORMAT_DATETIME_LONG, DT_STYLE
 from rubberband.utils.helpers import shorten_str, get_link, shortening_span, shortening_repres_id, rb_join_arg
@@ -375,3 +376,30 @@ class BaseHandler(RequestHandler):
             unique_nonzeros = set(nonzeros)
 
         return (len(unique_nonzeros)<=1)
+
+    def get_starred_testruns(self):
+        """Get a list of the testruns that are starred by the user."""
+        starred_string = self.get_cookie("starred-testruns", None)
+
+        starred = []
+        if starred_string:
+            starred = starred_string.split(",")
+
+        starred = set(starred)
+
+        testruns = []
+        for i in starred:
+            try:
+                testruns.append(TestSet.get(id=i))
+            except:
+                #TODO remove that id from starred
+                pass
+        return testruns
+
+    def get_testrun_table(self, testruns, tablename, checkboxes=True):
+        """Get a table of testruns."""
+        table = None
+        if testruns != []:
+            table = self.render_string("results_table.html", results=testruns,
+                    tablename=tablename, checkboxes=checkboxes)
+        return table;

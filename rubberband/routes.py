@@ -16,7 +16,7 @@ routes = [
     (r"/result/(?P<parent_id>[^\/]+)/instance/?(?P<child_id>[^\/]+)?", fe.InstanceView),
     (r"/search", fe.SearchView),
     (r"/upload", fe.UploadView),
-    (r"/user", fe.UserView),
+    (r"/personal", fe.PersonalView),
     (r"/visualize", fe.VisualizeView),
 
     # for typeahead in visualize.js

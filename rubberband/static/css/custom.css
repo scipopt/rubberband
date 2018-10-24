@@ -54,16 +54,13 @@ a {
 .rb-link {/* make nonlink clickable text look like link */
   color: #0c5460 !important;
 }
-a:hover {
-  color: red;
-}
 .rb-link:hover, button.rb-btn-as-link:hover {/* make non-link text hoverable */
   color: red !important;
 }
 .rb-collapser { /* collapsible elements show a clickable cursor */
   cursor: pointer;
 }
-.fa-angle-down { /* collapsible elements have this angle, make it more visible by making it red */
+.red, a:hover, h3 span.fa-angle-down { /* collapsible elements have this angle, make it more visible by making it red */
   color: red;
 }
 /* ---- end links -------------- */

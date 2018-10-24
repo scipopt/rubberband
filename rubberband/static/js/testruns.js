@@ -18,9 +18,15 @@ function set_cookie(key, value, expiry) {
   document.cookie = key + "=" + value + ((expiry) ? "; expiry=" + expiry : "") + ";";
 };
 
-function toggle_tr_cookie(tr_id) {
-  key = "starred-testruns";
-  value = get_cookie(key);
+function toggle_favorited_tr(name) {
+  console.log(name);
+
+  toggle_tr_stars_by_name(name);
+  let tr_id=name;
+
+  let key = "starred-testruns";
+  let value = get_cookie(key);
+  console.log(get_cookie(key));
 
   if (!value) {
     set_cookie(key, tr_id);
@@ -109,7 +115,6 @@ function align_table_columns_to(id, others) {
     init_colclasses(id, others);
   }
 
-  console.log(others);
   for (let c in colclasses[id]) {
     let rbclass = colclasses[id][c];
     let width = $("#"+id+" th."+rbclass)[0].style["width"]
@@ -118,7 +123,6 @@ function align_table_columns_to(id, others) {
     }
 
     for (let i in others) {
-      console.log($("#"+others[i]+" th."+rbclass+", #"+others[i]+" td."+rbclass))
       $("#"+others[i]+" th."+rbclass+", #"+others[i]+" td."+rbclass).each( function() {
         this.style["width"] = width;
       });
@@ -134,8 +138,7 @@ function align_table_columns_to(id, others) {
 //        below lines
 $('body').on('click', 'span.rb-tr-star', function (e) {
   name = e.target.attributes["name"].value;
-  toggle_tr_cookie(name);
-  toggle_tr_stars_by_name(name);
+  toggle_favorited_tr(name);
 });
 
 // -- click on checkboxes in search view
