@@ -56,7 +56,8 @@ function process_starred_to(name, is_favorited) {
     child = $($('span.rb-tr-star[name="' + name + '"]')[0]).parent().parent()
     $('#rb-starred-table').append(child.clone());
   } else {
-    $('#rb-starred-table span.rb-tr-star[name="' + name + '"]').parent().parent().remove();
+    // maybe we don't want the unstarred lines to vanish
+    // $('#rb-starred-table span.rb-tr-star[name="' + name + '"]').parent().parent().remove();
   }
 }
 

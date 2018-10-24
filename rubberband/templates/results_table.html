@@ -1,4 +1,4 @@
-{% if results %}
+{% if results or get_empty_header %}
 <table {% if tablename %}id="{{ tablename }}"{% end %} class="nowrap rb-table {{rb_dt_compact}} {{rb_dt_borderless}} rb-table-data" width="100%">
   <thead>
     <tr>

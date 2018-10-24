@@ -396,10 +396,10 @@ class BaseHandler(RequestHandler):
                 pass
         return testruns
 
-    def get_testrun_table(self, testruns, tablename, checkboxes=True):
+    def get_testrun_table(self, testruns, tablename, checkboxes=True, get_empty_header=False):
         """Get a table of testruns."""
         table = None
-        if testruns != []:
+        if testruns != [] or get_empty_header:
             table = self.render_string("results_table.html", results=testruns,
-                    tablename=tablename, checkboxes=checkboxes)
+                    tablename=tablename, checkboxes=checkboxes, get_empty_header=get_empty_header)
         return table;
