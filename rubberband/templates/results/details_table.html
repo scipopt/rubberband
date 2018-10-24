@@ -37,7 +37,10 @@
           {% raw get_link(href, r.instance_name, 20, 7) %}
         </td>
       {% else %}
-        <td><a href="/result/{{ file.meta.id }}/instance/{{ r.meta.id }}">{{ r.instance_name }}</a></td>
+        <td>
+          {% set href="/result/{fileid}/instance/{rid}".format(fileid=file.meta.id, rid=r.meta.id, compare=','.join([c.meta.id for c in compare])) %}
+          {% raw get_link(href, r.instance_name, 20, 7) %}
+        </td>
       {% end %}
 
       {% set objsen = get_objsen(compare + [file], name) %}

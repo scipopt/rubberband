@@ -1,8 +1,16 @@
-// ----------------------- functions
 
 // define global variables
 let charts = {};
+let dtp = {};
+let dtf = {};
 let query_params;
+
+// -- date time parsers
+dtp.detail = d3.timeParse("%Y-%m-%dT%H:%M:%S");
+dtp.month_year = d3.timeParse('%b-%y');
+dtp.date = d3.timeParse("%Y-%m-%d");
+
+dtf.detail = d3.timeFormat("%Y-%m-%d %H:%M")
 
 // ----------------------- functions
 
@@ -40,9 +48,8 @@ function makeCharts(data) {
   $("#charts").removeAttr("hidden");
 
   // data preprocessing
-  var dtp = d3.timeParse("%Y-%m-%dT%H:%M:%S");
   data.forEach(function(d) {
-    d.git_commit_timestamp = dtp(d.git_commit_timestamp.split("+")[0]);
+    d.git_commit_timestamp = dtp.detail(d.git_commit_timestamp.split("+")[0]);
     d.git_commit_timestamp_formatted = new Date(d.git_commit_timestamp);
   });
 
@@ -109,7 +116,6 @@ function makeResultsCount(data, ndx) {
 function makeSolvingTimesChart(data, ndx) {
   charts.solvingTimesChart = dc.scatterPlot("#solving-times");
 
-  var dateFormat = d3.timeParse("%Y-%m-%d");
   var solvingTimes = ndx.dimension(function (d) { return [d.git_commit_timestamp, d.TotalTime_solving]; });
   var solvingTimesGroup = solvingTimes.group();
 
@@ -124,19 +130,18 @@ function makeSolvingTimesChart(data, ndx) {
     .height(300)
     .dimension(solvingTimes)
     .group(solvingTimesGroup)
-    .x(d3.scaleTime().domain([dateFormat(query_params["start-date"]), dateFormat(query_params["end-date"])]))
+    .x(d3.scaleTime().domain([dtp.date(query_params["start-date"]), dtp.date(query_params["end-date"])]))
     .yAxisPadding(padding)
     .renderHorizontalGridLines(true)
     .yAxisLabel("solving time (seconds)")
     .xAxisLabel("git commit timestamp");
 
-  charts.solvingTimesChart.xAxis().tickFormat(d3.timeParse('%b-%y'));
+  charts.solvingTimesChart.xAxis().tickFormat(dtp.month_year);
 }
 
 function makeSolvingNodesChart(data, ndx) {
   charts.solvingNodesChart = dc.scatterPlot("#solving-nodes");
 
-  var dateFormat = d3.timeParse("%Y-%m-%d");
   var solvingNodes = ndx.dimension(function (d) { return [d.git_commit_timestamp, d.Nodes]; });
   var solvingNodesGroup = solvingNodes.group();
 
@@ -151,13 +156,13 @@ function makeSolvingNodesChart(data, ndx) {
     .height(300)
     .dimension(solvingNodes)
     .group(solvingNodesGroup)
-    .x(d3.scaleTime().domain([dateFormat(query_params["start-date"]), dateFormat(query_params["end-date"])]))
+    .x(d3.scaleTime().domain([dtp.date(query_params["start-date"]), dtp.date(query_params["end-date"])]))
     .renderHorizontalGridLines(true)
     .yAxisLabel("# solving nodes")
     .xAxisLabel("git commit timestamp")
     .yAxisPadding(padding);
 
-  charts.solvingNodesChart.xAxis().tickFormat(d3.timeParse('%b-%y'));
+  charts.solvingNodesChart.xAxis().tickFormat(dtp.month_year);
 }
 
 function makeResultsTable(data, ndx) {
@@ -180,7 +185,7 @@ function makeResultsTable(data, ndx) {
         defaultContent: ''
       }, {
         targets: 1,
-        data: function (d) { return d.git_commit_timestamp_formatted; },
+        data: function (d) { return dtf.detail(d.git_commit_timestamp_formatted); },
         type: 'date',
         defaultContent: 'Not found'
       }, {
@@ -221,7 +226,6 @@ function set_active_tab(route) {
 
 // ------------------ document ready
 $(document).ready(function() {
-
   // check if url is of right format
   if (window.location.search) {
     // get_query_params defined in rb-global.js
