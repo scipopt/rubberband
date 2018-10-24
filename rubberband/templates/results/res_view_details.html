@@ -4,21 +4,18 @@
   {% if not compare %}
     <div class="rb-details-tab-buttons row justify-content-end">
       {% if fileoptions[".out"] %}
-      <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="modal"   data-placement="top" data-target="#reimportResultModal" title="reimport result">
-        <span class="fa fa-redo"></span></span>
-
       <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/file/{{file.meta.id}}" title="view log file">
-        <span class="fa fa-info-circle"></span></a>
-      {% end %}
-
-      {% if fileoptions[".meta"] %}
-      <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/file/{{file.meta.id}}?ftype=.meta" title="view meta file">
-        <span class="fa fa-paperclip"></span></a>
+        <span class="fa fa-file-invoice"></span></a>
       {% end %}
 
       {% if fileoptions[".err"] %}
       <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/file/{{file.meta.id}}?ftype=.err" title="view error file">
-        <span class="fa fa-exclamation-circle"></span></a>
+        <span class="fa fa-file-excel"></span></a>
+      {% end %}
+
+      {% if fileoptions[".out"] %}
+      <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="modal"   data-placement="top" data-target="#reimportResultModal" title="reimport result">
+        <span class="fa fa-redo"></span></span>
       {% end %}
 
       <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="modal"   data-placement="top" data-target="#deleteResultModal" title="delete result">

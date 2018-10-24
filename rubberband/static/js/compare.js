@@ -1,1 +1,0 @@
-$("label.bs-tooltip").tooltip();

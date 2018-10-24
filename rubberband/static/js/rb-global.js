@@ -39,6 +39,10 @@ function jsonlog(val) {
   console.log(JSON.stringify(val));
 }
 
+function rb_error(){
+  alert("Rubberband got tangled up, it looks like something went wrong.");
+}
+
 /* ############### exeuction ############### */
 
 set_active_tab(end[1]);

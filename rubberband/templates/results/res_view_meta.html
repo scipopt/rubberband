@@ -1,14 +1,20 @@
 <div aria-labelledby="meta-tab" role="tabpanel" class="tab-pane fade" id="meta">
 
   <!-- headline ==================================================================== -->
-  {% if len(compare) >= 1 %}
   <div class="rb-details-tab-buttons row justify-content-end">
 
-    <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="tooltip" data-placement="top" title="Show/Hide rows with equal data">
-      <span id="toggle-meta" class='fa fa-eye-slash'></span></span>
+    {% if len(compare) >= 1 %}
+    <div class="rb-details-tab-buttons row justify-content-end">
+      <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="tooltip" data-placement="top" title="Show/Hide rows with equal data">
+        <span id="toggle-meta" class='fa fa-eye-slash'></span></span>
+    {% end %}
+
+    {% if fileoptions[".meta"] %}
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/file/{{file.meta.id}}?ftype=.meta" title="view meta file">
+      <span class="fa fa-file-medical"></span></a>
+    {% end %}
 
   </div>
-  {% end %}
   <h2 class="rb-details-tab-title">General information</h2>
   <!-- end headline ==================================================================== -->
 

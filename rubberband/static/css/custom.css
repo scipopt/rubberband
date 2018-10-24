@@ -60,7 +60,7 @@ a {
 .rb-collapser { /* collapsible elements show a clickable cursor */
   cursor: pointer;
 }
-.red, a:hover, h3 span.fa-angle-down { /* collapsible elements have this angle, make it more visible by making it red */
+.red, a:hover, h3 span.fa-angle-down, h2 span.fa-angle-down { /* collapsible elements have this angle, make it more visible by making it red */
   color: red;
 }
 /* ---- end links -------------- */

@@ -42,7 +42,7 @@
 
 <!-- tabs line ==================================================================== -->
 <ul id="resultNavTabs" class="nav nav-tabs row" role="tablist">
-  {% for (title, icon, anchor) in [["Details", "database", "details"], ["Evaluation", "calculator", "evaluation"], ["Meta", "cogs", "meta"], ["Settings", "sliders-h", "settings"]] %}
+  {% for (title, icon, anchor) in [["Details", "info-circle", "details"], ["Evaluation", "calculator", "evaluation"], ["Meta", "cogs", "meta"], ["Settings", "sliders-h", "settings"]] %}
   <li class="nav-item col-3 active">
     <a aria-selected="true" aria-controls="{{ title }}" role="tab" href="" class="text-nowrap nav-link {% if anchor == "details" %} active {% end %}" data-toggle="tab" data-target="#{{ anchor }}">
       <span class="d-block d-sm-none fa fa-{{ icon }}"></span>
