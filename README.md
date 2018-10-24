@@ -18,7 +18,7 @@ A flexible web view and analysis platform for solver log files of mathematical o
 
 ## Development
 
-This is a detailed description of how to set up Rubberband. If you're running Ubuntu or any of its Linux variants, simply clone this repository and run `bin/start_project.sh` for a faster setup. Otherwise, read the instructions below.
+This is a detailed description of how to set up Rubberband.
 
 ### Installing Elasticsearch
 
@@ -67,9 +67,10 @@ pip install -r requirements.txt
 pip install -r requirements-dev.txt
 ```
 
-The first install command will clone and install IPET from github. This step is not necessary if you happen to run in a virtual environment with IPET already installed.
+The first install command will clone and install IPET from github, you don't need to do this manually.
 
-Copy the configuration file in [config/app.cfg](config/app.cfg) into `/etc/rubberband/`, and edit the required variables. Rubberband has some sane defaults already configured, so this step isn't strictly required. However, if you want to connect Rubberband to a Gitlab instance, or to an SMTP server to send email, you will need to edit `app.cfg`.
+For a deployed version of Rubberband copy the configuration file in [config/app.cfg](config/app.cfg) into `/etc/rubberband/`, and edit the required variables. Rubberband has some sane defaults already configured, so this step isn't strictly required. However, if you want to connect Rubberband to a Gitlab instance, or to an SMTP server to send email, you will need to edit `app.cfg`.
+NOTE: If you install Rubberband as a developer version, you don't need to do this.
 
 ### Populating Elasticsearch
 
@@ -107,7 +108,7 @@ INFO:rubberband.utils.importer:Adding SoluFile.
 
 ### Start the server
 
-Cross your fingers and run the following command.
+Cross your fingers and run the following command from your virtual environment.
 
 ```
 python server.py
@@ -136,7 +137,7 @@ Run the test suite.
 py.test -v tests/
 ```
 
-Tests will fail if Elasticsearch is not running, or if the index is empty.
+Tests will fail if Elasticsearch is not running, or if the index is empty or if you didn't configure authentication correctly.
 
 ## Deployment
 
