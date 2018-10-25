@@ -182,6 +182,7 @@ class BaseHandler(RequestHandler):
             ipet_long_table=None,
             ipet_aggregated_table=None,
             rb_dt_style=DT_STYLE,
+            get_empty_header=False,
 
             rb_dt_compact=self.rb_dt_compact,
             rb_dt_borderless=self.rb_dt_borderless,
