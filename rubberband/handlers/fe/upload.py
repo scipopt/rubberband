@@ -31,6 +31,8 @@ class UploadView(BaseHandler):
             tags = tags.split(",")
             tags = list(map(str.strip, tags))
 
+        if files is None:
+            self.redirect("/upload")
         # write all files to local directory
         for f in files:
             paths.append(write_file(f["filename"], f["body"]))

@@ -43,6 +43,20 @@ function rb_error(){
   alert("Rubberband got tangled up, it looks like something went wrong.");
 }
 
+// add listener to file selectors
+$(document).ready(function(){
+  $('input[type="file"]').change(function(e){
+    let files = e.target.files;
+    let content = "Choose file ..."
+    if (files.length == 1) {
+      content = files[0].name;
+    } else if (files.length > 1) {
+      content = files.length + " files selected";
+    }
+    $('label.custom-file-label[for='+this.id+']').html(content);
+  });
+});
+
 /* ############### exeuction ############### */
 
 set_active_tab(end[1]);

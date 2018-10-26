@@ -2,9 +2,10 @@
 
 <!------------------ body -------------->
 {% block content %}
-<div class="alert alert-info" method="POST" name="fileUpload" enctype="multipart/form-data">
+<div class="alert alert-info">
   <h2>Upload logfiles:</h2>
-  <form>
+  <form method="POST" name="fileUpload" id="fileUpload" enctype="multipart/form-data">
+    <div>
     <fieldset>
 
       <div class="form-group">
@@ -45,20 +46,21 @@
     <div class="btn-group" role="group">
       <button type="submit" class="btn btn-primary">Upload</button>
     </div>
+    <p class="red" id="upload-feedback"></p>
   </form>
 </div>
 
 {% if msgs %}
 <div class="alert alert-info">
   <div class="col">
-  <pre><code>
+  <pre>
     {% for m in msgs %}
     Processing {{ m }}
       {% for i in msgs[m] %}
       {{ i }}
       {% end %}
     {% end %}
-  </code></pre>
+  </pre>
 
     {% if resulturl %}
     <p><a href="{{ resulturl }}">{{ resulturl }}</a></p>
@@ -77,6 +79,7 @@
 {% block extra_js %}
 {% include "includes/datetimepicker_js.html" %}
 
+<script src="/static/js/upload.js"></script>
 <script src="/static/js/initdatetime.js"></script>
 {% end %}
 

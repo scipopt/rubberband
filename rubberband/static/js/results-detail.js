@@ -438,6 +438,10 @@ function construct_row_toggle(toggleident) {
 $(document).ready(function(){
   /* init datatables */
   initDetailsTable('details-table');
+
+  // if compare is in query string, then we are in the compare view
+  if (window.location.search.indexOf("compare") >= 0) { colorateCells(); }
+
   initSimpleTable('.meta-table, #settings-table');
   format_dt_searchfield(".dataTables");
   construct_row_toggle("toggle-settings");
@@ -445,9 +449,6 @@ $(document).ready(function(){
 
   $(".bs-tooltip").tooltip();
   $("a.bs-popover").popover();
-
-  // if compare is in query string, then we are in the compare view
-  if (window.location.search.indexOf("compare") >= 0) { colorateCells(); }
 
   /* adjust tables */
   /* when window is resized */

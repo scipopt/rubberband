@@ -53,8 +53,8 @@ class VisualizeView(BaseHandler):
         if query_type == "Instance":
             s = Result.search()
             # Q is for Query
-            s = s.filter(Q("has_parent", type="testset", query=Q("range", **range_params)))
             s = s.filter(Q("term", instance_name=query))
+            s = s.filter(Q("has_parent", type="testset", query=Q("range", **range_params)))
 
             # this uses pagination/scroll
             for r in s.scan():
