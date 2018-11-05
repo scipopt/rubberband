@@ -10,7 +10,7 @@ ZIPPED_SUFFIX = ".gz"
 FILES_DIR = "files/"
 STATIC_FILES_DIR = FILES_DIR + "static/"
 
-#ALL_SOLU = "instancedata/database/instancedb.sqlite3"
+# ALL_SOLU = "instancedata/database/instancedb.sqlite3"
 ALL_SOLU = STATIC_FILES_DIR + "all.solu"
 
 ADD_READERS = STATIC_FILES_DIR + "additional_readers.xml"
