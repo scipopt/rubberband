@@ -373,8 +373,8 @@ def process_ipet_table(table, repres, add_ind=False, swap=False):
 
 def replace_in_str(rstring, repres):
     """Replace keys by values of repres in rstring."""
-    for k, v in repres.items():
-        rstring = rstring.replace(k, v)
+    for k in sorted(repres.keys(), key=len, reverse=True):
+        rstring = rstring.replace(k, repres[k])
     return rstring
 
 

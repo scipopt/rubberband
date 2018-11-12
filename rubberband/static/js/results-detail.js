@@ -487,7 +487,7 @@ $(document).ready(function(){
     evalurl = "/download?evaluation=" + data.form.evalid;
     window.location.href = evalurl;
   });
-  $(document).on('button#ipet-eval-latex-button', function (e) {
+  $(document).on('click', 'button#ipet-eval-latex-button', function (e) {
     window.open( getData().url.evalurl + "&style=latex" , "_blank");
   });
   $(document).on('change', 'select#ipet-long-filter-select', function (e) {
