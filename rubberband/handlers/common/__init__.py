@@ -34,7 +34,7 @@ def search(query):
             filter_dict = {field: value}
             s = s.filter("term", **filter_dict)
         else:
-            filter_dict = {"default_field": field, "query": "*"+value+"*"}
+            filter_dict = {"default_field": field, "query": "*" + value + "*"}
             s = s.query("query_string", **filter_dict)
 
     return s.sort("-index_timestamp")[:limit].execute()
