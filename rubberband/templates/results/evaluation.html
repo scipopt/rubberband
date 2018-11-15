@@ -1,30 +1,74 @@
-{% try %}
-    {% set long_table = ipet_long_table %}
-{% except NameError %}
-    {% set long_table = False %}
-{% end %}
-{% try %}
-    {% set aggregated_table = ipet_aggregated_table %}
-{% except NameError %}
-    {% set aggregated_table = False %}
-{% end %}
-
-<div id="ipet-eval-result">
-
-  {% if aggregated_table %}
-  <div id="ipet-eval-result-aggregated">
-    {% raw aggregated_table %}
-  </div>
-  {% end %}
-  <hr />
-  {% if long_table %}
-
-  <div id="plainchart" class="col-xs-6" style="width:50%; height:400px;"></div>
-  <div id="logchart" class="col-xs-6" style="width:50%; height:400px;"></div>
-
-  <div id="ipet-eval-result-long">
-    {% raw long_table %}
-  </div>
-  {% end %}
-
+{% if ipet_aggregated_table is not None %}
+<h3 data-toggle="collapse" href="#ipet-eval-result-aggregated" role="button" class="rb-collapser">IPET aggregated table
+  <span class="fa fa-angle-down small float-right p-2"></span></h3>
+<div class="collapse show" id="ipet-eval-result-aggregated">
+  {% raw ipet_aggregated_table %}
 </div>
+{% end %}
+
+{% if ipet_long_table is not None %}
+  <h3 data-toggle="collapse" href="#ipet-eval-result-plot" role="button" class="rb-collapser">Plot
+    <span class="fa fa-angle-down small float-right p-2"></span></h3>
+
+  <div class="row collapse" id="ipet-eval-result-plot">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+      <div class="alert alert-info">
+        <h4>Visualize columns from IPET long table</h4>
+        <form id="rb-plot-form">
+
+          <div id="custom-plot-form-x">
+            <h4>X-Axis</h4>
+
+            <select class="custom-select" name="plotx" id="plotx-select">
+              {% for id, name in columns.items() %}
+              <option value="{{ id }}">{{ name }}</option>
+              {% end %}
+            </select>
+
+            <div class="form-group custom-control custom-checkbox">
+              <input type="checkbox" class="form-check-input" id="plotx-log">
+              <label class="form-check-label" for="plotx-log">Logarithmic</label>
+            </div>
+          </div>
+
+          <div id="custom-plot-form-y">
+            <h4>Y-Axis</h4>
+
+            <select class="custom-select" name="ploty" id="ploty-select">
+              {% for id, name in columns.items() %}
+              <option value="{{ id }}">{{ name }}</option>
+              {% end %}
+            </select>
+
+            <div class="form-group custom-control custom-checkbox">
+              <input type="checkbox" class="form-check-input" id="ploty-log">
+              <label class="form-check-label" for="ploty-log">Logarithmic</label>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="custombarplot" class="col chart">
+      <div>
+        <span class="chart-title">Bar plot</span>
+        <a class="reset" href="javascript:customplot.bar.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
+        <span class="rb-link" id="exportbarplot">(export)</span>
+      </div>
+    </div>
+    <div id="customscatterplot" class="col chart">
+      <div>
+        <span class="chart-title">Scatter plot</span>
+        <a class="reset" href="javascript:customplot.scatter.filterAll();dc.redrawAll();" style="display: none;">(reset)</a>
+        <span class="rb-link" id="exportscatterplot">(export)</span>
+
+      </div>
+    </div>
+  </div>
+
+  <h3 data-toggle="collapse" href="#ipet-eval-result-long" role="button" class="rb-collapser">IPET long table
+    <span class="fa fa-angle-down small float-right p-2"></span></h3>
+  <div class="collapse" id="ipet-eval-result-long">
+    {% raw ipet_long_table %}
+  </div>
+{% end %}

@@ -1,0 +1,16 @@
+{% extends "narrow.html" %}
+
+{% block content %}
+
+<div class="alert alert-warning">
+  <h1>{{ status_code }}</h1>
+  {% if status_code != 404 %}
+  <pre><code>{{ msg }}</code></pre>
+  {% else %}
+  <p>Something went wrong, we couldn't find the page you requested.</p>
+  {% end %}
+</div>
+
+<p>Do you want to <a onclick="goBack()" class="rb-link">go back</a> instead?</p>
+
+{% end %}

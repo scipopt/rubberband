@@ -6,7 +6,6 @@ from elasticsearch_dsl import DocType, MetaField, String, Date, Float, Nested
 from ipet import Key
 
 from rubberband.constants import INFINITY_KEYS, INFINITY_MASK, ELASTICSEARCH_INDEX, INFINITY_FLOAT
-from .model_helpers import compute_stat
 
 
 class File(DocType):
@@ -423,26 +422,6 @@ class TestSet(DocType):
         # this uses pagination/scroll
         for hit in s.scan():
             self.files[hit.type] = hit
-
-    def load_stats(self, subset=[]):
-        """
-        Load the statistics of a TestSet object.
-
-        Parameters
-        ----------
-        subset : list
-            a subset of instance names to compute statistics for (default [])
-        """
-        self.stats = {}
-        if not hasattr(self, "children"):
-            self.load_children()
-
-        if subset:
-            all_instances = [self.children[instance_name] for instance_name in subset]
-        else:
-            all_instances = self.children.to_dict().values()
-
-        self.stats = compute_stat(all_instances)
 
 
 date_handler = lambda obj: (  # noqa

@@ -1,5 +1,1 @@
-
-$('.datetimepicker').datetimepicker({
-    format: 'YYYY-MM-DD'
-});
-
+init_datetimepicker("datetimepicker", 'YYYY-MM-DD');

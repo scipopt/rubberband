@@ -5,12 +5,28 @@ from tornado.web import RequestHandler
 from tornado.options import options
 import traceback
 
+from rubberband.models import TestSet
 from rubberband.constants import NONE_DISPLAY, INFINITY_KEYS, \
-        INFINITY_MASK, INFINITY_DISPLAY, FORMAT_DATETIME_SHORT
+        INFINITY_MASK, INFINITY_DISPLAY, FORMAT_DATETIME_LONG, DT_STYLE
+from rubberband.utils.helpers import shorten_str, get_link, shortening_span, \
+        shortening_repres_id, rb_join_arg
 
 
 class BaseHandler(RequestHandler):
     """Custom overrides."""
+
+    if DT_STYLE == "bs4":
+        # bootstrap4
+        rb_dt_compact = "table-condensed"
+        rb_dt_borderless = "table-borderless"
+        rb_dt_bordered = "table-bordered"
+        rb_dt_table = "table"
+    elif DT_STYLE == "std":
+        # default datatable style
+        rb_dt_compact = "compact"
+        rb_dt_borderless = ""
+        rb_dt_bordered = ""
+        rb_dt_table = ""
 
     def get_rb_base_url(self):
         """
@@ -50,7 +66,7 @@ class BaseHandler(RequestHandler):
         else:
             return "debug"
 
-    def get_cookie(self, name="_oauth2_proxy"):
+    def get_cookie(self, name="_oauth2_proxy", default=None):
         """
         Get the cookie from the request.
 
@@ -64,36 +80,60 @@ class BaseHandler(RequestHandler):
         str
             The value of the cookie.
         """
-        if not self.settings["debug"]:
-            cookie_val = self.request.cookies.get(name).value
-            return cookie_val
-        else:
+        if self.settings["debug"] and name == "_oauth2_proxy":
             return None
+        else:
+            cookie = self.cookies.get(name)
+            if cookie is not None:
+                return cookie.value
+            else:
+                return default
 
-    def write_error(self, status_code, msg="", **kwargs):
+    def clear_all_cookies(self):
+        """Clear all cookies that are defined."""
+        for i in self.cookies:
+            self.clear_cookie(i)
+
+    def get_all_cookies(self):
+        """Get all cookies that are defined as a dictionary."""
+        mycookies = {}
+        for i in self.cookies:
+            val = self.get_cookie(i)
+            if val == "":
+                self.clear_cookie(i)
+            else:
+                mycookies[i] = val
+        return mycookies
+
+    def write_error(self, status_code=400, **kwargs):
         """
         Send an error page back to the user.
+
+        This needs to be overwritten for error handling,
+        as it gets called when a handler raises an HTTPError.
 
         Parameters
         ----------
         status_code : int
             The status code of the error to be written.
-        msg : str
-            The message to be printed (default "").
         kwargs : keyword arguments
             keyword arguments for `traceback.format_exception`
         """
+        reason = kwargs.get('reason', "Error")
+
+        log_message = "\n".join(traceback.format_exception(*kwargs["exc_info"]))
+
         if status_code == 400:
-            self.render("400.html", msg=msg)
-            return
-        if status_code == 404:
-            #  'Simply render the template to a string and pass it to self.write'
-            self.render("404.html")
-            return
-        else:
-            msg = "\n".join(traceback.format_exception(*kwargs["exc_info"]))
-            self.render("500.html", msg=msg)
-            return
+            reason = "Bad Request"
+        elif status_code == 403:
+            reason = "Forbidden"
+        elif status_code == 404:
+            reason = "Not Found"
+        elif status_code == 500:
+            reason = "Internal Server Error"
+
+        self.render("error.html", status_code=status_code, page_title=reason, msg=log_message)
+        return
 
     def get_template_namespace(self):
         """Return a dictionary to be used as the default template namespace.
@@ -103,8 +143,12 @@ class BaseHandler(RequestHandler):
         The results of this method will be combined with additional
         defaults in the `tornado.template` module and keyword arguments
         to `render` or `render_string`.
+
+        Define default values for templates.
         """
-        namespace = dict(
+        namespace = super(BaseHandler, self).get_template_namespace()
+
+        name_space = dict(
             handler=self,
             request=self.request,
             current_user=self.current_user,
@@ -119,11 +163,36 @@ class BaseHandler(RequestHandler):
             format_attrs=self.format_attrs,
             get_objsen=self.get_objsen,
             are_equivalent=self.are_equivalent,
+            shorten_str=shorten_str,
+            shortening_span=shortening_span,
+            shortening_repres_id=shortening_repres_id,
+            rb_join_arg=rb_join_arg,
+            get_link=get_link,
             options=options,
+
+            page_title=None,
+            status_code='404',  # error code
+            checkboxes=False,
+            radiobuttons=False,
+            tablename='results-table',
+            modalheading=None,
+            modalbody=None,
+            modalfooter=None,
+            representation=None,
+            ipet_long_table=None,
+            ipet_aggregated_table=None,
+            rb_dt_style=DT_STYLE,
+            get_empty_header=False,
+
+            rb_dt_compact=self.rb_dt_compact,
+            rb_dt_borderless=self.rb_dt_borderless,
+            rb_dt_bordered=self.rb_dt_bordered,
+            rb_dt_table=self.rb_dt_table,
         )
 
         # additional ui modules
         namespace.update(self.ui)
+        namespace.update(name_space)
 
         return namespace
 
@@ -206,7 +275,7 @@ class BaseHandler(RequestHandler):
                 if attr in ["Iterations"]:
                     return int(value)
                 if attr.endswith("_timestamp") or attr.endswith("expirationdate"):
-                    return datetime.strftime(value, FORMAT_DATETIME_SHORT)
+                    return datetime.strftime(value, FORMAT_DATETIME_LONG)
                 if isinstance(value, str):
                     return value
                 if isinstance(value, Iterable):
@@ -278,6 +347,8 @@ class BaseHandler(RequestHandler):
         """
         Decide if the data in attr is the same in all TestSets.
 
+        Skip values that don't exist.
+
         Parameters
         ----------
         sets : list of TestSets
@@ -288,7 +359,7 @@ class BaseHandler(RequestHandler):
         bool
         """
         if len(sets) <= 1:
-            return True
+            return False
 
         if attr == "number_instances":
             l = [len(ts.children.to_dict().keys()) for ts in sets]
@@ -299,9 +370,38 @@ class BaseHandler(RequestHandler):
                     return False
             return True
 
-        old = self.format_attr(sets[0], attr)
-        for ts in sets[1:]:
-            new = self.format_attr(ts, attr)
-            if old != new:
-                return False
-        return True
+        vals = [getattr(ts, attr, None) for ts in sets]
+        nonzeros = [val for val in vals if val is not None]
+        try:
+            unique_nonzeros = set(nonzeros)  # this does not work for lists
+        except TypeError:
+            nonzeros = [','.join(val) for val in vals if val is not None]
+            unique_nonzeros = set(nonzeros)
+
+        return (len(unique_nonzeros) <= 1)
+
+    def get_starred_testruns(self):
+        """Get a list of the testruns that are starred by the user."""
+        starred_string = self.get_cookie("starred-testruns", None)
+
+        starred = []
+        if starred_string:
+            starred = starred_string.split(",")
+
+        starred = set(starred)
+
+        testruns = []
+        for i in starred:
+            try:
+                testruns.append(TestSet.get(id=i))
+            except:
+                pass
+        return testruns
+
+    def get_testrun_table(self, testruns, tablename, checkboxes=True, get_empty_header=False):
+        """Get a table of testruns."""
+        table = None
+        if testruns != [] or get_empty_header:
+            table = self.render_string("results_table.html", results=testruns,
+                    tablename=tablename, checkboxes=checkboxes, get_empty_header=get_empty_header)
+        return table

@@ -1,0 +1,61 @@
+<div aria-labelledby="details-tab" role="tabpanel" class="tab-pane fade active show" id="details">
+
+  <!-- headline ==================================================================== -->
+  {% if not compare %}
+    <div class="rb-details-tab-buttons row justify-content-end">
+      {% if fileoptions[".out"] %}
+      <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/file/{{file.meta.id}}" title="view log file">
+        <span class="fa fa-file-invoice"></span></a>
+      {% end %}
+
+      {% if fileoptions[".err"] %}
+      <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/file/{{file.meta.id}}?ftype=.err" title="view error file">
+        <span class="fa fa-file-excel"></span></a>
+      {% end %}
+
+      {% if fileoptions[".out"] %}
+      <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="modal"   data-placement="top" data-target="#reimportResultModal" title="reimport result">
+        <span class="fa fa-redo"></span></span>
+      {% end %}
+
+      <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="modal"   data-placement="top" data-target="#deleteResultModal" title="delete result">
+        <span class="fa fa-trash-alt"></span></span>
+    </div>
+  {% end %}
+  <h2 class="rb-details-tab-title">Detailed data</h2>
+  <!-- end headline ==================================================================== -->
+
+  <div class="datatables-content">
+    {% include "details_table.html" %}
+  </div>
+
+  {% if sets.get("difference") %}
+    <h3>Exclusions</h3>
+    <div id="exclusions">
+      <p>The following {{ len(sets["difference"]) }} instances are not present in all of the compared test sets, and have therefore been ommitted from the table above:</p>
+      <p class="monospace">{{", ".join(sets['difference'])}}</p>
+    </div>
+  {% end %}
+
+  <!-- Modals =========================================== -->
+  {% if not compare %}
+
+    <!-- Delete Result Modal -->
+    {% module Template("modal.html", id="deleteResultModal", modalheading="Delete Testrun?", modalbody='''
+      <p>Are you sure that you want to delete this result?</p>
+    ''', modalfooter='''
+      <button type="button" id="delete-result" class="btn btn-danger">Yes! I know what I'm doing.</button>
+    ''') %}
+
+    {% if fileoptions[".out"] %}
+      <!-- Reimport Result Modal -->
+      {% module Template("modal.html", id="reimportResultModal", modalheading="Reimport Testrun?", modalbody='''
+        <p>Are you sure that you want to reimport this result?</p>
+      ''', modalfooter='''
+        <button type="button" id="reimport-result" class="btn btn-danger">Yes! I know what I'm doing.</button>
+      ''') %}
+
+    {% end %}
+  {% end %}
+</div>
+

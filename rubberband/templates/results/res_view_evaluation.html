@@ -1,0 +1,96 @@
+<div aria-labelledby="evaluation-tab" role="tabpanel" class="tab-pane fade" id="evaluation">
+
+  <!-- headline ==================================================================== -->
+
+  <h2 class="rb-details-tab-title">IPET Evaluation</h2>
+  <!-- end headline ==================================================================== -->
+
+  <!-- eval form ==================================================================== -->
+  <div class="alert alert-info">
+    <form id="ipet-eval-form">
+
+      <h4 data-toggle="collapse" href="#rb-ipet-eval-advanced-options" role="button" class="rb-details-tab-title rb-collapser">Advanced Options<span class="fa fa-angle-down small float-right p-2"></span></h4>
+
+      <div id="rb-ipet-eval-advanced-options" class="collapse">
+        <p>Choose the default testrun in the table at the top of the page.</p>
+
+        <div class="row">
+          <div class="col-12 col-sm-12 col-md-10 col-lg-8 col-xl-6">
+            <div class="form-group row align-items-center">
+
+              <label class="col-6">Adjust feasibility tolerance:</label>
+              <div class="col-6">
+                <div class="row">
+
+                  <div class="col-9">
+                    <input class="custom-range slider" id="eval-tolerance-slider" type="range" value="-6" min="-9" max="-3" step="1">
+                  </div>
+                  <div class="col-3">
+                    <p id="ipet-tolerance-value">1e-6</p>
+                  </div>
+
+                </div>
+              </div>
+
+            </div> <!-- end form-group row -->
+          </div>
+        </div> <!-- end row -->
+      </div>
+
+      <h4>Options</h4>
+
+      <div class="row">
+        <div class="col-12 col-sm-12 col-md-10 col-lg-8 col-xl-6">
+          <div class="form-group row">
+
+            <label class="col-6">Select an IPET evaluation:</label>
+            <div class="col-6">
+              <select class="form-control" name="ipet-eval-file" id="ipet-eval-file-select">
+                {% for id,e in evals.items() %}
+                <option value="{{ id }}">{{ e["name"] }}</option>
+                {% end %}
+              </select>
+            </div>
+
+          </div> <!-- end form-group row -->
+        </div> <!-- end col-auto -->
+      </div> <!-- end row -->
+
+      <div class="btn-group" id="ipet-eval-menu">
+        <button type="button" class="btn btn-primary rb-wait" id="ipet-eval-button">Evaluate</button>
+        <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+        <div class="dropdown-menu">
+          <button type="button" class="dropdown-item" id="ipet-eval-show-log">Show Info Window</button>
+          <button type="button" class="dropdown-item rb-wait" id="ipet-eval-show-button">Show evalfile</button>
+          <button type="button" class="dropdown-item rb-wait" id="ipet-eval-download-button">Download evalfile</button>
+          <button type="button" class="dropdown-item rb-wait bs-tooltip" id="ipet-eval-latex-button" data-placement="top" data-toggle="tooltip" title="Experimental feature: Use it with 'group by githash...' and make sure you are comparing two runs or two seeded/permutation runs.">Generate latex table</button>
+        </div>
+      </div> <!-- end btn-group -->
+
+    </form>
+  </div>
+  <!-- end eval form ==================================================================== -->
+
+  <div id="rb-ipet-eval-result">
+  {% include "evaluation.html" %}
+  </div>
+
+  {% if sets.get("difference") %}
+
+  <h3 data-toggle="collapse" href="#rb-result-exclusions" role="button" class="rb-collapser">Exclusions<span class="fa fa-angle-down small float-right p-2"></span></h3>
+  <div id="rb-result-exclusions" class="collapse">
+    <p>
+    The following {{ len(sets["difference"]) }} instances are not present in all of the compared test sets, and have therefore been ommitted from the tables below:
+    </p><p class="monospace">
+    {{", ".join(sets['difference'])}}
+    </p>
+  </div>
+  {% end %}
+
+  <!-- Show Evalfile Modal -->
+  {% module Template("modal.html", id="info-modal", modalheading="Information", modalbody='''
+  <pre lang="xml" id="info-modal-content">
+  </pre>
+  ''') %}
+
+</div>

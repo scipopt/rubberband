@@ -1,0 +1,16 @@
+{% if rb_dt_style == "bs4" %}
+
+<!-- datatables core -->
+<link type="text/css" rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css"/>
+<!-- plugins - fixed columns -->
+<link rel="stylesheet" href="https://cdn.datatables.net/fixedcolumns/3.2.6/css/fixedColumns.bootstrap4.min.css">
+
+{% elif rb_dt_style == "std" %}
+
+<!-- datatables core -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/jquery.dataTables.min.css"/>
+<!-- plugins - fixed columns -->
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/fixedcolumns/3.2.5/css/fixedColumns.dataTables.min.css"/>
+
+{% end %}
+

@@ -1,171 +1,247 @@
 Array.prototype.allValuesSame = function() {
+  for(var i = 1; i < this.length; i++) {
+    if(this[i] !== this[0]) {
+      return false;
+    }
+  }
+  return true;
+}
 
-    for(var i = 1; i < this.length; i++)
-    {
-        if(this[i] !== this[0])
-            return false;
+// ####################################### global vars
+var modal = document.getElementById("info-modal");
+
+var ipetlongtable;
+var ipetaggtable;
+var detailstable;
+
+// ####################################### functions
+function format_dt_searchfield(tableident) {
+  $(tableident+'_filter label').addClass("col-form-label text-left");
+  $(tableident+'_filter label input').addClass("m-0 form-control");
+}
+
+function construct_columns_toggle(tablename) {
+  /* add columns toggle buttons to datatable with id tableident */
+  var tableident = "#"+tablename;
+  var table = $(tableident).DataTable();
+
+  var toolbar = $('.'+tablename+'-toolbar');
+  toolbar.addClass("float-right rb-dt-custom row");
+
+  var out = toolbar.html()+'<label class="col-form-label text-left col">Toggle columns:<select id="'+tablename+'-select" class="custom-select">';
+
+  ncols = table.columns().count()
+  // ipet long table has an invisible column for filtering
+  if (tablename.includes('ipet-long')) { ncols = ncols-1; }
+  for (colindex = 1; colindex < ncols; colindex = colindex+1) {
+    column = table.column(colindex);
+
+    coltitle = $(column.header()).text().split('\n')[0]
+    if (tablename.includes('ipet-long')) {
+      if (colindex == 1) {
+        coltitle = 'id';
+      } else {
+        arr = $('#'+tablename+'_wrapper .dataTables_scrollHead table thead tr th.col'+(colindex-1).toString());
+        coltitle = Array.prototype.join.call(arr.map((x,y) => $(y).text()),",")
+      }
     }
 
-    return true;
-}
-var table;
-var meta_table;
-var settings_table;
-formatResultTables();
-formatMetaTable();
-formatSettingsTable();
-$(".bs-tooltip").tooltip();
-$("a.bs-popover").popover();
-$("#toggle-settings").bootstrapToggle()
-$(function() {
-    $("#toggle-settings").change(function() {
-        var elements = $(".toggle_settings_hide");
-        var displaystyle = "";
-        if ($(this).prop('checked')) {
-            displaystyle = "none";
-        }
-        for(var i=0; i<elements.length; i++){
-            elements[i].style.display = displaystyle;
-        }
-    })
-})
-$("#toggle-meta").bootstrapToggle()
-$(function() {
-    $("#toggle-meta").change(function() {
-        var elements = $(".toggle_meta_hide");
-        var displaystyle = "";
-        if ($(this).prop('checked')) {
-            displaystyle = "none";
-        }
-        for(var i=0; i<elements.length; i++){
-            elements[i].style.display = displaystyle;
-        }
-    })
-})
-/* adjust tables */
-$('a[data-toggle="tab"]').on('shown.bs.tab', function(e) {
-    $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
-});
-// if compare is in query string, then we are in the compare view but only in a comparison to exactly one
-//if ((window.location.search.indexOf("compare") >= 0) && !(window.location.valueOf("compare").toString().includes(","))) {
+    out = out+'<option value="'+colindex+'">'+coltitle+"</option>";
+  }
+  out = out+"</select></label>";
+  toolbar.html(out);
 
-// if compare is in query string, then we are in the compare view
-if (window.location.search.indexOf("compare") >= 0) {
-  /* red = new Color(245, 50, 50);
-  green = new Color(50, 245, 50); */
-  dark_gray = new Color(160, 160, 160);
-  gray = new Color(200, 200, 200);
-  white = new Color(255, 255, 255);
-  red = new Color(240, 40, 150);
-  green = new Color(130, 200, 30);
-  colorateCells();
+  $(tableident+'-select').on('change', function(e) {
+    colindex = this.value;
+    currcol = table.column(colindex);
+    currcol.visible( !currcol.visible() );
+  });
 }
 
-function formatMetaTable() {
-    meta_table = $('.meta-table').DataTable({
-        scrollY: '80vh',
-        scrollX: true,
-        scroller: true,
-        scrollCollapse: true,
-        paging: false,
-    });
+function formattolerance(val) {
+  /* make a number 1eN from a number N */
+  newval = Number("1e" + String(val));
+  return newval.toExponential(0);
 }
 
-function formatSettingsTable() {
-    settings_table = $('.settings-table').DataTable({
-        scrollY: '80vh',
-        scrollX: true,
-        scroller: true,
-        scrollCollapse: true,
-        paging: false,
+function getData() {
+  /* get data from eval form */
+  evalid = $("#ipet-eval-file-select").val();
+  defaultrun = $("#rb-legend-table input[type='radio']:checked").val();
+  tolerance = formattolerance( $("#eval-tolerance-slider")[0].value);
+
+  /* get data from url */
+  url = window.location.href;
+  search = window.location.search;
+
+  // construct evaluation url
+  getstr = (url.split("compare"+'=')[1] || '').split('&')[0];
+  idlist = "?testruns=" + path.split("/")[2];
+  if (getstr != "") {
+    idlist = idlist + "," + getstr;
+  }
+  evalurl = "/eval/" + evalid + idlist + "&tolerance=" + tolerance + "&default=" + defaultrun;
+
+  return {
+    form: { evalid: evalid, defaultrun: defaultrun, tolerance: tolerance, },
+    url: { full: url, search: search, evalurl: evalurl, }
+  }
+};
+
+function processResponse(data, pos) {
+  /* process the raw response of the ipet evaluation */
+  stamp = data.substring(0, 32);
+  arr = data.split(stamp);
+  return arr[pos];
+};
+
+function modalAction(action) {
+  /* action can be hide and show for modal to be displayed or hidden */
+  if (action == "hide" || action == "show") {
+    $(modal).modal(action);
+  } else {
+    return false;
+  }
+};
+
+function modalShow() { modalAction("show"); }
+function modalHide() { modalAction("hide"); }
+
+function fillModal(content) {
+  /* set modal contents to content */
+  buttonsDisable();
+  document.getElementById("info-modal-content").innerHTML = content;
+  modalShow();
+};
+
+function setButtons(val) {
+  /* enable and disable ipet eval buttons */
+  var value = false;
+  if (val == "enabled") {
+    var value = true;
+  }
+  $("#ipet-eval-menu .rb-wait").each(function() {
+    this.disabled = value;
+  });
+};
+
+function buttonsDisable() { setButtons("disable"); }
+function buttonsEnable() { setButtons("enable"); }
+
+function hoverTable(index, name) {
+  /* method to toggle the hover class in a row */
+  function toggleRow() {
+    /* hovering for ipet tables */
+    trIndex = $(this).index()+index;
+    $("#"+name+'_wrapper table.dataTable').each(function(index) {
+      row = $(this).find("tr:eq("+trIndex+")")
+      row.toggleClass("hover");
+      row.each(function(index) {
+        $(this).find("td").toggleClass("hover");
+      });
     });
+  }
+  return toggleRow;
 }
 
-function formatResultTables() {
-    table = $('.results-table').DataTable({
-        scrollY: '80vh',
-        scrollX: true,
-        scroller: true,
-        scrollCollapse: true,
-        paging: false,
-        columnDefs: [
-            { type: 'any-number', targets: 'number' },
-        ]
-    });
+function redraw_datatables() {
+  /* datatables have to be redrawn to adjust column widths etc.*/
+  $($.fn.dataTable.tables(true)).DataTable().columns.adjust();
+  $($.fn.dataTable.tables(true)).DataTable().fixedColumns().relayout();
+}
 
-    $('.nav-tabs').stickyTabs();
+function initIpetTables(ipetlongtoolbartext) {
+  /* initialize ipet tables */
+  ipetlongtable = $('table#ipet-long-table').DataTable({
+    columnDefs: [
+      { targets: [-1], searchable: true, visible: false, },
+      //{ targets: 0, width: '15%', },
+    ],
+    scrollY: '80vh', scrollX: true, scroller: true, scrollCollapse: true,
+    paging:         false,
+    fixedColumns:   {
+      leftColumns: 1,
+    },
+    order: [1, "desc"],
+    dom: '<"ipet-long-table-toolbar">frtip',
+  });
+  ipetaggtable = $('table#ipet-aggregated-table').DataTable({
+    scrollY: '80vh', scrollX: true, scroller: true, scrollCollapse: true,
+    paging:         false,
+    fixedColumns:   {
+      leftColumns: 2,
+    },
+    dom: 'frtip',
+  });
 
-    $('#resultNavTabs a').click(function (e) {
-          e.preventDefault()
-          $(this).tab('show')
-    });
+  format_dt_searchfield('#ipet-long-table');
+  format_dt_searchfield('#ipet-aggregated-table');
 
-    $('button#delete-result').click(function (e) {
-        e.preventDefault()
-        $.ajax({
-           type: "DELETE",
-           url: "/result/" + end[2],
-           success: function (data){ window.location.href = "/search";},
-           error:function(){
-               alert("Something went wrong.");
-           }
-        });
-    });
+  $('.ipet-long-table-toolbar').html(ipetlongtoolbartext);
+  construct_columns_toggle('ipet-long-table');
+  /* add event listeners for long table */
+  // plot_custom_charts defined in ipet-custom-plot.js
+  ipetlongtable.on('search.dt', plot_custom_charts);
+};
 
-    $('button#reimport-result').click(function (e) {
-        e.preventDefault()
-        button = document.getElementById("reimport-result")
-        button.disabled = true;
-        currurl = window.location.href;
-        $.ajax({
-           type: "PUT",
-           url: "/result/" + end[2],
-           success: function (data){
-              alert("Reimport complete");
-              window.location.href = currurl;
-           },
-           error:function(){
-               alert("Something went wrong.");
-           }
-        });
-    });
+function initSimpleTable(tableident) {
+  $(tableident).DataTable({
+    scrollY: '80vh', scrollX: true, scroller: true, scrollCollapse: true,
+    paging: false,
+    dom: 'frtip',
+  });
+}
 
-    $('a[href="#settings-filtered"]').click(function (e) {
-      e.preventDefault();
-      $("tr.default-value").remove();
-    });
+function initDetailsTable(tablename) {
+  var tableident = "#"+tablename;
+  detailstable = $(tableident).DataTable({
+    scrollY: '80vh', scrollX: true, scroller: true, scrollCollapse: true,
+    paging: false,
+    columnDefs: [
+      { type: 'any-number', targets: 'number' },
+      { targets: 0, }
+    ],
+    fixedColumns:   {
+      leftColumns: 1,
+    },
+    dom: 'f<"'+tablename+'-toolbar">rtip',
+    autoWidth: false,
+  });
+
+  /* want to be able to hide columns */
+  construct_columns_toggle(tablename);
+  /* we need to do this for tables with fixed columns by hand */
+  $(document).on('mouseenter mouseleave', 'table#'+tablename+' tbody tr', hoverTable(1, tablename));
 }
 
 /*
- * Colorate the result table cells for the compare view
+ * Colorate the details table cells for the compare view
  */
 function colorateCells() {
-    table.cells().every( function () {
-      // determine if tooltip is string or number
-      var element = $(this.node())[0];
-      if (element.attributes["title"] !== undefined) {
-          // these are the compare values, one value or many separated by '\n'.
-          // currently we only do this for one compare value
-          var other_values_str = element.attributes["title"].value;
-          var values = Array(element.textContent);
-          Array.prototype.push.apply(values, other_values_str.split("\n"));
-          var rgb;
-          if (element.attributes["invert"] !== undefined) {
-            rgb = getRGB(element.attributes["class"].value, values, true);
-          } else {
-            rgb = getRGB(element.attributes["class"].value, values, false);
-          }
-          if (rgb) {
-            element.style.backgroundColor = "rgb(" + rgb.getColorString() + ")";
-          }
+  detailstable.cells().every( function () {
+    // determine if tooltip is string or number
+    var element = $(this.node())[0];
+    if (element.attributes["title"] !== undefined) {
+      // these are the compare values, one value or many separated by '\n'.
+      // currently we only do this for one compare value
+      var other_values_str = element.attributes["title"].value;
+      var values = Array(element.textContent);
+      Array.prototype.push.apply(values, other_values_str.split("\n"));
+      var rgb;
+      if (element.attributes["invert"] !== undefined) {
+        rgb = getRGBColor(element.attributes["class"].value, values, true);
+      } else {
+        rgb = getRGBColor(element.attributes["class"].value, values, false);
       }
-  })
+      if (rgb) {
+        element.style.backgroundColor = rgb.getColorString();
+      }
+    }
+  });
 }
 
-/*
- * Get an array of values, and translate that to into an RGB array.
- */
-function getRGB(valclass, arr_values, invert) {
+// Get an array of values, and translate that to into an RGB array.
+function getRGBColor(valclass, arr_values, invert) {
   var contains_floats = false;
   var floatValues = Array();
   for (var i = 0; i < arr_values.length; i++) {
@@ -182,17 +258,17 @@ function getRGB(valclass, arr_values, invert) {
       return null;
     } else {
       // compute the appropriate color
-      return computeRGB(valclass, floatValues, invert);
+      return computeColor(valclass, floatValues, invert);
     }
   } else if (arr_values.allValuesSame()) {
       return null;
   } else {
     // mix of floats and strings, or different strings
-    return gray;
+    return color_gray;
   }
 }
 
-function computeRGB(valclass, arr_values, invert) {
+function computeColor(valclass, arr_values, invert) {
   // The first value of arr_values is the principle value for compare view
   var arr_length = arr_values.length;
   if (valclass.includes("Time")) {
@@ -231,21 +307,21 @@ function computeRGB(valclass, arr_values, invert) {
 
   // if one of the values is zero we cannot compare
   if ( smallest == 0 || largest == 0 || value == 0) {
-    return Interpolate(dark_gray, 0.9);
+    return getBackgroundColor(color_dark_gray, 0.9);
   }
 
   // color dual and primal bounds in shades of grey
   if (valclass.includes("Bound")) {
-    return Interpolate(dark_gray, factor);
+    return getBackgroundColor(color_dark_gray, factor);
   }
 
   // finally, decide the color:
   if (value < smallest) {
     // if the value is better than all others
-    return Interpolate(green, factor);
+    return getBackgroundColor(color_green, factor);
   } else if (value > largest) {
     // if the value is worse than all others
-    return Interpolate(red, factor);
+    return getBackgroundColor(color_red, factor);
   } else {
     // otherwise we do not give a color but a shade of gray
     var relstddev = 0;
@@ -267,56 +343,161 @@ function computeRGB(valclass, arr_values, invert) {
       var stddeviation = Math.pow(sum_of_squares/(arr_length), 1/2);
       relstddev = stddeviation/smallest;
     }
-    return Interpolate(dark_gray, relstddev);
+    return getBackgroundColor(color_dark_gray, relstddev);
   }
 }
 
-function Interpolate(colorBase, factor) {
-  if (factor >= 1) {
-    return colorBase;
-  }
-  else {
-    factor = factor * 100;
-    // threshold what the human eye can see
-    if (factor < 10) {
-        factor = 10;
+function evaluate(e) {
+  evalurl = getData().url.evalurl;
+  fillModal("Evaluating");
+
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', evalurl);
+  xhr.onload = function() {
+    buttonsEnable();
+    modalHide();
+    data = processResponse(xhr.responseText, 2);
+    datadict = JSON.parse(data);
+    for(var key in datadict) {
+      if (key == "rb-ipet-buttons") {
+        continue;
+      }
+      var targetel = document.getElementById(key)
+      targetel.innerHTML = datadict[key];
     }
-    var end_color = colorBase.getColors();
-    var r = interpolate(255, end_color.r, 100, factor);
-    var g = interpolate(255, end_color.g, 100, factor);
-    var b = interpolate(255, end_color.b, 100, factor);
-    return new Color(r, g, b);
-  }
+    initIpetTables(datadict["rb-ipet-buttons"]);
+    initialize_custom_chart(); // from ipet-custom-plot.js
+  };
+  xhr.onerror = buttonsDisable;
+  xhr.onprogress = function(e) {
+    fillModal(processResponse(xhr.responseText,1));
+  };
+  xhr.send();
 }
 
-// does math
-function interpolate(start, end, steps, count) {
-  var s = start,
-      e = end,
-      final = s + (((e - s) / steps) * count);
-  return Math.floor(final);
+function show_evalfile(e) {
+  localdata = getData();
+  // construct url
+  evalurl = "/display/eval/" + localdata.form.evalid;
+  $.ajax({
+    type: "GET",
+    url: evalurl,
+    success:function(data) {
+      fillModal(data);
+      buttonsEnable();
+    },
+    error: rb_error,
+  });
 }
 
-// Class to manage an rgb color
-function Color(_r, _g, _b) {
-    var r, g, b;
-    var setColors = function(_r, _g, _b) {
-        r = _r;
-        g = _g;
-        b = _b;
-    };
-
-    setColors(_r, _g, _b);
-    this.getColors = function() {
-        var colors = {
-            r: r,
-            g: g,
-            b: b
-        };
-        return colors;
-    };
-
-    this.getColorString = function() {
-        return r + "," + g + "," + b;
-    };
+function delete_result(e) {
+  e.preventDefault();
+  $.ajax({
+    type: "DELETE",
+    url: "/result/" + end[2],
+    success: function (data){ window.location.href = "/search";},
+    error: rb_error,
+  });
 }
+
+function reimport_result(e) {
+  e.preventDefault();
+  button = document.getElementById("reimport-result")
+  button.disabled = true;
+  currurl = window.location.href;
+  $.ajax({
+    type: "PUT",
+    url: "/result/" + end[2],
+    success: function (data){
+      alert("Reimport complete");
+      window.location.href = currurl;
+    },
+    error: rb_error,
+  });
+}
+
+function construct_row_toggle(toggleident) {
+  $('span#' + toggleident).click(function (e) {
+    $(this).toggleClass("fa-eye-slash fa-eye");
+
+    var displaystyle = "";
+    if ($(this).hasClass('fa-eye')) {
+      displaystyle = "none";
+    }
+
+    var elements = $("." + toggleident + "-hide");
+    for(var i=0; i<elements.length; i++){
+      elements[i].style.display = displaystyle;
+    }
+    redraw_datatables();
+  });
+}
+
+// ######################## on document ready
+
+$(document).ready(function(){
+  /* init datatables */
+  initDetailsTable('details-table');
+
+  // if compare is in query string, then we are in the compare view
+  if (window.location.search.indexOf("compare") >= 0) { colorateCells(); }
+
+  initSimpleTable('.meta-table, #settings-table');
+  format_dt_searchfield(".dataTables");
+  construct_row_toggle("toggle-settings");
+  construct_row_toggle("toggle-meta");
+
+  $(".bs-tooltip").tooltip();
+  $("a.bs-popover").popover();
+
+  /* adjust tables */
+  /* when window is resized */
+  $(window).resize(redraw_datatables);
+  /* tab is toggled */
+  $(document).on('shown.bs.tab', redraw_datatables);
+  /* something is uncollapsed in evaluation tab */
+  $(document).on('shown.bs.collapse', redraw_datatables);
+
+  /* update the number for tolerances */
+  $('#eval-tolerance-slider').on('input', function() {
+    document.getElementById('ipet-tolerance-value').innerHTML = formattolerance(this.value);
+  });
+
+  /* hovering for ipet tables */
+  /* note: by binding these to document, we don't have to wait until after the evaluation */
+  $(document).on('mouseenter mouseleave', '#ipet-aggregated-table_wrapper tbody tr', hoverTable(2, 'ipet-aggregated-table'));
+  $(document).on('mouseenter mouseleave', '#ipet-long-table_wrapper tbody tr', hoverTable(3, 'ipet-long-table'));
+
+  // ######################## clickable elements
+
+  /* modal behaviour */
+  /* hide modal on click into window */
+  window.onclick = function(event) {
+    // if the modal is shown, a click outside it will be considered a click on the modal
+    if (event.target == modal) { modalHide(); }
+  };
+  $(document).on('click', 'button#info-modal-close', modalHide);
+
+  /* ipet buttons */
+  $(document).on('click', 'button#ipet-eval-button', evaluate);
+  $(document).on('click', 'button#ipet-eval-show-log', modalShow);
+  $(document).on('click', 'button#ipet-eval-show-button', show_evalfile);
+  $(document).on('click', 'button#ipet-eval-download-button', function (e) {
+    data = getData();
+    evalurl = "/download?evaluation=" + data.form.evalid;
+    window.location.href = evalurl;
+  });
+  $(document).on('click', 'button#ipet-eval-latex-button', function (e) {
+    window.open( getData().url.evalurl + "&style=latex" , "_blank");
+  });
+  $(document).on('change', 'select#ipet-long-filter-select', function (e) {
+    /* make long table searchable for filtergroups */
+    fg_name = this.value;
+    // The '|' are for avoiding trouble with substrings
+    ipetlongtable.search("|"+fg_name+"|").draw()
+  });
+
+  /* reimport and delete buttons */
+  $(document).on('click', 'button#delete-result', delete_result);
+  $(document).on('click', 'button#reimport-result', reimport_result);
+});

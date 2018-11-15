@@ -1,70 +1,78 @@
-{% extends "base.html" %}
-{% block extra_css %}
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css"/>
-{% end %}
-{% block extra_js %}
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="/static/js/instance_detail.js"></script>
-{% end %}
-{% block body %}
-  <div class="row">
-    <h3 class="tab-title">{{ result.instance_name }}</h3>
-    <div class="tab-buttons">
-	    <a class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="back to test run" href="/result/{{ result.meta.parent }}{% if compare %}?compare={{ ','.join([c.meta.parent for c in compare]) }}{% end %}"><span class="glyphicon glyphicon-share-alt h3-icon-leftalign"></span></a>
-      <a class="bs-tooltip" data-toggle="tooltip" data-placement="top" title="view log" href="/file/{{ result.meta.parent }}?ftype=.out&format=raw&instance={{ result.meta.id }}"><span class="glyphicon glyphicon-info-sign h3-icon-leftalign"></span></a>
-      <a class="bs-tooltip" type="button" data-toggle="modal" data-target="#downloadInstanceOptions" title="download results" id="download-instance-results" data-placement="top" data-toggle="tooltip"><span class="glyphicon glyphicon-download-alt h3-icon-leftalign"></span></a>
-    </div>
+{% extends "wide.html" %}
+
+<!------------------ body -------------->
+{% block content %}
+
+  <!-- headline ==================================================================== -->
+  <div class="rb-details-tab-buttons row justify-content-end">
+
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" title="back to test run" href="/result/{{ result.meta.parent }}{% if compare %}?compare={{ ','.join([c.meta.parent for c in compare]) }}{% end %}">
+      <span class="fa fa-chevron-left"></span></a>
+
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" title="view log" href="/file/{{ result.meta.parent }}?ftype=.out&format=raw&instance={{ result.meta.id }}">
+      <span class="fa fa-info-circle"></span></a>
+
+    <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="modal" data-placement="top" data-target="#downloadInstanceOptions" title="download results">
+      <span class="fa fa-download"></span></span>
+
   </div>
-<div class="row">
-<p>{{ result.instance_name }} has been tested {{ num_results }} times. Metrics that have a None value are excluded from the table below.</p>
-</div>
-<div class="row">
-<table class="instance-result table table-striped table-bordered">
-  <thead>
-    <tr>
-      <th>Metric</th>
-      <th>Value</th>
-      {% for f in compare %}
-      <th>Compare</th>
-      {% end %}
-    </tr>
-  </thead>
-  <tbody>
-  {% for k in list(result) %}
-    <tr>
-      <td>{{ k.replace("_", " ") }}</td>
-      <td>{{ getattr(result, k, "--") }}</td>
-      {% for f in compare %}
-      <td>{{ getattr(f, k, "--") }}</td>
-      {% end %}
-    </tr>
-  {% end %}
-  </tbody>
-</table>
-</div>
+
+  <h2 class="rb-details-tab-title">{{ result.instance_name }}</h2>
+
+  <!-- end headline ==================================================================== -->
+
+  <p>{{ result.instance_name }} has been tested {{ num_results }} times. Metrics that have a None value are excluded from the table below.</p>
+
+  <div>
+    <table id="instance-result" class="rb-table {{rb_dt_compact}} {{rb_dt_borderless}} rb-wrap-table" width="100%" >
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Value</th>
+          {% for f in compare %}
+          <th>Compare</th>
+          {% end %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for k in list(result) %}
+        <tr>
+          <td>{{ k.replace("_", " ") }}</td>
+          <td>{{ format_attr(result, k) }}</td>
+          {% for f in compare %}
+          <td>{{ format_attr(f, k) }}</td>
+          {% end %}
+        </tr>
+        {% end %}
+      </tbody>
+    </table>
+  </div>
 
 <!-- Modal -->
-<div class="modal fade" id="downloadInstanceOptions" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Download Formats</h4>
-      </div>
-      <div class="modal-body">
+{% module Template("modal.html", id="downloadInstanceOptions", modalheading="Download Formats", modalbody='''
 	<h5>Full Content</h5>
-        <ul>
+  <ul>
 		<li><a href="/file/{{ result.meta.parent }}?download=true&ftype=.out&format=raw&instance={{ result.meta.id }}" download="{{result.instance_name}}.txt">plaintext</a></li>
 		<li><a href="/file/{{ result.meta.parent }}?download=true&ftype=.out&format=json&instance={{ result.meta.id }}" download="{{result.instance_name}}.json">json</a></li>
 	 <li>csv (coming soon!)</li>
-        </ul>
+  </ul>
 	<h5>Selection</h5>
 	<ul>
 	  <li>json (coming soon!)</li>
 	  <li>csv (coming soon!)</li>
 	</ul>
-      </div>
-    </div>
-  </div>
-</div>
+''') %}
+
+<!------------------ end body -------------->
+{% end %}
+
+<!------------------ extra css -------------->
+{% block extra_css %}
+{% include includes/datatables_css.html %}
+{% end %}
+
+<!------------------ extra js -------------->
+{% block extra_js %}
+{% include includes/datatables_core_js.html %}
+<script type="text/javascript" src="/static/js/instance-detail.js"></script>
 {% end %}

@@ -1,322 +1,171 @@
-/*
- * Base structure
- */
 
-body {
-    font-family: 'Fira Mono', sans-serif;
-    font-size: 12px;
+/* ---- general -------------- */
+body { /* main body */
+  font-family: 'Fira Mono', sans-serif;
+  font-family: 'Fira Sans', sans-serif;
+  padding-top: 3.5rem; /* Move content down because we have a fixed navbar that is 50px tall */
+  min-width: 100px;
 }
-
-.rb-btn-group {
-    width: 15em;
-    display: grid;
-}
-
-/* Move down content because we have a fixed navbar that is 50px tall */
-.top-buffer {
-  padding-top: 50px;
-}
-
-p.exclusions {
-    text-align: left;
-}
-
-table {
-    word-wrap: break-word;
-    margin-top: 15px;
-    font-family: monospace;
-    border: none;
-}
-
-/*
- * Global add-ons
- */
-
-.sub-header {
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eee;
-}
-
-pre {
-    display: block;
-    max-height: 80vh;
-    overflow: scroll;
-    word-break: normal !important;
-    word-wrap: normal !important;
-    white-space: pre !important;
-}
-
-div.ipet-long-toolbar {
-  margin-bottom: 5px;
-}
-/*
- * Top navigation
- * Hide default border to remove 1px line.
- */
-.navbar-fixed-top {
-  border: 0;
-}
-
-.row {
-  margin-bottom: 10px;
-}
-
-.tooltip-inner {
-  white-space: pre-wrap;
-  text-align: left;
-}
-
-td {
-  word-break: break-all;
-}
-
-/*
- * Sidebar
- */
-
-/* Hide for mobile, show later */
-.sidebar {
-  display: none;
-  width: 10%;
-}
-
-/* Sidebar navigation */
-.navbar-nav-rb {
-
-}
-.navbar-nav-rb > li > a {
-  padding-right: 20px;
-  padding-left: 20px;
-  color: #fff;
-}
-a.navbar-brand:hover,
-.navbar-nav-rb > li > a:hover {
-    background-color: inherit;
-    color: #000;
-}
-.navbar-nav-rb > .active > a,
-.navbar-nav-rb > .active > a:hover,
-.navbar-nav-rb > .active > a:focus {
-  background-color: #fff;
-  color: #000;
-}
-
-/*
- * Main content
- */
-
 .main {
   padding: 20px;
   width: 100%;
 }
-
-.main .page-header {
-  margin-top: 0;
+fieldset {
+  width: 100%;
 }
+/* ---- end general -------------- */
 
+/* ---- headlines -------------- */
+h1, h2, h3, h4, h5, h6 {
+  border-bottom: 1px solid #eeeeee !important;
+}
+h1 {
+  margin-bottom: 2.5rem !important;
+}
+h2 {
+  margin-bottom: 1rem !important;
+}
+/* ---- end headlines -------------- */
 
-/*
- * Placeholder dashboard ideas
- */
+/* ---- text -------------- */
+.monospace {
+  /* exclusions text in monospace */
+  font-family: monospace;
+}
+span.important, p.rb-warning {
+  color: #e83e8c;
+}
+/* ---- end text -------------- */
 
-.placeholders {
-  margin-bottom: 30px;
-  text-align: center;
+/* ---- links -------------- */
+button.rb-btn-as-link { /* make button look like link */
+  color: #0c5460;
+  background: none !important;
+  border: none;
+  padding: 0 !important;
+  font: inherit;
+  cursor: pointer;
+  -webkit-appearance: none;
 }
-.placeholders h4 {
-  margin-bottom: 0;
+a {
+  cursor: pointer;
+  color: #0c5460;
 }
-.placeholder {
-  margin-bottom: 20px;
+.rb-link {/* make nonlink clickable text look like link */
+  color: #0c5460 !important;
 }
-.placeholder img {
-  display: inline-block;
-  border-radius: 50%;
+.rb-link:hover, button.rb-btn-as-link:hover {/* make non-link text hoverable */
+  color: red !important;
 }
+.rb-collapser { /* collapsible elements show a clickable cursor */
+  cursor: pointer;
+}
+.red, a:hover, h3 span.fa-angle-down, h2 span.fa-angle-down { /* collapsible elements have this angle, make it more visible by making it red */
+  color: red;
+}
+/* ---- end links -------------- */
 
-/*
- * Loading icon
- */
-
-.glyphicon-refresh-animate {
-    -animation: spin .7s infinite linear;
-    -ms-animation: spin .7s infinite linear;
-    -webkit-animation: spinw .7s infinite linear;
-    -moz-animation: spinm .7s infinite linear;
+/* ---- result view tabs bars -------------- */
+#resultNavTabs {
+  margin-bottom: 1rem;
 }
-
-div#loading-icon span.glyphicon {
-    padding-right: 0px;
-    margin-top: 100px;
-    font-size: 2.0em;
+.rb-details-tab-buttons  {
+  font-size: 1.5rem;
+  margin-bottom: -2.4rem;
+  margin-right: 0rem;
 }
+/* ---- end result view tabs bars -------------- */
 
-div#loading-icon {
-    height: 200px;
+/* ---- slider -------------- */
+.slider {
+  width: 100% !important;
 }
+.slider::-webkit-slider-thumb {
+    background: black;
+}
+.slider::-moz-range-thumb {
+    background: black;
+}
+/* ---- end slider -------------- */
 
-@keyframes spin {
-    from { transform: scale(1) rotate(0deg);}
-    to { transform: scale(1) rotate(360deg);}
-}
-
-@-webkit-keyframes spinw {
-    from { -webkit-transform: rotate(0deg);}
-    to { -webkit-transform: rotate(360deg);}
-}
-
-@-moz-keyframes spinm {
-    from { -moz-transform: rotate(0deg);}
-    to { -moz-transform: rotate(360deg);}
-}
-
-
-form {
-    margin-top: 15px;
-}
-
-th,
-.data-table {
-    white-space: nowrap;
-}
-.data-table .number {
-    text-align: right;
-}
-.data-table .text {
-    text-align: left;
+/* ---- tables -------------- */
+table {
+  font-family: monospace;
 }
 th.col_heading {
-    text-align: right;
+  text-align: right;
 }
 th.row_heading {
-    text-align: left;
+  text-align: left;
+}
+table.rb-table-data {
+  white-space: nowrap;
+}
+table.rb-table-data .number {
+  text-align: right;
+}
+table.rb-table-data .text {
+  text-align: left;
 }
 tbody > tr.hover > td,
 tbody > tr.hover > th,
-.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
-    background-color: #bdf !important;
+table.rb-table tbody tr:hover td,
+table.rb-table tbody tr:hover th {
+  background-color: #bdf !important;
+}
+table.rb-table td {
+  padding: 4px;
+}
+/*
+table.rb-table tbody {
+  border-top: 1px black solid;
+  border-bottom: 1px black solid;
+}
+*/
+table.rb-wrap-table {
+  /* wrapping for tables */
+  word-break: break-word;
+  vertical-align: top;
+}
+.rb-identical-vals {
+  color: #666666;
+  background-color: #f3f3f3 !important;
+}
+div.rb-table-testrun {
+  margin-bottom: 1rem;
+  overflow: auto;
 }
 
-.datatables_wrapper {
-    margin-top:20px;
-}
+/* ---- end tables -------------- */
 
-.dataTables_filter {
-    float: left !important;
+/* ---- datatables -------------- */
+/* custom datatable toolbar elements */
+div.rb-dt-custom {
+  float: right !important;
+  margin-top: 0rem !important;
 }
-
-.DTFC_LeftBodyLiner {
-    overflow-x: hidden;
+div.dataTables_filter { /* move datatables search field to the left */
+  float: left !important;
+  margin-top: 0rem !important;
 }
-
-.DTFC_Cloned {
-    background-color: white;
+div.ipet-long-toolbar { /* in evaluated long table datatable*/
+  float: right !important;
 }
+.DTFC_LeftBodyLiner { /* fixed column works badly with font changed to monospace */
+  border-right: 1px solid black;
+  overflow-x: hidden;
+}
+.dt-buttons {
+  align: right;
+}
+/* ---- end datatables -------------- */
 
-.one-chart {
+.one-chart { /* charts on visualize page */
   padding: 20px;
 }
-
-.chart-title {
-    font-size: 1.5rem;
+.modal-dialog {
+  max-width: 900px;
 }
-.navbar-brand {
-    color: #f5f5f5;
-}
-
-span.menu-glyphicon {
-    padding-right: 15px;
-}
-
-.row-buffered {
-    margin-top: 30px;
-    margin-bottom: 30px;
-}
-
-.row {
-    margin-left:0px;
-    margin-right:0px;
-}
-
-span.h3-icon-leftalign {
-    float: right;
-}
-
-/* Results Page */
-/* Results Page Header */
-
-.page-header-wrapper.results {
-  position: relative;
-}
-
-.page-header-wrapper.results h1 {
-  border: none;
-}
-
-.page-header-wrapper.results .page-header {
-  float: left;
-}
-
-#resultNavTabs {
-  width: 100%;
-  padding-top: 7px;
-}
-
-#resultNavTabs::after {
-  position: absolute;
-  content: ' ';
-  width: 100%;
-  height: 1px;
-  background-color: #ddd;
-  left: 0;
-  margin-top: -1px;
-  z-index: -1;
-}
-
-/* Results Page Settings */
-.tab-title {
-}
-
-.tab-buttons {
-  width: 100%;
-  margin-top: 20px;
-  text-align: right;
-  font-size: 24px;
-}
-
-.tab-buttons > a {
-  display: inline-block;
-}
-
-.tab-buttons .glyphicon {
-  padding: 0 7px;
-}
-
-td.highlighted-cell {
-  background: #ff4d4d;
-}
-
-a.bs-tooltip {
-    cursor: pointer;
-}
-
-/* Statistics Tab */
-
-input.fieldKey {
-    width: 5%;
-}
-
-select.comparator {
-    width: 10px;
-}
-
-input.fieldValue {
-    width: 5%;
-}
-
-/* Toggle buttons */
-.quick .toggle-group { transition: none; -webkit-transition: none; }
-
-.slider {
-  width: 90% !important;
+.rb-ml-0 {
+  margin-left: 0px;
 }

@@ -15,7 +15,6 @@ class SearchEndpoint(BaseHandler):
         Answer to GET requests.
 
         The initial search view, possibly prefilled with query string options.
-        Renders `search_form.html`.
         """
         query_fields = [
             "test_set",

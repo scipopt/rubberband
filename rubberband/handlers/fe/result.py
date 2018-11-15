@@ -5,6 +5,7 @@ import logging
 from .base import BaseHandler
 from rubberband.models import TestSet
 from rubberband.utils import ResultClient, write_file
+from rubberband.utils.helpers import setup_testruns_subst_dict, get_rbid_representation
 from rubberband.constants import EXPORT_FILE_TYPES, IPET_EVALUATIONS
 
 
@@ -19,10 +20,6 @@ class ResultView(BaseHandler):
         ----------
         parent_id
             Rubberband id of parent
-
-        Returns
-        -------
-
         """
         # parent id is the first argument: meta id of TestSet
         if not parent_id:
@@ -45,16 +42,10 @@ class ResultView(BaseHandler):
                 c.load_children()
 
             all_runs = [parent] + compare
-            same_status = get_same_status(all_runs)
-            parent.load_stats(same_status)
-            for c in compare:
-                c.load_stats(same_status)
             # save intersection results and difference results
             sets = get_intersection_difference([c.children.to_dict().keys() for c in all_runs])
         else:
             sets = {}
-            # save stats in parent.stats
-            parent.load_stats()
 
         # construct link to download archive
         testset_ids = []
@@ -73,15 +64,21 @@ class ResultView(BaseHandler):
             file_contents = getattr(obj, "raw")(ftype=ftype)
             fileoptions[ftype] = (file_contents is not None)
 
-        rrt = self.render_string("results_table.html", results=[parent] + compare,
-                checked=parent.meta.id, radios=(len(compare) > 0))
-        ilt = self.render_string("results_table.html", results=[parent] + compare,
-                radios=True, checked=parent.meta.id,
-                tablename="ipet-legend-table")
-        self.render("result_view.html", file=parent, page_title="Evaluate", compare=compare,
-                    sets=sets, meta=meta, ipet_legend_table=ilt, comparelist=comparelist,
-                    rendered_results_table=rrt, fileoptions=fileoptions,
-                    downloadzip=downloadziplink, evals=IPET_EVALUATIONS)
+        # sort testruns by their representation and render table
+        # get substitutions dictionary
+        testruns = [parent] + compare
+        repres = setup_testruns_subst_dict(testruns)
+        testruns = sorted(testruns,
+                key=lambda x: repres['long'][get_rbid_representation(x, "extended")])
+
+        rrt = self.render_string("results_table.html", results=testruns,
+                representation=repres, tablename="rb-legend-table",
+                checked=parent.meta.id, radiobuttons=True)
+
+        self.render("result_view.html", file=parent, compare=compare, meta=meta,
+                comparelist=comparelist, representation=repres, sets=sets,
+                rendered_results_table=rrt, fileoptions=fileoptions,
+                downloadzip=downloadziplink, evals=IPET_EVALUATIONS)
 
     def post(self, parent_id):
         """

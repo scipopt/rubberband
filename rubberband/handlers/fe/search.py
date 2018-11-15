@@ -13,11 +13,44 @@ class SearchView(BaseHandler):
         Answer to GET requests.
 
         The initial search view, possibly prefilled with query string options.
-        Renders `search_form.html`.
+        Renders `search.html`.
         """
-        options = get_options()
+        base_id = self.get_argument("base", None)
 
-        self.render("search_form.html", page_title="Search", search_options=options)
+        compare_str = self.get_argument("compare", None)
+
+        # get a unique set of all needed testruns
+        compares = []
+        compare_trns = []
+        if compare_str:
+            compares = compare_str.split(",")
+        compares = set(compares)
+        if base_id is not None and base_id in compares:
+            compares.pop(base_id)
+
+        # get the testrun objects
+        for i in compares:
+            compare_trns.append(TestSet.get(id=i))
+        if base_id is not None:
+            base = TestSet.get(id=base_id)
+            compare_trns.append(base)
+        else:
+            base = None
+
+        # get search options
+        options = get_options()
+        if base is not None:
+            options["defaults"]["test_set"] = base.test_set
+            options["defaults"]["mode"] = base.mode
+
+        # render compares and starred table
+        rct = self.get_testrun_table(compare_trns, tablename="rb-compares-table")
+        rst = self.get_testrun_table(self.get_starred_testruns(), tablename="rb-starred-table",
+                get_empty_header=True)
+
+        # render search view
+        self.render("search.html", page_title="Search", search_options=options,
+                compare_table=rct, starred_table=rst)
 
     def post(self):
         """

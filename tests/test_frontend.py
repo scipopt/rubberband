@@ -17,7 +17,7 @@ class GetTest(TestHandlerBase):
                               "solver=&solver_version=&git_hash=&lp_solver=&lp_solver_version=&"
                               "tags=")
         self.assertEqual(response.code, 200)
-        self.assertIn(b"Compare Selected Runs", response.body)
+        self.assertIn(b"Compare selected Testruns?", response.body)
 
     def test_visualize(self):
         response = self.fetch("/visualize")
@@ -32,4 +32,5 @@ class GetTest(TestHandlerBase):
     def test_notfound(self):
         response = self.fetch("/dsnbhjfsb")
         self.assertEqual(response.code, 404)
-        self.assertIn(b"Sorry, that page doesn't exist.", response.body)
+        self.assertIn(b"Something went wrong, we couldn't find the page you requested.",
+                response.body)

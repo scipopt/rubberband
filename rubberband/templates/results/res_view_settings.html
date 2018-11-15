@@ -1,0 +1,81 @@
+<div aria-labelledby="settings-tab" role="tabpanel" class="tab-pane fade" id="settings">
+
+  <!-- headline ==================================================================== -->
+  {% if file.settings %}
+  <div class="rb-details-tab-buttons row justify-content-end">
+
+    <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="tooltip" data-placement="top" title="Show/Hide rows with equal data">
+      <span id="toggle-settings" class='fa fa-eye-slash'></span></span>
+
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/file/{{file.meta.id}}?ftype=.set" title="view settings file" >
+      <span class="fa fa-file-alt"></span></a>
+
+    <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="modal"   data-placement="top" data-target="#downloadSettingsOptions" title="download settings">
+      <span class="fa fa-download"></span></span>
+
+
+  </div>
+  {% end %}
+  <h2 class="rb-details-tab-title">Settings</h2>
+  <!-- end headline ==================================================================== -->
+  {% if file.settings %}
+
+  <div class="rb-table-testrun">
+
+    <!-- table ==================================================================== -->
+    <table id="settings-table" class="rb-table {{rb_dt_compact}} {{rb_dt_borderless}}" width="100%">
+
+      <thead><tr>
+        <th>Setting name</th>
+        {% if representation is not None %}
+          <th>{% raw shortening_repres_id(representation, file.id) %}</th>
+          {% for c in compare %}
+            {% if c.settings %}
+              <th>{% raw shortening_repres_id(representation, c.id) %}</th>
+            {% end %}
+          {% end %}
+        {% else %}
+          <th>Run value</th>
+          {% for c in compare %}
+            {% if c.settings %}
+              <th>Compare</th>
+            {% end %}
+          {% end %}
+        {% end %}
+        <th>Default value</th>
+      </tr></thead>
+
+      <tbody>
+        {% for i in file.settings %}
+          <tr{% if are_equivalent([f.settings_default for f in [file]+compare]+[f.settings for f in [file]+compare], i) %} class="rb-identical-vals toggle-settings-hide" {% end %}>
+            <td>{{ i }}</td>
+            <td>{{ format_attr(file.settings, i) }}</td>
+            {% for c in compare %}
+              {% if c.settings %}
+                <td>{{ format_attr(c.settings, i) }}</td>
+              {% end %}
+            {% end %}
+            <td>{{ format_attr(file.settings_default, i) }}</td>
+          </tr>
+        {% end %}
+
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal -->
+  {% set modalbody_settings_download='''
+  <ul>
+    <li><a href="/file/{id}?download=true&ftype=.set&format=raw" download="{name}">plaintext</a></li>
+    <li><a href="/file/{id}?download=true&ftype=.set&format=gzip" download="{name}.gz">gzip</a></li>
+    <li><a href="/file/{id}?download=true&ftype=.set&format=json" download="{name}.json">json</a></li>
+    <li>csv (coming soon!)</li>
+  </ul>
+  '''.format( id=file.meta.id, name=file.get_filename(ending='.set') ) %}
+
+  {% module Template("modal.html", id="downloadSettingsOptions", modalheading="Download Formats", modalbody=modalbody_settings_download) %}
+
+  {% else %}
+  <p>No settings file found.</p>
+  {% end %}
+</div>

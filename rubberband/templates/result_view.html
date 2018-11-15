@@ -1,45 +1,104 @@
-{% extends "base.html" %}
+{% extends "wide.html" %}
 
-{% block extra_css %}
-<link href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
-<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.2/css/bootstrap-slider.css" rel="stylesheet">
+<!------------------ body -------------->
+{% block content %}
+
+{% if compare %}
+  <form action="/compare" method="post">
 {% end %}
 
-{% block extra_js %}
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js "></script>
-<script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/3.2.3/js/dataTables.fixedColumns.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.16/sorting/any-number.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.0.2/bootstrap-slider.js"></script>
-<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
-<script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/modules/exporting.js"></script>
-<script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
-<script type="text/javascript" src="/static/js/jquery.stickytabs.js"></script>
-<script type="text/javascript" src="/static/js/results-detail.js"></script>
-<script type="text/javascript" src="/static/js/evaluation.js"></script>
-{% end %}
+  <!-- headline ==================================================================== -->
+  <div class="rb-details-tab-buttons row justify-content-end">
 
-{% block title %}
-<div class='page-header-wrapper results'>
-  <h1 class="page-header">{{ page_title }}</h1>
-  <ul id="resultNavTabs" role="tablist" class="nav nav-tabs nav-justified">
-    <li role="presentation" class="active"><a data-toggle="tab" aria-controls="results" role="tab" href="#details">Details</a></li>
-    <li role="presentation" class=""><a data-toggle="tab" aria-controls="stats" role="tab" href="#summary">Summary</a></li>
-    <li role="presentation" class=""><a data-toggle="tab" aria-controls="meta" role="tab" href="#meta">Meta</a></li>
-    <li role="presentation" class=""><a data-toggle="tab" aria-controls="settings" role="tab" href="#settings">Settings</a></li>
-  </ul>
-</div>
-{% end %}
+    {% if compare %}
+    <button type="submit" class="bs-tooltip ml-2 mr-2 rb-btn-as-link" data-placement="top" title="change comparison base">
+      <span class="fa fa-random" ></span></button>
+    {% end %}
 
-{% block body %}
-<div>
-  <br>
-  <div class="tab-content">
-    {% include "results/instance_results.html" %}
-    {% include "results/statistics.html" %}
-    {% include "results/meta.html" %}
-    {% include "results/settings.html" %}
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/search?base={{ file.meta.id }}{% if comparelist is not None %}&compare={{ comparelist }}{% end %}" title="add/remove comparison runs">
+      <span class="fa fa-plus"></span></a>
+
+    <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="modal"   data-placement="top" data-target="#downloadSummaryOptions" title="download results">
+      <span class="fa fa-download" ></span></span>
+
+    {% if fileoptions[".out"] or fileoptions[".meta"] or fileoptions[".err"] %}
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="{{ downloadzip }}" title="download files as zip archive">
+      <span class="fa fa-gift"></span></a>
+    {% end %}
+
   </div>
-</div>
+
+  <h2 data-toggle="collapse" href="#rb-legend" role="button" class="rb-details-tab-title rb-collapser">Testrun{% if compare %}s{% end %} <span class="fa fa-angle-down small"></span></h2>
+
+  <!-- end headline ==================================================================== -->
+
+  <div class="rb-table-testrun collapse show" id="rb-legend">
+    {% raw rendered_results_table %}
+  </div>
+
+{% if compare %}
+</form>
 {% end %}
+
+<!-- tabs line ==================================================================== -->
+<ul id="resultNavTabs" class="nav nav-tabs row" role="tablist">
+  {% for (title, icon, anchor) in [["Details", "info-circle", "details"], ["Evaluation", "calculator", "evaluation"], ["Meta", "cogs", "meta"], ["Settings", "sliders-h", "settings"]] %}
+  <li class="nav-item col-3 active">
+    <a aria-selected="true" aria-controls="{{ title }}" role="tab" href="" class="text-nowrap nav-link {% if anchor == "details" %} active {% end %}" data-toggle="tab" data-target="#{{ anchor }}">
+      <span class="d-block d-sm-none fa fa-{{ icon }}"></span>
+      <div class="d-none d-sm-block">
+        <span class="fa fa-{{ icon }}"></span> {{ title }}
+      </div>
+    </a>
+  </li>
+  {% end %}
+</ul>
+<!-- end tabs line ==================================================================== -->
+
+<div id="resultNavTabsContent" class="tab-content">
+  {% include "results/res_view_details.html" %}
+  {% include "results/res_view_evaluation.html" %}
+  {% include "results/res_view_meta.html" %}
+  {% include "results/res_view_settings.html" %}
+</div>
+
+<!-- Modals =========================================== -->
+
+<!-- Download Modal -->
+{% set modalbody_download= '''
+<h6>Full Results</h6>
+<ul>
+  <li><a href="/file/{id}?download=true&ftype=.out&format=raw" download="{name}">plaintext</a></li>
+  <li><a href="/file/{id}?download=true&ftype=.out&format=gzip" download="{name}.gz">gzip</a></li>
+  <li><a href="/file/{id}?download=true&ftype=.out&format=json" download="{name}.json">json</a></li>
+  <li>csv (coming soon!)</li>
+</ul>
+<h6>Summary Results</h6>
+<ul>
+  <li>json (coming soon!)</li>
+  <li>csv (coming soon!)</li>
+</ul>
+'''.format( id=file.meta.id, name=file.get_filename(ending='.out') ) %}
+
+{% module Template("modal.html", id="downloadSummaryOptions", modalheading="Download Formats", modalbody=modalbody_download) %}
+
+<!------------------ end body -------------->
+{% end %}
+
+<!------------------ extra css -------------->
+{% block extra_css %}
+{% include "includes/datatables_css.html" %}
+{% include "includes/dc_css.html" %}
+{% end %}
+
+<!------------------ extra js -------------->
+{% block extra_js %}
+{% include "includes/datatables_js.html" %}
+{% include "includes/dc_js.html" %}
+
+<script src="/static/js/color.js"></script>
+<script src="/static/js/results-detail.js"></script>
+<script src="/static/js/testruns.js"></script>
+<script src="/static/js/ipet-custom-plot.js"></script>
+{% end %}
+

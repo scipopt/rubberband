@@ -1,52 +1,85 @@
-{% extends "base.html" %}
-{% block extra_css%}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css">
-{% end %}
-{% block extra_js %}
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js"></script>
-<script type="text/javascript" src="/static/js/initdatetime.js"></script>
-{% end %}
-{% block body %}
-<div class="row">
-  <form method="POST" name="fileUpload" enctype="multipart/form-data">
-    <p>Please select a set of logfiles for upload: <code>*.out</code>, <code>*.err</code>, <code>*.set</code> and <code>*.meta.</code>
-    The collection should contain exactly one logfile.</p>
-    <div class="row">
-      <fieldset class="form-group col-md-6">
-        <input type="file" id="uploadFiles" name="resultFiles" multiple>
-      </fieldset>
-    </div>
-    <div class="row">
-      <p>Optional: Specify a comma separated list of tags to more easily find this run in the future.</p>
-      <fieldset class="form-group col-md-6">
+{% extends "narrow.html" %}
+
+<!------------------ body -------------->
+{% block content %}
+<div class="alert alert-info">
+  <h2>Upload logfiles:</h2>
+  <form method="POST" name="fileUpload" id="fileUpload" enctype="multipart/form-data">
+    <div>
+    <fieldset>
+
+      <div class="form-group">
+        <p>Please select a set of logfiles for upload:
+          <code>*.out</code>,
+          <code>*.err</code>,
+          <code>*.set</code> and
+          <code>*.meta.</code>
+          The collection should contain exactly one logfile.
+        </p>
+        <div class="custom-file">
+          <label class="custom-file-label" for="validatedCustomFile">Choose file...</label>
+          <input class="custom-file-input" type="file" id="validatedCustomFile" accept=".out,.err,.meta,.set" name="resultFiles" multiple>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <span class="important">Optional:</span> Specify a comma separated list of tags to more easily find this run in the future.
+        </label>
         <input type="text" class="form-control" name="tags" id="tagsInput" placeholder="enforelax, repairheuristics, SAP, etc">
-      </fieldset>
+      </div>
+
+      <div class="form-group">
+        <label>
+          <span class="important">Optional:</span> Provide an expiration date for this TestRun.
+        </label>
+        <div class="input-group date" id="datetimepicker" data-target-input="nearest">
+          <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker" name="expirationdate"/>
+          <div class="input-group-append" data-target="#datetimepicker" data-toggle="datetimepicker">
+            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+          </div>
+        </div>
+      </div>
+
+    </fieldset>
+
+    <div class="btn-group" role="group">
+      <button type="submit" class="btn btn-primary">Upload</button>
     </div>
-    <div class="row">
-      <p>Optional: Provide an expiration date for this TestRun. </p>
-      <fieldset class="form-group col-md-6">
-        <input class="form-control datetimepicker" name="expirationdate" autocomplete="off">
-      </fieldset>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <p class="red" id="upload-feedback"></p>
   </form>
 </div>
+
 {% if msgs %}
-<div class="row row-buffered">
-  <div class="panel panel-default">
-    <div class="panel-body">
-      {% for m in msgs %}
-      <p>Processing {{ m }}</p>
+<div class="alert alert-info">
+  <div class="col">
+  <pre>
+    {% for m in msgs %}
+    Processing {{ m }}
       {% for i in msgs[m] %}
-      <p>{{ i }}</p>
+      {{ i }}
       {% end %}
-      {% end %}
-      {% if resulturl %}
-      <p><a href="{{ resulturl }}">{{ resulturl }}</a></p>
-      {% end %}
-    </div>
+    {% end %}
+  </pre>
+
+    {% if resulturl %}
+    <p><a href="{{ resulturl }}">{{ resulturl }}</a></p>
+    {% end %}
   </div>
 </div>
 {% end %}
 {% end %}
+
+<!------------------ extra css -------------->
+{% block extra_css%}
+{% include "includes/datetimepicker_css.html" %}
+{% end %}
+
+<!------------------ extra js -------------->
+{% block extra_js %}
+{% include "includes/datetimepicker_js.html" %}
+
+<script src="/static/js/upload.js"></script>
+<script src="/static/js/initdatetime.js"></script>
+{% end %}
+

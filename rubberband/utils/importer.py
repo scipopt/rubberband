@@ -259,7 +259,7 @@ class ResultClient(object):
         lp_solver_version = None
         if "LPSolver" in data.keys():
             # assume that a testrun is all run with the same lpsolver
-            v = most_frequent_value(data, 'LPSolver')
+            v = self.most_frequent_value(data, 'LPSolver')
             lp_data = v.split(" ")
             lp_solver_name = ""
             lp_solver_version = ""
@@ -273,21 +273,21 @@ class ResultClient(object):
             lp_solver_version = None
 
         if "SpxGitHash" in data.keys():
-            lp_solver_githash = most_frequent_value(data, "SpxGitHash")
+            lp_solver_githash = self.most_frequent_value(data, "SpxGitHash")
         else:
             lp_solver_githash = None
 
         vs = {}
         for i in ["mode", Key.TimeLimit]:
             if i in data:
-                vs[i] = most_frequent_value(data, i)
+                vs[i] = self.most_frequent_value(data, i)
 
         filename = os.path.basename(self.files[".out"])
 
         file_data = {
             "filename": filename,
-            "solver": most_frequent_value(data, Key.Solver),
-            "solver_version": most_frequent_value(data, Key.Version),
+            "solver": self.most_frequent_value(data, Key.Solver),
+            "solver_version": self.most_frequent_value(data, Key.Version),
             "mode": vs.get("mode"),
             "time_limit": vs.get(Key.TimeLimit),
             "lp_solver": lp_solver_name,
@@ -335,7 +335,7 @@ class ResultClient(object):
 
         # get data from git if it's available
         if "GitHash" in data and data["GitHash"]:
-            git_hash = most_frequent_value(data, 'GitHash')
+            git_hash = self.most_frequent_value(data, 'GitHash')
 
             if git_hash.endswith("-dirty"):
                 file_data["git_hash_dirty"] = True
@@ -620,6 +620,35 @@ class ResultClient(object):
         else:
             raise Exception('file_id not yet set. Lookup failed.')
 
+    def most_frequent_value(self, data, key):
+        """
+        Find most frequent value in data[key].
+
+        Parameters
+        ----------
+        data : dict
+            dictionary containing lists of values.
+        key : key
+            key to search for
+
+        Returns
+        -------
+        value
+        """
+        if key not in data.keys():
+            msg = "Missing key {} in data.".format("key")
+            self._log_failure(msg)
+            raise Exception(msg)
+        d = data[key]
+        count = {}
+        for v in d.values():
+            count[v] = count.get(v, 0) + 1
+        try:
+            count.pop("nan")
+        except:
+            pass
+        return max(count, key=count.get)
+
 
 def _determine_type(inst):
     """
@@ -682,27 +711,3 @@ def _determine_type(inst):
     elif (integer_variables == 0): return "MBP"
 
     else: return "MIP"
-
-
-def most_frequent_value(data, key):
-    """
-    Find most frequent value in data[key].
-
-    Parameters
-    ----------
-    data : dict
-        dictionary containing lists of values.
-    key : key
-        key to search for
-
-    Returns
-    -------
-    value
-    """
-    if key not in data.keys():
-        return None
-    d = data[key]
-    count = {}
-    for v in d.values():
-        count[v] = count.get(v, 0) + 1
-    return max(count, key=count.get)

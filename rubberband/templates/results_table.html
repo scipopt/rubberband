@@ -1,89 +1,69 @@
-{% try %}
-    {% set radio = radios %}
-{% except NameError %}
-    {% set radio = False %}
-{% end %}
-{% try %}
-    {% set checkbox = checkboxes %}
-{% except NameError %}
-    {% set checkbox = False %}
-{% end %}
-{% try %}
-    {% set name = tablename %}
-{% except NameError %}
-    {% set name = 'results-table' %}
-{% end %}
-{% try %}
-    {% set repres = representation %}
-{% except NameError %}
-    {% set repres = False %}
-{% end %}
-
-{% if results %}
-<table id="{{ name }}" class="table-hover compact data-table" width="100%">
+{% if results or get_empty_header %}
+<table {% if tablename %}id="{{ tablename }}"{% end %} class="nowrap rb-table {{rb_dt_compact}} {{rb_dt_borderless}} rb-table-data" width="100%">
   <thead>
     <tr>
-      {% if radio %}
-      <th>Default</th>
+      {% if radiobuttons %}
+      <th class="rb-table-radio"></th>
       {% end %}
-      {% if checkbox %}
-      <th></th>
+      {% if checkboxes %}
+      <th class="rb-table-check"></th>
       {% end %}
-      {% if repres %}
-      <th>RubberbandId</th>
+      {% if representation is not None %}
+      <th class="rb-table-repr">Repr.</th>
       {% end %}
-      <th></th>
-      <th>Solver</th>
-      <th>LPSolver</th>
-      <th>Mode</th>
-      <th>Test Set</th>
-      <th>Setting</th>
-      <th>Seed</th>
-      <th>Permutation</th>
-      <th>Timelimit</th>
-      <th>Hostname</th>
-      <th>Commit Timestamp</th>
-      <th>Uploader</th>
-      <th>Date Added</th>
-      <th>Expirationdate</th>
+      <th class="rb-table-info"></th>
+      <!-- <th><span class="fa fa-star-half-alt"></span></th> -->
+      <th class="rb-table-star"></th>
+      <th class="rb-table-solver">Solver</th>
+      <th class="rb-table-lps">LPSolver</th>
+      <th class="rb-table-mode">Mode</th>
+      <th class="rb-table-testset">Test Set</th>
+      <th class="rb-table-setting">Setting</th>
+      <th class="rb-table-seed">Seed</th>
+      <th class="rb-table-perm">Perm</th>
+      <th class="rb-table-tilim">Timelimit</th>
+      <th class="rb-table-host">Host</th>
+      <th class="rb-table-commit">Commit Timestamp</th>
+      <th class="rb-table-upload">Uploader</th>
+      <th class="rb-table-added">Date Added</th>
     </tr>
   </thead>
   <tbody>
   {% for r in results %}
-  <tr data-url='result/{{ r.meta.id }}'>
-    {% if radio %}
-    <td><input type="radio" name="base" value="{{ r.meta.id }}"
+  <tr class="rb-testrun" data-name="{{ r.meta.id }}">
+    {% if radiobuttons %}
+    <td class="rb-table-radio"><input class="rb-tr-radiobutton" type="radio" name="base" value="{{ r.meta.id }}"
     {% if r.meta.id == checked %}
     checked
     {% end %}
     ><input name="{{ r.meta.id }}" hidden></td>
     {% end %}
-    {% if checkbox %}
-    <td><input type="checkbox" name="{{ r.meta.id }}"></td>
+    {% if checkboxes %}
+    <td class="rb-table-check"><input class="rb-tr-checkbox" type="checkbox" name="{{ r.meta.id }}"></td>
     {% end %}
-    {% if repres %}
-    <td> {{ representation[r.id] }} </td>
+    {% if representation is not None %}
+      <td class="rb-table-repr">{% raw shortening_repres_id(representation, r.id) %}</td>
     {% end %}
-    <td><a href="/result/{{ r.meta.id }}">Details</a></td>
-    <td>{{ format_attr(r, "solver") }} {{ format_attr(r, "solver_version") }}</td>
-    <td>{{ format_attr(r, "lp_solver") }} {{ format_attr(r, "lp_solver_version") }}</td>
-    <td>{{ format_attr(r, "mode") }}</td>
-    <td>{{ format_attr(r, "test_set") }}</td>
-    <td>{{ format_attr(r, "settings_short_name") }}</td>
-    <td>{{ format_attr(r, "seed") }}</td>
-    <td>{{ format_attr(r, "permutation") }}</td>
-    <td>{{ format_attr(r, "time_mod") }}</td>
-    <td>{{ format_attr(r, "run_environment") }}</td>
-    <td>{{ format_attr(r, "git_commit_timestamp") }}</td>
-    <td>{{ format_attr(r, "uploader") }}</td>
-    <td>{{ format_attr(r, "upload_timestamp") }}</td>
-    <td>{{ format_attr(r, "expirationdate") }}</td>
+    <td class="rb-table-info"><a href="/result/{{ r.meta.id }}"><span class="fa fa-info-circle"></span></a></td>
+    <td class="rb-table-star"><span class="far fa-star rb-tr-star" name="{{ r.meta.id }}"></span></td>
+    <td class="rb-table-solver">{{ format_attr(r, "solver") }} {{ format_attr(r, "solver_version") }}</td>
+    <td class="rb-table-lps">{{ format_attr(r, "lp_solver") }} {{ format_attr(r, "lp_solver_version") }}</td>
+    <td class="rb-table-mode">{{ format_attr(r, "mode") }}</td>
+    <td class="rb-table-testset">{{ format_attr(r, "test_set") }}</td>
+    <td class="rb-table-setting">{{ format_attr(r, "settings_short_name") }}</td>
+    <td class="rb-table-seed">{{ format_attr(r, "seed") }}</td>
+    <td class="rb-table-perm">{{ format_attr(r, "permutation") }}</td>
+    <td class="rb-table-tilim">{{ format_attr(r, "time_mod") }}</td>
+    <td class="rb-table-host">{{ format_attr(r, "run_environment") }}</td>
+    <td class="rb-table-commit">{{ format_attr(r, "git_commit_timestamp") }}</td>
+    <td class="rb-table-upload">{{ format_attr(r, "uploader") }}</td>
+    <td class="rb-table-added">{{ format_attr(r, "upload_timestamp") }}</td>
   </tr>
   {% end %}
   </tbody>
 </table>
 {% else %}
-<div id="{{ name }}">
+<div id="{{ tablename }}">
   No results found for given query.
 </div>
 {% end %}

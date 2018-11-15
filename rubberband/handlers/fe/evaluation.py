@@ -1,20 +1,18 @@
 """Contains EvaluationView."""
-from datetime import datetime
 from lxml import html
-
-from .base import BaseHandler
-from rubberband.constants import IPET_EVALUATIONS, FORMAT_DATETIME_SHORT, \
-        NONE_DISPLAY, ALL_SOLU
-from rubberband.models import TestSet
-from rubberband.utils import RBLogHandler
-
-from ipet import Experiment, TestRun
-from ipet.evaluation import IPETEvaluation
 import pandas as pd
 
 import json
-import string
 import logging
+
+from .base import BaseHandler
+from rubberband.constants import IPET_EVALUATIONS, NONE_DISPLAY, ALL_SOLU
+from rubberband.models import TestSet
+from rubberband.utils import RBLogHandler
+from rubberband.utils.helpers import get_rbid_representation, setup_testruns_subst_dict
+
+from ipet import Experiment, TestRun
+from ipet.evaluation import IPETEvaluation
 
 
 class EvaluationView(BaseHandler):
@@ -32,7 +30,7 @@ class EvaluationView(BaseHandler):
             id of evaluation file read from url by routes.
 
         Writes latex version of ipet-agg-table via file.html if style option in url is `latex`,
-        else it writes ipet-long-table and ipet-agg-table as json
+        else it writes ipet-long-table and ipet-aggregated-table into a json dict
         """
         # default and implicit style is ipetevaluation. if given latex, generate a table in the
         # style of the release report
@@ -75,57 +73,47 @@ class EvaluationView(BaseHandler):
         set_defaultgroup(ev, ex, default_id)
 
         # do evaluation
-        self.write('a')
         longtable, aggtable = ev.evaluate(ex)
-        self.write('b')
 
         # None style is default
         if style is None:
 
             # add filtergroup buttons to ipet long table
-            fg_buttons_str, longtable["Filtergroups"] = generate_filtergroup_buttons(longtable, ev)
+            fg_buttons_str, longtable["Filtergroups"] = generate_filtergroup_selector(longtable, ev)
 
             # get substitutions dictionary
-            repres = setup_substitutions_dict(testruns)
+            repres = setup_testruns_subst_dict(testruns)
 
-            col_select = get_column_selectors(longtable)
-            col_select = replace_in_str(col_select, repres["short"])
+            cols_dict = get_columns_dict(longtable, repres["short"])
 
             # add id column to longtable
             longtable.insert(0, "id", range(1, len(longtable) + 1))
 
             # convert to html and get style
-            html_long, style_long = table_to_html(longtable, ev, add_class="ipet-long-table")
-            html_agg, style_agg = table_to_html(aggtable, ev, add_class="ipet-aggregated-table")
+            add_classes = " ".join([self.rb_dt_borderless, self.rb_dt_compact])  # style for table
+            html_long, style_long = table_to_html(longtable, ev, html_id="ipet-long-table",
+                    add_class=add_classes)
+            html_agg, style_agg = table_to_html(aggtable, ev, html_id="ipet-aggregated-table",
+                    add_class=add_classes)
 
             ipetlogger.removeHandler(rbhandler)
             rbhandler.close()
 
             # postprocessing
-            html_long = process_ipet_table(html_long, repres["short"], add_ind=False) + \
-                html.tostring(style_long).decode("utf-8")
-            html_agg = process_ipet_table(html_agg, repres["long"], add_ind=True) + \
-                html.tostring(style_agg).decode("utf-8")
+            html_long = process_ipet_table(html_long, repres["short"], add_ind=False,
+                    swap=True) + html.tostring(style_long).decode("utf-8")
+            html_agg = process_ipet_table(html_agg, repres["long"], add_ind=True,
+                    swap=False) + html.tostring(style_agg).decode("utf-8")
 
             # render to strings
             html_tables = self.render_string("results/evaluation.html",
                     ipet_long_table=html_long,
-                    ipet_aggregated_table=html_agg).decode("utf-8")
-
-            # sort testruns by their representation and render table
-            testruns = sorted(testruns,
-                    key=lambda x: repres['long'][get_rbid_representation(x, "extended")])
-            results_table = self.render_string("results_table.html",
-                    results=testruns,
-                    representation=repres["template"],
-                    radios=True,
-                    checked=default_id,
-                    tablename="ipet-legend-table").decode("utf-8")
+                    ipet_aggregated_table=html_agg,
+                    columns=cols_dict).decode("utf-8")
 
             # send evaluated data
-            mydict = {"ipet-legend-table": results_table,
-                      "ipet-eval-result": html_tables,
-                      "buttons": fg_buttons_str + col_select}
+            mydict = {"rb-ipet-eval-result": html_tables,
+                      "rb-ipet-buttons": fg_buttons_str}
             self.write(json.dumps(mydict))
 
         elif style == "latex":
@@ -184,8 +172,9 @@ class EvaluationView(BaseHandler):
 
             tridstr = ",".join([tr for tr in testrunids if tr != default_id])
             baseurl = self.get_rb_base_url()
-            summary_url = "{}/result/{}?compare={}#summary".format(baseurl, default_id, tridstr)
-            out = insert_into_latex(out, summary_url)
+            evaluation_url = "{}/result/{}?compare={}#evaluation".format(baseurl,
+                    default_id, tridstr)
+            out = insert_into_latex(out, evaluation_url)
 
             # send reply
             self.render("file.html", contents=out)
@@ -331,101 +320,7 @@ def setup_experiment(testruns):
     return ex
 
 
-def get_rbid_representation(testrun, mode="extended"):
-    """
-    Get representative string for a testrun.
-
-    This is used for uniqueness and sorting
-
-    Parameters
-    ----------
-    testrun : rubberband.TestSet
-        TestSet to be represented
-    mode : str
-        ["extended", "readable"] format of representative
-
-    Returns
-    -------
-    str
-        representation
-    """
-    if testrun.git_commit_timestamp:
-        ts = "(" + datetime.strftime(testrun.git_commit_timestamp, FORMAT_DATETIME_SHORT) + ")"
-        ts_time = datetime.strftime(testrun.git_commit_timestamp, "%Y%m%d%H%M%S")
-    else:
-        ts_time = ""
-        ts = ""
-
-    if mode == "readable":
-        rbid_repres = " " + testrun.settings_short_name + " " + ts
-    else:  # if mode == "extended"
-        rbid_repres = ts_time + testrun.settings_short_name + testrun.id
-
-    return rbid_repres
-
-
-def setup_substitutions_dict(testruns):
-    """
-    Setup the substitutions dictionary for the regular view.
-
-    Parameters
-    ----------
-    testruns : list
-        a list of rubberband TestSet
-
-    Returns
-    -------
-    dict
-        dictionary of representation key value pairs
-    """
-    # get representations letters
-    letters = get_letters(len(testruns))
-
-    # for long table, for aggregated (short) table and for the results_table (template)
-    repres = {"long": {}, "short": {}, "template": {}}
-
-    # substitutions in both tables
-    for k in ["long", "short"]:
-        repres[k]["GitHash"] = "Commit"
-
-    for t in testruns:
-        if t.git_commit_timestamp:
-            ts = "(" + datetime.strftime(t.git_commit_timestamp, FORMAT_DATETIME_SHORT) + ")"
-        else:
-            ts = ""
-
-        extended_rbid = get_rbid_representation(t, "extended")
-        readable_rbid = get_rbid_representation(t, "readable")
-
-        for k in ["long", "short"]:
-            repres[k][t.git_hash] = ts
-
-        repres["long"][extended_rbid] = readable_rbid
-        repres["template"][extended_rbid] = t.id
-
-    count = 0
-
-    # sort testruns by extended_rbid
-    for extended_rbid in sorted(repres["template"].keys()):
-        tid = repres["template"][extended_rbid]
-
-        # prepend a letter to the readable_rbid
-        longname = letters[count] + repres["long"][extended_rbid]
-
-        # substitute the extended_rbids with a sortable and readable name
-        repres["short"][extended_rbid] = letters[count]
-        repres["long"][extended_rbid] = longname
-
-        # in the template we need the testrun id as a key
-        repres["template"][tid] = longname
-
-        # count through the letters of the alphabet
-        count = count + 1
-
-    return repres
-
-
-def process_ipet_table(table, repres, add_ind=False):
+def process_ipet_table(table, repres, add_ind=False, swap=False):
     """
     Make some modifications to the html structure.
 
@@ -439,13 +334,15 @@ def process_ipet_table(table, repres, add_ind=False):
         Replacement dictionary, `key` -> `value`
     add_ind : bool
         Add indices to rows
+    swap : bool
+        Swap the first two rows of header
 
     Returns
     -------
     str
         The html table as a string.
     """
-    # split rowspan cells from the tables to enable js datatable
+    # split rowspan cells from the tables body to enable js datatable
     table_rows = [e for e in table.find(".//tbody").iter() if e.tag == "tr" or e.tag == "th"]
     groupcount = 1
     oldtext = ""
@@ -476,35 +373,9 @@ def process_ipet_table(table, repres, add_ind=False):
 
 def replace_in_str(rstring, repres):
     """Replace keys by values of repres in rstring."""
-    for k, v in repres.items():
-        rstring = rstring.replace(k, v)
+    for k in sorted(repres.keys(), key=len, reverse=True):
+        rstring = rstring.replace(k, repres[k])
     return rstring
-
-
-def get_letters(quantity):
-    """
-    Construct an alphabetical list of letters.
-
-    Parameters
-    ----------
-    quantity : int
-        length of requested list, maximum length is 26^2.
-
-    Returns
-    -------
-    list
-
-    Example
-    -------
-    >>> 3
-    ['A', 'B', 'C']
-    >>> 29
-    ['AA', 'AB', ... , 'AZ', 'BA', 'BB']
-    """
-    letters = list(string.ascii_uppercase)
-    if quantity > 26:
-        letters = [x + y for x in letters for y in letters]
-    return letters
 
 
 def highlight_series(s):
@@ -546,7 +417,7 @@ def align_elems(s):
     return 'text-align: %s' % align
 
 
-def table_to_html(df, ev, add_class="", border=0):
+def table_to_html(df, ev, html_id="", add_class=""):
     """
     Convert an ipet table to an html table, also gives a style.
 
@@ -554,8 +425,7 @@ def table_to_html(df, ev, add_class="", border=0):
     ----------
     df : pandas.dataframe
     ev : ipet.evaluation
-    add_class : str
-    border : int
+    html_id : str
 
     Returns
     -------
@@ -594,11 +464,11 @@ def table_to_html(df, ev, add_class="", border=0):
     tree = html.fromstring(htmlstr)
     treestyle = tree.find(".//style")
     treetable = tree.find(".//table")
-    treetable.set("width", "100%")
+    treetable.set("width", "100%")  # needed for datatable js plugin
 
-    tableclasses = add_class + " ipet-table data-table compact"
-    treetable.set("class", tableclasses)
-    treetable.set("id", tableclasses)
+    tableclasses = " ipet-table rb-table-data " + add_class
+    treetable.set("class", tableclasses)  # set classes
+    treetable.set("id", html_id)  # set id
 
     return treetable, treestyle
 
@@ -674,9 +544,9 @@ def set_defaultgroup(evaluation, experiment, testrun_id):
     evaluation.set_defaultgroup(defaultgroup_string)
 
 
-def generate_filtergroup_buttons(table, evaluation):
+def generate_filtergroup_selector(table, evaluation):
     """
-    Generate a string with html filtergroup buttons for ipet long table and and a column for table.
+    Generate a string with html filtergroup selector for ipet long table and and a column for table.
 
     Parameters
     ----------
@@ -688,11 +558,11 @@ def generate_filtergroup_buttons(table, evaluation):
     Returns
     -------
     str, pandas.Series
-        buttons and additional column
+        selector and additional column
     """
     table = table.copy()
     table["Filtergroups"] = "|all|"
-    buttons_str = '<div class="col-xs-9">Show filtergroups: <div id="ipet-long-filter-buttons" class="btn-group" role="group">' # noqa
+    out = '<div id="ipet-long-table-filter col"><label class="col-form-label text-left">Select filtergroups:<select id="ipet-long-filter-select" class="custom-select">' # noqa
 
     for fg in evaluation.getActiveFilterGroups():
         table["Newfiltergroup"] = ""
@@ -703,8 +573,8 @@ def generate_filtergroup_buttons(table, evaluation):
         if len(fg_data) == 0:
             continue
 
-        # construct new button string
-        newbutton = '<button id="ipet-long-filter-button" type="button" class="btn btn-sm btn-info">' + fg_name + '</button>' # noqa
+        # construct new option string
+        newoption = '<option value=' + fg_name + '>' + fg_name + '</option>' # noqa
         fg_data["Newfiltergroup"] = "|{}|".format(fg_name)
 
         # update the table with the new filtergroup data
@@ -716,25 +586,24 @@ def generate_filtergroup_buttons(table, evaluation):
         # update original table
         table["Filtergroups"] = newcolumn
 
-        # update buttons_str
-        buttons_str = buttons_str + newbutton
+        # update selector strin
+        out = out + newoption
 
-    buttons_str = buttons_str + '</div></div>'
-    return buttons_str, table["Filtergroups"]
+    out = out + '</select></label></div>'
+    return out, table["Filtergroups"]
 
 
-def get_column_selectors(table):
-    """Construct a html selector field for the data column headers."""
-    # add column selector
-    col_select = '<div class="col-xs-3">Select a column for the plot:<select id="selectcolumn" class="form-control">' # noqa
+def get_columns_dict(table, replace):
+    """Construct a dictionary with column headers and ids, also replace given by replace dict."""
     # 0 is name, 1 is id
     if type(table.index) == pd.MultiIndex:
         colcount = 1 + len(table.index[0])
     else:
         colcount = 2
+    cols = {}
     for c in table.columns:
+        c_repres = ",".join(c)
         if "Filtergroups" not in c:
-            col_select = col_select + '<option value="{}">{}</option>'.format(colcount, c)
+            cols[colcount] = replace_in_str(str(c_repres), replace)
         colcount = colcount + 1
-    col_select = col_select + '</select></div>'
-    return col_select
+    return cols
