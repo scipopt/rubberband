@@ -404,9 +404,9 @@ lp/checkdualfeas = TRUE
 # [type: int, advanced: TRUE, range: [0,1], default: 1]
 lp/fastmip = 1
 
-# LP scaling (0: none, 1: normal, 2: aggressive)
-# [type: int, advanced: TRUE, range: [0,2], default: 1]
-lp/scaling = 1
+# should scaling of LP solver be used?
+# [type: bool, range: {TRUE,FALSE}, default: TRUE]
+lp/scaling = TRUE
 
 # should presolving of LP solver be used?
 # [type: bool, advanced: TRUE, range: {TRUE,FALSE}, default: TRUE]
