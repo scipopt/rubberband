@@ -700,13 +700,14 @@ def drop_different(dictionary, data):
     keep = {}
     for k, v in dictionary.items():
         val = None
-        different = True
+        different = False
         for el in set(data[k].values()):
-            if el in [val, None, ""]:
-                continue
-            else:
-                val = el
-                different = False
+            if el not in [val, None, ""]:
+                if val is None:
+                    val = el
+                else:
+                    different = True
+                    break
         if not different:
             keep[k] = v
     return keep

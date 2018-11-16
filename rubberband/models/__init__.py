@@ -65,7 +65,7 @@ class Result(DocType):
 
     def __str__(self):
         """Return a string description of the result object."""
-        return "Result {}".format(self.instance_name)
+        return "Result {}({})".format(self.instance_name, self.instance_id)
 
     def raw(self, ftype=".out"):
         """
