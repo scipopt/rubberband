@@ -114,12 +114,13 @@ class ResultClient(object):
         testset : TestSet
             TestSet if already existing (default: None)
         """
-        # validate and organize files
+        # validate and organize files (make sure they exist and are readable)
         self.files = self.validate_and_organize_files(bundle)
 
         # generate file hash
         self.file_id = generate_sha256_hash(self.files[".out"])
 
+        # initial is true on upload, on reimport it is false
         if initial:
             # check if already existing
             found = self.file_lookup()
@@ -132,16 +133,19 @@ class ResultClient(object):
                 return
 
         # parse files with ipet
-        # manageable is the ipet.TestRun
-        manageable = self.get_data_from_ipet()
+        ipettestrun = self.get_data_from_ipet()
         # data is the 'data' DataFrame from ipet.TestRun
-        data = json.loads(manageable.data.to_json())
-        # get the scipparameters and the defaultparameters from ipet
-        settings = manageable.getParameterData()
+        data = json.loads(ipettestrun.data.to_json())
+
+        # get the scipparameters (from settings file) and their defaults from ipet
+        settings = ipettestrun.getParameterData()
 
         # organize data into file_data and results
-        # get data from testrun.metadatadict
-        md = manageable.getMetaData()
+        # get data from getter of testrun.metadatadict
+        md = ipettestrun.getMetaData()
+        # only keep the metadata that is the same for all instances
+        md = drop_different(dictionary=md, data=data)
+
         # collect data from testrun as a whole
         file_data = self.get_file_data(data, settings=settings, expirationdate=expirationdate,
                 metadata=md)
@@ -240,88 +244,58 @@ class ResultClient(object):
         Parameters
         ----------
         data : dict
-            data in json format from ipet
+            Data in json format from ipet
         settings
-            Parameterdata dictionary from ipet (default: None)
+            Settings parameterdata dictionary from ipet (default: None)
         expirationdate : str in date form
             Date after which data can be purged from elasticsearch (default: None)
         metadata
             Metadata dictionary from IPET (default: {})
         """
         # settings is a tuple
-        # data is 'data' DataFrame from ipet.TestRun
-        # for scip these data is available
-        file_keys = set([Key.TimeLimit, Key.Version, "LPSolver", "GitHash",
-            Key.Solver, "mode", "SpxGitHash"])
-        # TODO once the ipet is up to date, use this and update the rest
-        # file_keys = set([Key.TimeLimit, Key.Version, Key.LPSolver, Key.GitHash,
-        lp_solver_name = None
-        lp_solver_version = None
-        if "LPSolver" in data.keys():
-            # assume that a testrun is all run with the same lpsolver
-            v = self.most_frequent_value(data, 'LPSolver')
-            lp_data = v.split(" ")
-            lp_solver_name = ""
-            lp_solver_version = ""
-            try:
-                lp_solver_name = lp_data[0]
-                lp_solver_version = " ".join(lp_data[1:])
-            except:
-                pass
-        else:
-            lp_solver_name = None
-            lp_solver_version = None
-
-        if "SpxGitHash" in data.keys():
-            lp_solver_githash = self.most_frequent_value(data, "SpxGitHash")
-        else:
-            lp_solver_githash = None
-
-        vs = {}
-        for i in ["mode", Key.TimeLimit]:
-            if i in data:
-                vs[i] = self.most_frequent_value(data, i)
-
-        filename = os.path.basename(self.files[".out"])
-
         file_data = {
-            "filename": filename,
-            "solver": self.most_frequent_value(data, Key.Solver),
-            "solver_version": self.most_frequent_value(data, Key.Version),
-            "mode": vs.get("mode"),
-            "time_limit": vs.get(Key.TimeLimit),
-            "lp_solver": lp_solver_name,
-            "lp_solver_version": lp_solver_version,
-            "lp_solver_githash": lp_solver_githash,
+            "id": self.file_id,
+            "filename": os.path.basename(self.files[".out"]),
+            # or self.most_frequent_value(data, Key.LogFileName)
+            "metadata": metadata,
             "tags": self.tags,
             "index_timestamp": datetime.now(),
-            "metadata": metadata
         }
+
         if expirationdate is not None:
             file_data["expirationdate"] = expirationdate
 
-        # read the following from metadata, which is added to each problem after parsing
-        # assume that a testrun is run on all instances with the same test_set, environment,
-        # settings, opt_flag, architecture, os (etc.)
+        ipetkeymapping = {
+            "solver": Key.Solver,
+            "solver_version": Key.Version,
+            "time_limit": Key.TimeLimit,
+            "lp_solver": "LPSolver",
+            "lp_solver_version": "LPSolverVersion",
+            "lp_solver_githash": "SpxGitHash",
+            "mode": "mode",
+            "git_hash": "GitHash",
+        }
+        for key, ipetkey in ipetkeymapping.items():
+            file_data[key] = self.most_frequent_value(data, ipetkey)
 
-        # get these via ipet metadata...
-        # TODO are these correct?
-        if self.files[".meta"] is not None:
-            mapping = {
-                    "test_set": "TstName",
-                    "settings_short_name": "Settings",
-                    "seed": "Seed",
-                    "permutation": "Permutation",
-                    "run_environment": "Queue",
-                    "opt_flag": "OptFlag",
-                    "os": "OperatingSystem",
-                    "time_factor": "TimeFactor"
-                    }
-
-            for key, tag in mapping.items():
-                if tag in metadata.keys():
-                    file_data[key] = metadata[tag]
-        else:
+        # get some info via ipet metadata...
+        metamapping = {
+                "test_set": "TstName",
+                "settings_short_name": "Settings",
+                "seed": "Seed",
+                "permutation": "Permutation",
+                "run_environment": "Queue",
+                "opt_flag": "OptFlag",
+                "os": "OperatingSystem",
+                "time_factor": "TimeFactor",
+                }
+        # by this time we dropped all metadata that is not equal or empty for all data rows
+        for key, tag in metamapping.items():
+            if tag in metadata.keys():
+                file_data[key] = metadata[tag]
+        # it can be an old file if there is no meta file. then try to read info from filename
+        if self.files[".meta"] is None:
+            # this might be empty, also this is very bad practice. we keep it for historical data.
             file_data.update(self.parse_info_from_filename(self.files))
 
         if options.gitlab_url:
@@ -333,23 +307,19 @@ class ResultClient(object):
             file_data["settings"] = settings[0]
             file_data["settings_default"] = settings[1]
 
-        # get data from git if it's available
+        # get git data if it is available
         if "GitHash" in data and data["GitHash"]:
-            git_hash = self.most_frequent_value(data, 'GitHash')
-
-            if git_hash.endswith("-dirty"):
-                file_data["git_hash_dirty"] = True
+            git_hash = file_data["git_hash"]
+            file_data["git_hash_dirty"] = git_hash.endswith("-dirty")
+            if file_data["git_hash_dirty"]:
                 git_hash = git_hash.rstrip("-dirty")
-            else:
-                file_data["git_hash_dirty"] = False
 
             project_id_key = options.gitlab_project_ids.get(file_data["solver"].lower())
             if not project_id_key:
-                file_data["git_hash"] = git_hash
                 msg = "No project id specified for {}. Skipping commit lookup."\
                     .format(file_data["solver"].lower())
                 self._log_info(msg)
-            else:
+            elif options.gitlab_url:
                 try:
                     commit = gl.get_commit_data(project_id_key, git_hash)
                     file_data["git_hash"] = commit.id
@@ -360,11 +330,6 @@ class ResultClient(object):
                     msg = "Couldn't find commit {} in Gitlab. Aborting...".format(git_hash)
                     self._log_failure(msg)
                     raise
-
-        for k in file_keys:
-            data.pop(k, None)
-
-        file_data["id"] = self.file_id
 
         return file_data
 
@@ -385,6 +350,9 @@ class ResultClient(object):
         rogue_string = ".zib.de"
         file_path_clean = filename.replace(rogue_string, "")
         fnparts = file_path_clean.split(".")
+        if len(fnparts) < 8:
+            return {}
+
         info = {
                 "test_set": fnparts[1],  # short, bug, etc,
                 "settings_short_name": fnparts[-2],
@@ -620,7 +588,7 @@ class ResultClient(object):
         else:
             raise Exception('file_id not yet set. Lookup failed.')
 
-    def most_frequent_value(self, data, key):
+    def most_frequent_value(self, data, key, throwex=False):
         """
         Find most frequent value in data[key].
 
@@ -636,9 +604,13 @@ class ResultClient(object):
         value
         """
         if key not in data.keys():
-            msg = "Missing key {} in data.".format("key")
-            self._log_failure(msg)
-            raise Exception(msg)
+            if throwex:
+                msg = "Missing key {} in data.".format("key")
+                self._log_failure(msg)
+                raise Exception(msg)
+            else:
+                return None
+
         d = data[key]
         count = {}
         for v in d.values():
@@ -711,3 +683,30 @@ def _determine_type(inst):
     elif (integer_variables == 0): return "MBP"
 
     else: return "MIP"
+
+
+def drop_different(dictionary, data):
+    """Drop from dictionary the fields that are not constant in the data.
+
+    Parameters
+    ----------
+    dictionary : dict
+    data : pandas.DataFrame
+
+    Returns
+    -------
+    dict
+    """
+    keep = {}
+    for k, v in dictionary.items():
+        val = None
+        different = True
+        for el in set(data[k].values()):
+            if el in [val, None, ""]:
+                continue
+            else:
+                val = el
+                different = False
+        if not different:
+            keep[k] = v
+    return keep
