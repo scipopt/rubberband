@@ -109,24 +109,25 @@ function modalHide() { modalAction("hide"); }
 
 function fillModal(content) {
   /* set modal contents to content */
-  buttonsDisable();
   document.getElementById("info-modal-content").innerHTML = content;
   modalShow();
 };
 
 function setButtons(val) {
   /* enable and disable ipet eval buttons */
-  var value = false;
+  var value = true;
   if (val == "enabled") {
-    var value = true;
+    var value = false;
   }
   $("#ipet-eval-menu .rb-wait").each(function() {
     this.disabled = value;
+    console.log(this);
+    console.log(this.disabled);
   });
 };
 
-function buttonsDisable() { setButtons("disable"); }
-function buttonsEnable() { setButtons("enable"); }
+function buttonsDisable() { setButtons("disabled"); }
+function buttonsEnable() { setButtons("enabled"); }
 
 function hoverTable(index, name) {
   /* method to toggle the hover class in a row */
@@ -349,12 +350,12 @@ function computeColor(valclass, arr_values, invert) {
 
 function evaluate(e) {
   evalurl = getData().url.evalurl;
+  buttonsDisable();
   fillModal("Evaluating");
 
   var xhr = new XMLHttpRequest();
   xhr.open('GET', evalurl);
   xhr.onload = function() {
-    buttonsEnable();
     modalHide();
     data = processResponse(xhr.responseText, 2);
     datadict = JSON.parse(data);
@@ -367,6 +368,7 @@ function evaluate(e) {
     }
     initIpetTables(datadict["rb-ipet-buttons"]);
     initialize_custom_chart(); // from ipet-custom-plot.js
+    buttonsEnable();
   };
   xhr.onerror = buttonsDisable;
   xhr.onprogress = function(e) {

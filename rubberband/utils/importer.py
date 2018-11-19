@@ -423,7 +423,7 @@ class ResultClient(object):
 
         return required_files
 
-    def save_structured_data(self, file_level_data, instance_level_data, testset=None):
+    def save_structured_data(self, file_level_data, results, testset=None):
         """
         Save TestSet and Result model instances in Elasticsearch.
 
@@ -431,7 +431,7 @@ class ResultClient(object):
         ----------
         file_level_data : dict
             Data about TestSet (the whole TestRun)
-        instance_level_data
+        results : list
             Data of individual instances
         testset : TestSet
             (default: None)
@@ -452,7 +452,7 @@ class ResultClient(object):
                 f.update(**file_level_data)
             self.testset_meta_id = f.meta.id  # save this for backup step
             # save children
-            for r in instance_level_data:
+            for r in results:
                 r["_parent"] = f.meta.id
                 # TODO move this to constructor of Result model?
                 for key in ["Datetime_Start", "Datetime_End"]:
