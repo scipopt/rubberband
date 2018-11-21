@@ -54,18 +54,14 @@ class UploadEndpoint(BaseHandler):
                 self.set_status(400)  # bad request
                 break
 
-        response = {}
-        count = 0
+        response = []
         for result in results:
             if result.fail:
-                response[count] = make_response(result.status, self.application.base_url,
-                                         errors=result.getMessages())
+                response.append(make_response(result.status, self.application.base_url,
+                                         errors=result.getMessages()))
             else:
                 url = "{}{}".format(self.application.base_url, result.getUrl())
-                response[count] = make_response(result.status, url)
-            count = count + 1
-        if len(response) == 1:
-            response = response[0]
+                response.append(make_response(result.status, url))
 
         self.write(json_encode(response))
 
@@ -92,19 +88,14 @@ def import_files(paths, tags, user, url_base, expirationdate=None):
     """
     results = perform_import(paths, tags, user, expirationdate=expirationdate)
 
-    response = {}
-    count = 0
+    response = []
     for result in results:
         if result.fail:
-            response[count] = make_response(result.status, url_base,
-                                     errors=result.getMessages())
+            response.append(make_response(result.status, url_base,
+                                     errors=result.getMessages()))
         else:
             url = "{}{}".format(url_base, result.getUrl())
-            response[count] = make_response(result.status, url=url)
-    if len(response) == 1:
-        response = response[0]
-
-        count = count + 1
+            response.append(make_response(result.status, url=url))
 
     logging.info("Sending an email to {}".format(user))
     sendmail(response, user)

@@ -28,6 +28,8 @@ class UploadAPITest(TestHandlerBase):
                               body="something")
         self.assertEqual(response.code, 400)
         data = json.loads(response.body.decode("utf-8"))
+        self.assertTrue(isinstance(data, list))
+        data = data[0]
         self.assertTrue(isinstance(data, dict))
         self.assertIn("status", data)
         self.assertIn("errors", data)
