@@ -1,5 +1,6 @@
 """Contains UploadView."""
 from rubberband.utils import ResultClient, write_file
+from rubberband.utils.importer import bundle_files
 from .base import BaseHandler
 
 
@@ -13,7 +14,7 @@ class UploadView(BaseHandler):
         Show the upload form.
         Renders `upload.html`
         """
-        self.render("upload.html", page_title="Upload", msgs=[])
+        self.render("upload.html", page_title="Upload", infos=[])
 
     def post(self):
         """
@@ -36,33 +37,21 @@ class UploadView(BaseHandler):
         for f in files:
             paths.append(write_file(f["filename"], f["body"]))
 
-        paths = tuple(paths)
-        messages = []
+        infos = []
         bundles = bundle_files(paths)
         for bundle in bundles:
             # ResultClient helps us process the uploaded files
             c = ResultClient(user=self.get_current_user())
-            results = c.process_files(bundle, tags=tags, expirationdate=expirationdate)
-            msgs = results.getMessages()
-            url = results.getUrl()
+            importstats = c.process_files(bundle, tags=tags, expirationdate=expirationdate)
+
+            info = {}
+            info['messages'] = importstats.getMessages()
+            url = importstats.getUrl()
             if url:
                 url = self.application.base_url + url
-            messages.append([msgs, url])
+            info['url'] = url
+
+            infos.append(info)
 
         # send a message to the user describing the results of the upload
-        self.render("upload.html", page_title="Upload", msgs=messages)
-
-
-def bundle_files(paths):
-    """Take a bundle of files and split them by basename."""
-    bundles = []
-    for f in [path for path in paths if path[-4:] == ".out"]:
-        basename = f[:-4]
-        bundles.append([path for path in paths if path[:-4] == basename])
-    for f in paths:
-        if f[-5:] == ".solu":
-            for bundle in bundles:
-                if f not in bundle:
-                    bundle.append(f)
-    print(bundles)
-    return bundles
+        self.render("upload.html", page_title="Upload", infos=infos)

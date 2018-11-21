@@ -393,8 +393,8 @@ class ResultClient(object):
 
             filename, file_extension = os.path.splitext(f)
             if file_extension not in all_file_ext:
-                msg = "File type {} is unsupported. Ignoring this file. Supported files: {}"\
-                        .format(file_extension, ", ".join(all_file_ext))
+                msg = "File type {} is unsupported. Ignoring this file ({}). Supported files: {}"\
+                        .format(file_extension, filename, ", ".join(all_file_ext))
                 self._log_failure(msg)
 
             for r in required_files:
@@ -711,3 +711,20 @@ def drop_different(dictionary, data):
         if not different:
             keep[k] = v
     return keep
+
+
+def bundle_files(paths):
+    """Take a bundle of files and split them by basename."""
+    bundles = []
+    for f in [path for path in paths if path[-4:] == ".out"]:
+        basename = f[:-4]
+        bundles.append(tuple([path for path in paths if path[:-4] == basename]))
+    for f in paths:
+        if f[-5:] == ".solu":
+            for bundle in bundles:
+                if f not in bundle:
+                    bundle.append(f)
+    if bundles != []:
+        return bundles
+    else:
+        return [[]]

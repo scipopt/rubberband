@@ -391,7 +391,7 @@ class TestSet(DocType):
     def delete_all_children(self):
         """Delete all children (Result objects) associated to a TestSet object."""
         self.load_children()
-        for k, v in self.children.items():
+        for k, v in self.children.to_dict().items():
             v.delete()
 
     def delete_all_files(self):

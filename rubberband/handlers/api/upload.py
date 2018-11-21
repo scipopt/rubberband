@@ -6,6 +6,7 @@ from tornado.gen import coroutine
 
 from .base import BaseHandler, authenticated
 from rubberband.utils import ResultClient, write_file, sendmail
+from rubberband.utils.importer import bundle_files
 
 
 class UploadAsyncEndpoint(BaseHandler):
@@ -39,7 +40,6 @@ class UploadEndpoint(BaseHandler):
         """
         Answer to PUT requests.
 
-        The method that is called to upload files, call perform_import.
         The method that rbcli calls to upload files via commandline.
         Write json response.
         """
@@ -48,14 +48,24 @@ class UploadEndpoint(BaseHandler):
         expirationdate = self.get_argument("expirationdate", None)
         results = perform_import(files, tags, self.current_user, expirationdate=expirationdate)
 
-        if results.fail:
-            self.set_status(400)  # bad request
-            response = make_response(results.status, self.application.base_url,
-                                     errors=results.getMessages())
-        else:
-            self.set_status(201)  # created
-            url = "{}{}".format(self.application.base_url, results.getUrl())
-            response = make_response(results.status, url)
+        self.set_status(201)  # created
+        for result in results:
+            if result.fail:
+                self.set_status(400)  # bad request
+                break
+
+        response = {}
+        count = 0
+        for result in results:
+            if result.fail:
+                response[count] = make_response(result.status, self.application.base_url,
+                                         errors=result.getMessages())
+            else:
+                url = "{}{}".format(self.application.base_url, result.getUrl())
+                response[count] = make_response(result.status, url)
+            count = count + 1
+        if len(response) == 1:
+            response = response[0]
 
         self.write(json_encode(response))
 
@@ -81,13 +91,20 @@ def import_files(paths, tags, user, url_base, expirationdate=None):
     Sends an email to user after successfull import.
     """
     results = perform_import(paths, tags, user, expirationdate=expirationdate)
-    fail = results.fail
-    if fail:
-        response = make_response(results.status, url_base,
-                                 errors=results.getMessages())
-    else:
-        url = "{}{}".format(url_base, results.getUrl())
-        response = make_response(results.status, url=url)
+
+    response = {}
+    count = 0
+    for result in results:
+        if result.fail:
+            response[count] = make_response(result.status, url_base,
+                                     errors=result.getMessages())
+        else:
+            url = "{}{}".format(url_base, result.getUrl())
+            response[count] = make_response(result.status, url=url)
+    if len(response) == 1:
+        response = response[0]
+
+        count = count + 1
 
     logging.info("Sending an email to {}".format(user))
     sendmail(response, user)
@@ -116,14 +133,20 @@ def perform_import(files, tags, user, expirationdate=None):
     paths = []
     for f in files:
         paths.append(write_file(f[0]["filename"], f[0]["body"]))
-    paths = tuple(paths)
 
     if tags != []:
         tags = tags.split(",")
         tags = list(map(str.strip, tags))
 
-    c = ResultClient(user=user)
-    return c.process_files(paths, tags=tags, expirationdate=expirationdate)
+    bundles = bundle_files(paths)
+
+    importstats = []
+    for bundle in bundles:
+        c = ResultClient(user=user)
+        c_stat = c.process_files(bundle, tags=tags, expirationdate=expirationdate)
+        importstats.append(c_stat)
+
+    return importstats
 
 
 def make_response(status, url, msg="", errors=""):
