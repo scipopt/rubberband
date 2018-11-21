@@ -55,15 +55,15 @@ class ResultClient(object):
         testset : TestSet
             already existing TestSet in Rubberband
         """
-        self.metadata = ImportStats("results")
+        self.importstats = ImportStats("results")
         self.remove_files = True
         try:
             self.parse_file_bundle(paths, initial=False, testset=testset)
         except:
-            self.metadata.status = "fail"
+            self.importstats.status = "fail"
             traceback.print_exc()
 
-        return self.metadata
+        return self.importstats
 
     def process_files(self, paths, tags=[], remove=True, expirationdate=None):
         """
@@ -82,7 +82,7 @@ class ResultClient(object):
         """
         # TODO: maybe check for reasonable expdate?
         # This gets called by both the apiupload and the webupload
-        self.metadata = ImportStats("results")
+        self.importstats = ImportStats("results")
         total_files = len(paths)
         self.tags = tags
         self.remove_files = remove
@@ -91,10 +91,10 @@ class ResultClient(object):
             # parsing all locally saved files
             self.parse_file_bundle(paths, expirationdate=expirationdate)
         except:
-            self.metadata.status = "fail"
+            self.importstats.status = "fail"
             traceback.print_exc()
 
-        return self.metadata
+        return self.importstats
 
     def parse_file_bundle(self, bundle, expirationdate=None, initial=True, testset=None):
         """
@@ -125,8 +125,8 @@ class ResultClient(object):
             # check if already existing
             found = self.file_lookup()
             if found:
-                self.metadata.status = "found"
-                self.metadata.setUrl("/result/{}".format(found.meta.id))
+                self.importstats.status = "found"
+                self.importstats.setUrl("/result/{}".format(found.meta.id))
                 msg = "File was previously uploaded by {} on {}. Upload aborted."\
                       .format(found.get_uploader, found.index_timestamp)
                 self._log_info(msg)
@@ -220,10 +220,10 @@ class ResultClient(object):
         """
         self.logger.error(message)
         if not hasattr(self, "files"):
-            self.metadata.logMessage("_", message)
+            self.importstats.logMessage("_", message)
         else:
-            self.metadata.logMessage(self.files[".out"], message)
-        self.metadata.fail += 1
+            self.importstats.logMessage(self.files[".out"], message)
+        self.importstats.fail += 1
 
     def _log_info(self, message):
         """
@@ -235,7 +235,7 @@ class ResultClient(object):
             Message to log.
         """
         self.logger.info(message)
-        self.metadata.logMessage(self.files[".out"], message)
+        self.importstats.logMessage(self.files[".out"], message)
 
     def get_file_data(self, data, settings=None, expirationdate=None, metadata={}):
         """
@@ -472,8 +472,8 @@ class ResultClient(object):
 
         msg = "Data for file {} was successfully imported and archived".format(self.files[".out"])
         self.logger.info(msg)
-        self.metadata.status = "success"
-        self.metadata.setUrl("/result/{}".format(self.testset_meta_id))
+        self.importstats.status = "success"
+        self.importstats.setUrl("/result/{}".format(self.testset_meta_id))
 
     def backup_files(self):
         """Save all file contents in Elasticsearch."""

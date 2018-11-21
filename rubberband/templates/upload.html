@@ -50,21 +50,28 @@
   </form>
 </div>
 
-{% if msgs %}
+{% if msgs != [] %}
 <div class="alert alert-info">
   <div class="col">
-  <pre>
-    {% for m in msgs %}
-    Processing {{ m }}
-      {% for i in msgs[m] %}
-      {{ i }}
-      {% end %}
-    {% end %}
-  </pre>
+  {% for k in msgs %}
+    <p>
+      {% if k != [] %}
+        {% for m in k[0] %}
+        Processing {{ m }} <br/>
+        <ul>
+          {% for i in k[0][m] %}
+          <li> {{ i }} </li>
+          {% end %}
+        </ul>
+        {% end %}
 
-    {% if resulturl %}
-    <p><a href="{{ resulturl }}">{{ resulturl }}</a></p>
-    {% end %}
+        {% if k[1] %}
+          <a href="{{ k[1] }}">{{ k[1] }}</a>
+        {% end %}
+      {% end %}
+    </p>
+
+  {% end %}
   </div>
 </div>
 {% end %}
