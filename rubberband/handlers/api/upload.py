@@ -58,10 +58,10 @@ class UploadEndpoint(BaseHandler):
         for result in results:
             if result.fail:
                 response.append(make_response(result.status, self.application.base_url,
-                                         errors=result.getMessages()))
+                                 basename=result.basename, errors=result.getMessages()))
             else:
                 url = "{}{}".format(self.application.base_url, result.getUrl())
-                response.append(make_response(result.status, url))
+                response.append(make_response(result.status, url, basename=result.basename))
 
         self.write(json_encode(response))
 
@@ -92,10 +92,10 @@ def import_files(paths, tags, user, url_base, expirationdate=None):
     for result in results:
         if result.fail:
             response.append(make_response(result.status, url_base,
-                                     errors=result.getMessages()))
+                                     basename=result.basename, errors=result.getMessages()))
         else:
             url = "{}{}".format(url_base, result.getUrl())
-            response.append(make_response(result.status, url=url))
+            response.append(make_response(result.status, url=url, basename=result.basename))
 
     logging.info("Sending an email to {}".format(user))
     sendmail(response, user)
@@ -140,7 +140,7 @@ def perform_import(files, tags, user, expirationdate=None):
     return importstats
 
 
-def make_response(status, url, msg="", errors=""):
+def make_response(status, url, basename="", msg="", errors=""):
     """
     Construct a response dictionary.
 
@@ -150,6 +150,8 @@ def make_response(status, url, msg="", errors=""):
         Status
     url : str
         URL
+    basename : str
+        basename of file
     msg : str
         Message
     errors : str
@@ -168,5 +170,7 @@ def make_response(status, url, msg="", errors=""):
         response["msg"] = msg
     if errors:
         response["errors"] = errors
+    if basename:
+        response["basename"] = basename
 
     return response

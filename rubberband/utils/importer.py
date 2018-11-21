@@ -82,8 +82,11 @@ class ResultClient(object):
         """
         # TODO: maybe check for reasonable expdate?
         # This gets called by both the apiupload and the webupload
-        self.importstats = ImportStats("results")
         total_files = len(paths)
+        basename = ""
+        if total_files > 0:
+            basename = os.path.basename(paths[0])
+        self.importstats = ImportStats("results", basename=basename)
         self.tags = tags
         self.remove_files = remove
         self.logger.info("Found {} files. Beginning to parse.".format(total_files))
