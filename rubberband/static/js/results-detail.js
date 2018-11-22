@@ -499,7 +499,8 @@ $(document).ready(function(){
     ipetlongtable.search("|"+fg_name+"|").draw()
   });
 
-  /* reimport and delete buttons */
-  $(document).on('click', 'button#delete-result', delete_result);
+  /* reimport, edit and delete buttons */
   $(document).on('click', 'button#reimport-result', reimport_result);
+  $(document).on('click', 'button#delete-result', delete_result);
+  $('#editModal').on('hidden.bs.modal', function () { $(this).find('form').trigger('reset'); })
 });

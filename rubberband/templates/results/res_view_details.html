@@ -20,6 +20,9 @@
 
       <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="modal"   data-placement="top" data-target="#deleteResultModal" title="delete result">
         <span class="fa fa-trash-alt"></span></span>
+
+      <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="modal"   data-placement="top" data-target="#editModal" title="edit">
+        <span class="fa fa-edit"></span></span>
     </div>
   {% end %}
   <h2 class="rb-details-tab-title">Detailed data</h2>
@@ -39,6 +42,17 @@
 
   <!-- Modals =========================================== -->
   {% if not compare %}
+
+    <!-- Delete Result Modal -->
+    {% module Template("modal.html", id="editModal", modalheading="Edit Testrun", modalbody='''
+      <form method="post" id="edit-form">
+        <label class="col-form-label" for="tags-input">Tag(s) (comma separated):</label>
+        <input class="form-control" name="tags-input" id="tags-input" value="{tags}">
+      </form>
+      '''.format(tags=", ".join(file.tags)), modalfooter='''
+      <button type="submit" form="edit-form" id="edit-result-submit" value="submit" class="btn btn-danger">Submit changes</button>
+      <button type="reset" form="edit-form" class="btn btn-primary">Reset</button>
+    ''') %}
 
     <!-- Delete Result Modal -->
     {% module Template("modal.html", id="deleteResultModal", modalheading="Delete Testrun?", modalbody='''
