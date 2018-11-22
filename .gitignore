@@ -4,6 +4,7 @@ all.solu
 *.out
 *.res
 *.meta
+*.set
 *.err
 
 # python
