@@ -30,7 +30,7 @@ def search(query):
     limit = int(limit)
 
     for field, value in query.items():
-        if not field == "git_hash":
+        if field not in ["git_hash", "tags"]:
             filter_dict = {field: value}
             s = s.filter("term", **filter_dict)
         else:

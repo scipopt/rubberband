@@ -74,4 +74,10 @@ window.onresize = function() {
 
 $(document).ready(function(){
   updateResultsTable();
+
+  //Listen for Enter Key
+  $("#form-search").keyup(function(event){
+    if(event.keyCode == 13){ updateResultsTable(); }
+  });
+
 });
