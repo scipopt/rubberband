@@ -5,7 +5,7 @@ from collections import defaultdict
 class ImportStats(object):
     """Class to hold information about import status."""
 
-    def __init__(self, collection):
+    def __init__(self, collection, basename):
         """
         Initialize an ImportStats object.
 
@@ -15,6 +15,7 @@ class ImportStats(object):
             name for the object
         """
         self.collection = collection
+        self.basename = basename
         self.fail = 0
         self.url = None
         self.status = None

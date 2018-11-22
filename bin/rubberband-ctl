@@ -63,7 +63,10 @@ def populate_index():
         paths = [f]
         # remove the .out
         base = f[:-4]
-        solu_file = os.path.join(APP_ROOT, "tests", "data", base.split(".")[1] + ".solu")
+        try:
+            solu_file = os.path.join(APP_ROOT, "tests", "data", base.split(".")[1] + ".solu")
+        except:
+            solu_file = ""
         if base + ".set" in set_files:
             paths.append(base + ".set")
         if base + ".err" in err_files:

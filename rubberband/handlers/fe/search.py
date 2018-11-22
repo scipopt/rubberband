@@ -67,7 +67,7 @@ class SearchView(BaseHandler):
             results = [r for r in results if r.meta.id not in exclude]
 
         self.write(self.render_string("results_table.html", tablename="search-result",
-            results=results, checkboxes=True))
+            results=results, checkboxes=True, get_empty_header=False))
 
     def fill_query(self, all_fields=None):
         """

@@ -65,7 +65,7 @@ class Result(DocType):
 
     def __str__(self):
         """Return a string description of the result object."""
-        return "Result {}".format(self.instance_name)
+        return "Result {}({})".format(self.instance_name, self.instance_id)
 
     def raw(self, ftype=".out"):
         """
@@ -168,7 +168,7 @@ class TestSet(DocType):
         kwargs
             keyword arguments
         """
-        self.mask_infinities(**kwargs)
+        self.mask_settings(**kwargs)
         return super(TestSet, self).update(**kwargs)
 
     def save(self, **kwargs):
@@ -180,10 +180,10 @@ class TestSet(DocType):
         kwargs
             keyword arguments
         """
-        self.mask_infinities(**kwargs)
+        self.mask_settings(**kwargs)
         return super(TestSet, self).save(**kwargs)
 
-    def mask_infinities(self, **kwargs):
+    def mask_settings(self, **kwargs):
         """
         Substitute infinities in fields for elasticsearch to be able to deal with them.
 
@@ -391,9 +391,8 @@ class TestSet(DocType):
     def delete_all_children(self):
         """Delete all children (Result objects) associated to a TestSet object."""
         self.load_children()
-        for c_name in self.children:
-            c = self.children[c_name]
-            c.delete()
+        for k, v in self.children.to_dict().items():
+            v.delete()
 
     def delete_all_files(self):
         """Delete all File objects associated to a TestSet object."""
@@ -409,9 +408,18 @@ class TestSet(DocType):
         s = s.filter("term", _parent=self.meta.id)
         self.children = {}
 
+        children = {}
+        children['ids'] = {}
+        children['names'] = {}
         # this uses pagination/scroll
         for hit in s.scan():
-            self.children[hit.instance_name] = hit
+            children['ids'][hit.instance_id] = hit
+            children['names']["{} ({})".format(hit.instance_name, hit.instance_id)] = hit
+
+        if len(children['ids'].keys()) == len(children['names'].keys()):
+            self.children = children['names']
+        else:
+            self.children = children['ids']
 
     def load_files(self):
         """Load the files of a TestSet object."""

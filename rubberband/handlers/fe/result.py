@@ -86,7 +86,15 @@ class ResultView(BaseHandler):
 
         Currently do nothing.
         """
-        pass
+        # parent id is the first argument: meta id of TestSet
+        t = TestSet.get(id=parent_id)
+        next_url = "{}/result/{}".format(self.application.base_url, t.meta.id)
+        tags = self.get_argument("tags-input", default=None)
+        if tags is not None:
+            tags = tags.split(",")
+            t.tags = [tag.strip() for tag in tags]
+            t.save()
+        self.redirect(next_url)
 
     def put(self, parent_id):
         """

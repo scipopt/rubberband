@@ -44,7 +44,7 @@
     {% if representation is not None %}
       <td class="rb-table-repr">{% raw shortening_repres_id(representation, r.id) %}</td>
     {% end %}
-    <td class="rb-table-info"><a href="/result/{{ r.meta.id }}"><span class="fa fa-info-circle"></span></a></td>
+    <td class="rb-table-info bs-tooltip" data-toggle="tooltip" data-placement="right" title="Tags: {{ ", ".join(r.tags) }}"><a href="/result/{{ r.meta.id }}"><span class="fa fa-info-circle"></span></a></td>
     <td class="rb-table-star"><span class="far fa-star rb-tr-star" name="{{ r.meta.id }}"></span></td>
     <td class="rb-table-solver">{{ format_attr(r, "solver") }} {{ format_attr(r, "solver_version") }}</td>
     <td class="rb-table-lps">{{ format_attr(r, "lp_solver") }} {{ format_attr(r, "lp_solver_version") }}</td>

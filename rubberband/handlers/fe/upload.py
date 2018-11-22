@@ -1,5 +1,6 @@
 """Contains UploadView."""
 from rubberband.utils import ResultClient, write_file
+from rubberband.utils.importer import bundle_files
 from .base import BaseHandler
 
 
@@ -13,8 +14,7 @@ class UploadView(BaseHandler):
         Show the upload form.
         Renders `upload.html`
         """
-        cookie = self.get_cookie()
-        self.render("upload.html", page_title="Upload", msgs=None, cookie=cookie)
+        self.render("upload.html", page_title="Upload", infos=[])
 
     def post(self):
         """
@@ -37,15 +37,21 @@ class UploadView(BaseHandler):
         for f in files:
             paths.append(write_file(f["filename"], f["body"]))
 
-        paths = tuple(paths)
+        infos = []
+        bundles = bundle_files(paths)
+        for bundle in bundles:
+            # ResultClient helps us process the uploaded files
+            c = ResultClient(user=self.get_current_user())
+            importstats = c.process_files(bundle, tags=tags, expirationdate=expirationdate)
 
-        # ResultClient helps us process the uploaded files
-        c = ResultClient(user=self.get_current_user())
-        results = c.process_files(paths, tags=tags, expirationdate=expirationdate)
-        msgs = results.getMessages()
-        url = results.getUrl()
-        if url:
-            url = self.application.base_url + url
+            info = {}
+            info['messages'] = importstats.getMessages()
+            url = importstats.getUrl()
+            if url:
+                url = self.application.base_url + url
+            info['url'] = url
+
+            infos.append(info)
 
         # send a message to the user describing the results of the upload
-        self.render("upload.html", page_title="Upload", msgs=msgs, resulturl=url)
+        self.render("upload.html", page_title="Upload", infos=infos)
