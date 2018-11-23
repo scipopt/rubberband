@@ -1,0 +1,11 @@
+@Permutation 0
+@Seed 0
+@Settings minlp_presolaggr
+@TstName MINLP_0s_1s
+@BinName bin/scip-4.0.1.3.linux.x86_64.gnu.dbg.cpx.none
+@NodeLimit 2100000000
+@MemLimit 6144
+@Threads 1
+@FeasTol default
+@Queue opt-low
+@Exclusive

@@ -296,6 +296,10 @@ class ResultClient(object):
         for key, tag in metamapping.items():
             if tag in metadata.keys():
                 file_data[key] = metadata[tag]
+        # it can be an old file if there is no meta file. then try to read info from filename
+        if self.files[".meta"] is None:
+            # this might be empty, also this is very bad practice. we keep it for historical data.
+            file_data.update(self.parse_info_from_filename(self.files))
 
         if options.gitlab_url:
             file_data["run_initiator"] = gl.get_username(self.current_user)
@@ -331,6 +335,35 @@ class ResultClient(object):
                     raise
 
         return file_data
+
+    def parse_info_from_filename(self, files):
+        """
+        Parse information from filename.
+
+        Parameters
+        ----------
+        files : dict
+            Files to parse from. Should contain ".out".
+
+        Returns
+        -------
+            dict of information about build options.
+        """
+        filename = os.path.basename(self.files[".out"])
+        rogue_string = ".zib.de"
+        file_path_clean = filename.replace(rogue_string, "")
+        fnparts = file_path_clean.split(".")
+        if len(fnparts) < 8:
+            return {}
+
+        info = {
+                "test_set": fnparts[1],  # short, bug, etc,
+                "settings_short_name": fnparts[-2],
+                "run_environment": fnparts[-3],
+                "opt_flag": fnparts[-5],
+                "architecture": fnparts[-7],
+                "os": fnparts[-8]}
+        return info
 
     def validate_and_organize_files(self, list_of_files):
         """

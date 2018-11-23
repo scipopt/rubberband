@@ -1,0 +1,30 @@
+
+Linux optc-02-10 4.4.0-53-generic #74-Ubuntu SMP Fri Dec 2 15:59:10 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
+@01 /nfs/OPTI/jenkins/workspace/SCIP_COMP=gnu_OPT=dbg_LPS=spx_IPOPT=true_nightly/check/IP/atamtuerk/nexp/nexp.150.20.1.2.mps.gz ===========
+Thu Dec  8 07:09:29 CET 2016
+Thu Dec  8 07:09:58 CET 2016
+Linux optc-02-10 4.4.0-53-generic #74-Ubuntu SMP Fri Dec 2 15:59:10 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
+@01 /nfs/OPTI/jenkins/workspace/SCIP_COMP=gnu_OPT=dbg_LPS=spx_IPOPT=true_nightly/check/IP/atamtuerk/nexp/nexp.150.20.1.5.mps.gz ===========
+Thu Dec  8 07:09:29 CET 2016
+Thu Dec  8 07:10:11 CET 2016
+Linux optc-06-05 4.4.0-53-generic #74-Ubuntu SMP Fri Dec 2 15:59:10 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
+@01 /nfs/OPTI/jenkins/workspace/SCIP_COMP=gnu_OPT=dbg_LPS=spx_IPOPT=true_nightly/check/IP/atamtuerk/nexp/nexp.50.20.4.2.mps.gz ===========
+Thu Dec  8 07:28:50 CET 2016
+gdb -batch-silent -return-child-result -ex "run" -ex "set logging file /usr/local/tmp/bzfmunoz-tmpdir/bzfmunoz.IP_1s_1m.84_nexp.50.20.4.2.scip-4.0.0.linux.x86_64.gnu.dbg.spx2.none.opt-low.default.err" -ex "set logging on" -ex "thread apply all bt full" --args /nfs/OPTI/jenkins/workspace/SCIP_COMP=gnu_OPT=dbg_LPS=spx_IPOPT=true_nightly/check/../bin/scip-4.0.0.linux.x86_64.gnu.dbg.spx2.none returned with error code 1.
+Thu Dec  8 07:28:50 CET 2016
+Linux optc-02-11 4.4.0-53-generic #74-Ubuntu SMP Fri Dec 2 15:59:10 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
+@01 /nfs/OPTI/jenkins/workspace/SCIP_COMP=gnu_OPT=dbg_LPS=spx_IPOPT=true_nightly/check/IP/borndoerfer/bs-2005-07-20-10-45-15.mps.gz ===========
+Thu Dec  8 07:09:29 CET 2016
+Thu Dec  8 07:10:08 CET 2016
+Linux optc-05-12 4.4.0-53-generic #74-Ubuntu SMP Fri Dec 2 15:59:10 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
+@01 /nfs/OPTI/jenkins/workspace/SCIP_COMP=gnu_OPT=dbg_LPS=spx_IPOPT=true_nightly/check/IP/borndoerfer/v0416.mps.gz ===========
+Thu Dec  8 07:06:00 CET 2016
+Thu Dec  8 07:06:09 CET 2016
+Linux optc-07-04 4.4.0-53-generic #74-Ubuntu SMP Fri Dec 2 15:59:10 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
+@01 /nfs/OPTI/jenkins/workspace/SCIP_COMP=gnu_OPT=dbg_LPS=spx_IPOPT=true_nightly/check/IP/chipverification/alu5_8.mps.gz ===========
+Thu Dec  8 07:06:01 CET 2016
+Thu Dec  8 07:06:38 CET 2016
+Linux optc-07-04 4.4.0-53-generic #74-Ubuntu SMP Fri Dec 2 15:59:10 UTC 2016 x86_64 x86_64 x86_64 GNU/Linux
+@01 /nfs/OPTI/jenkins/workspace/SCIP_COMP=gnu_OPT=dbg_LPS=spx_IPOPT=true_nightly/check/IP/chipverification/alu5_9.mps.gz ===========
+Thu Dec  8 07:06:01 CET 2016
+Thu Dec  8 07:06:44 CET 2016

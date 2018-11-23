@@ -1,0 +1,7 @@
+@TstName short
+@Settings default
+@Queue opt-low
+@OptFlag spx
+@Architecture x86_64
+@OperatingSystem linux
+@Seed 1
