@@ -1,7 +1,0 @@
-@TstName IP_1s_1s
-@Settings default
-@Queue opt-low
-@OptFlag cpx
-@Architecture x86_64
-@OperatingSystem linux
-@Seed 1

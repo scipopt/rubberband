@@ -270,7 +270,7 @@ class BaseHandler(RequestHandler):
                     return value
                 if attr in ["DualBound", "PrimalBound"]:
                     return "%.4f" % value
-                if attr in ["SolvingTime", "TotalTime_solving", "Gap"]:
+                if attr in ["SolvingTime", "TotalTime_solving"]:
                     return "%.2f" % value
                 if attr in ["Iterations"]:
                     return int(value)

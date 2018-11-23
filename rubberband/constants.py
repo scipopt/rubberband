@@ -13,30 +13,15 @@ ALL_SOLU = STATIC_FILES_DIR + "all.solu"
 # ALL_SOLU = "instancedata/database/instancedb.sqlite3"
 ADD_READERS = STATIC_FILES_DIR + "additional_readers.xml"
 IPET_EVALUATIONS = {
-        0: {"path": STATIC_FILES_DIR + "eval_singleruns_exclude.xml",
-            "name": "single runs - exclude fails & aborts (standard)"},
-        1: {"path": STATIC_FILES_DIR + "eval_singleruns_include.xml",
-            "name": "single runs - include fails & aborts (standard)"},
-        2: {"path": STATIC_FILES_DIR + "eval_singleruns_punish.xml",
-            "name": "single runs - punish fails & aborts (standard)"},
-        3: {"path": STATIC_FILES_DIR + "eval_groupgithash_exclude.xml",
-            "name": "group by githash - exclude fails & aborts"},
-        4: {"path": STATIC_FILES_DIR + "eval_groupsettings_exclude.xml",
-            "name": "group by settings - exclude fails & aborts"},
-        5: {"path": STATIC_FILES_DIR + "eval_grouplpsolver_exclude.xml",
-            "name": "group by LP solver - exclude fails & aborts"},
-        6: {"path": STATIC_FILES_DIR + "eval_grouplpsolver_exclude_detailed.xml",
-            "name": "detailed view - group githash, exclude"},
-        7: {"path": STATIC_FILES_DIR + "evaluation-pure.xml",
-            "name": "pure evaluation for sap"},
-        8: {"path": STATIC_FILES_DIR + "evaluation-deco.xml",
-            "name": "deco evaluation for sap"},
+        0: {"path": STATIC_FILES_DIR + "eval_1.xml",
+            "name": "evaluation 1"},
+        1: {"path": STATIC_FILES_DIR + "eval_2.xml",
+            "name": "evaluation 2"},
         }
-# date sorting works only with the empty NONE_DISPLAY at the moment
 NONE_DISPLAY = ""
 EXPORT_DATA_FORMATS = ("gzip", "json", "csv", "raw")
 EXPORT_FILE_TYPES = (".out", ".set", ".err", ".meta")
-ELASTICSEARCH_INDEX = "solver-results"
+ELASTICSEARCH_INDEX = "rubberband-results"
 
 FORMAT_DATE = "%Y-%m-%d"
 FORMAT_DATETIME_LONG = "%d. %b %Y, %H:%M"
