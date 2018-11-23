@@ -183,7 +183,7 @@ class ResultClient(object):
             modified data
         """
         results = {}
-        instances = data["SolvingTime"].keys()
+        instances = data["Solver"].keys()
 
         for i in instances:
             results[i] = {
