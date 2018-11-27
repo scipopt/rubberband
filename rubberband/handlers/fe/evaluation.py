@@ -67,7 +67,7 @@ class EvaluationView(BaseHandler):
 
         # evaluate with ipet
         ex = setup_experiment(testruns)
-        ev = setup_evaluation(evalfile["path"], ALL_SOLU, tolerance)
+        ev = setup_evaluation(evalfile["path"], tolerance=tolerance)
 
         # set defaultgroup
         set_defaultgroup(ev, ex, default_id)
@@ -289,7 +289,7 @@ def get_replacement_dict(cols, colindex):
     return repl
 
 
-def setup_experiment(testruns):
+def setup_experiment(testruns, solufile=None):
     """
     Setup an ipet experiment for the given testruns.
 
@@ -297,6 +297,8 @@ def setup_experiment(testruns):
     ----------
     testruns : list
         a list of rubberband TestSet
+    solufile : str
+        name of solution file to use
 
     Returns
     -------
@@ -304,7 +306,8 @@ def setup_experiment(testruns):
         experiment
     """
     ex = Experiment()
-    ex.addSoluFile(ALL_SOLU)
+    if solufile is not None:
+        ex.addSoluFile(solufile)
 
     # get data
     for t in testruns:
@@ -497,7 +500,7 @@ def get_testruns(testrunids):
     return testruns
 
 
-def setup_evaluation(evalfile, solufile, tolerance):
+def setup_evaluation(evalfile, solufile=None, tolerance=None):
     """
     Setup the IPET evaluation.
 
@@ -516,8 +519,8 @@ def setup_evaluation(evalfile, solufile, tolerance):
     """
     evaluation = IPETEvaluation.fromXMLFile(evalfile)
     evaluation.set_validate(solufile)
-
-    evaluation.set_feastol(tolerance)
+    if tolerance is not None:
+        evaluation.set_feastol(tolerance)
 
     return evaluation
 
