@@ -34,6 +34,8 @@ def get_link(href, text, length=30, end=10):
 
 def shorten_str(string, length=30, end=10):
     """Shorten a string to the given length."""
+    if string is None:
+        return ""
     if len(string) <= length:
         return string
     else:
@@ -84,6 +86,10 @@ def get_rbid_representation(testrun, mode="extended"):
     str
         representation
     """
+    setshort = testrun.settings_short_name
+    if setshort is None:
+        setshort = ""
+
     ts = ""
     ts_time = ""
     if testrun.git_commit_timestamp:
@@ -91,9 +97,9 @@ def get_rbid_representation(testrun, mode="extended"):
         ts_time = datetime.strftime(testrun.git_commit_timestamp, "%Y%m%d%H%M%S")
 
     if mode == "readable":
-        rbid_repres = " " + shorten_str(testrun.settings_short_name, 15, 5) + " " + ts
+        rbid_repres = " " + shorten_str(setshort, 15, 5) + " " + ts
     else:  # if mode == "extended"
-        rbid_repres = ts_time + testrun.settings_short_name + testrun.id
+        rbid_repres = ts_time + setshort + testrun.id
 
     return rbid_repres
 
