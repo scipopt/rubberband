@@ -6,7 +6,7 @@ import json
 import logging
 
 from .base import BaseHandler
-from rubberband.constants import IPET_EVALUATIONS, NONE_DISPLAY, ALL_SOLU
+from rubberband.constants import IPET_EVALUATIONS, NONE_DISPLAY
 from rubberband.models import TestSet
 from rubberband.utils import RBLogHandler
 from rubberband.utils.helpers import get_rbid_representation, setup_testruns_subst_dict
