@@ -686,11 +686,12 @@ def drop_different(dictionary, data):
 def bundle_files(paths):
     """Take a bundle of files and split them by basename."""
     bundles = []
-    for f in [path for path in paths if path[-4:] == ".out"]:
-        basename = f[:-4]
-        bundles.append(tuple([path for path in paths if path[:-4] == basename]))
+    for basename in [os.path.splitext(path)[0] for path in paths
+            if os.path.splitext(path)[1] == ".out"]:
+        bundles.append(tuple([path for path in paths
+            if os.path.splitext(path)[0] == basename]))
     for f in paths:
-        if f[-5:] == ".solu":
+        if os.path.splitext(f)[1] == ".solu":
             for bundle in bundles:
                 if f not in bundle:
                     bundle.append(f)
