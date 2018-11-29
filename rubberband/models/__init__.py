@@ -415,8 +415,8 @@ class TestSet(DocType):
         children['names'] = {}
         # this uses pagination/scroll
         for hit in s.scan():
-            children['ids'][hit.instance_id] = hit
-            children['names']["{} ({})".format(hit.instance_name, hit.instance_id)] = hit
+            children['ids']["{} ({})".format(hit.instance_name, hit.instance_id)] = hit
+            children['names']["{}".format(hit.instance_name)] = hit
 
         if len(children['ids'].keys()) == len(children['names'].keys()):
             self.children = children['names']
