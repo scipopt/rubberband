@@ -2,10 +2,9 @@
 import os
 import json
 import logging
+import traceback
 import dateutil.parser
 from datetime import datetime
-import traceback
-from gitlab.exceptions import GitlabGetError
 
 from ipet import Experiment, Key
 from ipet.misc import loader
@@ -55,7 +54,7 @@ class ResultClient(object):
         testset : TestSet
             already existing TestSet in Rubberband
         """
-        self.importstats = ImportStats("results")
+        self.importstats = ImportStats("results", "")
         self.remove_files = True
         try:
             self.parse_file_bundle(paths, initial=False, testset=testset)
@@ -325,11 +324,12 @@ class ResultClient(object):
             elif options.gitlab_url:
                 try:
                     commit = gl.get_commit_data(project_id_key, git_hash)
+
                     file_data["git_hash"] = commit.id
                     # user the author timestamp
                     file_data["git_commit_timestamp"] = dateutil.parser.parse(commit.authored_date)
                     file_data["git_commit_author"] = gl.get_username(commit.author_name)
-                except GitlabGetError:
+                except:
                     msg = "Couldn't find commit {} in Gitlab. Aborting...".format(git_hash)
                     self._log_failure(msg)
                     raise
@@ -555,7 +555,8 @@ class ResultClient(object):
 
             c.collectData()
 
-        except:
+        except Exception as err:
+            traceback.print_exc()
             msg = "Some kind of ipet error. Aborting..."
             self._log_failure(msg)
             raise
@@ -618,6 +619,10 @@ class ResultClient(object):
         count = {}
         for v in d.values():
             count[v] = count.get(v, 0) + 1
+        try:
+            count.pop(None)
+        except:
+            pass
         try:
             count.pop("nan")
         except:

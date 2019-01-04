@@ -84,7 +84,7 @@ class EvaluationView(BaseHandler):
             # get substitutions dictionary
             repres = setup_testruns_subst_dict(testruns)
 
-            cols_dict = get_columns_dict(longtable, repres["short"])
+            cols_dict = get_columns_dict(longtable, {**repres["short"], **repres["all"]})
 
             # add id column to longtable
             longtable.insert(0, "id", range(1, len(longtable) + 1))
@@ -100,10 +100,10 @@ class EvaluationView(BaseHandler):
             rbhandler.close()
 
             # postprocessing
-            html_long = process_ipet_table(html_long, repres["short"], add_ind=False,
-                    swap=True) + html.tostring(style_long).decode("utf-8")
-            html_agg = process_ipet_table(html_agg, repres["long"], add_ind=True,
-                    swap=False) + html.tostring(style_agg).decode("utf-8")
+            html_long = process_ipet_table(html_long, {**repres["short"], **repres["all"]},
+                    add_ind=False, swap=True) + html.tostring(style_long).decode("utf-8")
+            html_agg = process_ipet_table(html_agg, {**repres["long"], **repres["all"]},
+                    add_ind=True, swap=False) + html.tostring(style_agg).decode("utf-8")
 
             # render to strings
             html_tables = self.render_string("results/evaluation.html",
@@ -432,7 +432,7 @@ def table_to_html(df, ev, html_id="", add_class=""):
     html, style
         html object of table and corresponding style.
     """
-    formatters = ev.getColumnFormatters(df)
+    # formatters = ev.getColumnFormatters(df)
     df = ev.sortDataFrame(df)
 
     all_columns = df.columns
@@ -452,9 +452,10 @@ def table_to_html(df, ev, html_id="", add_class=""):
                 highlight_cols += [c for c in all_columns if col.hasCompareColumn(c[l])]
         highlight_cols += [c for c in all_columns if (c[l].startswith("_") and c[l].endswith("_"))]
 
-    # apply formatters styles
-    styler = df.style.format(formatters).\
-        applymap(align_elems)
+    styler = df.style.applymap(align_elems)
+    # # apply formatters styles
+    # styler = df.style.format(formatters).\
+    #     applymap(align_elems)
 
     # style requires a nonempty subset
     if highlight_cols != []:

@@ -305,8 +305,12 @@ class TestSet(DocType):
             return all_instances
 
         if key == Key.LPSolver:
-            if self.lp_solver is None and self.lp_solver_version is None:
-                return ""
+            out = []
+            if self.lp_solver is not None:
+                out.append(self.lp_solver)
+            if self.lp_solver_version is not None:
+                out.append(self.lp_solver_version)
+            return " ".join(out)
             return self.lp_solver + " " + self.lp_solver_version
         if key == Key.Settings:
             if self.settings_short_name is not None:
