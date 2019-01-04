@@ -52,8 +52,11 @@ class RBLogHandler(StreamHandler):
         msg : str
             output to write
         """
-        self.rbhandle.write(msg + "\n")
-        self.flush()
+        try:
+            self.rbhandle.write(msg + "\n")
+            self.flush()
+        except:
+            pass
 
     def close(self):
         """Close the handler, not the handle with a hash as stamp to mark where logoutput ends."""
