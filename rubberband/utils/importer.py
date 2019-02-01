@@ -328,7 +328,7 @@ class ResultClient(object):
                     file_data["git_hash"] = commit.id
                     # user the author timestamp
                     file_data["git_commit_timestamp"] = dateutil.parser.parse(commit.authored_date)
-                    file_data["git_commit_author"] = gl.get_username(commit.author_name)
+                    file_data["git_commit_author"] = gl.get_username(commit.author_email)
                 except:
                     msg = "Couldn't find commit {} in Gitlab. Aborting...".format(git_hash)
                     self._log_failure(msg)

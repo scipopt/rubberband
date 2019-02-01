@@ -3,6 +3,7 @@ from collections import Iterable
 from datetime import datetime
 from tornado.web import RequestHandler
 from tornado.options import options
+from utils.gitlab import get_user_access_level
 import traceback
 
 from rubberband.models import TestSet
@@ -62,8 +63,11 @@ class BaseHandler(RequestHandler):
         if not self.settings["debug"]:
             # self.request is single HTTP requestobject of type 'tornado.httputil.HTTPServerRequest'
             headers = dict(self.request.headers.get_all())
-            return headers.get("X-Forwarded-Email")
+            email = headers.get("X-Forwarded-Email")
+            self.access_level = get_user_access_level(email)
+            return email
         else:
+            self.access_level = 50
             return "debug"
 
     def get_cookie(self, name="_oauth2_proxy", default=None):
