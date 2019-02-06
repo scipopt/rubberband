@@ -27,6 +27,7 @@ def get_commit_data(project_id, git_hash):
 
     return commit
 
+
 def get_user_access_level(user_mail):
     """
     From email, find if user is either in the authenticated group or in the authenticated project.
@@ -42,14 +43,16 @@ def get_user_access_level(user_mail):
         integer corresponding to gitlab access level (0: no, < 15: read, > 15: write, > 45: delete)
     """
     client = Gitlab(options.gitlab_url, options.gitlab_private_token)
+    group_id = "integer"
     group_users = client.groups.get(group_id).members.list(query=user_mail)
-    project_users = client.groups.get(group_id).members.list(query=user_mail)
+    project_users = client.projects.get(
+            options.gitlab_project_ids["scip"]).members.list(query=user_mail)
     # x.username -> user name in gitlab
     # x.access_level -> user access level in gitlab
-    if len(group_users) > 1 or len(project_users) > 1:
+    if ((len(group_users) > 1 or len(project_users) > 1) or (
+          len(group_users) == 0 or len(project_users) == 0)):
         return 0
-
-    if len(group_users + project_users) = 2:
+    if len(group_users + project_users) == 2:
         group_id = group_users[0].id
         project_id = project_users[0].id
         if not group_id == project_id:
@@ -58,11 +61,12 @@ def get_user_access_level(user_mail):
         project_access_level = project_users[0].access_level
         access_level = max(access_level, project_access_level)
     else:
-        if len(group_users) = 1:
+        if len(group_users) == 1:
             access_level = group_users[0].access_level
-        else # if len(project_users) = 1:
+        else:  # if len(project_users) = 1:
             access_level = project_users[0].access_level
     return access_level
+
 
 def get_username(query_string):
     """

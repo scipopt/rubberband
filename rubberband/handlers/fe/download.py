@@ -51,7 +51,7 @@ class DownloadView(BaseHandler):
         elif evaluation != "" and testsets == "":
             try:
                 evalfile = IPET_EVALUATIONS[int(evaluation)]["path"]
-            except:
+            except KeyError:
                 raise HTTPError(404)
 
             evalfilename = os.path.basename(evalfile)

@@ -3,7 +3,7 @@ from collections import Iterable
 from datetime import datetime
 from tornado.web import RequestHandler
 from tornado.options import options
-from utils.gitlab import get_user_access_level
+from rubberband.utils.gitlab import get_user_access_level
 import traceback
 
 from rubberband.models import TestSet
@@ -28,6 +28,12 @@ class BaseHandler(RequestHandler):
         rb_dt_borderless = ""
         rb_dt_bordered = ""
         rb_dt_table = ""
+
+    def prepare(self):
+        """Called at the beginning of a request before get/post/and so on."""
+        self.current_user = self.get_current_user()
+        if self.access_level < 10:
+            self.write_error(status=403, msg="Sorry, you don't have permission to view this page.")
 
     def get_rb_base_url(self):
         """
@@ -125,7 +131,11 @@ class BaseHandler(RequestHandler):
         """
         reason = kwargs.get('reason', "Error")
 
-        log_message = "\n".join(traceback.format_exception(*kwargs["exc_info"]))
+        log_message = ""
+        if ("msg" in kwargs):
+            log_message = kwargs["msg"]
+        if ("exc_info" in kwargs):
+            log_message = "\n".join(traceback.format_exception(*kwargs["exc_info"]))
 
         if status_code == 400:
             reason = "Bad Request"
@@ -156,6 +166,7 @@ class BaseHandler(RequestHandler):
             handler=self,
             request=self.request,
             current_user=self.current_user,
+            access_level=self.access_level,
             locale=self.locale,
             _=self.locale.translate,
             pgettext=self.locale.pgettext,
@@ -366,9 +377,9 @@ class BaseHandler(RequestHandler):
             return False
 
         if attr == "number_instances":
-            l = [len(ts.children.to_dict().keys()) for ts in sets]
-            old = l[0]
-            for i in l:
+            length = [len(ts.children.to_dict().keys()) for ts in sets]
+            old = length[0]
+            for i in length:
                 new = i
                 if old != new:
                     return False

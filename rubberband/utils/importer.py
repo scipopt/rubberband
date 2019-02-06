@@ -463,7 +463,7 @@ class ResultClient(object):
                         timestamp = int(r[key])
                         timestr = datetime.fromtimestamp(timestamp).strftime(FORMAT_DATETIME)
                         r[key] = timestr
-                    except:
+                    except KeyError:
                         pass
                 res = Result(**r)
                 res.save()
@@ -555,7 +555,7 @@ class ResultClient(object):
 
             c.collectData()
 
-        except Exception as err:
+        except Exception:
             traceback.print_exc()
             msg = "Some kind of ipet error. Aborting..."
             self._log_failure(msg)
@@ -621,11 +621,11 @@ class ResultClient(object):
             count[v] = count.get(v, 0) + 1
         try:
             count.pop(None)
-        except:
+        except KeyError:
             pass
         try:
             count.pop("nan")
-        except:
+        except KeyError:
             pass
         return max(count, key=count.get)
 

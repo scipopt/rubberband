@@ -55,7 +55,7 @@ class RBLogHandler(StreamHandler):
         try:
             self.rbhandle.write(msg + "\n")
             self.flush()
-        except:
+        except RuntimeError:
             pass
 
     def close(self):

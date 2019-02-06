@@ -161,12 +161,12 @@ def setup_testruns_subst_dict(testruns):
     return repres
 
 
-def rb_join_arg(l=[], identif="default", pos=0):
-    """Construct url argument with identifier and l as list."""
-    if l == []:
+def rb_join_arg(li=[], identif="default", pos=0):
+    """Construct url argument with identifier and li as list."""
+    if li == []:
         return ""
     if pos == 0:
         letter = "?"
     else:
         letter = "&"
-    return "{letter}{ident}={l}".format(letter=letter, ident=identif, l=','.join(l))
+    return "{letter}{ident}={arg}".format(letter=letter, ident=identif, arg=','.join(li))
