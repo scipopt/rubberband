@@ -41,7 +41,6 @@ PyYAML==3.13
 recommonmark==0.5.0
 requests==2.21.0
 requests-toolbelt==0.9.1
--e git+git@github.com:ambros-gleixner/rubberband.git@6559fffd4eb8a1a2ccb2a49579c291edd82601fc#egg=rubberband
 scipy==1.2.0
 six==1.12.0
 snowballstemmer==1.2.1

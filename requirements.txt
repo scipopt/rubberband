@@ -22,7 +22,6 @@ python-gitlab==1.7.0
 pytz==2018.9
 requests==2.21.0
 requests-toolbelt==0.9.1
--e git+git@github.com:ambros-gleixner/rubberband.git@6559fffd4eb8a1a2ccb2a49579c291edd82601fc#egg=rubberband
 scipy==1.2.0
 six==1.12.0
 toposort==1.5
