@@ -1,3 +1,3 @@
-bin/rubberband-ctl create_index
-bin/rubberband-ctl populate_index
+bin/rubberband-ctl create-index
+bin/rubberband-ctl populate-index
 py.test tests/
