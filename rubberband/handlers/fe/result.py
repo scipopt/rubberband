@@ -120,11 +120,10 @@ class ResultView(BaseHandler):
             paths.append(write_file(t.files[k].filename, str.encode(t.files[k].text)))
         paths = tuple(paths)
 
-        user = self.get_current_user()
-        c = ResultClient(user=user)
+        c = ResultClient(user=self.current_user)
         c.reimport_files(paths, t)
 
-        msg = "{} updated by {}".format(t.meta.id, user)
+        msg = "{} updated by {}".format(t.meta.id, self.current_user)
         logging.info(msg)
 
     def delete(self, parent_id):
@@ -138,14 +137,18 @@ class ResultView(BaseHandler):
         parent_id
             id of TestSet to delete.
         """
-        user = self.get_current_user()
+        t = TestSet.get(id=parent_id)
+
+        if (not self.current_user == t.uploader) or self.access_level < 45:
+            print("error")
+            return self.write_error(status=403,
+                    msg="Sorry, you do not have permission to delete this run.")
 
         # remove from db
-        t = TestSet.get(id=parent_id)
         t.delete_all_associations()
         t.delete()
 
-        msg = "{} deleted {}".format(user, t.meta.id)
+        msg = "{} deleted {}".format(self.current_user, t.meta.id)
         logging.info(msg)
 
 

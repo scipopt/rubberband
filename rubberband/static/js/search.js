@@ -21,6 +21,7 @@ function updateResultsTable() {
       }
     }
     request_data["exclude_testsets"] = exclude.join(",");
+    request_data._xsrf = getCookie("_xsrf");
     $.ajax({
         type: "POST",
         url: "search",

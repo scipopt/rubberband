@@ -4,6 +4,7 @@ import logging
 
 from tornado.options import define, options
 from tornado.web import Application
+from tornado.routing import HostMatches
 from elasticsearch import Elasticsearch
 from elasticsearch_dsl.connections import connections
 
@@ -75,6 +76,7 @@ def make_app(project_root):
         "static_path": os.path.join(project_root, "static"),
         "template_path": os.path.join(project_root, "templates"),
         "cookie_secret": options.cookie_secret,
+        "xsrf_cookies": True,
         "default_handler_class": ErrorView,
         "logger": loggr,
     }
@@ -84,7 +86,9 @@ def make_app(project_root):
     # of tornado.web.RequestHandler. Those classes define get() or post() methods
     # to handle HTTP GET or POST requests to that URL."
     # these patterns are defined in routes.py
-    app = Application(routes, **settings)
+    app = Application(
+            [(HostMatches(r'(localhost|127\.0\.0\.1|{}|)'.format(options.prod_url)), routes)],
+            **settings)
 
     logging.info("Setting up Elasticsearch connection.")
     # set up elasticsearch

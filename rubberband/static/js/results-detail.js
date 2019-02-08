@@ -394,8 +394,11 @@ function show_evalfile(e) {
 
 function delete_result(e) {
   e.preventDefault();
+  request_data = {};
+  request_data._xsrf = getCookie("_xsrf");
   $.ajax({
     type: "DELETE",
+    data: request_data,
     url: "/result/" + end[2],
     success: function (data){ window.location.href = "/search";},
     error: rb_error,
@@ -407,8 +410,11 @@ function reimport_result(e) {
   button = document.getElementById("reimport-result")
   button.disabled = true;
   currurl = window.location.href;
+  request_data = {};
+  request_data._xsrf = getCookie("_xsrf");
   $.ajax({
     type: "PUT",
+    data: request_data,
     url: "/result/" + end[2],
     success: function (data){
       alert("Reimport complete");

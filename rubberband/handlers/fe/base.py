@@ -1,5 +1,5 @@
 """Common class to derive all rubberband web request handlers from."""
-from collections import Iterable
+from collections.abc import Iterable
 from datetime import datetime
 from tornado.web import RequestHandler
 from tornado.options import options
@@ -147,7 +147,6 @@ class BaseHandler(RequestHandler):
             reason = "Internal Server Error"
 
         self.render("error.html", status_code=status_code, page_title=reason, msg=log_message)
-        return
 
     def get_template_namespace(self):
         """Return a dictionary to be used as the default template namespace.
