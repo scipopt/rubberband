@@ -35,6 +35,23 @@ class BaseHandler(RequestHandler):
         if self.access_level < 10:
             self.write_error(status=403, msg="Sorry, you don't have permission to view this page.")
 
+    def has_permission(self, testrun=None, action="read"):
+        """Is user permitted to interact with testrun?"""
+        if testrun is not None:
+            if action == "delete":
+                return (self.current_user == testrun.uploader or self.access_level == 50)
+            elif action == "edit":
+                return (self.current_user == testrun.uploader or self.access_level > 25)
+            elif action == "read":
+                return (self.current_user == testrun.uploader or self.access_level > 5)
+        else:
+            if action == "delete":
+                return self.access_level == 50
+            elif action == "edit":
+                return self.access_level > 25
+            elif action == "read":
+                return self.access_level > 5
+
     def get_rb_base_url(self):
         """
         Url where the rubberband instance lives.
@@ -165,7 +182,7 @@ class BaseHandler(RequestHandler):
             handler=self,
             request=self.request,
             current_user=self.current_user,
-            access_level=self.access_level,
+            has_permission=self.has_permission,
             locale=self.locale,
             _=self.locale.translate,
             pgettext=self.locale.pgettext,

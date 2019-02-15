@@ -13,16 +13,21 @@
         <span class="fa fa-file-excel"></span></a>
       {% end %}
 
-      {% if fileoptions[".out"] %}
+      {% if fileoptions[".out"] and has_permission(file, "edit") %}
       <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="modal"   data-placement="top" data-target="#reimportResultModal" title="reimport result">
         <span class="fa fa-redo"></span></span>
       {% end %}
 
+      {% if has_permission(file, "delete") %}
       <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="modal"   data-placement="top" data-target="#deleteResultModal" title="delete result">
         <span class="fa fa-trash-alt"></span></span>
+      {% end %}
 
+      {% if has_permission(file, "edit") %}
       <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="modal"   data-placement="top" data-target="#editModal" title="edit">
         <span class="fa fa-edit"></span></span>
+      {% end %}
+
     </div>
   {% end %}
   <h2 class="rb-details-tab-title">Detailed data</h2>
