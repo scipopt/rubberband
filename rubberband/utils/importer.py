@@ -4,6 +4,7 @@ import json
 import logging
 import traceback
 import dateutil.parser
+from elasticsearch import TransportError
 from datetime import datetime
 
 from ipet import Experiment, Key
@@ -500,10 +501,11 @@ class ResultClient(object):
                 try:
                     fobj = File(**data)
                     fobj.save()
-                except:
+                except TransportError as e:
                     msg = "Couldn't create file in Elasticsearch. Check the logs for more info."\
                           " Aborting..."
                     self._log_failure(msg)
+                    self._log_failure(e.info)
                     raise
 
         self._log_info("{} file bundle backed up in Elasticsearch.".format(self.files[".out"]))
