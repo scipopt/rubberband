@@ -1,6 +1,5 @@
 """Contains InstanceView."""
 import json
-import logging
 from elasticsearch_dsl import A
 
 from rubberband.models import TestSet, Result
@@ -55,7 +54,6 @@ class InstanceNamesEndpoint(BaseHandler):
         res = s.execute()
 
         names = [x["key"] for x in res.aggregations["unique_instances"]["buckets"]]
-        logging.info("Found {} distinct instance names.".format(len(names)))
 
         return self.write(json.dumps(names))
 

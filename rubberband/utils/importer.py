@@ -4,6 +4,7 @@ import json
 import logging
 import traceback
 import dateutil.parser
+from elasticsearch import TransportError
 from datetime import datetime
 
 from ipet import Experiment, Key
@@ -328,7 +329,7 @@ class ResultClient(object):
                     file_data["git_hash"] = commit.id
                     # user the author timestamp
                     file_data["git_commit_timestamp"] = dateutil.parser.parse(commit.authored_date)
-                    file_data["git_commit_author"] = gl.get_username(commit.author_name)
+                    file_data["git_commit_author"] = gl.get_username(commit.author_email)
                 except:
                     msg = "Couldn't find commit {} in Gitlab. Aborting...".format(git_hash)
                     self._log_failure(msg)
@@ -463,7 +464,7 @@ class ResultClient(object):
                         timestamp = int(r[key])
                         timestr = datetime.fromtimestamp(timestamp).strftime(FORMAT_DATETIME)
                         r[key] = timestr
-                    except:
+                    except KeyError:
                         pass
                 res = Result(**r)
                 res.save()
@@ -500,10 +501,11 @@ class ResultClient(object):
                 try:
                     fobj = File(**data)
                     fobj.save()
-                except:
+                except TransportError as e:
                     msg = "Couldn't create file in Elasticsearch. Check the logs for more info."\
                           " Aborting..."
                     self._log_failure(msg)
+                    self._log_failure(e.info)
                     raise
 
         self._log_info("{} file bundle backed up in Elasticsearch.".format(self.files[".out"]))
@@ -555,7 +557,7 @@ class ResultClient(object):
 
             c.collectData()
 
-        except Exception as err:
+        except Exception:
             traceback.print_exc()
             msg = "Some kind of ipet error. Aborting..."
             self._log_failure(msg)
@@ -621,11 +623,11 @@ class ResultClient(object):
             count[v] = count.get(v, 0) + 1
         try:
             count.pop(None)
-        except:
+        except KeyError:
             pass
         try:
             count.pop("nan")
-        except:
+        except KeyError:
             pass
         return max(count, key=count.get)
 

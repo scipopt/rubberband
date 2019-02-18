@@ -83,8 +83,8 @@ pip install -e .
 Now take a look at the control script in `bin/rubberband-ctl`. Running the control script with no options will show the help. For first-time, create the index, and populate that index with data. This can be accomplished with the following two commands.
 
 ```
-bin/rubberband-ctl create_index
-bin/rubberband-ctl populate_index
+bin/rubberband-ctl create-index
+bin/rubberband-ctl populate-index
 ```
 
 The second command will need a few minutes to finish. If the commands complete sucessfully, stdout should look something like this:

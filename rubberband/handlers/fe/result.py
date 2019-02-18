@@ -84,12 +84,17 @@ class ResultView(BaseHandler):
         """
         Answer to POST requests.
 
-        Currently do nothing.
+        Update the tags field
         """
         # parent id is the first argument: meta id of TestSet
         t = TestSet.get(id=parent_id)
+        if not self.has_permission(t, "edit"):
+            return self.write_error(status=403,
+                    msg="Sorry, you do not have permission to edit this run.")
+
         next_url = "{}/result/{}".format(self.application.base_url, t.meta.id)
         tags = self.get_argument("tags-input", default=None)
+
         if tags is not None:
             tags = tags.split(",")
             t.tags = [tag.strip() for tag in tags]
@@ -108,6 +113,10 @@ class ResultView(BaseHandler):
             id of TestSet to update.
         """
         t = TestSet.get(id=parent_id)
+        if not self.has_permission(t, "edit"):
+            return self.write_error(status=403,
+                    msg="Sorry, you do not have permission to reimport this run.")
+
         t.load_files()
         if "out" not in t.files.to_dict().keys():
             raise HTTPError(404)
@@ -120,11 +129,10 @@ class ResultView(BaseHandler):
             paths.append(write_file(t.files[k].filename, str.encode(t.files[k].text)))
         paths = tuple(paths)
 
-        user = self.get_current_user()
-        c = ResultClient(user=user)
+        c = ResultClient(user=self.current_user)
         c.reimport_files(paths, t)
 
-        msg = "{} updated by {}".format(t.meta.id, user)
+        msg = "{} updated by {}".format(t.meta.id, self.current_user)
         logging.info(msg)
 
     def delete(self, parent_id):
@@ -138,14 +146,17 @@ class ResultView(BaseHandler):
         parent_id
             id of TestSet to delete.
         """
-        user = self.get_current_user()
+        t = TestSet.get(id=parent_id)
+
+        if not self.has_permission(t, "delete"):
+            return self.write_error(status=403,
+                    msg="Sorry, you do not have permission to delete this run.")
 
         # remove from db
-        t = TestSet.get(id=parent_id)
         t.delete_all_associations()
         t.delete()
 
-        msg = "{} deleted {}".format(user, t.meta.id)
+        msg = "{} deleted {}".format(self.current_user, t.meta.id)
         logging.info(msg)
 
 
