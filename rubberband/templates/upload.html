@@ -5,6 +5,7 @@
 <div class="alert alert-info">
   <h2>Upload logfiles:</h2>
   <form method="POST" name="fileUpload" id="fileUpload" enctype="multipart/form-data">
+    {% module xsrf_form_html() %}
     <div>
     <fieldset>
 

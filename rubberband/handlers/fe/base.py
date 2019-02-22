@@ -36,7 +36,7 @@ class BaseHandler(RequestHandler):
             self.write_error(status=403, msg="Sorry, you don't have permission to view this page.")
 
     def has_permission(self, testrun=None, action="read"):
-        """Is user permitted to interact with testrun?"""
+        """Decide whether user is permitted to interact with testrun."""
         if testrun is not None:
             if action == "delete":
                 return (self.current_user == testrun.uploader or self.access_level == 50)
@@ -189,6 +189,7 @@ class BaseHandler(RequestHandler):
             static_url=self.static_url,
             xsrf_form_html=self.xsrf_form_html,
             reverse_url=self.reverse_url,
+            clusterbench=self.clusterbench,
             format_attr=self.format_attr,
             format_type=self.format_type,
             format_attrs=self.format_attrs,
@@ -253,6 +254,11 @@ class BaseHandler(RequestHandler):
         if isinstance(value, float) or isinstance(value, int):
             return "number"
         return ""
+
+    def clusterbench(self, obj):
+        """Format ClusterBenchmarkID to a date."""
+        cbid = self.format_attr(obj.metadata, "ClusterBenchmarkID")
+        return "({}.{}.{})".format(cbid[6:8], cbid[4:6], cbid[0:4])
 
     def format_attr(self, obj, attr):
         """

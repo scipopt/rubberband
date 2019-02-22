@@ -49,8 +49,12 @@
     <td class="rb-table-solver">{{ format_attr(r, "solver") }} {{ format_attr(r, "solver_version") }}</td>
     <td class="rb-table-lps">{{ format_attr(r, "lp_solver") }} {{ format_attr(r, "lp_solver_version") }}</td>
     <td class="rb-table-mode">{{ format_attr(r, "mode") }}</td>
-    <td class="rb-table-testset">{{ format_attr(r, "test_set") }}</td>
-    <td class="rb-table-setting">{{ format_attr(r, "settings_short_name") }}</td>
+    <td class="rb-table-testset"> {{ format_attr(r, "test_set") }} </td>
+    <td class="rb-table-setting">{{ format_attr(r, "settings_short_name") }}
+      {% if "ClusterBenchmarkID" in r.metadata %}
+        {{ clusterbench(r) }}
+      {% end %}
+      </td>
     <td class="rb-table-seed">{{ format_attr(r, "seed") }}</td>
     <td class="rb-table-perm">{{ format_attr(r, "permutation") }}</td>
     <td class="rb-table-tilim">{{ format_attr(r, "time_mod") }}</td>
