@@ -87,7 +87,8 @@ def make_app(project_root):
     # to handle HTTP GET or POST requests to that URL."
     # these patterns are defined in routes.py
     app = Application(
-            [(HostMatches(r'(localhost|127\.0\.0\.1|{}|)'.format(options.prod_url)), routes)],
+            [(HostMatches(r'(localhost|127\.0\.0\.1|{}|)'.format(
+                options.prod_url.replace("https://", ""))), routes)],
             **settings)
 
     logging.info("Setting up Elasticsearch connection.")
