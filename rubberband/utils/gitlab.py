@@ -50,7 +50,7 @@ def get_user_access_level(user_mail):
     # x.username -> user name in gitlab
     # x.access_level -> user access level in gitlab
     if ((len(group_users) > 1 or len(project_users) > 1) or (
-          len(group_users) == 0 or len(project_users) == 0)):
+          len(group_users) == 0 and len(project_users) == 0)):
         return 0
     if len(group_users + project_users) == 2:
         group_id = group_users[0].id
