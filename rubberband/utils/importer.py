@@ -464,7 +464,7 @@ class ResultClient(object):
                         timestamp = int(r[key])
                         timestr = datetime.fromtimestamp(timestamp).strftime(FORMAT_DATETIME)
                         r[key] = timestr
-                    except KeyError:
+                    except (KeyError, TypeError):
                         pass
                 res = Result(**r)
                 res.save()
