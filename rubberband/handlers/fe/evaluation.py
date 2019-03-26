@@ -566,7 +566,7 @@ def generate_filtergroup_selector(table, evaluation):
         selector and additional column
     """
     table = table.copy()
-    table["Filtergroups"] = "|all|"
+    table["Filtergroups"] = ""
     out = '<div id="ipet-long-table-filter col"><label class="col-form-label text-left">Select filtergroups:<select id="ipet-long-filter-select" class="custom-select">' # noqa
 
     for fg in evaluation.getActiveFilterGroups():
