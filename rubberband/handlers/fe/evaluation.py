@@ -91,9 +91,9 @@ class EvaluationView(BaseHandler):
 
             # convert to html and get style
             add_classes = " ".join([self.rb_dt_borderless, self.rb_dt_compact])  # style for table
-            html_long, style_long = table_to_html(longtable, ev, html_id="ipet-long-table",
+            html_long = table_to_html(longtable, ev, html_id="ipet-long-table",
                     add_class=add_classes)
-            html_agg, style_agg = table_to_html(aggtable, ev, html_id="ipet-aggregated-table",
+            html_agg = table_to_html(aggtable, ev, html_id="ipet-aggregated-table",
                     add_class=add_classes)
 
             ipetlogger.removeHandler(rbhandler)
@@ -101,9 +101,9 @@ class EvaluationView(BaseHandler):
 
             # postprocessing
             html_long = process_ipet_table(html_long, {**repres["short"], **repres["all"]},
-                    add_ind=False, swap=True) + html.tostring(style_long).decode("utf-8")
+                    add_ind=False, swap=True)
             html_agg = process_ipet_table(html_agg, {**repres["long"], **repres["all"]},
-                    add_ind=True, swap=False) + html.tostring(style_agg).decode("utf-8")
+                    add_ind=True, swap=False)
 
             # render to strings
             html_tables = self.render_string("results/evaluation.html",
@@ -400,29 +400,9 @@ def highlight_series(s):
     return ['background-color: #eee' for v in s]
 
 
-def align_elems(s):
-    """
-    Align numbers to the right, everything else to the left.
-
-    An applymap function for pandas styler.
-    Maps scalar -> scalarstring with CSS "value: attribute" pair.
-
-    Parameters
-    ----------
-    s : scalars in a pandas DataFrame
-
-    Returns
-    -------
-    str
-        css text-align attribute
-    """
-    align = 'right' if (type(s) is int or type(s) is float) else 'left'
-    return 'text-align: %s' % align
-
-
 def table_to_html(df, ev, html_id="", add_class=""):
     """
-    Convert an ipet table to an html table, also gives a style.
+    Convert an ipet table to an html table.
 
     Parameters
     ----------
@@ -432,50 +412,20 @@ def table_to_html(df, ev, html_id="", add_class=""):
 
     Returns
     -------
-    html, style
-        html object of table and corresponding style.
+    html
+        html object of table
     """
-    # formatters = ev.getColumnFormatters(df)
+    formatters = ev.getColumnFormatters(df)
+
+    # apply sortlevel
     df = ev.sortDataFrame(df)
 
-    all_columns = df.columns
-    length = 0
-    if isinstance(all_columns[0], tuple):
-        length = len(all_columns[0]) - 1
+    tableclasses = 'ipet-table rb-table-data {}" width="100%'.format(add_class)
+    htmlstr = df.to_html(border=0,
+            na_rep=NONE_DISPLAY, formatters=formatters, justify="right",
+            table_id=html_id, classes=tableclasses)
 
-    highlight_cols = []
-    if length == 0:
-        for col in ev.getActiveColumns():
-            if col.getCompareMethod() is not None:
-                highlight_cols += [c for c in all_columns if col.hasCompareColumn(c)]
-        highlight_cols += [c for c in all_columns if (c.startswith("_") and c.endswith("_"))]
-    else:
-        for col in ev.getActiveColumns():
-            if col.getCompareMethod() is not None:
-                highlight_cols += [c for c in all_columns if col.hasCompareColumn(c[length])]
-        highlight_cols += [c for c in all_columns
-                if (c[length].startswith("_") and c[length].endswith("_"))]
-
-    styler = df.style.applymap(align_elems)
-    # # apply formatters styles
-    # styler = df.style.format(formatters).\
-    #     applymap(align_elems)
-
-    # style requires a nonempty subset
-    if highlight_cols != []:
-        styler = styler.apply(highlight_series, subset=highlight_cols)
-
-    htmlstr = styler.render()
-    tree = html.fromstring(htmlstr)
-    treestyle = tree.find(".//style")
-    treetable = tree.find(".//table")
-    treetable.set("width", "100%")  # needed for datatable js plugin
-
-    tableclasses = " ipet-table rb-table-data " + add_class
-    treetable.set("class", tableclasses)  # set classes
-    treetable.set("id", html_id)  # set id
-
-    return treetable, treestyle
+    return html.fromstring(htmlstr)
 
 
 def get_testruns(testrunids):
