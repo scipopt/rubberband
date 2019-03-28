@@ -3,7 +3,7 @@ from collections.abc import Iterable
 from datetime import datetime
 from tornado.web import RequestHandler
 from tornado.options import options
-from rubberband.utils.gitlab import get_user_access_level
+from rubberband.utils.gitlab import get_user_access_level, get_username
 import traceback
 
 from rubberband.models import TestSet
@@ -37,13 +37,14 @@ class BaseHandler(RequestHandler):
 
     def has_permission(self, testrun=None, action="read"):
         """Decide whether user is permitted to interact with testrun."""
+        usr = get_username(self.current_user)
         if testrun is not None:
             if action == "delete":
-                return (self.current_user == testrun.uploader or self.access_level == 50)
+                return (usr == testrun.uploader or self.access_level == 50)
             elif action == "edit":
-                return (self.current_user == testrun.uploader or self.access_level > 25)
+                return (usr == testrun.uploader or self.access_level > 25)
             elif action == "read":
-                return (self.current_user == testrun.uploader or self.access_level > 5)
+                return (usr == testrun.uploader or self.access_level > 5)
         else:
             if action == "delete":
                 return self.access_level == 50
