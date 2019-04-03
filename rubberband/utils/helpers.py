@@ -3,7 +3,7 @@
 from datetime import datetime
 import string
 
-from rubberband.constants import FORMAT_DATETIME_SHORT
+from rubberband.constants import FORMAT_DATETIME_SHORT, FORMAT_DATETIME_LONG
 
 
 def shortening_repres_id(repres, key):
@@ -130,7 +130,7 @@ def setup_testruns_subst_dict(testruns):
     for tr in testruns:
         # add representation for githash: timestamp of commit
         if tr.git_commit_timestamp:
-            ts = "(" + datetime.strftime(tr.git_commit_timestamp, FORMAT_DATETIME_SHORT) + ")"
+            ts = "(" + datetime.strftime(tr.git_commit_timestamp, FORMAT_DATETIME_LONG) + ")"
             repres["all"][tr.git_hash] = ts
 
         extended_rbid = get_rbid_representation(tr, "extended")
@@ -161,12 +161,12 @@ def setup_testruns_subst_dict(testruns):
     return repres
 
 
-def rb_join_arg(l=[], identif="default", pos=0):
-    """Construct url argument with identifier and l as list."""
-    if l == []:
+def rb_join_arg(li=[], identif="default", pos=0):
+    """Construct url argument with identifier and li as list."""
+    if li == []:
         return ""
     if pos == 0:
         letter = "?"
     else:
         letter = "&"
-    return "{letter}{ident}={l}".format(letter=letter, ident=identif, l=','.join(l))
+    return "{letter}{ident}={arg}".format(letter=letter, ident=identif, arg=','.join(li))

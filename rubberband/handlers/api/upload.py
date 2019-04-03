@@ -31,6 +31,10 @@ class UploadAsyncEndpoint(BaseHandler):
 
         self.write(json_response)
 
+    def check_xsrf_cookie(self):
+        """Turn off the xsrf cookie for upload api endpoint, since we check the user differently."""
+        pass
+
 
 class UploadEndpoint(BaseHandler):
     """Request handler handling the upload by api."""
@@ -64,6 +68,10 @@ class UploadEndpoint(BaseHandler):
                 response.append(make_response(result.status, url, basename=result.basename))
 
         self.write(json_encode(response))
+
+    def check_xsrf_cookie(self):
+        """Turn off the xsrf cookie for upload api endpoint, since we check the user differently."""
+        pass
 
 
 @coroutine

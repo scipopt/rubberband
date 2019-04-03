@@ -107,7 +107,7 @@ class Result(DocType):
         ftype : str
             extension of file to get data from (default ".out")
         """
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def gzip(self, ftype=".out"):
         """
@@ -118,7 +118,7 @@ class Result(DocType):
         ftype : str
             extension of file to get data from (default ".out")
         """
-        raise NotImplemented()
+        raise NotImplementedError()
 
 
 class TestSet(DocType):
@@ -247,7 +247,7 @@ class TestSet(DocType):
         s = s.filter("term", type=ftype.lstrip("."))
         try:
             contents = s.execute()[0].text
-        except:
+        except IndexError:
             contents = None
 
         return contents
@@ -305,9 +305,12 @@ class TestSet(DocType):
             return all_instances
 
         if key == Key.LPSolver:
-            if self.lp_solver is None and self.lp_solver_version is None:
-                return ""
-            return self.lp_solver + " " + self.lp_solver_version
+            out = []
+            if self.lp_solver is not None:
+                out.append(self.lp_solver)
+            if self.lp_solver_version is not None:
+                out.append(self.lp_solver_version)
+            return " ".join(out)
         if key == Key.Settings:
             if self.settings_short_name is not None:
                 return self.settings_short_name
@@ -372,7 +375,7 @@ class TestSet(DocType):
 
         elif ftype == ".err":
             # TODO
-            raise NotImplemented()
+            raise NotImplementedError()
 
     def csv(self, ftype=".out"):
         """
@@ -383,7 +386,7 @@ class TestSet(DocType):
         ftype : str
             extension of file to get data from (default ".out")
         """
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def delete_all_associations(self):
         """Delete all children associated to a TestSet object, i.e. Result and File objects."""

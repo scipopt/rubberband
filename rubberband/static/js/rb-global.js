@@ -43,6 +43,11 @@ function rb_error(){
   alert("Rubberband got tangled up, it looks like something went wrong.");
 }
 
+function getCookie(name) {
+  var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+  return r ? r[1] : undefined;
+}
+
 // add listener to file selectors
 $(document).ready(function(){
   $('input[type="file"]').change(function(e){
@@ -56,6 +61,7 @@ $(document).ready(function(){
     $('label.custom-file-label[for='+this.id+']').html(content);
   });
 });
+
 
 /* ############### exeuction ############### */
 

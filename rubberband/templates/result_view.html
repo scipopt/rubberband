@@ -5,6 +5,7 @@
 
 {% if compare %}
   <form action="/compare" method="post">
+  {% module xsrf_form_html() %}
 {% end %}
 
   <!-- headline ==================================================================== -->

@@ -24,6 +24,8 @@ class CompareView(BaseHandler):
         """
         # compares contains the meta ids of all TestSets that should be compared, base among these
         compares = list(self.request.arguments.keys())
+        if "_xsrf" in compares:
+            compares.remove("_xsrf")
         if "compare" in compares:
             compares.remove("compare")
 

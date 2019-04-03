@@ -1,8 +1,9 @@
 """Common class to derive all rubberband web request handlers from."""
-from collections import Iterable
+from collections.abc import Iterable
 from datetime import datetime
 from tornado.web import RequestHandler
 from tornado.options import options
+from rubberband.utils.gitlab import get_user_access_level, get_username
 import traceback
 
 from rubberband.models import TestSet
@@ -27,6 +28,30 @@ class BaseHandler(RequestHandler):
         rb_dt_borderless = ""
         rb_dt_bordered = ""
         rb_dt_table = ""
+
+    def prepare(self):
+        """Called at the beginning of a request before get/post/and so on."""
+        self.current_user = self.get_current_user()
+        if self.access_level < 10:
+            self.write_error(status=403, msg="Sorry, you don't have permission to view this page.")
+
+    def has_permission(self, testrun=None, action="read"):
+        """Decide whether user is permitted to interact with testrun."""
+        usr = get_username(self.current_user)
+        if testrun is not None:
+            if action == "delete":
+                return (usr == testrun.uploader or self.access_level == 50)
+            elif action == "edit":
+                return (usr == testrun.uploader or self.access_level > 25)
+            elif action == "read":
+                return (usr == testrun.uploader or self.access_level > 5)
+        else:
+            if action == "delete":
+                return self.access_level == 50
+            elif action == "edit":
+                return self.access_level > 25
+            elif action == "read":
+                return self.access_level > 5
 
     def get_rb_base_url(self):
         """
@@ -62,8 +87,11 @@ class BaseHandler(RequestHandler):
         if not self.settings["debug"]:
             # self.request is single HTTP requestobject of type 'tornado.httputil.HTTPServerRequest'
             headers = dict(self.request.headers.get_all())
-            return headers.get("X-Forwarded-Email")
+            email = headers.get("X-Forwarded-Email")
+            self.access_level = get_user_access_level(email)
+            return email
         else:
+            self.access_level = 50
             return "debug"
 
     def get_cookie(self, name="_oauth2_proxy", default=None):
@@ -121,7 +149,11 @@ class BaseHandler(RequestHandler):
         """
         reason = kwargs.get('reason', "Error")
 
-        log_message = "\n".join(traceback.format_exception(*kwargs["exc_info"]))
+        log_message = ""
+        if ("msg" in kwargs):
+            log_message = kwargs["msg"]
+        if ("exc_info" in kwargs):
+            log_message = "\n".join(traceback.format_exception(*kwargs["exc_info"]))
 
         if status_code == 400:
             reason = "Bad Request"
@@ -133,7 +165,6 @@ class BaseHandler(RequestHandler):
             reason = "Internal Server Error"
 
         self.render("error.html", status_code=status_code, page_title=reason, msg=log_message)
-        return
 
     def get_template_namespace(self):
         """Return a dictionary to be used as the default template namespace.
@@ -152,12 +183,14 @@ class BaseHandler(RequestHandler):
             handler=self,
             request=self.request,
             current_user=self.current_user,
+            has_permission=self.has_permission,
             locale=self.locale,
             _=self.locale.translate,
             pgettext=self.locale.pgettext,
             static_url=self.static_url,
             xsrf_form_html=self.xsrf_form_html,
             reverse_url=self.reverse_url,
+            clusterbench=self.clusterbench,
             format_attr=self.format_attr,
             format_type=self.format_type,
             format_attrs=self.format_attrs,
@@ -222,6 +255,11 @@ class BaseHandler(RequestHandler):
         if isinstance(value, float) or isinstance(value, int):
             return "number"
         return ""
+
+    def clusterbench(self, obj):
+        """Format ClusterBenchmarkID to a date."""
+        cbid = self.format_attr(obj.metadata, "ClusterBenchmarkID")
+        return "({}.{}.{})".format(cbid[6:8], cbid[4:6], cbid[0:4])
 
     def format_attr(self, obj, attr):
         """
@@ -362,9 +400,9 @@ class BaseHandler(RequestHandler):
             return False
 
         if attr == "number_instances":
-            l = [len(ts.children.to_dict().keys()) for ts in sets]
-            old = l[0]
-            for i in l:
+            length = [len(ts.children.to_dict().keys()) for ts in sets]
+            old = length[0]
+            for i in length:
                 new = i
                 if old != new:
                     return False

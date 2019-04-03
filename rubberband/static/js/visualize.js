@@ -23,6 +23,7 @@ function initializeTypeahead() {
 }
 
 function generateCharts(request_data) {
+  request_data._xsrf = getCookie("_xsrf");
   /* makes an ajax request for data and then draws charts */
   $.ajax({
     type: "POST",

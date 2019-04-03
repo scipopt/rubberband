@@ -13,16 +13,21 @@
         <span class="fa fa-file-excel"></span></a>
       {% end %}
 
-      {% if fileoptions[".out"] %}
+      {% if fileoptions[".out"] and has_permission(file, "edit") %}
       <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="modal"   data-placement="top" data-target="#reimportResultModal" title="reimport result">
         <span class="fa fa-redo"></span></span>
       {% end %}
 
+      {% if has_permission(file, "delete") %}
       <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="modal"   data-placement="top" data-target="#deleteResultModal" title="delete result">
         <span class="fa fa-trash-alt"></span></span>
+      {% end %}
 
+      {% if has_permission(file, "edit") %}
       <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="modal"   data-placement="top" data-target="#editModal" title="edit">
         <span class="fa fa-edit"></span></span>
+      {% end %}
+
     </div>
   {% end %}
   <h2 class="rb-details-tab-title">Detailed data</h2>
@@ -46,10 +51,11 @@
     <!-- Delete Result Modal -->
     {% module Template("modal.html", id="editModal", modalheading="Edit Testrun", modalbody='''
       <form method="post" id="edit-form">
+        {xsrf}
         <label class="col-form-label" for="tags-input">Tag(s) (comma separated):</label>
         <input class="form-control" name="tags-input" id="tags-input" value="{tags}">
       </form>
-      '''.format(tags=", ".join(file.tags)), modalfooter='''
+      '''.format(xsrf=xsrf_form_html(), tags=", ".join(file.tags) ), modalfooter='''
       <button type="submit" form="edit-form" id="edit-result-submit" value="submit" class="btn btn-danger">Submit changes</button>
       <button type="reset" form="edit-form" class="btn btn-primary">Reset</button>
     ''') %}
@@ -58,16 +64,22 @@
     {% module Template("modal.html", id="deleteResultModal", modalheading="Delete Testrun?", modalbody='''
       <p>Are you sure that you want to delete this result?</p>
     ''', modalfooter='''
-      <button type="button" id="delete-result" class="btn btn-danger">Yes! I know what I'm doing.</button>
-    ''') %}
+      <form>
+        {xsrf}
+        <button type="button" id="delete-result" class="btn btn-danger">Yes! I know what I'm doing.</button>
+      </form>
+    '''.format(xsrf=xsrf_form_html())) %}
 
     {% if fileoptions[".out"] %}
       <!-- Reimport Result Modal -->
       {% module Template("modal.html", id="reimportResultModal", modalheading="Reimport Testrun?", modalbody='''
         <p>Are you sure that you want to reimport this result?</p>
       ''', modalfooter='''
-        <button type="button" id="reimport-result" class="btn btn-danger">Yes! I know what I'm doing.</button>
-      ''') %}
+        <form>
+          {xsrf}
+          <button type="button" id="reimport-result" class="btn btn-danger">Yes! I know what I'm doing.</button>
+        </form>
+      '''.format(xsrf=xsrf_form_html())) %}
 
     {% end %}
   {% end %}
