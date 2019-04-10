@@ -544,6 +544,10 @@ def generate_filtergroup_selector(table, evaluation):
         # update selector strin
         out = out + newoption
 
+    maxfgstr = ",".join(["|{}|".format(fg.getName()) for fg in evaluation.getActiveFilterGroups()])
+    maxlen = len(maxfgstr)
+
+    pd.set_option('max_colwidth', max(pd.get_option('display.max_colwidth'), maxlen))
     out = out + '</select></label></div>'
     return out, table["Filtergroups"]
 
