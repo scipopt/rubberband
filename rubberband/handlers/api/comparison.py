@@ -37,6 +37,18 @@ class ComparisonEndpoint(BaseHandler):
         baserun = get_testruns(base_id)
         testruns = get_testruns(testrunids)
 
+        # timestamps
+        basehash = baserun.git_hash
+        times = {t.git_hash: datetime.strftime(t.git_commit_timestamp, FORMAT_DATE)
+                for t in testruns}
+        hashes = set([t.git_hash for t in testruns + [baserun]])
+        if len(hashes) != 2:
+            raise HTTPError(404)
+        hashes.remove(basehash)
+
+        comparehash = hashes.pop()
+        comparetime = times[comparehash]
+
         # tolerance
         tolerance = float(self.get_argument("tolerance", default=1e-6))
         if tolerance == "":
@@ -66,18 +78,19 @@ class ComparisonEndpoint(BaseHandler):
         _, aggtable = ev.evaluate(ex)
 
         # df = aggtable[["_count_","_solved_","T_sgm(1.0)Q","T_sgm(1.0)"]]
-        solved = aggtable["_solved_"][1] / aggtable["_solved_"][0]
-        time = aggtable["T_sgm(1.0)Q"][1]
 
-        basetimestamp = datetime.strftime(baserun.git_commit_timestamp, FORMAT_DATE)
-        times = set([datetime.strftime(t.git_commit_timestamp, FORMAT_DATE) for t in testruns])
-        timestamp = basetimestamp
-        if basetimestamp in times:
-            times.remove(basetimestamp)
-        if len(times) > 0:
-            timestamp = times.pop()
+        compareindex = ("clean", comparehash)
+        baseindex = ("clean", basehash)
 
-        self.write(",".join(list(map(str, [timestamp, solved, time]))))
+        solved = aggtable["_solved_"][compareindex] / aggtable["_solved_"][baseindex]
+        time = aggtable["T_sgm(1.0)Q"][compareindex]
+
+        self.write(
+                "\n".join([
+                    aggtable.to_html(),
+                    ",".join(list(map(str, [comparetime, solved, time])))
+                    ])
+                )
 
     def check_xsrf_cookie(self):
         """Turn off the xsrf cookie for upload api endpoint, since we check the user differently."""
