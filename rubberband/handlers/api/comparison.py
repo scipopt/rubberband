@@ -29,18 +29,21 @@ class ComparisonEndpoint(BaseHandler):
 
         # read testrunids
         testrun_ids = self.get_argument("compare")
-        testrunids = testrun_ids.split(",") + [base_id]
+        testrunids = testrun_ids.split(",")
+        if base_id in testrunids:
+            raise HTTPError(404)
+
+        # get testruns and default
+        baserun = get_testruns(base_id)
+        testruns = get_testruns(testrunids)
 
         # tolerance
         tolerance = float(self.get_argument("tolerance", default=1e-6))
         if tolerance == "":
             tolerance = 1e-6
 
-        # get testruns and default
-        testruns = get_testruns(testrunids)
-
         # evaluate with ipet
-        ex = setup_experiment(testruns)
+        ex = setup_experiment(testruns + [baserun])
         evalstring = """<?xml version="1.0" ?>
 <Evaluation comparecolformat="%.3f" index="ProblemName GitHash" indexsplit="-1">
     <Column formatstr="%.2f" name="T" origcolname="SolvingTime" minval="0.5"
@@ -66,8 +69,13 @@ class ComparisonEndpoint(BaseHandler):
         solved = aggtable["_solved_"][1] / aggtable["_solved_"][0]
         time = aggtable["T_sgm(1.0)Q"][1]
 
-        base = get_testruns(base_id)
-        timestamp = datetime.strftime(base.git_commit_timestamp, FORMAT_DATE)
+        basetimestamp = datetime.strftime(baserun.git_commit_timestamp, FORMAT_DATE)
+        times = set([datetime.strftime(t.git_commit_timestamp, FORMAT_DATE) for t in testruns])
+        timestamp = basetimestamp
+        if basetimestamp in times:
+            times.remove(basetimestamp)
+        if len(times) > 0:
+            timestamp = times.pop()
 
         self.write(",".join(list(map(str, [timestamp, solved, time]))))
 
