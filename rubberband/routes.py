@@ -26,7 +26,7 @@ routes = [
     (r"/instances/?(?P<parent_id>[^\/]+)", fe.InstanceEndpoint),
 
     # API Endpoints
-    (r"/api/comparison/(?P<base_id>[^\/]+)", fe.ComparisonView),
+    (r"/api/comparison/(?P<base_id>[^\/]+)", api.ComparisonEndpoint),
     (r"/api/upload/async", api.UploadAsyncEndpoint),
     (r"/api/upload", api.UploadEndpoint),
     (r"/api/search", api.SearchEndpoint),
