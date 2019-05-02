@@ -91,9 +91,11 @@ class ComparisonEndpoint(BaseHandler):
         if comparehash is not None:
             cleanindex = ("clean", comparehash)
             allindex = ("all", comparehash)
+            commithash = comparehash
         else:
             cleanindex = ("clean", basehash)
             allindex = ("all", basehash)
+            commithash = basehash
 
         allcount = aggtable["_count_"][allindex]
         allsolved = aggtable["_solved_"][allindex]
@@ -103,6 +105,7 @@ class ComparisonEndpoint(BaseHandler):
         cleantime = aggtable["T_sgm(1.0)"][cleanindex]
 
         self.write(",".join(list(map(str, [
+            commithash,
             committime,
             allcount,
             allsolved,
