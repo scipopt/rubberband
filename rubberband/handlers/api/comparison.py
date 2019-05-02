@@ -49,10 +49,11 @@ class ComparisonEndpoint(BaseHandler):
             raise HTTPError(404)
         hashes.remove(basehash)
 
-        if comparison_ids is not None:
+        comparehash = None
+        if len(hashes) == 1:
             comparehash = hashes.pop()
             committime = times[comparehash]
-        else:
+        else:  # len(hashes) == 0:
             committime = times[basehash]
 
         # tolerance
@@ -65,7 +66,8 @@ class ComparisonEndpoint(BaseHandler):
         evalstring = """<?xml version="1.0" ?>
 <Evaluation comparecolformat="%.3f" index="ProblemName GitHash" indexsplit="-1">
     <Column formatstr="%.2f" name="T" origcolname="SolvingTime" minval="0.5"
-    comp="quot shift. by 1" maxval="TimeLimit" alternative="TimeLimit" reduction="mean">
+    comp="quot shift. by 1" maxval="TimeLimit" alternative="TimeLimit"
+    reduction="shmean shift. by 1">
         <Aggregation aggregation="shmean" name="sgm" shiftby="1.0"/>
     </Column>
     <FilterGroup name="all"/>
@@ -86,7 +88,7 @@ class ComparisonEndpoint(BaseHandler):
 
         # df = aggtable[["_count_","_solved_","T_sgm(1.0)Q","T_sgm(1.0)"]]
 
-        if comparison_ids is not None:
+        if comparehash is not None:
             cleanindex = ("clean", comparehash)
             allindex = ("all", comparehash)
         else:
