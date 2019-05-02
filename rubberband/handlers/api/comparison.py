@@ -28,26 +28,32 @@ class ComparisonEndpoint(BaseHandler):
             raise HTTPError(404)
 
         # read testrunids
-        testrun_ids = self.get_argument("compare")
-        testrunids = testrun_ids.split(",")
-        if base_id in testrunids:
-            raise HTTPError(404)
+        comparison_ids = self.get_argument("compare", None)
+        if comparison_ids is not None:
+            testrunids = list(set(comparison_ids.split(",")))
+            if base_id in testrunids:
+                raise HTTPError(404)
 
         # get testruns and default
         baserun = get_testruns(base_id)
-        testruns = get_testruns(testrunids)
+        testruns = []
+        if comparison_ids is not None:
+            testruns = get_testruns(testrunids)
 
         # timestamps
         basehash = baserun.git_hash
         times = {t.git_hash: datetime.strftime(t.git_commit_timestamp, FORMAT_DATE)
-                for t in testruns}
+                for t in testruns + [baserun]}
         hashes = set([t.git_hash for t in testruns + [baserun]])
-        if len(hashes) != 2:
+        if len(hashes) > 2:
             raise HTTPError(404)
         hashes.remove(basehash)
 
-        comparehash = hashes.pop()
-        comparetime = times[comparehash]
+        if comparison_ids is not None:
+            comparehash = hashes.pop()
+            committime = times[comparehash]
+        else:
+            committime = times[basehash]
 
         # tolerance
         tolerance = float(self.get_argument("tolerance", default=1e-6))
@@ -62,6 +68,7 @@ class ComparisonEndpoint(BaseHandler):
     comp="quot shift. by 1" maxval="TimeLimit" alternative="TimeLimit" reduction="mean">
         <Aggregation aggregation="shmean" name="sgm" shiftby="1.0"/>
     </Column>
+    <FilterGroup name="all"/>
     <FilterGroup name="clean">
         <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
         <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
@@ -79,18 +86,28 @@ class ComparisonEndpoint(BaseHandler):
 
         # df = aggtable[["_count_","_solved_","T_sgm(1.0)Q","T_sgm(1.0)"]]
 
-        compareindex = ("clean", comparehash)
-        baseindex = ("clean", basehash)
+        if comparison_ids is not None:
+            cleanindex = ("clean", comparehash)
+            allindex = ("all", comparehash)
+        else:
+            cleanindex = ("clean", basehash)
+            allindex = ("all", basehash)
 
-        solved = aggtable["_solved_"][compareindex] / aggtable["_solved_"][baseindex]
-        time = aggtable["T_sgm(1.0)Q"][compareindex]
+        allcount = aggtable["_count_"][allindex]
+        allsolved = aggtable["_solved_"][allindex]
+        alltime = aggtable["T_sgm(1.0)"][allindex]
+        cleancount = aggtable["_count_"][cleanindex]
+        cleansolved = aggtable["_solved_"][cleanindex]
+        cleantime = aggtable["T_sgm(1.0)"][cleanindex]
 
-        self.write(
-                "\n".join([
-                    aggtable.to_html(),
-                    ",".join(list(map(str, [comparetime, solved, time])))
-                    ])
-                )
+        self.write(",".join(list(map(str, [
+            committime,
+            allcount,
+            allsolved,
+            alltime,
+            cleancount,
+            cleansolved,
+            cleantime]))))
 
     def check_xsrf_cookie(self):
         """Turn off the xsrf cookie for upload api endpoint, since we check the user differently."""
