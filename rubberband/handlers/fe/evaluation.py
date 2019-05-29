@@ -50,6 +50,92 @@ class EvaluationView(BaseHandler):
 
         # get evalfile
         evalfile = IPET_EVALUATIONS[int(eval_id)]
+        if style is not None and style == "latex":
+            evalfile = '''<?xml version="1.0" ?>
+<!-- group by githash - exclude fails & aborts -->
+<Evaluation comparecolformat="%.3f" index="ProblemName Seed Permutation GitHash" indexsplit="3">
+    <Column formatstr="%.2f" name="T" origcolname="SolvingTime" minval="0.5" comp="quot shift. by 1" maxval="TimeLimit" alternative="TimeLimit" reduction="shmean shift. by 1">
+        <Aggregation aggregation="shmean" name="sgm" shiftby="1.0"/>
+    </Column>
+    <Column formatstr="%.0f" name="N" origcolname="Nodes" comp="quot shift. by 100" reduction="shmean shift. by 100">
+        <Aggregation aggregation="shmean" name="sgm" shiftby="100.0" />
+    </Column>
+    <FilterGroup name="\cleaninst">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+    </FilterGroup>
+    <FilterGroup active="True" filtertype="intersection" name="\\affected">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter active="True" anytestrun="one" datakey="LP_Iterations_dualLP" operator="diff"/>
+        <Filter active="True" anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
+    </FilterGroup>
+    <FilterGroup name="\\bracket{0}{tilim}">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
+    </FilterGroup>
+    <FilterGroup name="\\bracket{1}{tilim}">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
+        <Filter anytestrun="one" expression1="T" expression2="1" operator="ge"/>
+    </FilterGroup>
+    <FilterGroup name="\\bracket{10}{tilim}">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
+        <Filter anytestrun="one" expression1="T" expression2="10" operator="ge"/>
+    </FilterGroup>
+    <FilterGroup name="\\bracket{100}{tilim}">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
+        <Filter anytestrun="one" expression1="T" expression2="100" operator="ge"/>
+    </FilterGroup>
+    <FilterGroup name="\\bracket{1000}{tilim}">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
+        <Filter anytestrun="one" expression1="T" expression2="1000" operator="ge"/>
+    </FilterGroup>
+    <FilterGroup name="\\alloptimal">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_solved_" expression2="1" operator="eq"/>
+    </FilterGroup>
+    <FilterGroup name="\difftimeouts">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
+        <Filter anytestrun="one" expression1="_solved_" expression2="0" operator="eq"/>
+    </FilterGroup>
+    <FilterGroup active="True" filtertype="intersection" name="\miplibs">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter active="True" anytestrun="one" datakey="ProblemName" operator="keep">
+            <Value active="True" name="MMM compl"/>
+        </Filter>
+    </FilterGroup>
+    <FilterGroup active="True" filtertype="intersection" name="\coral">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter active="True" anytestrun="one" datakey="ProblemName" operator="keep">
+            <Value active="True" name="COR@L"/>
+        </Filter>
+    </FilterGroup>
+    <FilterGroup active="True" filtertype="intersection" name="continuous">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="PresolvedProblem_ContVars" expression2="PresolvedProblem_Vars" operator="eq"/>
+    </FilterGroup>
+    <FilterGroup active="True" filtertype="intersection" name="integer">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="PresolvedProblem_ContVars" expression2="PresolvedProblem_Vars" operator="lt"/>
+    </FilterGroup>
+</Evaluation>
+'''
 
         tolerance = self.get_argument("tolerance")
         if tolerance == "":
@@ -67,7 +153,8 @@ class EvaluationView(BaseHandler):
 
         # evaluate with ipet
         ex = setup_experiment(testruns)
-        ev = setup_evaluation(evalfile["path"], ALL_SOLU, tolerance)
+        ev = setup_evaluation(evalfile, ALL_SOLU, tolerance,
+                evalstring=(style is not None and style == "latex"))
 
         # set defaultgroup
         set_defaultgroup(ev, ex, default_id)
@@ -136,9 +223,10 @@ class EvaluationView(BaseHandler):
             df_count = df["_count_"]
 
             # groups in rows
-            rows = ['clean', 'affected', '[0,tilim]', '[1,tilim]', '[10,tilim]', '[100,tilim]',
-                    '[1000,tilim]', 'diff-timeouts', 'all-optimal',
-                    'MMM compl (387)', 'Cor@l (349)', 'continuous', 'integer']
+            rows = ['\cleaninst', '\\affected', '\\bracket{0}{tilim}', '\\bracket{1}{tilim}',
+                    '\\bracket{10}{tilim}', '\\bracket{100}{tilim}',
+                    '\\bracket{1000}{tilim}', '\difftimeouts', '\\alloptimal',
+                    '\miplibs', '\coral', 'continuous', 'integer']
 
             df_rel = df_rel.pivot_table(index=['Group'], columns=[colindex]).swaplevel(
                     axis=1).sort_index(axis=1, level=0, sort_remaining=True, ascending=False)
@@ -162,6 +250,15 @@ class EvaluationView(BaseHandler):
             formatters = get_column_formatters(df)
             out = df.to_latex(column_format='@{}l@{\\;\\;\\extracolsep{\\fill}}rrrrrrrrr@{}',
                     multicolumn_format="c", escape=False, formatters=formatters)
+
+            # split lines into a list
+            latex_list = out.splitlines()
+            # insert a `\midrule` at third last position in list (which will be the fourth last line in latex output)
+            latex_list.insert(14, '\cmidrule{1-10}')
+            latex_list.insert(7, '\cmidrule{1-10}')
+            latex_list.insert(3, '\cmidrule{3-5} \cmidrule{6-8} \cmidrule{9-10}')
+            # join split lines to get the modified latex output string
+            out = '\n'.join(latex_list)
 
             # postprocessing
             repl = get_replacement_dict(cols, colindex)
@@ -226,7 +323,7 @@ def insert_into_latex(body, url):
     """
     latex_table_top = r"""
 % table automatically generated by rubberband, please have a look and check everything
-\\begin{table}
+\begin{table}
 \label{tbl:rubberband_table}
 \caption{Performance comparison}
 \scriptsize
@@ -259,35 +356,19 @@ def get_replacement_dict(cols, colindex):
     repl = {}
     for i in cols:
         if i.startswith("N_"):
-            repl[" " + i + " "] = " nodes "
+            repl[" " + i + " "] = "        nodes "
         if i.startswith("T_"):
-            repl[" " + i + " "] = " time "
-    repl["_solved_"] = "solved"
-    repl["Group"] = "Subset"
+            repl[" " + i + " "] = "       time "
+    repl["_solved_"] = "  solved"
+    repl["Group"] = "Subset               "
     repl["NaN"] = "  -"
     repl["nan"] = "  -"
-    repl["relative} \\\\\n"] = r"""relative} \\
-\cmidrule{3-5} \cmidrule{6-8} \cmidrule{9-10}
-"""
     repl["timeQ"] = "time"
     repl["nodesQ"] = "nodes"
-    repl["{} & instances"] = "Subset & instances"
+    repl["{} & instances"] = "Subset                & instances"
     repl[colindex + " &"] = "&"
     repl["egin{tabular"] = r"egin{tabular*}{\textwidth"
     repl["end{tabular"] = "end{tabular*"
-    repl["clean"] = r"\cleaninst"
-    repl["affected"] = r"\affected"
-    repl['[0,tilim]'] = r"""\cmidrule{1-10}
-\bracket{0}{tilim}"""
-    repl['[1,tilim]'] = r"\bracket{1}{tilim}"
-    repl['[10,tilim]'] = r"\bracket{10}{tilim}"
-    repl['[100,tilim]'] = r"\bracket{100}{tilim}"
-    repl['[1000,tilim]'] = r"\bracket{1000}{tilim}"
-    repl['diff-timeouts'] = r"\difftimeouts"
-    repl['all-optimal'] = r"\alloptimal"
-    repl['MMM compl (387)'] = r"""\cmidrule{1-10}
-\miplibs       """
-    repl['Cor@l (349)'] = r"\coral     "
     repl[r'- & \multi'] = r"  & \multi"
     return repl
 
@@ -453,7 +534,7 @@ def get_testruns(testrunids):
     return testruns
 
 
-def setup_evaluation(evalfile, solufile, tolerance):
+def setup_evaluation(evalfile, solufile, tolerance, evalstring=False):
     """
     Setup the IPET evaluation.
 
@@ -465,16 +546,20 @@ def setup_evaluation(evalfile, solufile, tolerance):
         name of solution file to use
     tolerance : str
         tolerance for validation
+    evalstring : bool
+        evalfile a string (or a filename)
 
     Returns
     -------
     ipet.IPETEvaluation
     """
-    evaluation = IPETEvaluation.fromXMLFile(evalfile)
+    if evalstring:
+        evaluation = IPETEvaluation.fromXML(evalfile)
+    else:
+        evaluation = IPETEvaluation.fromXMLFile(evalfile["path"])
+
     evaluation.set_validate(solufile)
-
     evaluation.set_feastol(tolerance)
-
     return evaluation
 
 
