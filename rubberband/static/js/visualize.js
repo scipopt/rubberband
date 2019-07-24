@@ -22,15 +22,33 @@ function initializeTypeahead() {
   }, "json");
 }
 
+function setButtons(val) {
+  /* enable and disable ipet eval buttons */
+  var value = true;
+  if (val == "enabled") {
+    var value = false;
+  }
+  $("#visualize button").each(function() {
+    this.disabled = value;
+  });
+};
+
 function generateCharts(request_data) {
+  setButton("disabled");
   request_data._xsrf = getCookie("_xsrf");
   /* makes an ajax request for data and then draws charts */
   $.ajax({
     type: "POST",
     url: "visualize",
     data: request_data,
-    success: function (data){makeCharts(JSON.parse(data));},
-    error:function(){ alert("Something went wrong."); }
+    success: function (data){
+      makeCharts(JSON.parse(data));
+      setButton("enabled");
+    },
+    error:function(){
+      alert("Something went wrong.");
+      setButton("enabled");
+    }
   });
 }
 

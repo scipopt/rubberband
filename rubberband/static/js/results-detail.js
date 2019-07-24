@@ -121,8 +121,6 @@ function setButtons(val) {
   }
   $("#ipet-eval-menu .rb-wait").each(function() {
     this.disabled = value;
-    console.log(this);
-    console.log(this.disabled);
   });
 };
 
