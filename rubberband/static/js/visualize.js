@@ -34,7 +34,7 @@ function setButtons(val) {
 };
 
 function generateCharts(request_data) {
-  setButton("disabled");
+  setButtons("disabled");
   request_data._xsrf = getCookie("_xsrf");
   /* makes an ajax request for data and then draws charts */
   $.ajax({
@@ -43,11 +43,11 @@ function generateCharts(request_data) {
     data: request_data,
     success: function (data){
       makeCharts(JSON.parse(data));
-      setButton("enabled");
+      setButtons("enabled");
     },
     error:function(){
       alert("Something went wrong.");
-      setButton("enabled");
+      setButtons("enabled");
     }
   });
 }
