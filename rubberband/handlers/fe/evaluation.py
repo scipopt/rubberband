@@ -558,6 +558,7 @@ def setup_evaluation(evalfile, solufile, tolerance, evalstring=False):
     else:
         evaluation = IPETEvaluation.fromXMLFile(evalfile["path"])
 
+    evaluation.set_grouptags(True)
     evaluation.set_validate(solufile)
     evaluation.set_feastol(tolerance)
     return evaluation
@@ -602,11 +603,12 @@ def generate_filtergroup_selector(table, evaluation):
         selector and additional column
     """
     table = table.copy()
-    table["Filtergroups"] = ""
+    gtindex = [c for c in table.columns if c[-1] == "groupTags"][0]
+    table["Filtergroups"] = list(map("|{}|".format, table[gtindex]))
+
     out = '<div id="ipet-long-table-filter col"><label class="col-form-label text-left">Select filtergroups:<select id="ipet-long-filter-select" class="custom-select">' # noqa
 
     for fg in evaluation.getActiveFilterGroups():
-        table["Newfiltergroup"] = ""
         fg_name = fg.getName()
         fg_data = evaluation.getInstanceGroupData(fg)
 
@@ -616,16 +618,6 @@ def generate_filtergroup_selector(table, evaluation):
 
         # construct new option string
         newoption = '<option value=' + fg_name + '>' + fg_name + '</option>' # noqa
-        fg_data["Newfiltergroup"] = "|{}|".format(fg_name)
-
-        # update the table with the new filtergroup data
-        table.update(fg_data)
-
-        # join the values in the filtergroup columns
-        newcolumn = table[["Filtergroups", "Newfiltergroup"]].apply(
-            lambda x: x[0] if pd.isnull(x[1]) else ''.join(x), axis=1)
-        # update original table
-        table["Filtergroups"] = newcolumn
 
         # update selector strin
         out = out + newoption
