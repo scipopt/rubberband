@@ -1,4 +1,4 @@
--e git+https://github.com/GregorCH/ipet.git@3cdd159b7effe59e25353585020ba2194667f1b0#egg=ipet
+-e git+https://github.com/GregorCH/ipet.git@30fa7cffdb693c4df8ddca97621badf31978b510#egg=ipet
 atomicwrites==1.3.0
 attrs==18.2.0
 certifi==2018.11.29
