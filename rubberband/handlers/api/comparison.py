@@ -79,7 +79,6 @@ class ComparisonEndpoint(BaseHandler):
         """
         ev = IPETEvaluation.fromXML(evalstring)
         ev.set_validate(ALL_SOLU)
-        ev.set_fillin(True)
         ev.set_feastol(tolerance)
 
         set_defaultgroup(ev, ex, base_id)
