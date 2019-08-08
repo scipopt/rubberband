@@ -79,7 +79,7 @@ class ComparisonEndpoint(BaseHandler):
         <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
     </FilterGroup>
 </Evaluation>
-        """.format(tl=testruns[0].time_limit)
+        """.format(tl=baserun.time_limit)
         ev = IPETEvaluation.fromXML(evalstring)
         ev.set_validate(ALL_SOLU)
         ev.set_feastol(tolerance)
