@@ -175,6 +175,8 @@ class EvaluationView(BaseHandler):
 
             # add id column to longtable
             longtable.insert(0, "id", range(1, len(longtable) + 1))
+            delcols = [i for i in longtable.columns if i[-1] == "groupTags"]
+            longtable = longtable.drop(delcols, axis=1)
 
             # convert to html and get style
             add_classes = " ".join([self.rb_dt_borderless, self.rb_dt_compact])  # style for table

@@ -41,8 +41,12 @@ function construct_columns_toggle(tablename) {
       if (colindex == 1) {
         coltitle = 'id';
       } else {
-        arr = $('#'+tablename+'_wrapper .dataTables_scrollHead table thead tr th.col'+(colindex-1).toString());
-        coltitle = Array.prototype.join.call(arr.map((x,y) => $(y).text()),",")
+        arr = [];
+        children = $($('#ipet-long-table').DataTable().table().header()).children()
+        for(x = 0; x < children.length-1; x++) {
+          arr[x] = $(children[x]).children()[colindex]
+        }
+        coltitle = Array.prototype.join.call(arr.map(y => $(y).text()),",")
       }
     }
 

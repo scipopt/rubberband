@@ -70,13 +70,16 @@ class ComparisonEndpoint(BaseHandler):
     reduction="shmean shift. by 1">
         <Aggregation aggregation="shmean" name="sgm" shiftby="1.0"/>
     </Column>
+    <Column formatstr="%.2f" origcolname="TimeLimit" alternative="{tl}"
+        reduction="mean">
+    </Column>
     <FilterGroup name="all"/>
     <FilterGroup name="clean">
         <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
         <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
     </FilterGroup>
 </Evaluation>
-        """
+        """.format(tl=testruns[0].time_limit)
         ev = IPETEvaluation.fromXML(evalstring)
         ev.set_validate(ALL_SOLU)
         ev.set_feastol(tolerance)
