@@ -54,10 +54,13 @@ class EvaluationView(BaseHandler):
             evalfile = '''<?xml version="1.0" ?>
 <!-- group by githash - exclude fails & aborts -->
 <Evaluation comparecolformat="%.3f" index="ProblemName Seed Permutation GitHash" indexsplit="3">
-    <Column formatstr="%.2f" name="T" origcolname="SolvingTime" minval="0.5" comp="quot shift. by 1" maxval="TimeLimit" alternative="TimeLimit" reduction="shmean shift. by 1">
+    <Column formatstr="%.2f" name="T" origcolname="SolvingTime" minval="0.5"
+        comp="quot shift. by 1" maxval="TimeLimit" alternative="TimeLimit"
+        reduction="shmean shift. by 1">
         <Aggregation aggregation="shmean" name="sgm" shiftby="1.0"/>
     </Column>
-    <Column formatstr="%.0f" name="N" origcolname="Nodes" comp="quot shift. by 100" reduction="shmean shift. by 100">
+    <Column formatstr="%.0f" name="N" origcolname="Nodes" comp="quot shift. by 100"
+        reduction="shmean shift. by 100">
         <Aggregation aggregation="shmean" name="sgm" shiftby="100.0" />
     </Column>
     <FilterGroup name="\cleaninst">
@@ -68,7 +71,8 @@ class EvaluationView(BaseHandler):
         <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
         <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter active="True" anytestrun="one" datakey="LP_Iterations_dualLP" operator="diff"/>
-        <Filter active="True" anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
+        <Filter active="True" anytestrun="one" expression1="_solved_"
+            expression2="1" operator="eq"/>
     </FilterGroup>
     <FilterGroup name="\\bracket{0}{tilim}">
         <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
@@ -127,12 +131,14 @@ class EvaluationView(BaseHandler):
     <FilterGroup active="True" filtertype="intersection" name="continuous">
         <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
         <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="PresolvedProblem_ContVars" expression2="PresolvedProblem_Vars" operator="eq"/>
+        <Filter anytestrun="all" expression1="PresolvedProblem_ContVars"
+            expression2="PresolvedProblem_Vars" operator="eq"/>
     </FilterGroup>
     <FilterGroup active="True" filtertype="intersection" name="integer">
         <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
         <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="PresolvedProblem_ContVars" expression2="PresolvedProblem_Vars" operator="lt"/>
+        <Filter anytestrun="all" expression1="PresolvedProblem_ContVars"
+            expression2="PresolvedProblem_Vars" operator="lt"/>
     </FilterGroup>
 </Evaluation>
 '''
@@ -255,7 +261,8 @@ class EvaluationView(BaseHandler):
 
             # split lines into a list
             latex_list = out.splitlines()
-            # insert a `\midrule` at third last position in list (which will be the fourth last line in latex output)
+            # insert a `\midrule` at third last position in list (which will be the fourth last
+            # line in latex output)
             latex_list.insert(14, '\cmidrule{1-10}')
             latex_list.insert(7, '\cmidrule{1-10}')
             latex_list.insert(3, '\cmidrule{3-5} \cmidrule{6-8} \cmidrule{9-10}')

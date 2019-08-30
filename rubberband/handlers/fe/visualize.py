@@ -67,7 +67,7 @@ class VisualizeView(BaseHandler):
                 components.update(parent_data.to_dict())
                 components["parent_id"] = r.meta.parent
                 final_components = {k: components[k] if k in components.keys() else v
-                        for k,v in datakeys.items()}
+                        for k, v in datakeys.items()}
                 final_data.append(final_components)
 
             # only need the following keys: ["git_commit_timestamp", "Nodes", "Status", "opt_flag",

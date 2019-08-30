@@ -64,7 +64,8 @@ class ComparisonEndpoint(BaseHandler):
         # evaluate with ipet
         ex = setup_experiment(testruns + [baserun])
         evalstring = """<?xml version="1.0" ?>
-<Evaluation comparecolformat="%.3f" index="ProblemName Settings Seed Permutation GitHash" indexsplit="-1" fillin="True">
+<Evaluation comparecolformat="%.3f" index="ProblemName Settings Seed Permutation GitHash"
+    indexsplit="-1" fillin="True">
     <Column formatstr="%.2f" name="T" origcolname="SolvingTime" minval="0.5"
     comp="quot shift. by 1" maxval="TimeLimit" alternative="TimeLimit"
     reduction="shmean shift. by 1">
