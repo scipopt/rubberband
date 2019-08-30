@@ -408,8 +408,11 @@ class TestSet(DocType):
 
     def load_children(self):
         """Load all children (Results objects) associated to a TestSet object."""
-        if self.children is not None:
-            return self.children
+        try:
+            if self.children is not None:
+                return self.children
+        except:
+            pass
 
         s = Result.search()
         # it's generally discouraged to return a large number of elements from a search query
@@ -434,8 +437,11 @@ class TestSet(DocType):
 
     def load_files(self):
         """Load the files of a TestSet object."""
-        if self.files is not None:
-            return self.files
+        try:
+            if self.files is not None:
+                return self.files
+        except:
+            pass
 
         s = File.search()
         s = s.query("has_parent", type="testset", query=Q('term', id=self.id))
