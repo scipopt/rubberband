@@ -2,7 +2,7 @@
 import gzip
 import json
 import datetime
-from elasticsearch_dsl import DocType, MetaField, String, Date, Float, Nested
+from elasticsearch_dsl import DocType, MetaField, String, Date, Float, Nested, Q
 from ipet import Key
 
 from rubberband.constants import INFINITY_KEYS, INFINITY_MASK, ELASTICSEARCH_INDEX, INFINITY_FLOAT
@@ -410,14 +410,17 @@ class TestSet(DocType):
         """Load all children (Results objects) associated to a TestSet object."""
         s = Result.search()
         # it's generally discouraged to return a large number of elements from a search query
-        s = s.filter("term", _parent=self.meta.id)
+        s = s.query("has_parent", type="testset", query=Q('term', id=self.id))
+        totalchildren = s.count()
+        s = s[0:totalchildren]
+        res = s.execute()
         self.children = {}
 
         children = {}
         children['ids'] = {}
         children['names'] = {}
         # this uses pagination/scroll
-        for hit in s.scan():
+        for hit in res:
             children['ids']["{} ({})".format(hit.instance_name, hit.instance_id)] = hit
             children['names']["{}".format(hit.instance_name)] = hit
 
@@ -429,11 +432,14 @@ class TestSet(DocType):
     def load_files(self):
         """Load the files of a TestSet object."""
         s = File.search()
-        s = s.filter("term", testset_id=self.meta.id)
+        s = s.query("has_parent", type="testset", query=Q('term', id=self.id))
+        totalfiles = s.count()
+        s = s[0:totalfiles]
+        res = s.execute()
 
         self.files = {}
         # this uses pagination/scroll
-        for hit in s.scan():
+        for hit in res:
             self.files[hit.type] = hit
 
 

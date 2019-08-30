@@ -58,8 +58,8 @@ def make_app(project_root):
     """
     # init logger
     logging.basicConfig(level=logging.DEBUG,
-            format='%(asctime)s %(levelname)-5s %(name)-15s %(message)s',
-            datefmt='%d-%m-%Y %H:%M -')
+            format='%(asctime)s%(msecs)03d %(levelname)-5s %(name)-15s %(message)s',
+            datefmt='%d-%m-%Y %H:%M:%S - ')
     loggr = logging.getLogger()
     loggr.setLevel(level=20)
     # Load options from environment
