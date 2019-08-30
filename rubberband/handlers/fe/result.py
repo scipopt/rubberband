@@ -38,9 +38,6 @@ class ResultView(BaseHandler):
         if comparelist:
             compare_ids = comparelist.split(",")
             compare = load_testsets(compare_ids)
-            for c in compare:
-                c.load_children()
-
             all_runs = [parent] + compare
             # save intersection results and difference results
             sets = get_intersection_difference([c.children.to_dict().keys() for c in all_runs])
