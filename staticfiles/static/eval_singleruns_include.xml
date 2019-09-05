@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<!-- single runs - include fails, punish aborts -->
+<!-- single runs - exclude fails & aborts (standard) -->
 <Evaluation comparecolformat="%.2f" index="ProblemName RubberbandId" indexsplit="-1">
     <Column formatstr="%.2f" name="T" origcolname="SolvingTime" minval="0.5" comp="quot" maxval="TimeLimit" alternative="TimeLimit" reduction="mean">
         <Aggregation aggregation="shmean" name="sgm" shiftby="1.0"/>

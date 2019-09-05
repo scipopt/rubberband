@@ -8,7 +8,7 @@ import traceback
 
 from rubberband.models import TestSet
 from rubberband.constants import NONE_DISPLAY, INFINITY_KEYS, \
-        INFINITY_MASK, INFINITY_DISPLAY, FORMAT_DATETIME_LONG, DT_STYLE
+        INFINITY_MASK, INFINITY_DISPLAY, FORMAT_DATETIME_LONG
 from rubberband.utils.helpers import shorten_str, get_link, shortening_span, \
         shortening_repres_id, rb_join_arg
 
@@ -16,18 +16,11 @@ from rubberband.utils.helpers import shorten_str, get_link, shortening_span, \
 class BaseHandler(RequestHandler):
     """Custom overrides."""
 
-    if DT_STYLE == "bs4":
-        # bootstrap4
-        rb_dt_compact = "table-condensed"
-        rb_dt_borderless = "table-borderless"
-        rb_dt_bordered = "table-bordered"
-        rb_dt_table = "table"
-    elif DT_STYLE == "std":
-        # default datatable style
-        rb_dt_compact = "compact"
-        rb_dt_borderless = ""
-        rb_dt_bordered = ""
-        rb_dt_table = ""
+    # default datatable style
+    rb_dt_compact = "compact"
+    rb_dt_borderless = ""
+    rb_dt_bordered = ""
+    rb_dt_table = ""
 
     def prepare(self):
         """Called at the beginning of a request before get/post/and so on."""
@@ -214,7 +207,6 @@ class BaseHandler(RequestHandler):
             representation=None,
             ipet_long_table=None,
             ipet_aggregated_table=None,
-            rb_dt_style=DT_STYLE,
             get_empty_header=False,
 
             rb_dt_compact=self.rb_dt_compact,

@@ -34,5 +34,3 @@ FORMAT_DATE = "%Y-%m-%d"
 FORMAT_DATETIME_LONG = "%d. %b %Y, %H:%M"
 FORMAT_DATETIME_SHORT = "%d. %b %y"
 FORMAT_DATETIME = "%Y-%m-%d %H:%M:%S"
-
-DT_STYLE = "std"  # datatables style 'bs4' or 'std'
