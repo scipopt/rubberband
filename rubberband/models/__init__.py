@@ -207,6 +207,26 @@ class TestSet(DocType):
                 if kwargs["settings_default"][i] == INFINITY_FLOAT:
                     kwargs["settings_default"][i] = INFINITY_MASK
 
+        key = "conflict/uselocalrows"
+        if getattr(self.settings, key, None) == True:
+            setattr(self.settings, key, 0)
+        else:
+            setattr(self.settings, key, 1)
+        if getattr(self.settings_default, key, None) == True:
+            setattr(self.settings_default, key, 0)
+        else:
+            setattr(self.settings_default, key, 1)
+        if kwargs != {} and "settings" in kwargs.keys() and i in kwargs["settings"].keys():
+            if kwargs["settings"][key] == True:
+                kwargs["settings"][key] = 0
+            else:
+                kwargs["settings"][key] = 1
+            if kwargs["settings_default"][key] == True:
+                kwargs["settings_default"][key] = 0
+            else:
+                kwargs["settings_default"][key] = 1
+
+
     def __str__(self):
         """Return a string description of the testset object."""
         return "TestSet {}".format(self.filename)
@@ -361,6 +381,16 @@ class TestSet(DocType):
                     if default == INFINITY_MASK:
                         default = INFINITY_FLOAT
 
+                if k == "conflict/uselocalrows":
+                    if setting == 0:
+                        setting = True
+                    else:
+                        setting = False
+                    if default == 0:
+                        default= True
+                    else:
+                        default = False
+
                 output[k] = {
                     "setting": setting,
                     "default": default,
@@ -411,7 +441,7 @@ class TestSet(DocType):
         try:
             if self.children is not None:
                 return self.children
-        except:
+        except AttributeError:
             pass
 
         s = Result.search()
@@ -440,7 +470,7 @@ class TestSet(DocType):
         try:
             if self.files is not None:
                 return self.files
-        except:
+        except AttributeError:
             pass
 
         s = File.search()

@@ -294,6 +294,8 @@ class BaseHandler(RequestHandler):
             # get value
             value = getattr(obj, attr, None)
             if value not in (None, ""):
+                if attr == "conflict/uselocalrows":
+                    return (value == 0)
                 if attr in INFINITY_KEYS and value == INFINITY_MASK:
                     return INFINITY_DISPLAY
                 if (type(value) is int or type(value) is float):
