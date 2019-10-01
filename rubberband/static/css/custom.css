@@ -166,3 +166,7 @@ div.ipet-long-toolbar { /* in evaluated long table datatable*/
 .rb-ml-0 {
   margin-left: 0px;
 }
+
+table.dataTable.compact thead td, table.dataTable.compact thead th {
+  text-align: right;
+}
