@@ -626,7 +626,7 @@ def generate_filtergroup_selector(table, evaluation):
             continue
 
         # construct new option string
-        newoption = '<option value=' + fg_name + '>' + fg_name + '</option>' # noqa
+        newoption = '<option value="' + fg_name + '">' + fg_name + '</option>' # noqa
 
         # update selector strin
         out = out + newoption
