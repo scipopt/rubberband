@@ -505,7 +505,7 @@ class ResultClient(object):
                     msg = "Couldn't create file in Elasticsearch. Check the logs for more info."\
                           " Aborting..."
                     self._log_failure(msg)
-                    self._log_failure(e.info)
+                    self._log_failure(e.args)
                     raise
 
         self._log_info("{} file bundle backed up in Elasticsearch.".format(self.files[".out"]))
