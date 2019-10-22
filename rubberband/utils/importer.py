@@ -332,8 +332,8 @@ class ResultClient(object):
                     file_data["git_commit_author"] = gl.get_username(commit.author_email)
                 except:
                     msg = "Couldn't find commit {} in Gitlab. Aborting...".format(git_hash)
-                    #self._log_failure(msg)
-                    #raise
+                    # self._log_failure(msg)
+                    # raise
 
         return file_data
 

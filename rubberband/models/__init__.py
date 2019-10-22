@@ -226,7 +226,6 @@ class TestSet(DocType):
             else:
                 kwargs["settings_default"][key] = 1
 
-
     def __str__(self):
         """Return a string description of the testset object."""
         return "TestSet {}".format(self.filename)
@@ -387,7 +386,7 @@ class TestSet(DocType):
                     else:
                         setting = False
                     if default == 0:
-                        default= True
+                        default = True
                     else:
                         default = False
 
