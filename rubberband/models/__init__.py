@@ -216,7 +216,7 @@ class TestSet(DocType):
             setattr(self.settings_default, key, 0)
         else:
             setattr(self.settings_default, key, 1)
-        if kwargs != {} and "settings" in kwargs.keys() and i in kwargs["settings"].keys():
+        if kwargs != {} and "settings" in kwargs.keys() and key in kwargs["settings"].keys():
             if kwargs["settings"][key] == True:
                 kwargs["settings"][key] = 0
             else:
