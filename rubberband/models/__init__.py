@@ -473,14 +473,11 @@ class TestSet(DocType):
             pass
 
         s = File.search()
-        s = s.query("has_parent", type="testset", query=Q('term', id=self.id))
-        totalfiles = s.count()
-        s = s[0:totalfiles]
-        res = s.execute()
+        s = s.filter("term", testset_id=self.meta.id)
 
         self.files = {}
         # this uses pagination/scroll
-        for hit in res:
+        for hit in s.scan():
             self.files[hit.type] = hit
 
 
