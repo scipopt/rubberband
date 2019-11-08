@@ -445,17 +445,14 @@ class TestSet(DocType):
 
         s = Result.search()
         # it's generally discouraged to return a large number of elements from a search query
-        s = s.query("has_parent", type="testset", query=Q('term', id=self.id))
-        totalchildren = s.count()
-        s = s[0:totalchildren]
-        res = s.execute()
+        s = s.filter("term", _parent=self.meta.id)
         self.children = {}
 
         children = {}
         children['ids'] = {}
         children['names'] = {}
         # this uses pagination/scroll
-        for hit in res:
+        for hit in s.scan():
             children['ids']["{} ({})".format(hit.instance_name, hit.instance_id)] = hit
             children['names']["{}".format(hit.instance_name)] = hit
 
