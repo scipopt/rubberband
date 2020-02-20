@@ -58,7 +58,9 @@ function fillResultTable(data) {
   }
 
   // methods from static/js/testruns.js
+  color_tablerows();
   init_all_stars();
+  select_all_compares();
 }
 
 // on click on search-button, update the resultstable according to the search fields

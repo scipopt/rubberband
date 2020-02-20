@@ -136,6 +136,35 @@ function align_table_columns_to(id, others) {
   }
 }
 
+
+function color_tablerows() {
+  var infolist = document.getElementsByClassName("rb-table-info");
+  for (var i=0; i<infolist.length; i=i+1) {
+    var element = infolist[i];
+    var title = element.title;
+    title = title.slice(6,title.length);
+    if (title != "") {
+      tags = title.split(", ");
+      for (var j=0; j<tags.length; j=j+1) {
+        tag = tags[j];
+        if (tag == "unreliable") {
+          element.parentElement.style.textDecoration = "line-through";
+        } else if (tag == "performance") {
+          element.parentElement.style.fontWeight = "bold";
+        } else if (tag == "master") {
+          // powderblue
+          element.parentElement.style.backgroundColor = "#d8f0f2";
+        } else if (tag == "bugfix") {
+          // thistle
+          element.parentElement.style.backgroundColor = "#ecdfeb";
+        } else if (tag == "consexpr") {
+          // moccasin
+          element.parentElement.style.backgroundColor = "#fff1da";
+        }
+      }
+    }
+  }
+}
 // ======================================================
 // listeners for elements
 
@@ -159,6 +188,7 @@ $('form#compare').on('change', 'input.rb-tr-checkbox', function (e) {
 // ======================================================
 // when document is ready do ...
 $(document).ready(function(){
+  color_tablerows();
   init_all_stars();
   select_all_compares();
 });
