@@ -2,6 +2,7 @@
 from lxml import html
 import pandas as pd
 
+import re
 import json
 import logging
 
@@ -153,6 +154,7 @@ class EvaluationView(BaseHandler):
         tolerance = self.get_argument("tolerance")
         if tolerance == "":
             tolerance = 1e-6
+        droplist = self.get_argument("droplist")
 
         # read testrunids
         testrun_ids = self.get_argument("testruns")
@@ -165,7 +167,7 @@ class EvaluationView(BaseHandler):
         testruns = get_testruns(testrunids)
 
         # evaluate with ipet
-        ex = setup_experiment(testruns)
+        ex, excluded_inst = setup_experiment(testruns, droplist)
         ev = setup_evaluation(evalfile, ALL_SOLU, tolerance,
                 evalstring=(style is not None and style == "latex"))
 
@@ -207,11 +209,14 @@ class EvaluationView(BaseHandler):
             html_agg = process_ipet_table(html_agg, {**repres["long"], **repres["all"]},
                     add_ind=True, swap=False)
 
+            message = ", ".join(set(excluded_inst))
+            print(message)
             # render to strings
             html_tables = self.render_string("results/evaluation.html",
                     ipet_long_table=html_long,
                     ipet_aggregated_table=html_agg,
-                    columns=cols_dict).decode("utf-8")
+                    columns=cols_dict,
+                    psmessage=message).decode("utf-8")
 
             # send evaluated data
             mydict = {"rb-ipet-eval-result": html_tables,
@@ -389,7 +394,7 @@ def get_replacement_dict(cols, colindex):
     return repl
 
 
-def setup_experiment(testruns):
+def setup_experiment(testruns, droplist):
     """
     Setup an ipet experiment for the given testruns.
 
@@ -406,6 +411,18 @@ def setup_experiment(testruns):
     ex = Experiment()
     ex.addSoluFile(ALL_SOLU)
 
+    regexlist = []
+    for x in droplist.split(","):
+        # defaultvalue, if empty we don't want to exclude everything
+        if x == "":
+            continue
+        try:
+            y = re.compile(x)
+            regexlist.append(y)
+        except:
+            pass
+
+    excluded_inst = []
     # get data
     for t in testruns:
         # update representation
@@ -414,10 +431,20 @@ def setup_experiment(testruns):
         # collect data and pass to ipet
         ipettestrun = TestRun()
         tr_raw_data = t.get_data(add_data=additional_data)
-        ipettestrun.data = pd.DataFrame(tr_raw_data).T
+
+        tr_data = {}
+        for i in tr_raw_data.keys():
+            for r in regexlist:
+                if r.match(i):
+                    excluded_inst.append(i)
+                    break
+            else:
+                tr_data[i] = tr_raw_data[i]
+
+        ipettestrun.data = pd.DataFrame(tr_data).T
 
         ex.testruns.append(ipettestrun)
-    return ex
+    return ex, excluded_inst
 
 
 def process_ipet_table(table, repres, add_ind=False, swap=False):

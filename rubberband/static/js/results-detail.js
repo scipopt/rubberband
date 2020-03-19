@@ -73,6 +73,8 @@ function getData() {
   evalid = $("#ipet-eval-file-select").val();
   defaultrun = $("#rb-legend-table input[type='radio']:checked").val();
   tolerance = formattolerance( $("#eval-tolerance-slider")[0].value);
+  console.log($("#eval-exclude-input"));
+  droplist = $("#eval-exclude-input")[0].value;
 
   /* get data from url */
   url = window.location.href;
@@ -84,7 +86,7 @@ function getData() {
   if (getstr != "") {
     idlist = idlist + "," + getstr;
   }
-  evalurl = "/eval/" + evalid + idlist + "&tolerance=" + tolerance + "&default=" + defaultrun;
+  evalurl = "/eval/" + evalid + idlist + "&tolerance=" + tolerance + "&default=" + defaultrun + "&droplist=" + droplist;
 
   return {
     form: { evalid: evalid, defaultrun: defaultrun, tolerance: tolerance, },

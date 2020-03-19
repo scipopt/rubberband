@@ -7,7 +7,7 @@
 
   <!-- eval form ==================================================================== -->
   <div class="alert alert-info">
-    <form id="ipet-eval-form">
+    <form id="ipet-eval-form" onSubmit="return false;">
 
       <h4 data-toggle="collapse" href="#rb-ipet-eval-advanced-options" role="button" class="rb-details-tab-title rb-collapser">Advanced Options<span class="fa fa-angle-down small float-right p-2"></span></h4>
 
@@ -15,11 +15,11 @@
         <p>Choose the default testrun in the table at the top of the page.</p>
 
         <div class="row">
-          <div class="col-12 col-sm-12 col-md-10 col-lg-8 col-xl-6">
+          <div class="col-12 col-sm-12">
             <div class="form-group row align-items-center">
 
-              <label class="col-6">Adjust feasibility tolerance:</label>
-              <div class="col-6">
+              <label class="col-3">Adjust feasibility tolerance:</label>
+              <div class="col-9">
                 <div class="row">
 
                   <div class="col-9">
@@ -35,6 +35,19 @@
             </div> <!-- end form-group row -->
           </div>
         </div> <!-- end row -->
+
+        <div class="row">
+          <div class="col-12 col-sm-12">
+            <div class="form-group row align-items-center">
+              <label class="col-3" for="eval-exclude-input">Exclude instances:</label>
+              <input class="col-9" type="text" class="form-control" id="eval-exclude-input" aria-describedby="ipet-exclude-help">
+              <small id="ipet-exclude-help" class="col-12 form-text text-muted">Give a comma-seperated list of
+                <a href="https://docs.python.org/3/library/re.html">regular expressions</a>.</small>
+
+            </div> <!-- end form-group row -->
+          </div>
+        </div> <!-- end row -->
+
       </div>
 
       <h4>Options</h4>
