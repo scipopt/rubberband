@@ -209,7 +209,7 @@ class EvaluationView(BaseHandler):
             html_agg = process_ipet_table(html_agg, {**repres["long"], **repres["all"]},
                     add_ind=True, swap=False)
 
-            message = ", ".join(set(excluded_inst))
+            message = ", ".join(sorted(list(set(excluded_inst))))
             print(message)
             # render to strings
             html_tables = self.render_string("results/evaluation.html",
