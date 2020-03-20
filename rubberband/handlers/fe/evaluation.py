@@ -54,7 +54,8 @@ class EvaluationView(BaseHandler):
         if style is not None and style == "latex":
             evalfile = '''<?xml version="1.0" ?>
 <!-- group by githash - exclude fails & aborts -->
-<Evaluation comparecolformat="%.3f" index="ProblemName Seed Permutation Settings LPSolver GitHash" indexsplit="3">
+<Evaluation comparecolformat="%.3f" index="ProblemName Seed Permutation Settings LPSolver GitHash"
+indexsplit="3">
     <Column formatstr="%.2f" name="T" origcolname="SolvingTime" minval="0.5"
         comp="quot shift. by 1" maxval="TimeLimit" alternative="TimeLimit"
         reduction="shmean shift. by 1">

@@ -2,7 +2,7 @@
 import gzip
 import json
 import datetime
-from elasticsearch_dsl import DocType, MetaField, String, Date, Float, Nested, Q
+from elasticsearch_dsl import DocType, MetaField, String, Date, Float, Nested
 from ipet import Key
 
 from rubberband.constants import INFINITY_KEYS, INFINITY_MASK, ELASTICSEARCH_INDEX, INFINITY_FLOAT
