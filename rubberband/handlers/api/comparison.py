@@ -62,7 +62,7 @@ class ComparisonEndpoint(BaseHandler):
             tolerance = 1e-6
 
         # evaluate with ipet
-        ex = setup_experiment(testruns + [baserun], "")
+        ex, _ = setup_experiment(testruns + [baserun], "")
         evalstring = """<?xml version="1.0" ?>
 <Evaluation comparecolformat="%.3f" index="ProblemName Settings Seed Permutation GitHash"
     indexsplit="-1" fillin="True">

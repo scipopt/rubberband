@@ -395,7 +395,7 @@ def get_replacement_dict(cols, colindex):
     return repl
 
 
-def setup_experiment(testruns, droplist):
+def setup_experiment(testruns, droplist=""):
     """
     Setup an ipet experiment for the given testruns.
 
