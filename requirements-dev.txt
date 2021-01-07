@@ -17,7 +17,7 @@ idna==2.8
 imagesize==1.1.0
 -e git+https://github.com/GregorCH/ipet.git@c66f6a93b041f9244c8bd604e4f132d9e4bd17e8#egg=ipet
 Jinja2==2.10
-lxml==4.3.0
+lxml==4.6.2
 MarkupSafe==1.1.0
 mccabe==0.6.1
 more-itertools==5.0.0
