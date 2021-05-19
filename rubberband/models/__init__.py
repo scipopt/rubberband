@@ -354,10 +354,17 @@ class TestSet(DocType):
         if key == Key.GitHash:
             return self.git_hash
         if key == "ReportVersion":
-            return "\\{}~{}+\\{}~{}".format(str.lower(self.solver),
-                    self.solver_version,
-                    str.lower(self.lp_solver),
-                    self.lp_solver_version)
+            if self.lp_solver is None:
+                if self.solver_version is None:
+                    return "\\{}".format(str.lower(self.solver))
+                else:
+                    return "\\{}~{}".format(str.lower(self.solver),
+                            self.solver_version)
+            else:
+                return "\\{}~{}+\\{}~{}".format(str.lower(self.solver),
+                        self.solver_version,
+                        str.lower(self.lp_solver),
+                        self.lp_solver_version)
 
     def json(self, ftype=".out"):
         """

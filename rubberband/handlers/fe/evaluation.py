@@ -233,6 +233,7 @@ indexsplit="3">
             for i in poss:
                 if i in df.columns:
                     colindex = i
+                    break
 
             cols = [c for c in df.columns if (c in ['Group', colindex, '_solved_'] or c.
                 startswith("N_") or c.startswith("T_")) and not c.endswith(")p")]
