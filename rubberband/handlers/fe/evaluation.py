@@ -123,7 +123,7 @@ indexsplit="3">
             <Value active="True" name="MIPLIB2017"/>
         </Filter>
     </FilterGroup>
-     <FilterGroup active="True" filtertype="intersection" name="nonconvex">
+     <FilterGroup active="True" filtertype="intersection" name="\\nonconvex">
         <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
         <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter active="True" anytestrun="all" datakey="ProblemName" operator="keep">
@@ -1334,7 +1334,7 @@ indexsplit="3">
             <Value active="True" name="worst"/>
         </Filter>
     </FilterGroup>
-    <FilterGroup active="True" filtertype="intersection" name="convex">
+    <FilterGroup active="True" filtertype="intersection" name="\\convex">
         <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
         <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter active="True" anytestrun="all" datakey="ProblemName" operator="keep">
@@ -1834,7 +1834,7 @@ indexsplit="3">
             rows = ['\cleaninst', '\\affected', '\\bracket{0}{tilim}', '\\bracket{1}{tilim}',
                     '\\bracket{10}{tilim}', '\\bracket{100}{tilim}',
                     '\\bracket{1000}{tilim}', '\difftimeouts', '\\alloptimal',
-                    '\miplib~2010', '\miplib~2017', '\coral', 'continuous', 'integer']
+                    '\\convex', '\\nonconvex', '\miplib~2017', '\coral', 'continuous', 'integer']
 
             df_rel = df_rel.pivot_table(index=['Group'], columns=[colindex]).swaplevel(
                     axis=1).sort_index(axis=1, level=0, sort_remaining=True, ascending=False)
