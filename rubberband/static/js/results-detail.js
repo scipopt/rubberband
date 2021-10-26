@@ -81,7 +81,7 @@ function getData() {
   search = window.location.search;
 
   // construct evaluation url
-  getstr = (url.split("compare"+'=')[1] || '').split('&')[0];
+  getstr = (url.split("compare"+'=')[1] || '').split('&')[0].split("#")[0];
   idlist = "?testruns=" + path.split("/")[2];
   if (getstr != "") {
     idlist = idlist + "," + getstr;
