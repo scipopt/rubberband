@@ -966,6 +966,7 @@ indexsplit="3">
             <Value active="True" name="rocket200"/>
             <Value active="True" name="rocket400"/>
             <Value active="True" name="rocket50"/>
+            <Value active="True" name="routingdelay_proj"/>
             <Value active="True" name="saa_2"/>
             <Value active="True" name="sep1"/>
             <Value active="True" name="sepasequ_complex"/>
@@ -1330,6 +1331,7 @@ indexsplit="3">
             <Value active="True" name="waterund36"/>
             <Value active="True" name="waterx"/>
             <Value active="True" name="waterz"/>
+            <Value active="True" name="weapons"/>
             <Value active="True" name="windfac"/>
             <Value active="True" name="worst"/>
         </Filter>
@@ -1808,9 +1810,16 @@ indexsplit="3">
             # send evaluated data
             mydict = {"rb-ipet-eval-result": html_tables,
                       "rb-ipet-buttons": fg_buttons_str}
-            self.write(json.dumps(mydict))
+            response = json.dumps(mydict)
+            self.write(response)
+            self.flush()
+
 
         elif style == "latex":
+            if aggtable.empty:
+                self.write_error(status_code=204, msg="Sorry, aggregated table is empty. Aborting.")
+                self.flush()
+                return
             # generate a table that can be used in the release-report
             df = aggtable
             # care for the columns

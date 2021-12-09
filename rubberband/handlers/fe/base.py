@@ -148,7 +148,9 @@ class BaseHandler(RequestHandler):
         if ("exc_info" in kwargs):
             log_message = "\n".join(traceback.format_exception(*kwargs["exc_info"]))
 
-        if status_code == 400:
+        if status_code == 204:
+            reason = "No content"
+        elif status_code == 400:
             reason = "Bad Request"
         elif status_code == 403:
             reason = "Forbidden"
