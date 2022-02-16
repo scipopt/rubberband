@@ -48,6 +48,7 @@ def get_user_access_level(user_mail):
     group_users = client.groups.get(group_id).members.list(query=user_mail)
     project_users = client.projects.get(
             options.gitlab_project_ids["scip"]).members.list(query=user_mail)
+    min_access = 20
     # logging.info(msg="GROUP LIST LENGTH IS {}".format(len(group_users)))
     # logging.info(msg="PROJECT LIST LENGTH IS {}".format(len(project_users)))
     # for i in project_users:
@@ -63,12 +64,12 @@ def get_user_access_level(user_mail):
     # so something is wrong, return 0
     if ((len(group_users) > 1 or len(project_users) > 1) or (
           len(group_users) == 0 and len(project_users) == 0)):
-        return 0
+        return min_access
     if len(group_users + project_users) == 2:
         group_id = group_users[0].id
         project_id = project_users[0].id
         if not group_id == project_id:
-            return 0
+            return min_access
         access_level = group_users[0].access_level
         project_access_level = project_users[0].access_level
         access_level = max(access_level, project_access_level)
@@ -79,7 +80,7 @@ def get_user_access_level(user_mail):
             access_level = project_users[0].access_level
     # logging.info(msg="ACCESS LEVEL IS {}".format(access_level))
     # logging.info(msg="MAX ACCESS LEVEL IS {}".format(max(20,access_level)))
-    return max(20, access_level)
+    return max(min_access, access_level)
 
 
 
