@@ -79,7 +79,7 @@ def get_user_access_level(user_mail):
             access_level = project_users[0].access_level
     # logging.info(msg="ACCESS LEVEL IS {}".format(access_level))
     # logging.info(msg="MAX ACCESS LEVEL IS {}".format(max(20,access_level)))
-    return math.max(20, access_level)
+    return max(20, access_level)
 
 
 
