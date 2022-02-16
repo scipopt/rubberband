@@ -37,6 +37,11 @@ IPET_EVALUATIONS = {
         11: {"path": STATIC_FILES_DIR + "evalclusterbench_queuenode.xml",
             "name": "clusterbenchmark queuenodes"},
         12: {"path": STATIC_FILES_DIR + "papilo_evaluation.xml",
+            "name": "evaluation papilo"},
+        13: {"path": STATIC_FILES_DIR + "papilo_evaluation_solver_specific.xml",
+            "name": "evaluation papilo solver specific"},
+        14: {"path": STATIC_FILES_DIR + "papilo_evaluation_groupsettings.xml",
+            "name": "evaluation papilo group settings"},
         }
 # date sorting works only with the empty NONE_DISPLAY at the moment
 NONE_DISPLAY = ""
