@@ -15,16 +15,16 @@ flake8==3.7.5
 future==0.17.1
 idna==2.8
 imagesize==1.1.0
--e git+https://github.com/GregorCH/ipet.git@c66f6a93b041f9244c8bd604e4f132d9e4bd17e8#egg=ipet
+-e git+https://github.com/GregorCH/ipet.git@5224ce92fb2b302c85ad48516fbe6d438832a94f#egg=ipet
 Jinja2==2.10
 lxml==4.3.0
 MarkupSafe==1.1.0
 mccabe==0.6.1
 more-itertools==5.0.0
-numpy==1.16.1
-numpydoc==0.8.0
+numpy
+numpydoc
 packaging==19.0
-pandas==0.24.1
+pandas
 pep257==0.7.0
 pluggy==0.8.1
 py==1.7.0
@@ -41,7 +41,7 @@ PyYAML==3.13
 recommonmark==0.5.0
 requests==2.21.0
 requests-toolbelt==0.9.1
-scipy==1.2.0
+scipy
 six==1.12.0
 snowballstemmer==1.2.1
 Sphinx==1.8.4

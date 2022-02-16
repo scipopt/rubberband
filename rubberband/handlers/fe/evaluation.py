@@ -35,19 +35,20 @@ class EvaluationView(BaseHandler):
         """
         # default and implicit style is ipetevaluation. if given latex, generate a table in the
         # style of the release report
+        # logging.info(msg="starting eval with uri".format(self.request.uri))
         style = self.get_argument("style", None)
 
         # setup logger
         if style is None:
 
-            ipetlogger = logging.getLogger("ipet")
+            # ipetlogger = logging.getLogger("ipet")
             rbhandler = RBLogHandler(self)
 
             rbhandler.setLevel(logging.INFO)
             formatter = logging.Formatter('%(name)s - %(levelname)s - %(message)s')
             rbhandler.setFormatter(formatter)
 
-            ipetlogger.addHandler(rbhandler)
+            # ipetlogger.addHandler(rbhandler)
 
         # get evalfile
         evalfile = IPET_EVALUATIONS[int(eval_id)]
@@ -1789,7 +1790,7 @@ indexsplit="3">
             html_agg = table_to_html(aggtable, ev, html_id="ipet-aggregated-table",
                     add_class=add_classes)
 
-            ipetlogger.removeHandler(rbhandler)
+            # ipetlogger.removeHandler(rbhandler)
             rbhandler.close()
 
             # postprocessing
@@ -1820,6 +1821,7 @@ indexsplit="3">
                 self.write_error(status_code=204, msg="Sorry, aggregated table is empty. Aborting.")
                 self.flush()
                 return
+
             # generate a table that can be used in the release-report
             df = aggtable
             # care for the columns

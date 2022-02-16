@@ -1,7 +1,7 @@
 {% if file.solver == "GENIOS" %}
-{% set add_cols = [{"name": "MemRatio", "short": "Mem",  "type": "number"}] %}
+{% set add_cols = [{"name": "Status", "short": "Stat", "type": "text"}] %}
 {% else %}
-{% set add_cols = [{"name": "Status",   "short": "Stat", "type": "text"}] %}
+{% set add_cols = [{"name": "Status", "short": "Stat", "type": "text"}] %}
 {% end %}
 {% set cols = [
   {"name": "Instance Name", "short": "Inst", "type": "text"},

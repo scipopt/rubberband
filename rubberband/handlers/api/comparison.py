@@ -88,7 +88,7 @@ class ComparisonEndpoint(BaseHandler):
         set_defaultgroup(ev, ex, base_id)
 
         # do evaluation
-        _, aggtable = ev.evaluate(ex)
+        longtable, aggtable = ev.evaluate(ex)
 
         # df = aggtable[["_count_","_solved_","T_sgm(1.0)Q","T_sgm(1.0)"]]
 

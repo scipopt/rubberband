@@ -8,9 +8,8 @@ INFINITY_FLOAT = float('inf')
 INFINITY_DISPLAY = 1e+20
 ZIPPED_SUFFIX = ".gz"
 FILES_DIR = "files/"
+ALL_SOLU = FILES_DIR + "instancedata/database/instancedb.sqlite3"
 STATIC_FILES_DIR = FILES_DIR + "static/"
-# ALL_SOLU = "instancedata/database/instancedb.sqlite3"
-ALL_SOLU = STATIC_FILES_DIR + "all.solu"
 ADD_READERS = STATIC_FILES_DIR + "additional_readers.xml"
 IPET_EVALUATIONS = {
         0: {"path": STATIC_FILES_DIR + "eval_singleruns_exclude.xml",
@@ -23,6 +22,21 @@ IPET_EVALUATIONS = {
             "name": "group by githash - exclude fails & aborts"},
         4: {"path": STATIC_FILES_DIR + "eval_groupsettings_exclude.xml",
             "name": "group by settings - exclude fails & aborts"},
+        5: {"path": STATIC_FILES_DIR + "eval_grouplpsolver_exclude.xml",
+            "name": "group by LP solver - exclude fails & aborts"},
+        6: {"path": STATIC_FILES_DIR + "eval_groupsettings_exclude_detailed.xml",
+            "name": "detailed view - group settings, exclude"},
+        7: {"path": STATIC_FILES_DIR + "eval_groupgithash_exclude_detailed.xml",
+            "name": "detailed view - group githash, exclude"},
+        8: {"path": STATIC_FILES_DIR + "evaluation-pure.xml",
+            "name": "pure evaluation for sap"},
+        9: {"path": STATIC_FILES_DIR + "evaluation-deco.xml",
+            "name": "deco evaluation for sap"},
+        10: {"path": STATIC_FILES_DIR + "evalclusterbench_queue.xml",
+            "name": "clusterbenchmark queues"},
+        11: {"path": STATIC_FILES_DIR + "evalclusterbench_queuenode.xml",
+            "name": "clusterbenchmark queuenodes"},
+        12: {"path": STATIC_FILES_DIR + "papilo_evaluation.xml",
         }
 # date sorting works only with the empty NONE_DISPLAY at the moment
 NONE_DISPLAY = ""

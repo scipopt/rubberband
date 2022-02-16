@@ -86,6 +86,7 @@ def make_app(project_root):
     # of tornado.web.RequestHandler. Those classes define get() or post() methods
     # to handle HTTP GET or POST requests to that URL."
     # these patterns are defined in routes.py
+    # default:  app = Application(routes, **settings)
     app = Application(
             [(HostMatches(r'(localhost|127\.0\.0\.1|{}|)'.format(
                 options.prod_url.replace("https://", ""))), routes)],
