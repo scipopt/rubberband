@@ -8,7 +8,7 @@
         <Aggregation aggregation="shmean" name="sgm" shiftby="100.0" />
     </Column>
     <Column formatstr="%.4f" name="PDI" origcolname="PrimalDualIntegral" comp="quot" reduction="mean">
-        <Aggregation aggregation="mean" name="am"/>
+        <Aggregation aggregation="shmean" name="sgm" shiftby="1000.0" />
     </Column>
     <FilterGroup name="all"/>
     <FilterGroup name="clean">
