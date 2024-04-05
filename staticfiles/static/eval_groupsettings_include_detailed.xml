@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
-<!-- group by githash - exclude fails & aborts -->
-<Evaluation comparecolformat="%.3f" index="ProblemName GitHash" indexsplit="-1">
+<!-- group by settings - include fails & aborts - detailed-->
+<Evaluation comparecolformat="%.3f" index="ProblemName Seed Permutation Settings" indexsplit="3">
     <Column formatstr="%.2f" name="T" origcolname="SolvingTime" minval="0.5" comp="quot shift. by 1" maxval="TimeLimit" alternative="TimeLimit" reduction="shmean shift. by 1">
         <Aggregation aggregation="shmean" name="sgm" shiftby="1.0"/>
     </Column>
@@ -15,98 +15,65 @@
       <Column origcolname="PrimalDualIntegral" />
       <Aggregation aggregation="mean" name="am"/>
     </Column>
+    <Column name="St" origcolname="Status"/>
     <FilterGroup name="all"/>
-    <FilterGroup name="clean">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
-    </FilterGroup>
     <FilterGroup active="True" filtertype="intersection" name="affected">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter active="True" anytestrun="one" datakey="LP_Iterations_dualLP" operator="diff"/>
         <Filter active="True" anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
     </FilterGroup>
     <FilterGroup active="True" filtertype="intersection" name="unaffected">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter active="True" anytestrun="all" datakey="LP_Iterations_dualLP" operator="equal"/>
     </FilterGroup>
     <FilterGroup name="[0,tilim]">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
     </FilterGroup>
     <FilterGroup name="[1,tilim]">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
         <Filter anytestrun="one" expression1="T" expression2="1" operator="ge"/>
     </FilterGroup>
     <FilterGroup name="[10,tilim]">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
         <Filter anytestrun="one" expression1="T" expression2="10" operator="ge"/>
     </FilterGroup>
     <FilterGroup name="[100,tilim]">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
         <Filter anytestrun="one" expression1="T" expression2="100" operator="ge"/>
     </FilterGroup>
     <FilterGroup name="[1000,tilim]">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
         <Filter anytestrun="one" expression1="T" expression2="1000" operator="ge"/>
     </FilterGroup>
     <FilterGroup name="[0,10)">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
         <Filter anytestrun="all" expression1="T" expression2="10" operator="lt"/>
     </FilterGroup>
     <FilterGroup name="[0,100)">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
         <Filter anytestrun="all" expression1="T" expression2="100" operator="lt"/>
     </FilterGroup>
     <FilterGroup name="all-optimal">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter anytestrun="all" expression1="_solved_" expression2="1" operator="eq"/>
     </FilterGroup>
     <FilterGroup name="diff-timeouts">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
         <Filter anytestrun="one" expression1="_solved_" expression2="0" operator="eq"/>
     </FilterGroup>
     <FilterGroup active="True" filtertype="intersection" name="MIPLIB2017">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter active="True" anytestrun="all" datakey="ProblemName" operator="keep">
             <Value active="True" name="MIPLIB2017"/>
         </Filter>
     </FilterGroup>
     <FilterGroup active="True" filtertype="intersection" name="MIPLIB2010 (87)">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter active="True" anytestrun="all" datakey="ProblemName" operator="keep">
             <Value active="True" name="MIPLIB2010"/>
         </Filter>
     </FilterGroup>
     <FilterGroup active="True" filtertype="intersection" name="MMM (168)">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter active="True" anytestrun="one" datakey="ProblemName" operator="keep">
             <Value active="True" name="MMM"/>
         </Filter>
     </FilterGroup>
     <FilterGroup active="True" filtertype="intersection" name="MMM compl (387)">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter active="True" anytestrun="one" datakey="ProblemName" operator="keep">
             <Value active="True" name="air03"/>
             <Value active="True" name="blend2"/>
@@ -498,31 +465,21 @@
         </Filter>
     </FilterGroup>
     <FilterGroup active="True" filtertype="intersection" name="Cor@l (349)">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter active="True" anytestrun="one" datakey="ProblemName" operator="keep">
             <Value active="True" name="COR@L"/>
         </Filter>
     </FilterGroup>
     <FilterGroup active="True" filtertype="intersection" name="continuous">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter anytestrun="all" expression1="PresolvedProblem_ContVars" expression2="PresolvedProblem_Vars" operator="eq"/>
     </FilterGroup>
     <FilterGroup active="True" filtertype="intersection" name="integer">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter anytestrun="all" expression1="PresolvedProblem_ContVars" expression2="PresolvedProblem_Vars" operator="lt"/>
     </FilterGroup>
     <FilterGroup active="True" filtertype="intersection" name="diff-contint">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter anytestrun="one" expression1="PresolvedProblem_ContVars" expression2="PresolvedProblem_Vars" operator="eq"/>
         <Filter anytestrun="one" expression1="PresolvedProblem_ContVars" expression2="PresolvedProblem_Vars" operator="lt"/>
     </FilterGroup>
     <FilterGroup active="True" filtertype="intersection" name="nonconvex">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter active="True" anytestrun="one" datakey="ProblemName" operator="keep">
             <Value active="True" name="4stufen"/>
             <Value active="True" name="alkyl"/>
@@ -1734,8 +1691,6 @@
         </Filter>
     </FilterGroup>
     <FilterGroup active="True" filtertype="intersection" name="convex">
-        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
-        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
         <Filter active="True" anytestrun="one" datakey="ProblemName" operator="keep">
             <Value active="True" name="abel"/>
             <Value active="True" name="alan"/>

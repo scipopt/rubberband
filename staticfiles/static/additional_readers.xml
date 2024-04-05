@@ -20,6 +20,7 @@
 <Readers>
     <CustomReader datakey="TimeLimit" datatype="float" index="-1" name="MyTimeLimitReader" regpattern="^limits\/time" method="last"/>
     <CustomReader datakey="PrimalDualIntegral" datatype="float" index="1" name="PrimalDualIntegralReader" regpattern="^  Avg\. Gap" method="last"/>
+    <CustomReader datakey="InternalPrimalDualIntegral" datatype="float" index="1" name="InternalPrimalDualIntegralReader" regpattern="^  primal-dual" method="last"/>
     <CustomReader datakey="FirstPrimalBound" datatype="float" index="0" name="FirstPrimalBoundReader" regpattern="^  First Solution" method="last"/>
     <CustomReader datakey="NodesToFirst" datatype="int" index="2" name="NodesToFirstReader" regpattern="^  First Solution" method="last"/>
 </Readers>

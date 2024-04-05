@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
-<!-- group by githash - exclude fails & aborts -->
-<Evaluation comparecolformat="%.3f" index="ProblemName GitHash" indexsplit="-1">
+<!-- group by settings - exclude fails & aborts - detailed-->
+<Evaluation comparecolformat="%.3f" index="ProblemName Seed Permutation Settings" indexsplit="3">
     <Column formatstr="%.2f" name="T" origcolname="SolvingTime" minval="0.5" comp="quot shift. by 1" maxval="TimeLimit" alternative="TimeLimit" reduction="shmean shift. by 1">
         <Aggregation aggregation="shmean" name="sgm" shiftby="1.0"/>
     </Column>
@@ -15,6 +15,7 @@
       <Column origcolname="PrimalDualIntegral" />
       <Aggregation aggregation="mean" name="am"/>
     </Column>
+    <Column name="St" origcolname="Status"/>
     <FilterGroup name="all"/>
     <FilterGroup name="clean">
         <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>

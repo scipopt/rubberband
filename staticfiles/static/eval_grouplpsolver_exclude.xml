@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <!-- group by githash - exclude fails & aborts -->
-<Evaluation comparecolformat="%.3f" index="ProblemName GitHash" indexsplit="-1">
+<Evaluation comparecolformat="%.3f" index="ProblemName LPSolver" indexsplit="-1">
     <Column formatstr="%.2f" name="T" origcolname="SolvingTime" minval="0.5" comp="quot shift. by 1" maxval="TimeLimit" alternative="TimeLimit" reduction="shmean shift. by 1">
         <Aggregation aggregation="shmean" name="sgm" shiftby="1.0"/>
     </Column>
