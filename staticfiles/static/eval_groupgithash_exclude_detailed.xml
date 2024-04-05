@@ -4,16 +4,13 @@
     <Column formatstr="%.2f" name="T" origcolname="SolvingTime" minval="0.5" comp="quot shift. by 1" maxval="TimeLimit" alternative="TimeLimit" reduction="shmean shift. by 1">
         <Aggregation aggregation="shmean" name="sgm" shiftby="1.0"/>
     </Column>
-    <Column formatstr="%.2f" name="maxT" origcolname="SolvingTime" minval="0.5" comp="quot shift. by 1" maxval="TimeLimit" alternative="TimeLimit" reduction="max">
-        <Aggregation aggregation="shmean" name="sgm" shiftby="1.0"/>
-    </Column>
     <Column formatstr="%.0f" name="N" origcolname="Nodes" comp="quot shift. by 100" reduction="shmean shift. by 100">
         <Aggregation aggregation="shmean" name="sgm" shiftby="100.0" />
     </Column>
-    <Column  formatstr="%.1f" name="PDI" transformfunc="min" comp="quot" reduction="mean">
+    <Column  formatstr="%.1f" name="PDI" transformfunc="min" comp="quot shift. by 100" reduction="shmean shift. by 100">
       <Column origcolname="InternalPrimalDualIntegral" />
       <Column origcolname="PrimalDualIntegral" />
-      <Aggregation aggregation="mean" name="am"/>
+      <Aggregation aggregation="shmean" name="sgm" shiftby="100.0" />
     </Column>
     <Column name="St" origcolname="Status"/>
     <FilterGroup name="all"/>
