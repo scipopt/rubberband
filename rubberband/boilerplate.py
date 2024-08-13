@@ -1,6 +1,7 @@
 """Define variables and setup rubberband app."""
 import os
 import logging
+from urllib.parse import urlparse
 
 from tornado.options import define, options
 from tornado.web import Application
@@ -89,7 +90,7 @@ def make_app(project_root):
     # default:  app = Application(routes, **settings)
     app = Application(
             [(HostMatches(r'(localhost|127\.0\.0\.1|{}|)'.format(
-                options.prod_url.replace("https://", ""))), routes)],
+                urlparse(options.prod_url).hostname)), routes)],
             **settings)
 
     logging.info("Setting up Elasticsearch connection.")
