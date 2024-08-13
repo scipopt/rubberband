@@ -61,7 +61,7 @@ def make_app(project_root):
             format='%(asctime)s%(msecs)03d %(levelname)-5s %(name)-15s %(message)s',
             datefmt='%d-%m-%Y %H:%M:%S - ')
     loggr = logging.getLogger()
-    loggr.setLevel(level=20)
+    loggr.setLevel(level=logging.INFO)
     # Load options from environment
     config = "/etc/rubberband/app.cfg"
     if os.path.isfile(config):
