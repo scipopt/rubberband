@@ -11,8 +11,8 @@ Jinja2==2.10
 lxml==4.3.0
 MarkupSafe==1.1.0
 more-itertools==5.0.0
-numpy
-pandas
+numpy==1.16.1
+pandas==0.24.1
 pluggy==0.8.1
 py==1.7.0
 pypandoc==1.4
@@ -22,7 +22,7 @@ python-gitlab==1.7.0
 pytz==2018.9
 requests==2.21.0
 requests-toolbelt==0.9.1
-scipy
+scipy==1.2.0
 six==1.12.0
 toposort==1.5
 tornado==5.1.1
