@@ -144,31 +144,36 @@ def delete_expired_records():
         tr.delete()
 
 
-@main.command()
-def show_testsets():
-    ts = TestSet.search()
-    x = ts.query("bool", filter=[
-        Q("match", mode="debug"),
-        Q("match", run_initiator="debug")])
-    for r in x:
-        print(r)
+# print a subset of testsets
+#@main.command()
+#def show_testsets():
+#    '''
+#    Debug: Print testsets
+#    '''
+#    ts = TestSet.search()
+#    x = ts.query("bool", filter=[
+#        Q("match", mode="debug"),
+#        Q("match", run_initiator="debug")])
+#    for r in x:
+#        print(r)
 
 
-@main.command()
-def load_children():
-    ts_id = "AWzcqvmjmbWLq0fbeaAd"
-    ts = TestSet.get(id=ts_id)
-    print(ts.id)
-
-    ts_id = ts.id
-    s = Result.search().query('has_parent', type='testset', query=Q('term', id=ts_id))
-    total = s.count()
-    s = s[0:total]
-    res = s.execute()
-    print(res)
-    for r in res:
-        print(r)
-        print(r.meta.parent)
+# some debug query
+#@main.command()
+#def load_children():
+#    ts_id = "AWzcqvmjmbWLq0fbeaAd"
+#    ts = TestSet.get(id=ts_id)
+#    print(ts.id)
+#
+#    ts_id = ts.id
+#    s = Result.search().query('has_parent', type='testset', query=Q('term', id=ts_id))
+#    total = s.count()
+#    s = s[0:total]
+#    res = s.execute()
+#    print(res)
+#    for r in res:
+#        print(r)
+#        print(r.meta.parent)
 
 
 if __name__ == "__main__":
