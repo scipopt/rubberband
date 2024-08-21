@@ -218,6 +218,7 @@ texinfo_documents = [
 # -- Extension interface --------------------------
 
 def setup(app):
+    # for recent Sphinx, this needs to be changed to add_css_file()
     app.add_stylesheet('css/custom.css') # may also be an URL, files found in _static/css
     # app.add_javascript('file.js') # may also be an URL, files found in _static/
 
