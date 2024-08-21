@@ -34,6 +34,6 @@ Table of contents
    _static/folderstructure
    _static/crashcourses
 
-   _modules/rubberband/modules
+   _modules/rubberband/rubberband
 
    genindex
