@@ -2012,6 +2012,7 @@ def setup_experiment(testruns, droplist=""):
 
     regexlist = []
     for x in droplist.split(","):
+        x = x.strip()
         # defaultvalue, if empty we don't want to exclude everything
         if x == "":
             continue
