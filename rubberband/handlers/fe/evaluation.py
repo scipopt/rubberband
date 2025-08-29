@@ -1815,7 +1815,6 @@ indexsplit="3">
             self.write(response)
             self.flush()
 
-
         elif style == "latex":
             if aggtable.empty:
                 self.write_error(status_code=204, msg="Sorry, aggregated table is empty. Aborting.")

@@ -5,6 +5,7 @@ from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Q, Search
 from elasticsearch_dsl.connections import connections
 import glob
+import logging
 import os.path
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -32,6 +33,7 @@ def delete_index():
     '''
     Delete the current index.
     '''
+    logging.info('Deleting the current index')
     conn = connections.get_connection()
     conn.indices.delete(index=ELASTICSEARCH_INDEX)
 
@@ -41,6 +43,7 @@ def create_index():
     '''
     Create an index with the the required mappings (Result, File, TestSet).
     '''
+    logging.info('Creating index')
     Result.init()
     File.init()
     TestSet.init()
@@ -51,6 +54,7 @@ def populate_index():
     '''
     Seed Elasticsearch with results from the tests/data directory.
     '''
+    logging.info('Populating index')
     filepath = os.path.join(APP_ROOT, "tests", "data")
     out_files = glob.glob(os.path.join(filepath, "*.out"))
     set_files = glob.glob(os.path.join(filepath, "*.set"))
@@ -89,50 +93,13 @@ def populate_index():
 
 
 @main.command()
-def update_db():
-    '''
-    Update old datastructures to new ones.
-    '''
-    ts = TestSet.search()
-    ts = ts.query("bool", filter=[
-        Q("match", mode="debug"),
-        Q("match", run_initiator="adm_timo")])
-    for t in ts.scan():
-        # add expirationdate to debugruns that have none
-        if t.expirationdate is None and t.mode == "debug" and t.run_initiator == "adm_timo":
-            t.expirationdate = t.index_timestamp + relativedelta(months=1)
-            print(t)
-            #t.save()
-
-        # # clean up a misunderstanding
-        # if t.opt_flag not in ["spx", "spx1", "spx2", "cpx"]:
-        #     if t.lp_solver == "CPLEX":
-        #         t.opt_flag = "cpx"
-        #     elif t.lp_solver == "SoPlex":
-        #         t.opt_flag = "spx"
-
-        # save the original upload timestamp
-        # if getattr(t, "upload_timestamp", None) is None:
-        #     t.upload_timestamp = t.index_timestamp
-        #     t.uploader = t.run_initiator
-
-        # continue
-        # perform updates on the children
-        # t.load_children()
-        # for i in t.children.to_dict().values():
-        #     # update the weird ipet statuses
-        #     if i.Status == "solved_not_verified":
-        #         i.Status = "solved not verified"
-        #         i.save()
-
-
-@main.command()
 def delete_expired_records():
     '''
     Delete TestSets whose expirationdate lies in the past.
     If a TestSet does have an expirationdate set, then it won't get deleted here.
     This should be run regularly (nightly, weekly)
     '''
+    logging.info('Deleting expired records')
     t = TestSet.search()
     t = t.filter('range', **{'expirationdate':{'lte':'now'}})
     t = t.query("bool", filter=[
@@ -142,38 +109,6 @@ def delete_expired_records():
         print("delete testset", tr.expirationdate, tr.mode, tr.index_timestamp, tr.run_initiator)
         tr.delete_all_associations()
         tr.delete()
-
-
-# print a subset of testsets
-#@main.command()
-#def show_testsets():
-#    '''
-#    Debug: Print testsets
-#    '''
-#    ts = TestSet.search()
-#    x = ts.query("bool", filter=[
-#        Q("match", mode="debug"),
-#        Q("match", run_initiator="debug")])
-#    for r in x:
-#        print(r)
-
-
-# some debug query
-#@main.command()
-#def load_children():
-#    ts_id = "AWzcqvmjmbWLq0fbeaAd"
-#    ts = TestSet.get(id=ts_id)
-#    print(ts.id)
-#
-#    ts_id = ts.id
-#    s = Result.search().query('has_parent', type='testset', query=Q('term', id=ts_id))
-#    total = s.count()
-#    s = s[0:total]
-#    res = s.execute()
-#    print(res)
-#    for r in res:
-#        print(r)
-#        print(r.meta.parent)
 
 
 if __name__ == "__main__":

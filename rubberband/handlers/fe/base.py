@@ -30,6 +30,9 @@ class BaseHandler(RequestHandler):
 
     def has_permission(self, testrun=None, action="read"):
         """Decide whether user is permitted to interact with testrun."""
+        if self.settings["debug"]:
+            return True
+
         usr = get_username(self.current_user).lower()
         if testrun is not None:
             if action == "delete":
