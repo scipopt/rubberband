@@ -15,7 +15,7 @@ class HelpView(BaseHandler):
             "What is Rubberband?":
                 "Rubberband is a flexible web view and analysis platform for solver log files of mathematical optimization software, backed by Elasticsearch.", # noqa
             "Where do i report errors and other issues?":
-                "Rubberband is a project developed on GitHub, you can post your issue <a href='https://github.com/ambros-gleixner/rubberband/issues'>here</a>.", # noqa
+                "Rubberband is a project developed on GitHub, you can post your issue <a href='https://github.com/scipopt/rubberband/issues'>here</a>.", # noqa
             "How do I interpret the IPET tables in the evaluation view of the results?":
                 """<p>
                 In the IPET long table all instances are displayed. These that are only present in one testrun have a NaN in one of the columns (i.e. Time).

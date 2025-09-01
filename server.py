@@ -1,7 +1,6 @@
 # starting from this file
 
 import os
-import logging
 import tornado.ioloop
 import tornado.httpserver
 

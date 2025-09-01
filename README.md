@@ -1,7 +1,5 @@
 # Rubberband
 
-[![Build Status](https://travis-ci.org/xmunoz/rubberband.svg?branch=master)](https://travis-ci.org/xmunoz/rubberband)
-
 A flexible web view and analysis platform for solver log files of mathematical optimization software, backed by Elasticsearch.
 
 - [Development](#development)
@@ -20,14 +18,18 @@ A flexible web view and analysis platform for solver log files of mathematical o
 
 This is a detailed description of how to set up Rubberband.
 
+### Install system requirements
+
+```
+sudo apt install git curl libffi-dev libssl-dev libsqlite3-dev libbz2-dev libncurses-dev libreadline-dev liblzma-dev
+```
+
 ### Installing Elasticsearch
 
 Java 8 is [required](https://www.elastic.co/guide/en/elasticsearch/reference/2.4/setup.html#jvm-version) to run Elasticsearch. For Ubuntu, you can install Java 8 this way.
 ```
-sudo apt-get install python-software-properties
-sudo add-apt-repository ppa:webupd8team/java
-sudo apt-get update
-sudo apt-get install oracle-java8-installer
+sudo apt update
+sudo apt install openjdk-8-jdk
 ```
 
 To confirm that Java is properly installed, check the version.
@@ -43,7 +45,7 @@ Now you're ready to install Elasticsearch. NOTE: Elasticsearch is rapidly develo
 ```
 wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
 echo "deb http://packages.elastic.co/elasticsearch/2.x/debian stable main" | sudo tee -a /etc/apt/sources.list.d/elasticsearch-2.x.list
-sudo apt-get update && sudo apt-get install elasticsearch
+sudo apt update && sudo apt install elasticsearch
 ```
 
 General instructions for installing Elasticsearch can be found in the [offical Elasticsearch documentation](https://www.elastic.co/guide/en/elasticsearch/reference/2.4/_installation.html).
@@ -58,11 +60,18 @@ Rubberband is built on [tornado](http://www.tornadoweb.org/en/stable/) and [IPET
 sudo service elasticsearch start
 ```
 
-Now clone this repository and set up a virtual environment.
+Now install [pyenv](https://github.com/pyenv/pyenv).
 
 ```
-virtualenv -p python3 --no-site-packages venv
-source venv/bin/activate
+curl -fsSL https://pyenv.run | bash
+```
+
+Then clone this repository, install the correct python version and set up a virtual environment.
+
+```
+pyenv install
+pyenv virtualenv venv
+pyenv activate venv
 pip install -r requirements.txt
 pip install -r requirements-dev.txt
 ```
@@ -117,6 +126,10 @@ python server.py
 If everything went well, you should be able to open [http://127.0.0.1:8888/](http://127.0.0.1:8888/) in your browser and see something that looks like this.
 
 ![rubberband screenshot](https://raw.githubusercontent.com/xmunoz/rubberband/master/rubberband-screenshot.png)
+
+## CI
+
+Continuous integration is configured with [Github Actions](https://github.com/features/actions), and is run on every pull request. For more information about the CI workflow, please see [here](./.github/workflows/ci.yaml).
 
 ## Documentation
 
