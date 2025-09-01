@@ -4,7 +4,7 @@ import logging
 
 from .base import BaseHandler
 from rubberband.models import TestSet
-from rubberband.utils import ResultClient, write_file
+from rubberband.utils import Importer, write_file
 from rubberband.utils.helpers import setup_testruns_subst_dict, get_rbid_representation
 from rubberband.constants import EXPORT_FILE_TYPES, IPET_EVALUATIONS
 
@@ -12,25 +12,25 @@ from rubberband.constants import EXPORT_FILE_TYPES, IPET_EVALUATIONS
 class ResultView(BaseHandler):
     """Request handler handling the results view."""
 
-    def get(self, parent_id):
+    def get(self, testset_id):
         """
         Answer to GET requests.
 
         Parameters
         ----------
-        parent_id
-            Rubberband id of parent
+        testset_id
+           Elasticsearch ID of the testset
         """
-        # parent id is the first argument: meta id of TestSet
-        if not parent_id:
+        if not testset_id:
             raise HTTPError(404)
-        parent = TestSet.get(id=parent_id, ignore=404)
+        testset = TestSet.get(id=testset_id, ignore=404)
 
-        if not parent:
+        if not testset:
             raise HTTPError(404)
 
-        # get data associated with TestSet, save in parent.children[]
-        parent.load_children()
+        # get data associated with TestSet, save in testset.results[]
+        testset.load_results()
+        testset.load_settings()
 
         compare = []
         comparelist = self.get_argument("compare", default=None)
@@ -38,9 +38,9 @@ class ResultView(BaseHandler):
         if comparelist:
             compare_ids = comparelist.split(",")
             compare = load_testsets(compare_ids)
-            all_runs = [parent] + compare
+            all_runs = [testset] + compare
             # save intersection results and difference results
-            sets = get_intersection_difference([c.children.to_dict().keys() for c in all_runs])
+            sets = get_intersection_difference([c.results.to_dict().keys() for c in all_runs])
         else:
             sets = {}
 
@@ -48,43 +48,43 @@ class ResultView(BaseHandler):
         testset_ids = []
         if compare:
             testset_ids = compare_ids
-        testset_ids.append(parent_id)
+        testset_ids.append(testset_id)
         downloadziplink = "/download?testsets=" + (",".join(testset_ids))
 
-        metas = [key for md in [parent] + compare for key in md.to_dict().get('metadata', [])]
+        metas = [key for md in [testset] + compare for key in md.to_dict().get('metadata', [])]
         meta = list(set(metas))
         meta.sort()
 
         fileoptions = {}
         for ftype in EXPORT_FILE_TYPES:
-            obj = TestSet.get(id=parent_id)
+            obj = TestSet.get(id=testset_id)
             file_contents = getattr(obj, "raw")(ftype=ftype)
             fileoptions[ftype] = (file_contents is not None)
 
         # sort testruns by their representation and render table
         # get substitutions dictionary
-        testruns = [parent] + compare
+        testruns = [testset] + compare
         repres = setup_testruns_subst_dict(testruns)
         testruns = sorted(testruns,
                 key=lambda x: repres['long'][get_rbid_representation(x, "extended")])
 
         rrt = self.render_string("results_table.html", results=testruns,
                 representation=repres, tablename="rb-legend-table",
-                checked=parent.meta.id, radiobuttons=True)
+                checked=testset.meta.id, radiobuttons=True)
 
-        self.render("result_view.html", file=parent, compare=compare, meta=meta,
+        self.render("result_view.html", file=testset, compare=compare, meta=meta,
                 comparelist=comparelist, representation=repres, sets=sets,
                 rendered_results_table=rrt, fileoptions=fileoptions,
                 downloadzip=downloadziplink, evals=IPET_EVALUATIONS)
 
-    def post(self, parent_id):
+    def post(self, testset_id):
         """
         Answer to POST requests.
 
         Update the tags field
         """
-        # parent id is the first argument: meta id of TestSet
-        t = TestSet.get(id=parent_id)
+        # meta id of TestSet
+        t = TestSet.get(id=testset_id)
         if not self.has_permission(t, "edit"):
             return self.write_error(status=403,
                     msg="Sorry, you do not have permission to edit this run.")
@@ -98,7 +98,7 @@ class ResultView(BaseHandler):
             t.save()
         self.redirect(next_url)
 
-    def put(self, parent_id):
+    def put(self, testset_id):
         """
         Answer to PUT requests.
 
@@ -106,10 +106,10 @@ class ResultView(BaseHandler):
 
         Parameters
         ----------
-        parent_id
+        testset_id
             id of TestSet to update.
         """
-        t = TestSet.get(id=parent_id)
+        t = TestSet.get(id=testset_id)
         if not self.has_permission(t, "edit"):
             return self.write_error(status=403,
                     msg="Sorry, you do not have permission to reimport this run.")
@@ -118,7 +118,7 @@ class ResultView(BaseHandler):
         if "out" not in t.files.to_dict().keys():
             raise HTTPError(404)
             return
-        t.delete_all_children()
+        t.delete_all_results()
 
         # write all files to local directory
         paths = []
@@ -126,13 +126,13 @@ class ResultView(BaseHandler):
             paths.append(write_file(t.files[k].filename, str.encode(t.files[k].text)))
         paths = tuple(paths)
 
-        c = ResultClient(user=self.current_user)
+        c = Importer(user=self.current_user)
         c.reimport_files(paths, t)
 
         msg = "{} updated by {}".format(t.meta.id, self.current_user)
         logging.info(msg)
 
-    def delete(self, parent_id):
+    def delete(self, testset_id):
         """
         Answer to DELETE requests.
 
@@ -140,10 +140,10 @@ class ResultView(BaseHandler):
 
         Parameters
         ----------
-        parent_id
+        testset_id
             id of TestSet to delete.
         """
-        t = TestSet.get(id=parent_id)
+        t = TestSet.get(id=testset_id)
 
         if not self.has_permission(t, "delete"):
             return self.write_error(status=403,
@@ -175,7 +175,8 @@ def load_testsets(ids):
     try:
         for id in ids:
             t = TestSet.get(id=id)
-            t.load_children()
+            t.load_results()
+            t.load_settings()
             tss.append(t)
     except:
         raise HTTPError(404)
@@ -197,12 +198,12 @@ def get_same_status(runs):
     list
         list of names of instances whose status is the same in all TestSets.
     """
-    instances = runs[0].children.to_dict()
+    instances = runs[0].results.to_dict()
     final_instances = set([])
     for i in instances:
         statuses = []
         for r in runs:
-            rd = r.children.to_dict()
+            rd = r.results.to_dict()
             if i in rd and "Status" in rd[i]:
                 statuses.append(rd[i]["Status"])
 

@@ -21,36 +21,17 @@ This is a detailed description of how to set up Rubberband.
 ### Install system requirements
 
 ```
-sudo apt install git curl libffi-dev libssl-dev libsqlite3-dev libbz2-dev libncurses-dev libreadline-dev liblzma-dev
+sudo apt install git curl libffi-dev libssl-dev libsqlite3-dev libbz2-dev libncurses-dev libreadline-dev liblzma-dev zlib1g-dev tk-dev
 ```
 
 ### Installing Elasticsearch
 
-Java 8 is [required](https://www.elastic.co/guide/en/elasticsearch/reference/2.4/setup.html#jvm-version) to run Elasticsearch. For Ubuntu, you can install Java 8 this way.
-```
-sudo apt update
-sudo apt install openjdk-8-jdk
-```
-
-To confirm that Java is properly installed, check the version.
-```
-$ java -version
-java version "1.8.0_101"
-Java(TM) SE Runtime Environment (build 1.8.0_101-b13)
-Java HotSpot(TM) 64-Bit Server VM (build 25.101-b13, mixed mode)
-```
-
-Now you're ready to install Elasticsearch. NOTE: Elasticsearch is rapidly developing software. Only 2.x versions of Elasticsearch are supported by Rubberband. Sadly, Elasticsearch is neither backwards- nor forwards-compatible. Here are the most current instructions for installing Elasticsearch with `apt` on Ubuntu.
+Download the .deb package and install it manually. Elasticsearch [comes bundled](https://www.elastic.co/guide/en/elasticsearch/reference/7.0/setup.html#jvm-version) with the version of Java that it needs to run.
 
 ```
-wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
-echo "deb http://packages.elastic.co/elasticsearch/2.x/debian stable main" | sudo tee -a /etc/apt/sources.list.d/elasticsearch-2.x.list
-sudo apt update && sudo apt install elasticsearch
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.0.0-amd64.deb
+sudo dpkg -i elasticsearch-7.0.0-amd64.deb
 ```
-
-General instructions for installing Elasticsearch can be found in the [offical Elasticsearch documentation](https://www.elastic.co/guide/en/elasticsearch/reference/2.4/_installation.html).
-
-More information about running Elasticsearch as a service can be found [here](https://www.elastic.co/guide/en/elasticsearch/reference/2.4/setup-repositories.html), though this shouldn't be required for a development setup.
 
 ### Setting up Rubberband
 
@@ -89,11 +70,11 @@ To populate the database or run unit tests, first install Rubberband inside the 
 pip install -e .
 ```
 
-Now take a look at the control script in `bin/rubberband-ctl`. Running the control script with no options will show the help. For first-time, create the index, and populate that index with data. This can be accomplished with the following two commands.
+Now take a look at the control script in `bin/rubberband-ctl`. Running the control script with no options will show the help. For first-time, create the indices, and populate the indices with data. This can be accomplished with the following two commands.
 
 ```
-bin/rubberband-ctl create-index
-bin/rubberband-ctl populate-index
+bin/rubberband-ctl create-indices
+bin/rubberband-ctl populate-indices
 ```
 
 The second command will need a few minutes to finish. If the commands complete sucessfully, stdout should look something like this:
@@ -150,11 +131,11 @@ Run the test suite.
 py.test -v tests/
 ```
 
-Tests will fail if Elasticsearch is not running, or if the index is empty or if you didn't configure authentication correctly.
+Tests will fail if Elasticsearch is not running, or if the indices are empty or if you didn't configure authentication correctly.
 
 ## Deployment
 
-Rubberband currently requires a connection to an [Elasticsearch 2.x](https://www.elastic.co/guide/en/elasticsearch/reference/2.4/index.html) instance and (optionally) a [Gitlab](https://about.gitlab.com/) instance to run. To configure a Gitlab connection, edit the configuration variables in `/etc/rubberband/app.cfg` beginning with `gitlab_`. The Gitlab connection is used to look up information from the code base that your test set log is linked to. Examples of this type of information are git commit date and last committer. The visualize tab is disabled if no Gitlab connection information is provided.
+Rubberband currently requires a connection to an [Elasticsearch 7.x](https://www.elastic.co/guide/en/elasticsearch/reference/7.0/index.html) instance and (optionally) a [Gitlab](https://about.gitlab.com/) instance to run. To configure a Gitlab connection, edit the configuration variables in `/etc/rubberband/app.cfg` beginning with `gitlab_`. The Gitlab connection is used to look up information from the code base that your test set log is linked to. Examples of this type of information are git commit date and last committer. The visualize tab is disabled if no Gitlab connection information is provided.
 
 ### Authentication
 

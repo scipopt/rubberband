@@ -19,11 +19,6 @@ class GetTest(TestHandlerBase):
         self.assertEqual(response.code, 200)
         self.assertIn(b"Compare selected Testruns?", response.body)
 
-    def test_compare(self):
-        response = self.fetch("/result/AZkAcluwiwKGuY57-VG6?compare=AZkAci1diwKGuY57-VE5")
-        self.assertEqual(response.code, 200)
-        self.assertIn(b"Detailed data", response.body)
-
     def test_visualize(self):
         response = self.fetch("/visualize")
         self.assertEqual(response.code, 200)

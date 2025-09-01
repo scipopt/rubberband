@@ -6,10 +6,10 @@
   <!-- headline ==================================================================== -->
   <div class="rb-details-tab-buttons row justify-content-end">
 
-    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" title="back to test run" href="/result/{{ result.meta.parent }}{% if compare %}?compare={{ ','.join([c.meta.parent for c in compare]) }}{% end %}">
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" title="back to test run" href="/result/{{ result.testset_id }}{% if compare %}?compare={{ ','.join([c.testset_id for c in compare]) }}{% end %}">
       <span class="fa fa-chevron-left"></span></a>
 
-    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" title="view log" href="/file/{{ result.meta.parent }}?ftype=.out&format=raw&instance={{ result.meta.id }}">
+    <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" title="view log" href="/file/{{ result.testset_id }}?ftype=.out&format=raw&instance={{ result.meta.id }}">
       <span class="fa fa-info-circle"></span></a>
 
     <span class="bs-tooltip ml-2 mr-2 rb-link" data-toggle="modal" data-placement="top" data-target="#downloadInstanceOptions" title="download results">
@@ -49,11 +49,10 @@
   </div>
 
 <!-- Modal -->
-{% module Template("modal.html", id="downloadInstanceOptions", modalheading="Download Formats", modalbody='''
-	<h5>Full Content</h5>
+{% set modalbodydownload= '''
   <ul>
-		<li><a href="/file/{{ result.meta.parent }}?download=true&ftype=.out&format=raw&instance={{ result.meta.id }}" download="{{result.instance_name}}.txt">plaintext</a></li>
-		<li><a href="/file/{{ result.meta.parent }}?download=true&ftype=.out&format=json&instance={{ result.meta.id }}" download="{{result.instance_name}}.json">json</a></li>
+		<li><a href="/file/{id}?download=true&ftype=.out&format=raw&instance={result_id}" download="{name}.txt">plaintext</a></li>
+		<li><a href="/file/{id}?download=true&ftype=.out&format=json&instance={result_id}" download="{name}.json">json</a></li>
 	 <li>csv (coming soon!)</li>
   </ul>
 	<h5>Selection</h5>
@@ -61,8 +60,9 @@
 	  <li>json (coming soon!)</li>
 	  <li>csv (coming soon!)</li>
 	</ul>
-''') %}
+'''.format(id=result.testset_id, result_id=result.meta.id, name=result.instance_name) %}
 
+{% module Template("modal.html", id="downloadInstanceOptions", modalheading="Full Content", modalbody=modalbodydownload) %}
 <!------------------ end body -------------->
 {% end %}
 
