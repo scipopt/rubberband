@@ -54,24 +54,24 @@ class VisualizeView(BaseHandler):
             s = Result.search()
             # Q is for Query
             s = s.filter(Q("term", instance_name=query))
-            s = s.filter(Q("has_parent", type="testset", query=Q("range", **range_params)))
+            s = s.filter("range", **range_params)
 
             datakeys = {"file_path": "", "opt_flag": "opt", "Nodes": -1, "TotalTime_solving": -1,
-                    "Iterations": -1, "git_commit_timestamp": "", "Status": "unkn", "parent_id": "",
-                    "filename": ""}
+                    "Iterations": -1, "git_commit_timestamp": "", "Status": "unkn",
+                    "testset_id": "", "filename": ""}
 
             # this uses pagination/scroll
             for r in s.scan():
-                parent_data = TestSet.get(id=r.meta.parent)
+                testset = TestSet.get(id=r.testset_id)
                 components = r.to_dict()
-                components.update(parent_data.to_dict())
-                components["parent_id"] = r.meta.parent
+                components.update(testset.to_dict())
+                components["testset_id"] = r.testset_id
                 final_components = {k: components[k] if k in components.keys() else v
                         for k, v in datakeys.items()}
                 final_data.append(final_components)
 
             # only need the following keys: ["git_commit_timestamp", "Nodes", "Status", "opt_flag",
-            # "TotalTime_solving", "Iterations", "file_path", "parent_id", "filename"]:
+            # "TotalTime_solving", "Iterations", "file_path", "testset_id", "filename"]:
 
         elif query_type == "Test Set":
             s = TestSet.search()

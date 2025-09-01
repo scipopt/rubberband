@@ -2,7 +2,7 @@
 
 import click
 from elasticsearch import Elasticsearch
-from elasticsearch_dsl import Q, Search
+from elasticsearch_dsl import Q, Search, Index
 from elasticsearch_dsl.connections import connections
 import glob
 import logging
@@ -10,10 +10,10 @@ import os.path
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
-from rubberband.models import Result, File, TestSet
-from rubberband.utils import ResultClient
+from rubberband.models import Result, File, TestSet, Settings
+from rubberband.constants import FILE_INDEX, RESULT_INDEX, TESTSET_INDEX, SETTINGS_INDEX
+from rubberband.utils import Importer
 from rubberband.version import __version__
-from rubberband.constants import ELASTICSEARCH_INDEX
 from rubberband.boilerplate import make_app
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
@@ -22,6 +22,9 @@ PACKAGE_ROOT = os.path.join(APP_ROOT, "rubberband")
 
 make_app(PACKAGE_ROOT)
 
+es_logger = logging.getLogger('elasticsearch')
+es_logger.setLevel(logging.INFO)
+
 @click.group(context_settings=CONTEXT_SETTINGS)
 @click.version_option(version=__version__)
 def main():
@@ -29,32 +32,45 @@ def main():
 
 
 @main.command()
-def delete_index():
+def delete_indices():
     '''
-    Delete the current index.
+    Delete all indices.
     '''
-    logging.info('Deleting the current index')
+    logging.info('Deleting all indices')
     conn = connections.get_connection()
-    conn.indices.delete(index=ELASTICSEARCH_INDEX)
+    conn.indices.delete(index=FILE_INDEX)
+    conn.indices.delete(index=RESULT_INDEX)
+    conn.indices.delete(index=TESTSET_INDEX)
+    conn.indices.delete(index=SETTINGS_INDEX)
 
 
 @main.command()
-def create_index():
+def create_indices():
     '''
-    Create an index with the the required mappings (Result, File, TestSet).
+    Create indices for the Result, File, TestSet objects.
     '''
-    logging.info('Creating index')
-    Result.init()
-    File.init()
+    logging.info('Creating indices')
     TestSet.init()
-
+    File.init()
+    Result.init()
+    Settings.init()
+    settings_index = Index(SETTINGS_INDEX)
+    result_index= Index(RESULT_INDEX)
+    # Need to close the index before modifying the settings
+    settings_index.close()
+    result_index.close()
+    settings_index.put_settings(body={"index.mapping.ignore_malformed": True})
+    settings_index.put_settings(body={"index.mapping.total_fields.limit": 5000})
+    result_index.put_settings(body={"index.mapping.total_fields.limit": 5000})
+    settings_index.open()
+    result_index.open()
 
 @main.command()
-def populate_index():
+def populate_indices():
     '''
     Seed Elasticsearch with results from the tests/data directory.
     '''
-    logging.info('Populating index')
+    logging.info('Populating indices')
     filepath = os.path.join(APP_ROOT, "tests", "data")
     out_files = glob.glob(os.path.join(filepath, "*.out"))
     set_files = glob.glob(os.path.join(filepath, "*.set"))
@@ -79,7 +95,7 @@ def populate_index():
             paths.append(base + ".meta")
         if solu_file in solu_files:
             paths.append(solu_file)
-        c = ResultClient(user="debug")
+        c = Importer(user="debug")
 
         expdate = datetime.today()
         if count < 2:

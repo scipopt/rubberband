@@ -1,11 +1,15 @@
 """Define constants used by rubberband."""
 
 INFINITY_KEYS = ("separating/flowcover/maxslackroot", "separating/flowcover/maxslack",
-                 "heuristics/undercover/maxcoversizeconss")
+                 "heuristics/undercover/maxcoversizeconss", "solvingphases/optimalvalue",
+                 "misc/referencevalue")
 INFINITY_MASK = -1
-INFINITY = 1e+20
 INFINITY_FLOAT = float('inf')
 INFINITY_DISPLAY = 1e+20
+FILE_INDEX = 'file'
+RESULT_INDEX = 'result'
+TESTSET_INDEX = 'testset'
+SETTINGS_INDEX = 'settings'
 ZIPPED_SUFFIX = ".gz"
 FILES_DIR = "files/"
 ALL_SOLU = FILES_DIR + "instancedata/database/instancedb.sqlite3"
@@ -49,7 +53,6 @@ IPET_EVALUATIONS = {
 NONE_DISPLAY = ""
 EXPORT_DATA_FORMATS = ("gzip", "json", "csv", "raw")
 EXPORT_FILE_TYPES = (".out", ".set", ".err", ".meta")
-ELASTICSEARCH_INDEX = "solver-results"
 
 FORMAT_DATE = "%Y-%m-%d"
 FORMAT_DATETIME_LONG = "%d. %b %Y, %H:%M"

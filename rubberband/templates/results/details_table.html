@@ -27,18 +27,18 @@
     </tr>
   </thead>
   <tbody>
-    {% for name, r in file.children.to_dict().items() %}
+    {% for name, r in file.results.to_dict().items() %}
     {% if not compare or name in sets["intersection"] %}
     <tr>
 
       {% if compare %}
         <td>
-          {% set href="/result/{fileid}/instance/{rid}?compare={compare}".format(fileid=file.meta.id, rid=r.meta.id, compare=','.join([c.meta.id for c in compare])) %}
+          {% set href="/instance/{rid}?compare={compare}".format(rid=r.meta.id, compare=','.join([c.meta.id for c in compare])) %}
           {% raw get_link(href, r.instance_name, 20, 7) %}
         </td>
       {% else %}
         <td>
-          {% set href="/result/{fileid}/instance/{rid}".format(fileid=file.meta.id, rid=r.meta.id, compare=','.join([c.meta.id for c in compare])) %}
+          {% set href="/instance/{rid}".format(rid=r.meta.id, compare=','.join([c.meta.id for c in compare])) %}
           {% raw get_link(href, r.instance_name, 20, 7) %}
         </td>
       {% end %}

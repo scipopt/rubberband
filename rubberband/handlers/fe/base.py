@@ -336,13 +336,13 @@ class BaseHandler(RequestHandler):
         """
         objsen = None
         for o in objs:
-            objsen = getattr(o.children[inst_name], "Objsense", None)
+            objsen = getattr(o.results[inst_name], "Objsense", None)
             if objsen is not None:
                 return float(objsen)
         for o in objs:
             try:
-                pb = float(getattr(o.children[inst_name], "PrimalBound", None))
-                db = float(getattr(o.children[inst_name], "DualBound", None))
+                pb = float(getattr(o.results[inst_name], "PrimalBound", None))
+                db = float(getattr(o.results[inst_name], "DualBound", None))
                 if pb > db:
                     # minimize
                     return 1
@@ -370,7 +370,7 @@ class BaseHandler(RequestHandler):
         """
         attr_str = []
         for o in objs:
-            val = self.format_attr(o.children[inst_name], attr)
+            val = self.format_attr(o.results[inst_name], attr)
             attr_str.append(val)
 
         partial_list = sorted([a for a in attr_str
@@ -399,7 +399,7 @@ class BaseHandler(RequestHandler):
             return False
 
         if attr == "number_instances":
-            length = [len(ts.children.to_dict().keys()) for ts in sets]
+            length = [len(ts.results.to_dict().keys()) for ts in sets]
             old = length[0]
             for i in length:
                 new = i
