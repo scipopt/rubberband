@@ -12,8 +12,8 @@ routes = [
     (r"/eval/(?P<eval_id>[^\/]+)", fe.EvaluationView),
     (r"/file/(?P<file_id>[^\/]+)", fe.FileView),
     (r"/help", fe.HelpView),
-    (r"/result/(?P<parent_id>[^\/]+)", fe.ResultView),
-    (r"/result/(?P<parent_id>[^\/]+)/instance/?(?P<child_id>[^\/]+)?", fe.InstanceView),
+    (r"/result/(?P<testset_id>[^\/]+)", fe.ResultView),
+    (r"/instance/?(?P<result_id>[^\/]+)?", fe.InstanceView),
     (r"/search", fe.SearchView),
     (r"/upload", fe.UploadView),
     (r"/personal", fe.PersonalView),
@@ -23,7 +23,7 @@ routes = [
     (r"/instances/names", fe.InstanceNamesEndpoint),
 
     # for typeahead in statistic.js
-    (r"/instances/?(?P<parent_id>[^\/]+)", fe.InstanceEndpoint),
+    (r"/instances/?(?P<testset_id>[^\/]+)", fe.InstanceEndpoint),
 
     # API Endpoints
     (r"/api/comparison/(?P<base_id>[^\/]+)", api.ComparisonEndpoint),

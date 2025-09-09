@@ -5,7 +5,7 @@ from tornado.ioloop import IOLoop
 from tornado.gen import coroutine
 
 from .base import BaseHandler, authenticated
-from rubberband.utils import ResultClient, write_file, sendmail
+from rubberband.utils import Importer, write_file, sendmail
 from rubberband.utils.importer import bundle_files
 
 
@@ -141,7 +141,7 @@ def perform_import(files, tags, user, expirationdate=None):
 
     importstats = []
     for bundle in bundles:
-        c = ResultClient(user=user)
+        c = Importer(user=user)
         c_stat = c.process_files(bundle, tags=tags, expirationdate=expirationdate)
         importstats.append(c_stat)
 

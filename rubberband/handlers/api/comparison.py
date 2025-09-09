@@ -19,8 +19,8 @@ class ComparisonEndpoint(BaseHandler):
 
         Parameters
         ----------
-        parent_id
-            Rubberband id of parent
+        base_id
+            ID of the base TestSet
 
         Compare TestRuns with IPET
         """

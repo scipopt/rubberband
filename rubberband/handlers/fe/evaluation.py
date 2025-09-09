@@ -1841,10 +1841,10 @@ indexsplit="3">
             df_count = df["_count_"]
 
             # groups in rows
-            rows = ['\cleaninst', '\\affected', '\\bracket{0}{tilim}', '\\bracket{1}{tilim}',
+            rows = [r'\cleaninst', '\\affected', '\\bracket{0}{tilim}', '\\bracket{1}{tilim}',
                     '\\bracket{10}{tilim}', '\\bracket{100}{tilim}',
-                    '\\bracket{1000}{tilim}', '\difftimeouts', '\\alloptimal',
-                    '\\convex', '\\nonconvex', '\miplib~2017', '\coral', 'continuous', 'integer']
+                    '\\bracket{1000}{tilim}', r'\difftimeouts', '\\alloptimal',
+                    '\\convex', '\\nonconvex', r'\miplib~2017', r'\coral', 'continuous', 'integer']
 
             df_rel = df_rel.pivot_table(index=['Group'], columns=[colindex]).swaplevel(
                     axis=1).sort_index(axis=1, level=0, sort_remaining=True, ascending=False)
@@ -1873,9 +1873,9 @@ indexsplit="3">
             latex_list = out.splitlines()
             # insert a `\midrule` at third last position in list (which will be the fourth last
             # line in latex output)
-            latex_list.insert(14, '\cmidrule{1-10}')
-            latex_list.insert(7, '\cmidrule{1-10}')
-            latex_list.insert(3, '\cmidrule{3-5} \cmidrule{6-8} \cmidrule{9-10}')
+            latex_list.insert(14, r'\cmidrule{1-10}')
+            latex_list.insert(7, r'\cmidrule{1-10}')
+            latex_list.insert(3, r'\cmidrule{3-5} \cmidrule{6-8} \cmidrule{9-10}')
             # join split lines to get the modified latex output string
             out = '\n'.join(latex_list)
 
