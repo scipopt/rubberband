@@ -10,10 +10,12 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+      - name: Install lxml dev packages
+        run: sudo apt install -y libxml2-dev libxslt1-dev
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.7.13"
+          python-version: "3.11.0"
           cache: 'pip'
       - name: Configure sysctl limits
         run: |
@@ -24,13 +26,11 @@ jobs:
       - name: Install Elasticsearch
         uses: elastic/elastic-github-actions/elasticsearch@master
         with:
-          stack-version: 7.0.0
+          stack-version: 7.17.17
       - name: Install Python package dependencies
         run: |
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
-      - name: Install Rubberband
-        run: python setup.py install
       - name: Run linter and formatter
         run: |
           ruff check rubberband
@@ -38,6 +38,8 @@ jobs:
       - name: Build documentation
         working-directory: ./doc
         run: make doc
+      - name: Install Rubberband
+        run: python setup.py install
       - name: Run tests
         run: |
           ./runtests tests/

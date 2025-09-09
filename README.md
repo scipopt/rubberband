@@ -21,21 +21,21 @@ This is a detailed description of how to set up Rubberband.
 ### Install system requirements
 
 ```
-sudo apt install git curl libffi-dev libssl-dev libsqlite3-dev libbz2-dev libncurses-dev libreadline-dev liblzma-dev zlib1g-dev tk-dev
+sudo apt install git curl libffi-dev libssl-dev libsqlite3-dev libbz2-dev libncurses-dev libreadline-dev liblzma-dev zlib1g-dev tk-dev libxml2-dev libxslt1-dev
 ```
 
 ### Installing Elasticsearch
 
-Download the .deb package and install it manually. Elasticsearch [comes bundled](https://www.elastic.co/guide/en/elasticsearch/reference/7.0/setup.html#jvm-version) with the version of Java that it needs to run.
+Download the .deb package and install it manually. Elasticsearch [comes bundled](https://www.elastic.co/guide/en/elasticsearch/reference/7.17/setup.html#jvm-version) with the version of Java that it needs to run.
 
 ```
-wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.0.0-amd64.deb
-sudo dpkg -i elasticsearch-7.0.0-amd64.deb
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.17.17-amd64.deb
+sudo dpkg -i elasticsearch-7.17.17-amd64.deb
 ```
 
 ### Setting up Rubberband
 
-Rubberband is built on [tornado](http://www.tornadoweb.org/en/stable/) and [IPET](https://github.com/gregorCH/ipet), an interactive performance evaluation tool that comes with a parsing library for benchmark files. To get Rubberband running locally, make sure you first have Elasticsearch installed and running.
+Rubberband is built on [tornado](http://www.tornadoweb.org/en/stable/) and [IPET](https://github.com/stephenjmaher/ipet/tree/remove-gui), an interactive performance evaluation tool that comes with a parsing library for benchmark files. To get Rubberband running locally, make sure you first have Elasticsearch installed and running.
 
 ```
 sudo service elasticsearch start
