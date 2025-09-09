@@ -26,11 +26,13 @@ sudo apt install git curl libffi-dev libssl-dev libsqlite3-dev libbz2-dev libncu
 
 ### Installing Elasticsearch
 
-Download the .deb package and install it manually. Elasticsearch [comes bundled](https://www.elastic.co/guide/en/elasticsearch/reference/7.0/setup.html#jvm-version) with the version of Java that it needs to run.
+Download the .deb package and install it manually. Elasticsearch [comes bundled](https://www.elastic.co/docs/deploy-manage/deploy/self-managed/installing-elasticsearch#jvm-version) with the version of Java that it needs to run.
 
 ```
-wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.0.0-amd64.deb
-sudo dpkg -i elasticsearch-7.0.0-amd64.deb
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-9.1.3-amd64.deb
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-9.1.3-amd64.deb.sha512
+shasum -a 512 -c elasticsearch-9.1.3-amd64.deb.sha512
+sudo dpkg -i elasticsearch-9.1.3-amd64.deb
 ```
 
 ### Setting up Rubberband
