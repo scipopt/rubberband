@@ -1,4 +1,5 @@
 """Contains VisualizeView."""
+
 import datetime
 from elasticsearch_dsl import Q
 import json
@@ -19,11 +20,17 @@ class VisualizeView(BaseHandler):
         Renders `visualize.html`.
         """
         # by default show results from the last year
-        start_date = (datetime.datetime.now() - datetime.timedelta(days=365)).strftime(FORMAT_DATE)
+        start_date = (datetime.datetime.now() - datetime.timedelta(days=365)).strftime(
+            FORMAT_DATE
+        )
         end_date = datetime.datetime.now().strftime(FORMAT_DATE)
         # show the form to enter data
-        self.render("visualize.html", page_title="Visualize", default_start_date=start_date,
-                    default_end_date=end_date)
+        self.render(
+            "visualize.html",
+            page_title="Visualize",
+            default_start_date=start_date,
+            default_end_date=end_date,
+        )
 
     def post(self):
         """
@@ -33,10 +40,10 @@ class VisualizeView(BaseHandler):
         Invoked after the user clicked on 'submit' in visualize-view.
         Write data as json.
         """
-        query_type = self.get_argument('data-type', None)
-        query = self.get_argument('data-name', None)
-        start_date = self.get_argument('start-date', None)
-        end_date = self.get_argument('end-date', None)
+        query_type = self.get_argument("data-type", None)
+        query = self.get_argument("data-name", None)
+        start_date = self.get_argument("start-date", None)
+        end_date = self.get_argument("end-date", None)
 
         if not all([query_type, query, start_date, end_date]):
             return self.write(json.dumps([]))
@@ -46,7 +53,7 @@ class VisualizeView(BaseHandler):
             "git_commit_timestamp": {
                 "gte": start_date,
                 "lte": end_date,
-                "format": "date"
+                "format": "date",
             }
         }
 
@@ -56,9 +63,17 @@ class VisualizeView(BaseHandler):
             s = s.filter(Q("term", instance_name=query))
             s = s.filter("range", **range_params)
 
-            datakeys = {"file_path": "", "opt_flag": "opt", "Nodes": -1, "TotalTime_solving": -1,
-                    "Iterations": -1, "git_commit_timestamp": "", "Status": "unkn",
-                    "testset_id": "", "filename": ""}
+            datakeys = {
+                "file_path": "",
+                "opt_flag": "opt",
+                "Nodes": -1,
+                "TotalTime_solving": -1,
+                "Iterations": -1,
+                "git_commit_timestamp": "",
+                "Status": "unkn",
+                "testset_id": "",
+                "filename": "",
+            }
 
             # this uses pagination/scroll
             for r in s.scan():
@@ -66,8 +81,10 @@ class VisualizeView(BaseHandler):
                 components = r.to_dict()
                 components.update(testset.to_dict())
                 components["testset_id"] = r.testset_id
-                final_components = {k: components[k] if k in components.keys() else v
-                        for k, v in datakeys.items()}
+                final_components = {
+                    k: components[k] if k in components.keys() else v
+                    for k, v in datakeys.items()
+                }
                 final_data.append(final_components)
 
             # only need the following keys: ["git_commit_timestamp", "Nodes", "Status", "opt_flag",

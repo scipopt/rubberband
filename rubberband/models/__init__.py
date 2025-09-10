@@ -1,12 +1,20 @@
 """Define data models and methods, also used by elasticsearch_dsl."""
+
 import gzip
 import json
 import datetime
 from elasticsearch_dsl import Boolean, Document, Text, Keyword, Date, Nested, Integer
 from ipet import Key
 
-from rubberband.constants import INFINITY_KEYS, INFINITY_MASK, INFINITY_FLOAT, \
-    FILE_INDEX, RESULT_INDEX, TESTSET_INDEX, SETTINGS_INDEX
+from rubberband.constants import (
+    INFINITY_KEYS,
+    INFINITY_MASK,
+    INFINITY_FLOAT,
+    FILE_INDEX,
+    RESULT_INDEX,
+    TESTSET_INDEX,
+    SETTINGS_INDEX,
+)
 
 
 class File(Document):
@@ -16,7 +24,9 @@ class File(Document):
     filename = Keyword(required=True)  # check.MMM.scip-021ace1...out
     hash = Keyword(required=True)  # computed hash
     testset_id = Keyword(required=True)  # for application-side joins
-    text = Text(index=False, required=True)  # this field is not indexed and is not searchable
+    text = Text(
+        index=False, required=True
+    )  # this field is not indexed and is not searchable
 
     class Index:
         name = FILE_INDEX
@@ -75,9 +85,12 @@ class Result(Document):
         whole_file = testset.raw(ftype=".out")
         # TODO: remove this once integer/ipet#20 is resolved
         # this is a hack for optimization/rubberband#41
-        if hasattr(self, "LineNumbers_BeginLogFile") and hasattr(self, "LineNumbers_EndLogFile"):
-            parts = whole_file.splitlines()[int(self.LineNumbers_BeginLogFile):
-                                            int(self.LineNumbers_EndLogFile)]
+        if hasattr(self, "LineNumbers_BeginLogFile") and hasattr(
+            self, "LineNumbers_EndLogFile"
+        ):
+            parts = whole_file.splitlines()[
+                int(self.LineNumbers_BeginLogFile) : int(self.LineNumbers_EndLogFile)
+            ]
             return "\n".join(parts)
         else:
             return "Unable to locate instance in out file :("
@@ -242,8 +255,16 @@ class TestSet(Document):
                 if self.lp_solver_githash:
                     all_instances[i]["SpxGitHash"] = self.lp_solver_githash
 
-                further_keys = [Key.GitHash, "CommitTime", Key.LPSolver, Key.LogFileName,
-                        Key.Settings, "RubberbandMetaId", "Seed", "Permutation"]
+                further_keys = [
+                    Key.GitHash,
+                    "CommitTime",
+                    Key.LPSolver,
+                    Key.LogFileName,
+                    Key.Settings,
+                    "RubberbandMetaId",
+                    "Seed",
+                    "Permutation",
+                ]
                 for fk in further_keys:
                     all_instances[i][fk] = self.get_data(fk)
 
@@ -287,13 +308,14 @@ class TestSet(Document):
                 if self.solver_version is None:
                     return "\\{}".format(str.lower(self.solver))
                 else:
-                    return "\\{}~{}".format(str.lower(self.solver),
-                            self.solver_version)
+                    return "\\{}~{}".format(str.lower(self.solver), self.solver_version)
             else:
-                return "\\{}~{}+\\{}~{}".format(str.lower(self.solver),
-                        self.solver_version,
-                        str.lower(self.lp_solver),
-                        self.lp_solver_version)
+                return "\\{}~{}+\\{}~{}".format(
+                    str.lower(self.solver),
+                    self.solver_version,
+                    str.lower(self.lp_solver),
+                    self.lp_solver_version,
+                )
 
     def json(self, ftype=".out"):
         """
@@ -394,17 +416,17 @@ class TestSet(Document):
         self.results = {}
 
         results = {}
-        results['ids'] = {}
-        results['names'] = {}
+        results["ids"] = {}
+        results["names"] = {}
         # this uses pagination/scroll
         for hit in s.scan():
-            results['ids']["{} ({})".format(hit.instance_name, hit.instance_id)] = hit
-            results['names']["{}".format(hit.instance_name)] = hit
+            results["ids"]["{} ({})".format(hit.instance_name, hit.instance_id)] = hit
+            results["names"]["{}".format(hit.instance_name)] = hit
 
-        if len(results['ids'].keys()) == len(results['names'].keys()):
-            self.results = results['names']
+        if len(results["ids"].keys()) == len(results["names"].keys()):
+            self.results = results["names"]
         else:
-            self.results = results['ids']
+            self.results = results["ids"]
 
     def load_files(self):
         """Load the files of a TestSet object."""
@@ -481,13 +503,13 @@ class Settings(Document):
                     kwargs[i] = INFINITY_MASK
 
         key = "conflict/uselocalrows"
-        if getattr(self, key, None) == True:
+        if getattr(self, key, None):
             setattr(self, key, 0)
         else:
             setattr(self, key, 1)
 
         if kwargs != {} and key in kwargs.keys():
-            if kwargs[key] == True:
+            if kwargs[key]:
                 kwargs[key] = 0
             else:
                 kwargs[key] = 1

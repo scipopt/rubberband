@@ -1,4 +1,5 @@
 """Class for a RequestHandler to respond with logoutput from loggering module."""
+
 from logging import StreamHandler
 import hashlib
 import time
@@ -21,7 +22,7 @@ class RBLogHandler(StreamHandler):
         """
         StreamHandler.__init__(self)
         rawname = "rbhandler{}{}".format(time.time(), handle)
-        self.name = hashlib.md5(bytes(rawname, 'utf-8')).hexdigest()
+        self.name = hashlib.md5(bytes(rawname, "utf-8")).hexdigest()
         self.rbhandle = handle
         self.rbhandle.write(self.name)
         self.rbwrite("Fetching data from elasticsearch.")

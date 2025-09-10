@@ -1,4 +1,5 @@
 """Contains FileView."""
+
 from tornado.web import HTTPError
 
 from rubberband.models import TestSet, Result

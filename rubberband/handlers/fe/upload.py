@@ -1,4 +1,5 @@
 """Contains UploadView."""
+
 from rubberband.utils import Importer, write_file
 from rubberband.utils.importer import bundle_files
 from .base import BaseHandler
@@ -42,14 +43,16 @@ class UploadView(BaseHandler):
         for bundle in bundles:
             # Importer helps us process the uploaded files
             c = Importer(user=self.current_user)
-            importstats = c.process_files(bundle, tags=tags, expirationdate=expirationdate)
+            importstats = c.process_files(
+                bundle, tags=tags, expirationdate=expirationdate
+            )
 
             info = {}
-            info['messages'] = importstats.getMessages()
+            info["messages"] = importstats.getMessages()
             url = importstats.getUrl()
             if url:
                 url = self.application.base_url + url
-            info['url'] = url
+            info["url"] = url
 
             infos.append(info)
 

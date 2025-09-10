@@ -1,4 +1,5 @@
 """Methods to use for the communication with gitlab."""
+
 from tornado.options import options
 from gitlab import Gitlab
 
@@ -46,11 +47,13 @@ def get_user_access_level(user_mail):
     group_id = "integer"
     group_users = client.groups.get(group_id).members.list(query=user_mail)
     project_users = client.projects.get(
-            options.gitlab_project_ids["scip"]).members.list(query=user_mail)
+        options.gitlab_project_ids["scip"]
+    ).members.list(query=user_mail)
     min_access = 20
     # so something is wrong, return 0
-    if ((len(group_users) > 1 or len(project_users) > 1) or (
-          len(group_users) == 0 and len(project_users) == 0)):
+    if (len(group_users) > 1 or len(project_users) > 1) or (
+        len(group_users) == 0 and len(project_users) == 0
+    ):
         return min_access
     if len(group_users + project_users) == 2:
         group_id = group_users[0].id
