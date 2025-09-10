@@ -6,7 +6,7 @@ from distutils.core import setup
 with open("rubberband/version.py") as f:
     exec(f.read())
 
-with open('requirements.txt') as requirements:
+with open("requirements.txt") as requirements:
     required = requirements.read().splitlines()
 
 kwargs = {
@@ -28,7 +28,7 @@ kwargs = {
         "Topic :: Software Development",
         "Topic :: Software Development :: Libraries",
         "Topic :: Software Development :: Libraries :: Python Modules",
-    ]
+    ],
 }
 
 setup(**kwargs)

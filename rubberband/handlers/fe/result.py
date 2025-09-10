@@ -1,4 +1,5 @@
 """Contains ResultView."""
+
 from tornado.web import HTTPError
 import logging
 
@@ -40,7 +41,9 @@ class ResultView(BaseHandler):
             compare = load_testsets(compare_ids)
             all_runs = [testset] + compare
             # save intersection results and difference results
-            sets = get_intersection_difference([c.results.to_dict().keys() for c in all_runs])
+            sets = get_intersection_difference(
+                [c.results.to_dict().keys() for c in all_runs]
+            )
         else:
             sets = {}
 
@@ -51,7 +54,11 @@ class ResultView(BaseHandler):
         testset_ids.append(testset_id)
         downloadziplink = "/download?testsets=" + (",".join(testset_ids))
 
-        metas = [key for md in [testset] + compare for key in md.to_dict().get('metadata', [])]
+        metas = [
+            key
+            for md in [testset] + compare
+            for key in md.to_dict().get("metadata", [])
+        ]
         meta = list(set(metas))
         meta.sort()
 
@@ -59,23 +66,39 @@ class ResultView(BaseHandler):
         for ftype in EXPORT_FILE_TYPES:
             obj = TestSet.get(id=testset_id)
             file_contents = getattr(obj, "raw")(ftype=ftype)
-            fileoptions[ftype] = (file_contents is not None)
+            fileoptions[ftype] = file_contents is not None
 
         # sort testruns by their representation and render table
         # get substitutions dictionary
         testruns = [testset] + compare
         repres = setup_testruns_subst_dict(testruns)
-        testruns = sorted(testruns,
-                key=lambda x: repres['long'][get_rbid_representation(x, "extended")])
+        testruns = sorted(
+            testruns,
+            key=lambda x: repres["long"][get_rbid_representation(x, "extended")],
+        )
 
-        rrt = self.render_string("results_table.html", results=testruns,
-                representation=repres, tablename="rb-legend-table",
-                checked=testset.meta.id, radiobuttons=True)
+        rrt = self.render_string(
+            "results_table.html",
+            results=testruns,
+            representation=repres,
+            tablename="rb-legend-table",
+            checked=testset.meta.id,
+            radiobuttons=True,
+        )
 
-        self.render("result_view.html", file=testset, compare=compare, meta=meta,
-                comparelist=comparelist, representation=repres, sets=sets,
-                rendered_results_table=rrt, fileoptions=fileoptions,
-                downloadzip=downloadziplink, evals=IPET_EVALUATIONS)
+        self.render(
+            "result_view.html",
+            file=testset,
+            compare=compare,
+            meta=meta,
+            comparelist=comparelist,
+            representation=repres,
+            sets=sets,
+            rendered_results_table=rrt,
+            fileoptions=fileoptions,
+            downloadzip=downloadziplink,
+            evals=IPET_EVALUATIONS,
+        )
 
     def post(self, testset_id):
         """
@@ -86,8 +109,9 @@ class ResultView(BaseHandler):
         # meta id of TestSet
         t = TestSet.get(id=testset_id)
         if not self.has_permission(t, "edit"):
-            return self.write_error(status=403,
-                    msg="Sorry, you do not have permission to edit this run.")
+            return self.write_error(
+                status=403, msg="Sorry, you do not have permission to edit this run."
+            )
 
         next_url = "{}/result/{}".format(self.application.base_url, t.meta.id)
         tags = self.get_argument("tags-input", default=None)
@@ -111,8 +135,10 @@ class ResultView(BaseHandler):
         """
         t = TestSet.get(id=testset_id)
         if not self.has_permission(t, "edit"):
-            return self.write_error(status=403,
-                    msg="Sorry, you do not have permission to reimport this run.")
+            return self.write_error(
+                status=403,
+                msg="Sorry, you do not have permission to reimport this run.",
+            )
 
         t.load_files()
         if "out" not in t.files.to_dict().keys():
@@ -146,8 +172,9 @@ class ResultView(BaseHandler):
         t = TestSet.get(id=testset_id)
 
         if not self.has_permission(t, "delete"):
-            return self.write_error(status=403,
-                    msg="Sorry, you do not have permission to delete this run.")
+            return self.write_error(
+                status=403, msg="Sorry, you do not have permission to delete this run."
+            )
 
         # remove from db
         t.delete_all_associations()
@@ -178,7 +205,7 @@ def load_testsets(ids):
             t.load_results()
             t.load_settings()
             tss.append(t)
-    except:
+    except Exception:
         raise HTTPError(404)
 
     return tss
@@ -238,6 +265,6 @@ def get_intersection_difference(runs):
     difference -= intersection
 
     return {
-                "intersection": intersection,
-                "difference": difference,
-            }
+        "intersection": intersection,
+        "difference": difference,
+    }

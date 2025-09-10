@@ -1,4 +1,5 @@
 """Contains SearchView."""
+
 from rubberband.models import TestSet
 from rubberband.utils import get_uniques
 from rubberband.handlers.common import search
@@ -45,12 +46,20 @@ class SearchView(BaseHandler):
 
         # render compares and starred table
         rct = self.get_testrun_table(compare_trns, tablename="rb-compares-table")
-        rst = self.get_testrun_table(self.get_starred_testruns(), tablename="rb-starred-table",
-                get_empty_header=True)
+        rst = self.get_testrun_table(
+            self.get_starred_testruns(),
+            tablename="rb-starred-table",
+            get_empty_header=True,
+        )
 
         # render search view
-        self.render("search.html", page_title="Search", search_options=options,
-                compare_table=rct, starred_table=rst)
+        self.render(
+            "search.html",
+            page_title="Search",
+            search_options=options,
+            compare_table=rct,
+            starred_table=rst,
+        )
 
     def post(self):
         """
@@ -66,8 +75,15 @@ class SearchView(BaseHandler):
             exclude = exclude.split(",")
             results = [r for r in results if r.meta.id not in exclude]
 
-        self.write(self.render_string("results_table.html", tablename="search-result",
-            results=results, checkboxes=True, get_empty_header=False))
+        self.write(
+            self.render_string(
+                "results_table.html",
+                tablename="search-result",
+                results=results,
+                checkboxes=True,
+                get_empty_header=False,
+            )
+        )
 
     def fill_query(self, all_fields=None):
         """

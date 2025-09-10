@@ -31,14 +31,10 @@ jobs:
           pip install -r requirements-dev.txt
       - name: Install Rubberband
         run: python setup.py install
-      - name: Run linter
+      - name: Run linter and formatter
         run: |
-          flake8 rubberband
-          flake8 tests
-      - name: Run pep257 checks
-        run: |
-          pep257 rubberband
-          pep257 tests
+          ruff check rubberband
+          ruff check tests
       - name: Build documentation
         working-directory: ./doc
         run: make doc

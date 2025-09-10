@@ -1,7 +1,9 @@
 import os.path
 from rubberband.utils import generate_sha256_hash
 
-DATAFILES = "data/check.IP_1s_1m.scip-3.2.1.linux.x86_64.gnu.dbg.cpx.opt-low.default.out"
+DATAFILES = (
+    "data/check.IP_1s_1m.scip-3.2.1.linux.x86_64.gnu.dbg.cpx.opt-low.default.out"
+)
 FULLDATAPATH = os.path.join(os.path.dirname(__file__), DATAFILES)
 
 

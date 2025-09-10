@@ -1,4 +1,5 @@
 """URL routes for rubberband tornado app."""
+
 import rubberband.handlers.fe as fe
 import rubberband.handlers.api as api
 
@@ -18,13 +19,10 @@ routes = [
     (r"/upload", fe.UploadView),
     (r"/personal", fe.PersonalView),
     (r"/visualize", fe.VisualizeView),
-
     # for typeahead in visualize.js
     (r"/instances/names", fe.InstanceNamesEndpoint),
-
     # for typeahead in statistic.js
     (r"/instances/?(?P<testset_id>[^\/]+)", fe.InstanceEndpoint),
-
     # API Endpoints
     (r"/api/comparison/(?P<base_id>[^\/]+)", api.ComparisonEndpoint),
     (r"/api/upload/async", api.UploadAsyncEndpoint),

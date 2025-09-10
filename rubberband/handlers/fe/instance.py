@@ -1,4 +1,5 @@
 """Contains InstanceView."""
+
 import json
 from elasticsearch_dsl import A
 
@@ -30,8 +31,13 @@ class InstanceView(BaseHandler):
             compare_ids = compare.split(",")
             compare = load_results(compare_ids, r.instance_name)
 
-        self.render("instance_detail_view.html", result=r, num_results=count, compare=compare,
-                    page_title="Instance Result")
+        self.render(
+            "instance_detail_view.html",
+            result=r,
+            num_results=count,
+            compare=compare,
+            page_title="Instance Result",
+        )
 
 
 class InstanceNamesEndpoint(BaseHandler):
