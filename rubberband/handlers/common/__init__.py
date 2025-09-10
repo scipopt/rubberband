@@ -1,4 +1,5 @@
 """Common methods for request handlers."""
+
 from rubberband.models import TestSet
 
 
@@ -23,7 +24,7 @@ def search(query):
         tags = tags.split(",")
         tags = list(map(str.strip, tags))
         s = s.filter("terms", tags=tags)
-        del(query["tags"])
+        del query["tags"]
 
     # return 100 items unless a limit is explicitly set
     limit = query.pop("limit", None) or 100

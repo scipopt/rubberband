@@ -1,4 +1,5 @@
 """Contains UploadApiEndpoint."""
+
 import logging
 from tornado.escape import json_encode
 from tornado.ioloop import IOLoop
@@ -24,10 +25,13 @@ class UploadAsyncEndpoint(BaseHandler):
         files = self.request.files.values()
         tags = self.get_argument("tags", [])
 
-        IOLoop.current().spawn_callback(import_files, files, tags, self.current_user,
-                                        self.application.base_url)
+        IOLoop.current().spawn_callback(
+            import_files, files, tags, self.current_user, self.application.base_url
+        )
         self.set_status(202)  # Accepted
-        json_response = make_response("queued", self.application.base_url, msg="Check your inbox.")
+        json_response = make_response(
+            "queued", self.application.base_url, msg="Check your inbox."
+        )
 
         self.write(json_response)
 
@@ -50,7 +54,9 @@ class UploadEndpoint(BaseHandler):
         files = self.request.files.values()
         tags = self.get_argument("tags", [])
         expirationdate = self.get_argument("expirationdate", None)
-        results = perform_import(files, tags, self.current_user, expirationdate=expirationdate)
+        results = perform_import(
+            files, tags, self.current_user, expirationdate=expirationdate
+        )
 
         self.set_status(201)  # created
         for result in results:
@@ -61,11 +67,19 @@ class UploadEndpoint(BaseHandler):
         response = []
         for result in results:
             if result.fail:
-                response.append(make_response(result.status, self.application.base_url,
-                                 basename=result.basename, errors=result.getMessages()))
+                response.append(
+                    make_response(
+                        result.status,
+                        self.application.base_url,
+                        basename=result.basename,
+                        errors=result.getMessages(),
+                    )
+                )
             else:
                 url = "{}{}".format(self.application.base_url, result.getUrl())
-                response.append(make_response(result.status, url, basename=result.basename))
+                response.append(
+                    make_response(result.status, url, basename=result.basename)
+                )
 
         self.write(json_encode(response))
 
@@ -99,11 +113,19 @@ def import_files(paths, tags, user, url_base, expirationdate=None):
     response = []
     for result in results:
         if result.fail:
-            response.append(make_response(result.status, url_base,
-                                     basename=result.basename, errors=result.getMessages()))
+            response.append(
+                make_response(
+                    result.status,
+                    url_base,
+                    basename=result.basename,
+                    errors=result.getMessages(),
+                )
+            )
         else:
             url = "{}{}".format(url_base, result.getUrl())
-            response.append(make_response(result.status, url=url, basename=result.basename))
+            response.append(
+                make_response(result.status, url=url, basename=result.basename)
+            )
 
     logging.info("Sending an email to {}".format(user))
     sendmail(response, user)

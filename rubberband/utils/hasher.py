@@ -1,4 +1,5 @@
 """Functions to deal with hases."""
+
 import hashlib
 
 

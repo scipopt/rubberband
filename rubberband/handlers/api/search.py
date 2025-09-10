@@ -1,4 +1,5 @@
 """Contains Search api endpoint."""
+
 import json
 
 from rubberband.handlers.common import search

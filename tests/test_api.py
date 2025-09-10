@@ -7,10 +7,10 @@ DATADIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data")
 
 class GetAPITest(TestHandlerBase):
     def test_instance_names(self):
-        '''
+        """
         Test that the expected content type is recieved.
         ["blend2", "rgn", "dcmulti", "misc03", "stein27", "vpm2", "enigma", "bell5", ...]
-        '''
+        """
         response = self.fetch("/instances/names")
         self.assertEqual(response.code, 200)
         data = json.loads(response.body.decode("utf-8"))
@@ -20,12 +20,10 @@ class GetAPITest(TestHandlerBase):
 
 class UploadAPITest(TestHandlerBase):
     def test_upload_exception_handling(self):
-        '''
+        """
         Test that the api can gracefully handle exceptions.
-        '''
-        response = self.fetch("/api/upload",
-                              method="PUT",
-                              body="something")
+        """
+        response = self.fetch("/api/upload", method="PUT", body="something")
         self.assertEqual(response.code, 400)
         data = json.loads(response.body.decode("utf-8"))
         self.assertTrue(isinstance(data, list))
@@ -39,11 +37,10 @@ class UploadAPITest(TestHandlerBase):
 
 class SearchAPITest(TestHandlerBase):
     def test_search(self):
-        '''
+        """
         Test that the api can gracefully handle exceptions.
-        '''
-        response = self.fetch("/api/search?test_set=short",
-                              method="GET")
+        """
+        response = self.fetch("/api/search?test_set=short", method="GET")
         self.assertEqual(response.code, 200)
         data = json.loads(response.body.decode("utf-8"))
         self.assertTrue(isinstance(data, list))

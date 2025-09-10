@@ -1,4 +1,5 @@
 """Contains MainView."""
+
 from .base import BaseHandler
 
 

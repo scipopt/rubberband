@@ -15,7 +15,9 @@ def main():
     project_root = os.path.join(os.path.dirname(__file__), "rubberband")
     app = make_app(project_root)
     # create an HTTPServer
-    server = tornado.httpserver.HTTPServer(app, max_body_size=2 * GB, max_buffer_size=2 * GB)
+    server = tornado.httpserver.HTTPServer(
+        app, max_body_size=2 * GB, max_buffer_size=2 * GB
+    )
     # bind it to a port specified in 'options'
     server.bind(options.port)
     # start server and ioloop as main event loop

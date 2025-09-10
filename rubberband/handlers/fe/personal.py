@@ -1,4 +1,5 @@
 """Contains HelpView."""
+
 from .base import BaseHandler
 
 
@@ -11,11 +12,16 @@ class PersonalView(BaseHandler):
 
         Renders `personal.html`.
         """
-        rst = self.get_testrun_table(self.get_starred_testruns(), tablename="rb-starred-table",
-                checkboxes=False)
+        rst = self.get_testrun_table(
+            self.get_starred_testruns(), tablename="rb-starred-table", checkboxes=False
+        )
 
-        self.render("personal.html", page_title="Personal space",
-                mycookies=self.get_all_cookies(), starred_table=rst)
+        self.render(
+            "personal.html",
+            page_title="Personal space",
+            mycookies=self.get_all_cookies(),
+            starred_table=rst,
+        )
 
     def post(self):
         """
