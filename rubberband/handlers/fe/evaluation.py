@@ -24,15 +24,15 @@ class EvaluationView(BaseHandler):
         """
         Answer to GET requests.
 
-        Evaluate TestRuns with IPET, read id of evaluation file from URL.
+        Evaluate TestRuns with IPET, read id of evaluation file from URL. Writes latex version
+        of ipet-agg-table via file.html if style option in url is `latex`, else it writes
+        ipet-long-table and ipet-aggregated-table into a json dict.
 
         Parameters
         ----------
         eval_id : str
             id of evaluation file read from url by routes.
 
-        Writes latex version of ipet-agg-table via file.html if style option in url is `latex`,
-        else it writes ipet-long-table and ipet-aggregated-table into a json dict
         """
         # default and implicit style is ipetevaluation. if given latex, generate a table in the
         # style of the release report

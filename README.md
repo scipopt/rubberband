@@ -21,7 +21,7 @@ This is a detailed description of how to set up Rubberband.
 ### Install system requirements
 
 ```
-sudo apt install git curl libffi-dev libssl-dev libsqlite3-dev libbz2-dev libncurses-dev libreadline-dev liblzma-dev zlib1g-dev tk-dev
+sudo apt install git curl libffi-dev libssl-dev libsqlite3-dev libbz2-dev libncurses-dev libreadline-dev liblzma-dev zlib1g-dev tk-dev libxml2-dev libxslt1-dev
 ```
 
 ### Installing Elasticsearch
@@ -37,7 +37,7 @@ sudo dpkg -i elasticsearch-9.1.3-amd64.deb
 
 ### Setting up Rubberband
 
-Rubberband is built on [tornado](http://www.tornadoweb.org/en/stable/) and [IPET](https://github.com/gregorCH/ipet), an interactive performance evaluation tool that comes with a parsing library for benchmark files. To get Rubberband running locally, make sure you first have Elasticsearch installed and running.
+Rubberband is built on [tornado](http://www.tornadoweb.org/en/stable/) and [IPET](https://github.com/stephenjmaher/ipet/tree/remove-gui), an interactive performance evaluation tool that comes with a parsing library for benchmark files. To get Rubberband running locally, make sure you first have Elasticsearch installed and running.
 
 ```
 sudo service elasticsearch start
