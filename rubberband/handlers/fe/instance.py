@@ -1,7 +1,7 @@
 """Contains InstanceView."""
 
 import json
-from elasticsearch_dsl import A
+from elasticsearch.dsl import A
 
 from rubberband.models import TestSet, Result
 from .base import BaseHandler

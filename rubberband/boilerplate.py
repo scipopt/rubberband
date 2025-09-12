@@ -8,7 +8,7 @@ from tornado.options import define, options
 from tornado.web import Application
 from tornado.routing import HostMatches
 from elasticsearch import Elasticsearch
-from elasticsearch_dsl.connections import connections
+from elasticsearch.dsl.connections import connections
 
 from rubberband.routes import routes
 from rubberband.handlers.fe import ErrorView
@@ -43,7 +43,6 @@ define(
 define(
     "elasticsearch_url", default="http://127.0.0.1:9200", help="The Elasticsearch url."
 )
-define("elasticsearch_use_ssl", default=False, help="Use ssl? No for dev.")
 define("elasticsearch_verify_certs", default=False, help="Verify certs? No for dev.")
 define("elasticsearch_ca_certs", default=None, help="Path to CA certs.")
 
@@ -124,13 +123,12 @@ def make_app(project_root):
     logging.info("Setting up Elasticsearch connection.")
     # set up elasticsearch
     # create connection instance
-    # the timeout argument is needed when you upload big files
+    # the request_timeout argument is needed when you upload big files
     conn = Elasticsearch(
         [options.elasticsearch_url],
-        use_ssl=options.elasticsearch_use_ssl,
         verify_certs=options.elasticsearch_verify_certs,
         ca_certs=options.elasticsearch_ca_certs,
-        timeout=100,
+        request_timeout=100,
     )
     # connect connection to pool
     connections.add_connection("default", conn)
