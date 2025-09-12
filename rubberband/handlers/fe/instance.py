@@ -52,7 +52,7 @@ class InstanceNamesEndpoint(BaseHandler):
         Write a list of all instance names in Elasticsearch.
         """
         s = Result.search()
-        a = A("terms", field="instance_name")
+        a = A("terms", field="instance_name", size=1000000)
         s.aggs.bucket("unique_instances", a)
         res = s.execute()
         names = [x["key"] for x in res.aggregations["unique_instances"]["buckets"]]
