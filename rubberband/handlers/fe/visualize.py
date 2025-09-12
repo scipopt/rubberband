@@ -1,7 +1,7 @@
 """Contains VisualizeView."""
 
 import datetime
-from elasticsearch_dsl import Q
+from elasticsearch.dsl import Q
 import json
 
 from .base import BaseHandler
