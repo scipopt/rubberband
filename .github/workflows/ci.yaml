@@ -27,6 +27,7 @@ jobs:
         uses: elastic/elastic-github-actions/elasticsearch@master
         with:
           stack-version: 7.17.17
+          security-enabled: false
       - name: Install Python package dependencies
         run: |
           pip install -r requirements.txt
