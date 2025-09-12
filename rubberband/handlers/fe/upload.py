@@ -27,6 +27,9 @@ class UploadView(BaseHandler):
         paths = []
         files = self.request.files.get("resultFiles")
         expirationdate = self.get_argument("expirationdate", None)
+        if expirationdate == '':
+            expirationdate = None
+
         tags = self.get_argument("tags", [])
         if tags != []:
             tags = tags.split(",")
