@@ -1,3 +1,17 @@
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "rubberband"
+version = "1.0.0"
+description = "A flexible archiving platform for optimization benchmarks"
+author = "Zuse Institute Berlin"
+maintainer = "Zuse Institute Berlin"
+author_email = "gleixner@zib.de"
+maintainer_email = "gleixner@zib.de"
+license = "MIT"
+url = "https://github.com/scipopt/rubberband"
+download_url = "https://github.com/scipopt/rubberband/archive/master.zip"
+
+
