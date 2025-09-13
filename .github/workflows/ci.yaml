@@ -40,7 +40,7 @@ jobs:
         working-directory: ./doc
         run: make doc
       - name: Install Rubberband
-        run: python setup.py install
+        run: python -m pip install .
       - name: Run tests
         run: |
           ./runtests tests/

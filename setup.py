@@ -21,8 +21,8 @@ kwargs = {
     "maintainer_email": "gleixner@zib.de",
     "license": "MIT",
     "install_requires": required[1:],
-    "url": "https://github.com/ambros-gleixner/rubberband",
-    "download_url": "https://github.com/ambros-gleixner/rubberband/archive/master.zip",
+    "url": "https://github.com/scipopt/rubberband",
+    "download_url": "https://github.com/scipopt/rubberband/archive/master.zip",
     "classifiers": [
         "Programming Language :: Python",
         "Topic :: Software Development",

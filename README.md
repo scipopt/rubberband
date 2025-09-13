@@ -133,7 +133,13 @@ Now you can view the documentation by opening `doc/build/html/index.html` in you
 
 ## Testing
 
-Run the test suite.
+First, install Rubberband locally:
+
+```
+python -m pip install .
+```
+
+Then, run the test suite.
 
 ```
 py.test -v tests/
