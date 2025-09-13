@@ -33,6 +33,12 @@ wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.17.17-
 sudo dpkg -i elasticsearch-7.17.17-amd64.deb
 ```
 
+This version of Elasticsearch comes with various security configurations enabled. For local development, you can turn all of these off. To do that, open up `/etc/elasticsearch/elasticsearch.yml` and change the following configuration options to `false`:
+ - `xpack.security.enabled`
+ - `xpack.security.enrollment.enabled`
+ - `xpack.security.http.ssl.enabled`
+ - `xpack.security.transport.ssl.enabled`
+
 ### Setting up Rubberband
 
 Rubberband is built on [tornado](http://www.tornadoweb.org/en/stable/) and [IPET](https://github.com/stephenjmaher/ipet/tree/remove-gui), an interactive performance evaluation tool that comes with a parsing library for benchmark files. To get Rubberband running locally, make sure you first have Elasticsearch installed and running.
