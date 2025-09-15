@@ -1,4 +1,4 @@
--e git+https://github.com/stephenjmaher/ipet.git@ddcbb843b50ae6fe6c9e55a6d6adcee2dadf7712#egg=ipet
+ipet @ git+https://github.com/stephenjmaher/ipet.git@ddcbb843b50ae6fe6c9e55a6d6adcee2dadf7712
 Click==8.2.1
 elasticsearch==7.17.12
 elasticsearch-dsl==7.4.1
