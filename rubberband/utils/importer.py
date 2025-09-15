@@ -83,7 +83,6 @@ class Importer(object):
         expirationdate : str in date form
             Date after which data can be purged from elasticsearch (default: None)
         """
-        # TODO: maybe check for reasonable expdate?
         # This gets called by both the apiupload and the webupload
         total_files = len(paths)
         basename = ""

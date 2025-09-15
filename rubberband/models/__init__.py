@@ -1,9 +1,9 @@
-"""Define data models and methods, also used by elasticsearch_dsl."""
+"""Define data models and methods."""
 
 import gzip
 import json
 import datetime
-from elasticsearch_dsl import Boolean, Document, Text, Keyword, Date, Nested, Integer
+from elasticsearch.dsl import Boolean, Document, Text, Keyword, Date, Nested, Integer
 from ipet import Key
 
 from rubberband.constants import (
