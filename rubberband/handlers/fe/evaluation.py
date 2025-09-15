@@ -5,6 +5,7 @@ import pandas as pd
 
 import re
 import json
+import logging
 
 from .base import BaseHandler
 from rubberband.constants import IPET_EVALUATIONS, NONE_DISPLAY, ALL_SOLU, EVAL_FILE
@@ -35,14 +36,24 @@ class EvaluationView(BaseHandler):
         """
         # default and implicit style is ipetevaluation. if given latex, generate a table in the
         # style of the release report
+        # logging.info(msg="starting eval with uri".format(self.request.uri))
         style = self.get_argument("style", None)
+
+        # setup logger
+        if style is None:
+            # ipetlogger = logging.getLogger("ipet")
+            rbhandler = RBLogHandler(self)
+
+            rbhandler.setLevel(logging.INFO)
+            formatter = logging.Formatter("%(name)s - %(levelname)s - %(message)s")
+            rbhandler.setFormatter(formatter)
 
         # get evalfile
         if style is not None and style == "latex":
-            evalfile = EVAL_FILE
+          evalfile = EVAL_FILE
         else:
-            evalfile = IPET_EVALUATIONS[int(eval_id)]
-
+          evalfile = IPET_EVALUATIONS[int(eval_id)]
+ 
         tolerance = self.get_argument("tolerance")
         if tolerance == "":
             tolerance = 1e-6
@@ -102,6 +113,9 @@ class EvaluationView(BaseHandler):
             html_agg = table_to_html(
                 aggtable, ev, html_id="ipet-aggregated-table", add_class=add_classes
             )
+
+            # ipetlogger.removeHandler(rbhandler)
+            rbhandler.close()
 
             # postprocessing
             html_long = process_ipet_table(
