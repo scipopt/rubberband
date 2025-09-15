@@ -55,3 +55,6 @@ doc/source/_modules
 
 # pytests
 .pytest_cache/
+
+# ruff cache
+.ruff_cache/
