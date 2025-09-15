@@ -50,10 +50,10 @@ class EvaluationView(BaseHandler):
 
         # get evalfile
         if style is not None and style == "latex":
-          evalfile = EVAL_FILE
+            evalfile = EVAL_FILE
         else:
-          evalfile = IPET_EVALUATIONS[int(eval_id)]
- 
+            evalfile = IPET_EVALUATIONS[int(eval_id)]
+
         tolerance = self.get_argument("tolerance")
         if tolerance == "":
             tolerance = 1e-6
