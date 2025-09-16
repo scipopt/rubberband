@@ -86,20 +86,30 @@ bin/rubberband-ctl populate-indices
 The second command will need a few minutes to finish. If the commands complete sucessfully, stdout should look something like this:
 
 ```
-WARNING:elasticsearch:HEAD /solver-results [status:404 request:0.005s]
-INFO:elasticsearch:PUT http://127.0.01:9200/solver-results [status:200 request:0.107s]
-INFO:elasticsearch:HEAD http://127.0.01:9200/solver-results [status:200 request:0.002s]
-INFO:elasticsearch:PUT http://127.0.01:9200/solver-results/_mapping/file [status:200 request:0.041s]
-INFO:elasticsearch:HEAD http://127.0.01:9200/solver-results [status:200 request:0.002s]
-INFO:elasticsearch:PUT http://127.0.01:9200/solver-results/_mapping/testset [status:200 request:0.019s]
-INFO:root:Loading additional configuration from /etc/rubberband/app.cfg
-INFO:root:Setting up Elasticsearch connection.
-INFO:rubberband.utils.importer:debug opened a connection to elasticsearch with the ResultClient
-INFO:rubberband.utils.importer:Found 4 files. Beginning to parse.
-INFO:urllib3.connectionpool:Starting new HTTP connection (1): 127.0.01
-INFO:elasticsearch:GET http://127.0.01:9200/solver-results/testset/_search [status:200 request:0.057s]
-INFO:rubberband.utils.importer:Adding SoluFile.
 ...
+16-09-2025 12:19:29 - 488 INFO  elastic_transport.transport POST http://127.0.0.1:9200/testset/_doc [status:201 duration:0.030s]
+16-09-2025 12:19:29 - 500 INFO  elastic_transport.transport POST http://127.0.0.1:9200/settings/_doc [status:201 duration:0.005s]
+16-09-2025 12:19:29 - 512 INFO  elastic_transport.transport POST http://127.0.0.1:9200/settings/_doc [status:201 duration:0.007s]
+16-09-2025 12:19:29 - 521 INFO  elastic_transport.transport POST http://127.0.0.1:9200/testset/_update/4o1SU5kBKuV0IQ9c9FAz?if_primary_term=1&if_seq_no=15&refresh=false [status:200 duration:0.009s]
+16-09-2025 12:19:29 - 529 INFO  elastic_transport.transport POST http://127.0.0.1:9200/result/_doc [status:201 duration:0.004s]
+16-09-2025 12:19:29 - 537 INFO  elastic_transport.transport POST http://127.0.0.1:9200/result/_doc [status:201 duration:0.004s]
+16-09-2025 12:19:29 - 548 INFO  elastic_transport.transport POST http://127.0.0.1:9200/result/_doc [status:201 duration:0.008s]
+16-09-2025 12:19:29 - 556 INFO  elastic_transport.transport POST http://127.0.0.1:9200/result/_doc [status:201 duration:0.004s]
+16-09-2025 12:19:29 - 563 INFO  elastic_transport.transport POST http://127.0.0.1:9200/result/_doc [status:201 duration:0.004s]
+16-09-2025 12:19:29 - 571 INFO  elastic_transport.transport POST http://127.0.0.1:9200/result/_doc [status:201 duration:0.004s]
+16-09-2025 12:19:29 - 580 INFO  elastic_transport.transport POST http://127.0.0.1:9200/result/_doc [status:201 duration:0.006s]
+16-09-2025 12:19:29 - 584 INFO  elastic_transport.transport POST http://127.0.0.1:9200/testset/_update/4o1SU5kBKuV0IQ9c9FAz?if_primary_term=1&if_seq_no=16&refresh=false [status:200 duration:0.003s]
+16-09-2025 12:19:29 - 584 INFO  rubberband.utils.importer Data for file /home/user/workspace/r/tests/data/check.IP_1s_1m.scip-3.2.1.linux.x86_64.gnu.dbg.cpx.opt-low.default.out was successfully imported and archived
+16-09-2025 12:19:29 - 587 INFO  rubberband.utils.importer Backing up /home/user/workspace/r/tests/data/check.IP_1s_1m.scip-3.2.1.linux.x86_64.gnu.dbg.cpx.opt-low.default.out in Elasticsearch
+16-09-2025 12:19:29 - 594 INFO  elastic_transport.transport POST http://127.0.0.1:9200/file/_doc [status:201 duration:0.006s]
+16-09-2025 12:19:29 - 595 INFO  rubberband.utils.importer Backing up /home/user/workspace/r/tests/data/check.IP_1s_1m.scip-3.2.1.linux.x86_64.gnu.dbg.cpx.opt-low.default.set in Elasticsearch
+16-09-2025 12:19:29 - 602 INFO  elastic_transport.transport POST http://127.0.0.1:9200/file/_doc [status:201 duration:0.005s]
+16-09-2025 12:19:29 - 602 INFO  rubberband.utils.importer Backing up /home/user/workspace/r/tests/data/check.IP_1s_1m.scip-3.2.1.linux.x86_64.gnu.dbg.cpx.opt-low.default.meta in Elasticsearch
+16-09-2025 12:19:29 - 608 INFO  elastic_transport.transport POST http://127.0.0.1:9200/file/_doc [status:201 duration:0.003s]
+16-09-2025 12:19:29 - 609 INFO  rubberband.utils.importer Backing up /home/user/workspace/r/tests/data/check.IP_1s_1m.scip-3.2.1.linux.x86_64.gnu.dbg.cpx.opt-low.default.err in Elasticsearch
+16-09-2025 12:19:29 - 614 INFO  elastic_transport.transport POST http://127.0.0.1:9200/file/_doc [status:201 duration:0.005s]
+16-09-2025 12:19:29 - 615 INFO  rubberband.utils.importer /home/user/workspace/r/tests/data/check.IP_1s_1m.scip-3.2.1.linux.x86_64.gnu.dbg.cpx.opt-low.default.out file bundle backed up in Elasticsearch.
+16-09-2025 12:19:29 - 615 INFO  rubberband.utils.importer Finished!
 ```
 
 ### Start the server
