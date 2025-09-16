@@ -12,11 +12,11 @@ readme = "README.md"
 dynamic = ["dependencies", "optional-dependencies"]
 
 authors = [
-  { name = "Zuse Institute Berlin", email = "gleixner@zib.de" }
+  { name = "Cristina Muñoz", email = "cristina@bitflipenterprises.com" }
 ]
 
 maintainers = [
-  { name = "Zuse Institute Berlin", email = "gleixner@zib.de" }
+  { name = "Cristina Muñoz", email = "cristina@bitflipenterprises.com" }
 ]
 
 urls = { "Homepage"= "https://github.com/scipopt/rubberband" }
