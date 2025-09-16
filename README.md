@@ -152,7 +152,7 @@ python -m pip install .
 Then, run the test suite.
 
 ```
-py.test -v tests/
+pytest tests/
 ```
 
 Tests will fail if Elasticsearch is not running, or if the indices are empty or if you didn't configure authentication correctly.
