@@ -149,7 +149,7 @@ Tests will fail if Elasticsearch is not running, or if the indices are empty or 
 
 ## Deployment
 
-Rubberband currently requires a connection to an [Elasticsearch 7.x](https://www.elastic.co/guide/en/elasticsearch/reference/7.0/index.html) instance and (optionally) a [Gitlab](https://about.gitlab.com/) instance to run. To configure a Gitlab connection, edit the configuration variables in `/etc/rubberband/app.cfg` beginning with `gitlab_`. The Gitlab connection is used to look up information from the code base that your test set log is linked to. Examples of this type of information are git commit date and last committer. The visualize tab is disabled if no Gitlab connection information is provided.
+Rubberband currently requires a connection to an [Elasticsearch 9.x](https://www.elastic.co/docs/solutions/search/get-started) instance and (optionally) a [Gitlab](https://about.gitlab.com/) instance to run. To configure a Gitlab connection, edit the configuration variables in `/etc/rubberband/app.cfg` beginning with `gitlab_`. The Gitlab connection is used to look up information from the code base that your test set log is linked to. Examples of this type of information are git commit date and last committer. The visualize tab is disabled if no Gitlab connection information is provided.
 
 ### Authentication
 
