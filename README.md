@@ -75,7 +75,7 @@ NOTE: If you install Rubberband as a developer version, you don't need to do thi
 To populate the database or run unit tests, first install Rubberband inside the virtualenv.
 
 ```
-pip install -e .
+python -m pip install .
 ```
 
 Now take a look at the control script in `bin/rubberband-ctl`. Running the control script with no options will show the help. For first-time, create the indices, and populate the indices with data. This can be accomplished with the following two commands.
