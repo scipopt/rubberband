@@ -1,4 +1,4 @@
-ipet @ git+https://github.com/stephenjmaher/ipet.git@ddcbb843b50ae6fe6c9e55a6d6adcee2dadf7712
+ipet @ git+https://github.com/stephenjmaher/ipet.git@7386dc2f9ccdcaae7bfab006a7152b33fb999d98
 Click==8.2.1
 elasticsearch==9.1.0
 lxml==6.0.1
