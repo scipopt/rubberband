@@ -8,9 +8,9 @@ import json
 import logging
 
 from .base import BaseHandler
-from rubberband.constants import IPET_EVALUATIONS, NONE_DISPLAY, ALL_SOLU, EVAL_FILE
+from rubberband.constants import IPET_EVALUATIONS, NONE_DISPLAY, EVAL_FILE
 from rubberband.models import TestSet
-from rubberband.utils import RBLogHandler
+from rubberband.utils import RBLogHandler, ALL_SOLU
 from rubberband.utils.helpers import get_rbid_representation, setup_testruns_subst_dict
 
 from ipet import Experiment, TestRun
