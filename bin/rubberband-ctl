@@ -13,7 +13,6 @@ from dateutil.relativedelta import relativedelta
 from rubberband.models import Result, File, TestSet, Settings
 from rubberband.constants import FILE_INDEX, RESULT_INDEX, TESTSET_INDEX, SETTINGS_INDEX
 from rubberband.utils import Importer
-from rubberband.version import __version__
 from rubberband.boilerplate import make_app
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
@@ -26,7 +25,6 @@ es_logger = logging.getLogger('elasticsearch')
 es_logger.setLevel(logging.INFO)
 
 @click.group(context_settings=CONTEXT_SETTINGS)
-@click.version_option(version=__version__)
 def main():
     pass
 
