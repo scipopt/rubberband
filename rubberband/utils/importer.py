@@ -23,7 +23,7 @@ REQUIRED_FILES = set([".out"])
 OPTIONAL_FILES = set([".solu", ".err", ".set", ".meta"])
 ALL_SOLU = (
     SOLU_DIR + "instancedb.sqlite3"
-    if os.path.isfile(SOLU_DIR, "instancedb.sqlite3")
+    if os.path.isfile(SOLU_DIR + "instancedb.sqlite3")
     else SOLU_DIR + "allpublic.solu"
 )
 
