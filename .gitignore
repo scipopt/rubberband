@@ -1,6 +1,4 @@
 # app specific
-all.solu
-*.solu
 *.out
 *.res
 *.meta

@@ -1,6 +1,6 @@
 """Helper modules."""
 
-from .importer import Importer, REQUIRED_FILES, OPTIONAL_FILES  # noqa
+from .importer import Importer, REQUIRED_FILES, OPTIONAL_FILES, ALL_SOLU  # noqa
 from .es_helpers import get_uniques  # noqa
 from .rbloghandler import RBLogHandler  # noqa
 from .hasher import generate_sha256_hash  # noqa

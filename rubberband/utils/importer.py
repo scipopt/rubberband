@@ -14,13 +14,18 @@ from tornado.options import options
 
 # package imports
 from rubberband.models import TestSet, Result, File, Settings
-from rubberband.constants import ALL_SOLU, ADD_READERS, FORMAT_DATETIME
+from rubberband.constants import ADD_READERS, FORMAT_DATETIME, SOLU_DIR
 from rubberband.utils import gitlab as gl
 from .stats import ImportStats
 from .hasher import generate_sha256_hash
 
 REQUIRED_FILES = set([".out"])
 OPTIONAL_FILES = set([".solu", ".err", ".set", ".meta"])
+ALL_SOLU = (
+    SOLU_DIR + "instancedb.sqlite3"
+    if os.path.isfile(SOLU_DIR, "instancedb.sqlite3")
+    else SOLU_DIR + "allpublic.solu"
+)
 
 
 class Importer(object):

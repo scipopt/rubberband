@@ -16,8 +16,8 @@ TESTSET_INDEX = "testset"
 SETTINGS_INDEX = "settings"
 ZIPPED_SUFFIX = ".gz"
 FILES_DIR = "files/"
-ALL_SOLU = FILES_DIR + "instancedata/database/instancedb.sqlite3"
-STATIC_FILES_DIR = FILES_DIR + "static/"
+SOLU_DIR = FILES_DIR + "instancedata/"
+STATIC_FILES_DIR = FILES_DIR + "xml/"
 ADD_READERS = STATIC_FILES_DIR + "additional_readers.xml"
 IPET_EVALUATIONS = {
     0: {

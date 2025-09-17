@@ -4,7 +4,8 @@ from datetime import datetime
 from tornado.web import HTTPError
 
 from .base import BaseHandler, authenticated
-from rubberband.constants import ALL_SOLU, FORMAT_DATE
+from rubberband.constants import FORMAT_DATE
+from rubberband.utils import ALL_SOLU
 from rubberband.handlers.fe.evaluation import (
     setup_experiment,
     get_testruns,
