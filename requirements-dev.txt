@@ -2,4 +2,4 @@ pypandoc==1.15
 pytest==7.4.4
 recommonmark==0.7.1
 ruff==0.12.12
-Sphinx==5.0.2
+Sphinx==8.2.3
