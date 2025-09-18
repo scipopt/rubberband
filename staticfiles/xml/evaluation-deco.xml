@@ -1,0 +1,43 @@
+<?xml version="1.0" ?>
+<Evaluation comparecolformat="%.3f" index="ProblemName RubberbandId" indexsplit="-1">
+	<Column active="True" formatstr="%.2f" name="Score" origcolname="Score" reduction="meanOrConcat" comp="difference">
+		<Aggregation aggregation="mean" name="avg"/>
+	</Column>
+	<Column active="True" alternative="-1e+30" name="CplexBound" origcolname="CplexPrimalBound" reduction="meanOrConcat"/>
+	<Column active="True" alternative="-1e+30" name="DualBound" origcolname="DualBound" reduction="meanOrConcat"/>
+	<Column active="True" alternative="1e+30" name="PrimalBound" origcolname="PrimalBound" reduction="meanOrConcat"/>
+	<Column active="True" alternative="1e+30" formatstr="%.2f" name="Gap" origcolname="Gap" reduction="meanOrConcat"/>
+	<Column active="True" name="Time" origcolname="SolveRuntime" reduction="meanOrConcat">
+		<Aggregation aggregation="shmean" name="sgm" shiftby="1.0"/>
+	</Column>
+	<Column active="True" name="TimeLimit" origcolname="SolveRuntimeMax" reduction="meanOrConcat"/>
+	<Column active="True" formatstr="%f" name="CplexMemory" origcolname="CplexMemory" reduction="meanOrConcat"/>
+	<Column active="True" formatstr="%f" name="Memory" origcolname="Memory" reduction="meanOrConcat"/>
+	<Column active="True" formatstr="%.2f" name="MemRatio" origcolname="MemoryRatio" reduction="meanOrConcat">
+		<Aggregation aggregation="mean" name="avg"/>
+	</Column>
+	<Column active="True" alternative="0" formatstr="%d" name="NProbs" origcolname="SubProbs" reduction="meanOrConcat"/>
+	<Column active="True" alternative="0" formatstr="%d" name="NOpt" origcolname="SubProbsOpt" reduction="meanOrConcat"/>
+	<Column active="True" alternative="0" formatstr="%d" name="NFeas" origcolname="SubProbsFeas" reduction="meanOrConcat"/>
+	<Column active="True" alternative="0" formatstr="%d" name="NFail" origcolname="SubProbsFail" reduction="meanOrConcat"/>
+  <Column active="True" name="Reward0" constant="0" alternative="1000" >
+    <Filter expression1="Score" expression2="-0.1" operator="ge"/>
+    <Aggregation aggregation="sum" name="sum" />
+  </Column>
+  <Column active="True" name="Reward1" constant="0" alternative="1000" >
+    <Filter expression1="Score" expression2="-1" operator="ge"/>
+    <Aggregation aggregation="sum" name="sum" />
+  </Column>
+  <FilterGroup active="True" filtertype="intersection" name="all"/>
+  <FilterGroup active="True" filtertype="intersection" name="affected">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+    <Filter active="True" anytestrun="one" datakey="LP_Iterations_dualLP" operator="diff"/>
+    <Filter active="True" anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
+  </FilterGroup>
+  <FilterGroup active="True" filtertype="intersection" name="unaffected">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+    <Filter active="True" anytestrun="all" datakey="LP_Iterations_dualLP" operator="equal"/>
+  </FilterGroup>
+</Evaluation>
