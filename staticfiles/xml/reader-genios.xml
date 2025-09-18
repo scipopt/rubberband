@@ -1,0 +1,4 @@
+<?xml version="1.0" ?>
+<Readers>
+    <CustomReader datakey="GeniosTimeLimit" datatype="float" index="0" name="GeniosTimeLimitReader" regpattern="^time limit                 =" method="sum"/>
+</Readers>
