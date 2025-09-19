@@ -38,6 +38,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.githubpages",
     "sphinx.ext.napoleon",
+    "myst_parser"
 ]
 
 # Include Python objects as they appear in source files
@@ -51,10 +52,6 @@ autosummary_generate = True
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
 
-# add markdown support
-source_parsers = {
-    ".md": "recommonmark.parser.CommonMarkParser",
-}
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 source_suffix = [".rst", ".md"]

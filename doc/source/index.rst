@@ -13,7 +13,7 @@ There is an optional `gitlab <http://gitlab.com/>`_ connection for linkage of us
 All of the data is stored in an `elasticsearch <http://www.elastic.co/products/elasticsearch>`_ database, including the logfiles themselves.
 As a tool for parsing the logfiles, rubberband utilizes `IPET <http://github.com/GregorCH/ipet>`_.
 
-.. figure:: _static/img/overview.svg
+.. figure:: static/img/overview.svg
     :align: center
     :alt: Visualization of Rubberband and its interaction with other services.
     :figclass: align-center
@@ -26,13 +26,13 @@ Table of contents
 .. toctree::
    :maxdepth: 2
 
-   Readme <_static/README>
-   _static/configuration
-   _static/documentation
-   Contributing <_static/CONTRIBUTING>
-   _static/roadmap
-   _static/folderstructure
-   _static/crashcourses
+   Readme <static/README.md>
+   static/configuration
+   static/documentation
+   Contributing <static/CONTRIBUTING.md>
+   static/roadmap
+   static/folderstructure
+   static/crashcourses
 
    _modules/rubberband/rubberband
 
