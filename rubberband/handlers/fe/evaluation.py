@@ -36,12 +36,10 @@ class EvaluationView(BaseHandler):
         """
         # default and implicit style is ipetevaluation. if given latex, generate a table in the
         # style of the release report
-        # logging.info(msg="starting eval with uri".format(self.request.uri))
         style = self.get_argument("style", None)
 
         # setup logger
         if style is None:
-            # ipetlogger = logging.getLogger("ipet")
             rbhandler = RBLogHandler(self)
 
             rbhandler.setLevel(logging.INFO)

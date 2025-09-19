@@ -57,30 +57,14 @@ IPET_EVALUATIONS = {
         "name": "detailed view - group githash, exclude",
     },
     9: {
-        "path": STATIC_FILES_DIR + "evaluation-pure.xml",
-        "name": "pure evaluation for sap",
-    },
-    10: {
-        "path": STATIC_FILES_DIR + "evaluation-deco.xml",
-        "name": "deco evaluation for sap",
-    },
-    11: {
-        "path": STATIC_FILES_DIR + "evalclusterbench_queue.xml",
-        "name": "clusterbenchmark queues",
-    },
-    12: {
-        "path": STATIC_FILES_DIR + "evalclusterbench_queuenode.xml",
-        "name": "clusterbenchmark queuenodes",
-    },
-    13: {
         "path": STATIC_FILES_DIR + "papilo_evaluation.xml",
         "name": "evaluation papilo",
     },
-    14: {
+    10: {
         "path": STATIC_FILES_DIR + "papilo_evaluation_solver_specific.xml",
         "name": "evaluation papilo solver specific",
     },
-    15: {
+    11: {
         "path": STATIC_FILES_DIR + "papilo_evaluation_groupsettings.xml",
         "name": "evaluation papilo group settings",
     },
