@@ -41,7 +41,7 @@ This version of Elasticsearch comes with various security configurations enabled
 
 ### Setting up Rubberband
 
-Rubberband is built on [tornado](http://www.tornadoweb.org/en/stable/) and [IPET](https://github.com/stephenjmaher/ipet/tree/remove-gui), an interactive performance evaluation tool that comes with a parsing library for benchmark files. To get Rubberband running locally, make sure you first have Elasticsearch installed and running.
+Rubberband is built on [tornado](http://www.tornadoweb.org/en/stable/) and [IPET](https://github.com/scipopt/ipet), an interactive performance evaluation tool that comes with a parsing library for benchmark files. To get Rubberband running locally, make sure you first have Elasticsearch installed and running.
 
 ```
 sudo service elasticsearch start
