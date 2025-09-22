@@ -1,7 +1,6 @@
 ipet @ git+https://github.com/scipopt/ipet.git@v1.1.0
 Click==8.2.1
-elasticsearch==7.17.12
-elasticsearch-dsl==7.4.1
+elasticsearch==9.1.0
 lxml==6.0.1
 numpy==2.3.2
 pandas==2.3.1
