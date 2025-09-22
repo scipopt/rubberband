@@ -1,6 +1,7 @@
 """Contains InstanceView."""
+
 import json
-from elasticsearch_dsl import A
+from elasticsearch.dsl import A
 
 from rubberband.models import TestSet, Result
 from .base import BaseHandler
@@ -9,7 +10,7 @@ from .base import BaseHandler
 class InstanceView(BaseHandler):
     """Request handler handling requests for a single instance."""
 
-    def get(self, parent_id, child_id):
+    def get(self, result_id):
         """
         Answer to GET requests.
 
@@ -17,14 +18,12 @@ class InstanceView(BaseHandler):
 
         Parameters
         ----------
-        parent_id : str
-            id of parent TestSet
-        child_id : str
+        result_id : str
             id of Result
 
         Renders `instance_detail_view.html`.
         """
-        r = Result.get(id=child_id, routing=parent_id)
+        r = Result.get(id=result_id)
         count = Result.search().filter("term", instance_name=r.instance_name).count()
 
         compare = self.get_argument("compare", default=[])
@@ -32,8 +31,13 @@ class InstanceView(BaseHandler):
             compare_ids = compare.split(",")
             compare = load_results(compare_ids, r.instance_name)
 
-        self.render("instance_detail_view.html", result=r, num_results=count, compare=compare,
-                    page_title="Instance Result")
+        self.render(
+            "instance_detail_view.html",
+            result=r,
+            num_results=count,
+            compare=compare,
+            page_title="Instance Result",
+        )
 
 
 class InstanceNamesEndpoint(BaseHandler):
@@ -48,11 +52,9 @@ class InstanceNamesEndpoint(BaseHandler):
         Write a list of all instance names in Elasticsearch.
         """
         s = Result.search()
-        a = A("terms", field="instance_name", size=0)  # set size to 0 so all results are returned
+        a = A("terms", field="instance_name", size=1000000)
         s.aggs.bucket("unique_instances", a)
-        s = s.params(search_type="count")
         res = s.execute()
-
         names = [x["key"] for x in res.aggregations["unique_instances"]["buckets"]]
 
         return self.write(json.dumps(names))
@@ -61,29 +63,29 @@ class InstanceNamesEndpoint(BaseHandler):
 class InstanceEndpoint(BaseHandler):
     """Access information about instances."""
 
-    def get(self, parent_id):
+    def get(self, testset_id):
         """
         Answer to GET requests.
 
         Parameters
         ----------
-        parent_id : str
-            Id of parent TestSet
+        testset_id : str
+            Id of TestSet
 
         Write a Result with all instances attached.
         """
-        res = TestSet.get(id=parent_id)
+        res = TestSet.get(id=testset_id)
         return self.write(res.json())
 
 
-def load_results(parent_ids, name):
+def load_results(testset_ids, name):
     """
-    Load the instance results from the various parent TestSets.
+    Load the instance results from the various TestSets.
 
     Parameters
     ----------
-    parent_ids : str
-        Ids of parent TestSets
+    testset_ids : str
+        Ids of TestSets
     name : str
         Name of instance Result
 
@@ -94,9 +96,9 @@ def load_results(parent_ids, name):
     """
     results = []
 
-    for id in parent_ids:
+    for id in testset_ids:
         f = TestSet.get(id=id)
-        f.load_children()
-        results.append(f.children[name])
+        f.load_results()
+        results.append(f.results[name])
 
     return results

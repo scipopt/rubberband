@@ -1,4 +1,5 @@
 """Common class to derive all rubberband web request handlers from."""
+
 from collections.abc import Iterable
 from datetime import datetime
 from tornado.web import RequestHandler
@@ -7,10 +8,20 @@ from rubberband.utils.gitlab import get_user_access_level, get_username
 import traceback
 
 from rubberband.models import TestSet
-from rubberband.constants import NONE_DISPLAY, INFINITY_KEYS, \
-        INFINITY_MASK, INFINITY_DISPLAY, FORMAT_DATETIME_LONG
-from rubberband.utils.helpers import shorten_str, get_link, shortening_span, \
-        shortening_repres_id, rb_join_arg
+from rubberband.constants import (
+    NONE_DISPLAY,
+    INFINITY_KEYS,
+    INFINITY_MASK,
+    INFINITY_DISPLAY,
+    FORMAT_DATETIME_LONG,
+)
+from rubberband.utils.helpers import (
+    shorten_str,
+    get_link,
+    shortening_span,
+    shortening_repres_id,
+    rb_join_arg,
+)
 
 
 class BaseHandler(RequestHandler):
@@ -26,18 +37,23 @@ class BaseHandler(RequestHandler):
         """Called at the beginning of a request before get/post/and so on."""
         self.current_user = self.get_current_user()
         if self.access_level < 10:
-            self.write_error(status=403, msg="Sorry, you don't have permission to view this page.")
+            self.write_error(
+                status=403, msg="Sorry, you don't have permission to view this page."
+            )
 
     def has_permission(self, testrun=None, action="read"):
         """Decide whether user is permitted to interact with testrun."""
+        if self.settings["debug"]:
+            return True
+
         usr = get_username(self.current_user).lower()
         if testrun is not None:
             if action == "delete":
-                return (usr == testrun.uploader.lower() or self.access_level == 50)
+                return usr == testrun.uploader.lower() or self.access_level == 50
             elif action == "edit":
-                return (usr == testrun.uploader.lower() or self.access_level > 25)
+                return usr == testrun.uploader.lower() or self.access_level > 25
             elif action == "read":
-                return (usr == testrun.uploader.lower() or self.access_level > 5)
+                return usr == testrun.uploader.lower() or self.access_level > 5
         else:
             if action == "delete":
                 return self.access_level == 50
@@ -140,12 +156,12 @@ class BaseHandler(RequestHandler):
         kwargs : keyword arguments
             keyword arguments for `traceback.format_exception`
         """
-        reason = kwargs.get('reason', "Error")
+        reason = kwargs.get("reason", "Error")
 
         log_message = ""
-        if ("msg" in kwargs):
+        if "msg" in kwargs:
             log_message = kwargs["msg"]
-        if ("exc_info" in kwargs):
+        if "exc_info" in kwargs:
             log_message = "\n".join(traceback.format_exception(*kwargs["exc_info"]))
 
         if status_code == 204:
@@ -159,7 +175,9 @@ class BaseHandler(RequestHandler):
         elif status_code == 500:
             reason = "Internal Server Error"
 
-        self.render("error.html", status_code=status_code, page_title=reason, msg=log_message)
+        self.render(
+            "error.html", status_code=status_code, page_title=reason, msg=log_message
+        )
 
     def get_template_namespace(self):
         """Return a dictionary to be used as the default template namespace.
@@ -197,12 +215,11 @@ class BaseHandler(RequestHandler):
             rb_join_arg=rb_join_arg,
             get_link=get_link,
             options=options,
-
             page_title=None,
-            status_code='404',  # error code
+            status_code="404",  # error code
             checkboxes=False,
             radiobuttons=False,
-            tablename='results-table',
+            tablename="results-table",
             modalheading=None,
             modalbody=None,
             modalfooter=None,
@@ -210,7 +227,6 @@ class BaseHandler(RequestHandler):
             ipet_long_table=None,
             ipet_aggregated_table=None,
             get_empty_header=False,
-
             rb_dt_compact=self.rb_dt_compact,
             rb_dt_borderless=self.rb_dt_borderless,
             rb_dt_bordered=self.rb_dt_bordered,
@@ -239,9 +255,18 @@ class BaseHandler(RequestHandler):
         """
         if attr in ["instance_type"]:
             return "text"
-        if attr in ["OriginalProblem_Vars", "OriginalProblem_InitialNCons",
-                "PresolvedProblem_InitialNCons", "PresolvedProblem_Vars", "DualBound",
-                "PrimalBound", "Gap", "Iterations", "Nodes", "TotalTime_solving"]:
+        if attr in [
+            "OriginalProblem_Vars",
+            "OriginalProblem_InitialNCons",
+            "PresolvedProblem_InitialNCons",
+            "PresolvedProblem_Vars",
+            "DualBound",
+            "PrimalBound",
+            "Gap",
+            "Iterations",
+            "Nodes",
+            "TotalTime_solving",
+        ]:
             return "number"
         value = getattr(obj, attr, None)
         if isinstance(value, str):
@@ -297,10 +322,10 @@ class BaseHandler(RequestHandler):
             value = getattr(obj, attr, None)
             if value not in (None, ""):
                 if attr == "conflict/uselocalrows":
-                    return (value == 0)
+                    return value == 0
                 if attr in INFINITY_KEYS and value == INFINITY_MASK:
                     return INFINITY_DISPLAY
-                if (type(value) is int or type(value) is float):
+                if type(value) is int or type(value) is float:
                     return value
                 if attr in ["DualBound", "PrimalBound"]:
                     return "%.4f" % value
@@ -333,20 +358,20 @@ class BaseHandler(RequestHandler):
         """
         objsen = None
         for o in objs:
-            objsen = getattr(o.children[inst_name], "Objsense", None)
+            objsen = getattr(o.results[inst_name], "Objsense", None)
             if objsen is not None:
                 return float(objsen)
         for o in objs:
             try:
-                pb = float(getattr(o.children[inst_name], "PrimalBound", None))
-                db = float(getattr(o.children[inst_name], "DualBound", None))
+                pb = float(getattr(o.results[inst_name], "PrimalBound", None))
+                db = float(getattr(o.results[inst_name], "DualBound", None))
                 if pb > db:
                     # minimize
                     return 1
                 elif pb < db:
                     # maximize
                     return -1
-            except:
+            except Exception:
                 pass
         return 0
 
@@ -367,13 +392,19 @@ class BaseHandler(RequestHandler):
         """
         attr_str = []
         for o in objs:
-            val = self.format_attr(o.children[inst_name], attr)
+            val = self.format_attr(o.results[inst_name], attr)
             attr_str.append(val)
 
-        partial_list = sorted([a for a in attr_str
-            if a is not None and type(a) in [int, float]], reverse=True)
-        partial_list.extend(sorted([a for a in attr_str
-            if a is not None and type(a) not in [int, float]], reverse=True))
+        partial_list = sorted(
+            [a for a in attr_str if a is not None and type(a) in [int, float]],
+            reverse=True,
+        )
+        partial_list.extend(
+            sorted(
+                [a for a in attr_str if a is not None and type(a) not in [int, float]],
+                reverse=True,
+            )
+        )
         partial_list.extend([NONE_DISPLAY for a in attr_str if a is None])
         return "\n".join(map(str, partial_list))
 
@@ -396,7 +427,7 @@ class BaseHandler(RequestHandler):
             return False
 
         if attr == "number_instances":
-            length = [len(ts.children.to_dict().keys()) for ts in sets]
+            length = [len(ts.results.to_dict().keys()) for ts in sets]
             old = length[0]
             for i in length:
                 new = i
@@ -409,10 +440,10 @@ class BaseHandler(RequestHandler):
         try:
             unique_nonzeros = set(nonzeros)  # this does not work for lists
         except TypeError:
-            nonzeros = [','.join(val) for val in vals if val is not None]
+            nonzeros = [",".join(val) for val in vals if val is not None]
             unique_nonzeros = set(nonzeros)
 
-        return (len(unique_nonzeros) <= 1)
+        return len(unique_nonzeros) <= 1
 
     def get_starred_testruns(self):
         """Get a list of the testruns that are starred by the user."""
@@ -428,14 +459,21 @@ class BaseHandler(RequestHandler):
         for i in starred:
             try:
                 testruns.append(TestSet.get(id=i))
-            except:
+            except Exception:
                 pass
         return testruns
 
-    def get_testrun_table(self, testruns, tablename, checkboxes=True, get_empty_header=False):
+    def get_testrun_table(
+        self, testruns, tablename, checkboxes=True, get_empty_header=False
+    ):
         """Get a table of testruns."""
         table = None
         if testruns != [] or get_empty_header:
-            table = self.render_string("results_table.html", results=testruns,
-                    tablename=tablename, checkboxes=checkboxes, get_empty_header=get_empty_header)
+            table = self.render_string(
+                "results_table.html",
+                results=testruns,
+                tablename=tablename,
+                checkboxes=checkboxes,
+                get_empty_header=get_empty_header,
+            )
         return table

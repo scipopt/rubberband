@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rubberband"
+version = "1.0.0"
+description = "A flexible archiving platform for optimization benchmarks"
+license = "MIT"
+requires-python = ">= 3.11"
+readme = "README.md"
+dynamic = ["dependencies", "optional-dependencies"]
+
+authors = [
+  { name = "Cristina Muñoz", email = "cristina@bitflipenterprises.com" }
+]
+
+maintainers = [
+  { name = "Cristina Muñoz", email = "cristina@bitflipenterprises.com" }
+]
+
+urls = { "Homepage"= "https://github.com/scipopt/rubberband" }
+
+classifiers = [
+  "Programming Language :: Python",
+  "Topic :: Software Development",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development :: Libraries :: Python Modules"
+]
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+optional-dependencies.dev = {file = ["requirements-dev.txt"]}
+

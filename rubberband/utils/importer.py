@@ -1,4 +1,5 @@
 """Methods for importing a TestSet from logfiles."""
+
 import os
 import json
 import logging
@@ -12,22 +13,27 @@ from ipet.misc import loader
 from tornado.options import options
 
 # package imports
-from rubberband.models import TestSet, Result, File
-from rubberband.constants import ALL_SOLU, ADD_READERS, FORMAT_DATETIME
+from rubberband.models import TestSet, Result, File, Settings
+from rubberband.constants import ADD_READERS, FORMAT_DATETIME, SOLU_DIR
 from rubberband.utils import gitlab as gl
 from .stats import ImportStats
 from .hasher import generate_sha256_hash
 
 REQUIRED_FILES = set([".out"])
 OPTIONAL_FILES = set([".solu", ".err", ".set", ".meta"])
+ALL_SOLU = (
+    SOLU_DIR + "instancedb.sqlite3"
+    if os.path.isfile(SOLU_DIR + "instancedb.sqlite3")
+    else SOLU_DIR + "allpublic.solu"
+)
 
 
-class ResultClient(object):
+class Importer(object):
     """Organize and process retrieved files."""
 
     def __init__(self, user):
         """
-        Create a ResultClient object for a user.
+        Create a Importer object for a user.
 
         Parameters
         ----------
@@ -38,10 +44,12 @@ class ResultClient(object):
             raise Exception("Missing user when initiliazing client.")
 
         self.current_user = user
-        # here, usually __name__ is "ResultClient" opposed to "__main__"
         self.logger = logging.getLogger(__name__)
-        self.logger.info("{} opened a connection to elasticsearch with the {}"
-                         .format(self.current_user, type(self).__name__))
+        self.logger.info(
+            "{} opened a connection to Elasticsearch with the {}".format(
+                self.current_user, type(self).__name__
+            )
+        )
         self.tags = []
 
     def reimport_files(self, paths, testset):
@@ -59,7 +67,7 @@ class ResultClient(object):
         self.remove_files = True
         try:
             self.parse_file_bundle(paths, initial=False, testset=testset)
-        except:
+        except Exception:
             self.importstats.status = "fail"
             traceback.print_exc()
 
@@ -80,7 +88,6 @@ class ResultClient(object):
         expirationdate : str in date form
             Date after which data can be purged from elasticsearch (default: None)
         """
-        # TODO: maybe check for reasonable expdate?
         # This gets called by both the apiupload and the webupload
         total_files = len(paths)
         basename = ""
@@ -93,13 +100,15 @@ class ResultClient(object):
         try:
             # parsing all locally saved files
             self.parse_file_bundle(paths, expirationdate=expirationdate)
-        except:
+        except Exception:
             self.importstats.status = "fail"
             traceback.print_exc()
 
         return self.importstats
 
-    def parse_file_bundle(self, bundle, expirationdate=None, initial=True, testset=None):
+    def parse_file_bundle(
+        self, bundle, expirationdate=None, initial=True, testset=None
+    ):
         """
         Internal method that parses a single file bundle.
 
@@ -130,8 +139,11 @@ class ResultClient(object):
             if found:
                 self.importstats.status = "found"
                 self.importstats.setUrl("/result/{}".format(found.meta.id))
-                msg = "File was previously uploaded by {} on {}. Upload aborted."\
-                      .format(found.get_uploader, found.index_timestamp)
+                msg = (
+                    "File was previously uploaded by {} on {}. Upload aborted.".format(
+                        found.get_uploader, found.index_timestamp
+                    )
+                )
                 self._log_info(msg)
                 return
 
@@ -150,8 +162,9 @@ class ResultClient(object):
         md = drop_different(dictionary=md, data=data)
 
         # collect data from testrun as a whole
-        file_data = self.get_file_data(data, settings=settings, expirationdate=expirationdate,
-                metadata=md)
+        file_data = self.get_file_data(
+            data, settings=settings, expirationdate=expirationdate, metadata=md
+        )
 
         results = self.get_results_data(data)
 
@@ -186,10 +199,7 @@ class ResultClient(object):
         instances = data["Solver"].keys()
 
         for i in instances:
-            results[i] = {
-                    "instance_name": data[Key.ProblemName][i],
-                    "instance_id": i
-                    }
+            results[i] = {"instance_name": data[Key.ProblemName][i], "instance_id": i}
 
         for k, v in data.items():
             for instance, metric in v.items():
@@ -259,7 +269,6 @@ class ResultClient(object):
         file_data = {
             "id": self.file_id,
             "filename": os.path.basename(self.files[".out"]),
-            # or self.most_frequent_value(data, Key.LogFileName)
             "metadata": metadata,
             "tags": self.tags,
             "index_timestamp": datetime.now(),
@@ -283,15 +292,15 @@ class ResultClient(object):
 
         # get some info via ipet metadata...
         metamapping = {
-                "test_set": "TstName",
-                "settings_short_name": "Settings",
-                "seed": "Seed",
-                "permutation": "Permutation",
-                "run_environment": "Queue",
-                "opt_flag": "OptFlag",
-                "os": "OperatingSystem",
-                "time_factor": "TimeFactor",
-                }
+            "test_set": "TstName",
+            "settings_short_name": "Settings",
+            "seed": "Seed",
+            "permutation": "Permutation",
+            "run_environment": "Queue",
+            "opt_flag": "OptFlag",
+            "os": "OperatingSystem",
+            "time_factor": "TimeFactor",
+        }
         # by this time we dropped all metadata that is not equal or empty for all data rows
         for key, tag in metamapping.items():
             if tag in metadata.keys():
@@ -319,8 +328,9 @@ class ResultClient(object):
 
             project_id_key = options.gitlab_project_ids.get(file_data["solver"].lower())
             if not project_id_key:
-                msg = "No project id specified for {}. Skipping commit lookup."\
-                    .format(file_data["solver"].lower())
+                msg = "No project id specified for {}. Skipping commit lookup.".format(
+                    file_data["solver"].lower()
+                )
                 self._log_info(msg)
             elif options.gitlab_url:
                 try:
@@ -328,12 +338,17 @@ class ResultClient(object):
 
                     file_data["git_hash"] = commit.id
                     # user the author timestamp
-                    file_data["git_commit_timestamp"] = dateutil.parser.parse(commit.authored_date)
-                    file_data["git_commit_author"] = gl.get_username(commit.author_email)
-                except:
-                    msg = "Couldn't find commit {} in Gitlab. Aborting...".format(git_hash)
-                    # self._log_failure(msg)
-                    # raise
+                    file_data["git_commit_timestamp"] = dateutil.parser.parse(
+                        commit.authored_date
+                    )
+                    file_data["git_commit_author"] = gl.get_username(
+                        commit.author_email
+                    )
+                except Exception:
+                    msg = "Couldn't find commit {} in Gitlab. Aborting...".format(
+                        git_hash
+                    )
+                    self._log_failure(msg)
 
         return file_data
 
@@ -358,12 +373,13 @@ class ResultClient(object):
             return {}
 
         info = {
-                "test_set": fnparts[1],  # short, bug, etc,
-                "settings_short_name": fnparts[-2],
-                "run_environment": fnparts[-3],
-                "opt_flag": fnparts[-5],
-                "architecture": fnparts[-7],
-                "os": fnparts[-8]}
+            "test_set": fnparts[1],  # short, bug, etc,
+            "settings_short_name": fnparts[-2],
+            "run_environment": fnparts[-3],
+            "opt_flag": fnparts[-5],
+            "architecture": fnparts[-7],
+            "os": fnparts[-8],
+        }
         return info
 
     def validate_and_organize_files(self, list_of_files):
@@ -397,8 +413,9 @@ class ResultClient(object):
 
             filename, file_extension = os.path.splitext(f)
             if file_extension not in all_file_ext:
-                msg = "File type {} is unsupported. Ignoring this file ({}). Supported files: {}"\
-                        .format(file_extension, filename, ", ".join(all_file_ext))
+                msg = "File type {} is unsupported. Ignoring this file ({}). Supported files: {}".format(
+                    file_extension, filename, ", ".join(all_file_ext)
+                )
                 self._log_failure(msg)
 
             for r in required_files:
@@ -441,12 +458,25 @@ class ResultClient(object):
             (default: None)
         """
         try:
-            # save parent
+            settings = file_level_data.pop("settings")
+            settings_default = file_level_data.pop("settings_default")
             if testset is None:
                 file_level_data["upload_timestamp"] = file_level_data["index_timestamp"]
                 file_level_data["uploader"] = file_level_data["run_initiator"]
                 f = TestSet(**file_level_data)
                 f.save()
+
+                settings = Settings(**settings, testset_id=f.meta.id)
+                settings.save()
+
+                default_settings = Settings(**settings_default, testset_id=f.meta.id)
+                default_settings.save()
+
+                f.update(
+                    settings_id=settings.meta.id,
+                    default_settings_id=default_settings.meta.id,
+                )
+
             else:
                 f = testset
                 if f.upload_timestamp is None:
@@ -454,27 +484,47 @@ class ResultClient(object):
                 if f.uploader is None:
                     file_level_data["uploader"] = f.run_initiator
                 f.update(**file_level_data)
+
+                settings = Settings(**settings, testset_id=f.meta.id)
+                settings.save()
+
+                default_settings = Settings(**settings_default, testset_id=f.meta.id)
+                default_settings.save()
+
+                f.update(
+                    settings_id=settings.meta.id,
+                    default_settings_id=default_settings.meta.id,
+                )
+
             self.testset_meta_id = f.meta.id  # save this for backup step
-            # save children
+            result_ids = []
             for r in results:
-                r["_parent"] = f.meta.id
+                r["testset_id"] = f.meta.id
                 # TODO move this to constructor of Result model?
                 for key in ["Datetime_Start", "Datetime_End"]:
                     try:
                         timestamp = int(r[key])
-                        timestr = datetime.fromtimestamp(timestamp).strftime(FORMAT_DATETIME)
+                        timestr = datetime.fromtimestamp(timestamp).strftime(
+                            FORMAT_DATETIME
+                        )
                         r[key] = timestr
                     except (KeyError, TypeError):
                         pass
                 res = Result(**r)
                 res.save()
-        except:
+                result_ids.append(res.meta.id)
+
+            f.update(result_ids=result_ids)
+        except Exception as e:
             # database error
             msg = "Some kind of database error."
             self._log_failure(msg)
+            self._log_failure(e)
             raise
 
-        msg = "Data for file {} was successfully imported and archived".format(self.files[".out"])
+        msg = "Data for file {} was successfully imported and archived".format(
+            self.files[".out"]
+        )
         self.logger.info(msg)
         self.importstats.status = "success"
         self.importstats.setUrl("/result/{}".format(self.testset_meta_id))
@@ -502,13 +552,17 @@ class ResultClient(object):
                     fobj = File(**data)
                     fobj.save()
                 except TransportError as e:
-                    msg = "Couldn't create file in Elasticsearch. Check the logs for more info."\
-                          " Aborting..."
+                    msg = (
+                        "Couldn't create file in Elasticsearch. Check the logs for more info."
+                        " Aborting..."
+                    )
                     self._log_failure(msg)
                     self._log_failure(e.args)
                     raise
 
-        self._log_info("{} file bundle backed up in Elasticsearch.".format(self.files[".out"]))
+        self._log_info(
+            "{} file bundle backed up in Elasticsearch.".format(self.files[".out"])
+        )
 
     def get_data_from_ipet(self):
         """
@@ -565,7 +619,9 @@ class ResultClient(object):
 
         testruns = c.getTestRuns()
         if len(testruns) != 1:
-            msg = "Unexpected number of testruns. Expected 1, got: {}".format(len(testruns))
+            msg = "Unexpected number of testruns. Expected 1, got: {}".format(
+                len(testruns)
+            )
             self._log_failure(msg)
             raise Exception(msg)
 
@@ -592,7 +648,7 @@ class ResultClient(object):
 
         # this should not happen
         else:
-            raise Exception('file_id not yet set. Lookup failed.')
+            raise Exception("file_id not yet set. Lookup failed.")
 
     def most_frequent_value(self, data, key, throwex=False):
         """
@@ -660,39 +716,48 @@ def _determine_type(inst):
     implicit_variables = inst.get("PresolvedProblem_ImplVars") or 0
     constraints = inst.get("PresolvedProblem_InitialNCons") or 0
     linear_constraints = inst.get("Constraints_Number_linear") or 0
-    linear_constraints += (inst.get("Constraints_Number_logicor") or 0)
-    linear_constraints += (inst.get("Constraints_Number_knapsack") or 0)
-    linear_constraints += (inst.get("Constraints_Number_setppc") or 0)
-    linear_constraints += (inst.get("Constraints_Number_varbound") or 0)
+    linear_constraints += inst.get("Constraints_Number_logicor") or 0
+    linear_constraints += inst.get("Constraints_Number_knapsack") or 0
+    linear_constraints += inst.get("Constraints_Number_setppc") or 0
+    linear_constraints += inst.get("Constraints_Number_varbound") or 0
     quadratic_constraints = inst.get("Constraints_Number_quadratic") or 0
-    quadratic_constraints += (inst.get("Constraints_Number_soc") or 0)
+    quadratic_constraints += inst.get("Constraints_Number_soc") or 0
     nonlinear_constraints = inst.get("Constraints_Number_nonlinear") or 0
-    nonlinear_constraints += (inst.get("Constraints_Number_abspower") or 0)
-    nonlinear_constraints += (inst.get("Constraints_Number_bivariate") or 0)
+    nonlinear_constraints += inst.get("Constraints_Number_abspower") or 0
+    nonlinear_constraints += inst.get("Constraints_Number_bivariate") or 0
 
-    if (linear_constraints < constraints):
-
+    if linear_constraints < constraints:
         linear_and_quadratic_constraints = linear_constraints + quadratic_constraints
 
-        if (linear_and_quadratic_constraints == constraints):
-            if (binary_variables == 0 and integer_variables == 0): return "QCP"
-            else: return "MIQCP"
+        if linear_and_quadratic_constraints == constraints:
+            if binary_variables == 0 and integer_variables == 0:
+                return "QCP"
+            else:
+                return "MIQCP"
 
-        elif (linear_and_quadratic_constraints + nonlinear_constraints == constraints):
-            if (binary_variables == 0 and integer_variables == 0): return "NLP"
-            else: return "MINLP"
+        elif linear_and_quadratic_constraints + nonlinear_constraints == constraints:
+            if binary_variables == 0 and integer_variables == 0:
+                return "NLP"
+            else:
+                return "MINLP"
 
-        else: return "CIP"
+        else:
+            return "CIP"
 
-    elif (binary_variables == 0 and integer_variables == 0): return "LP"
+    elif binary_variables == 0 and integer_variables == 0:
+        return "LP"
 
-    elif (continuous_variables == 0):
-        if (integer_variables == 0 and implicit_variables == 0): return "BP"
-        else: return "IP"
+    elif continuous_variables == 0:
+        if integer_variables == 0 and implicit_variables == 0:
+            return "BP"
+        else:
+            return "IP"
 
-    elif (integer_variables == 0): return "MBP"
+    elif integer_variables == 0:
+        return "MBP"
 
-    else: return "MIP"
+    else:
+        return "MIP"
 
 
 def drop_different(dictionary, data):
@@ -726,10 +791,14 @@ def drop_different(dictionary, data):
 def bundle_files(paths):
     """Take a bundle of files and split them by basename."""
     bundles = []
-    for basename in [os.path.splitext(path)[0] for path in paths
-            if os.path.splitext(path)[1] == ".out"]:
-        bundles.append(tuple([path for path in paths
-            if os.path.splitext(path)[0] == basename]))
+    for basename in [
+        os.path.splitext(path)[0]
+        for path in paths
+        if os.path.splitext(path)[1] == ".out"
+    ]:
+        bundles.append(
+            tuple([path for path in paths if os.path.splitext(path)[0] == basename])
+        )
     for f in paths:
         if os.path.splitext(f)[1] == ".solu":
             for bundle in bundles:

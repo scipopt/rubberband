@@ -12,7 +12,7 @@ def shortening_repres_id(repres, key):
 
     Get a shortening span where the text is under key in dicts repres['long'] and repres['short'].
     """
-    return shortening_span(repres['long'][key], repres['short'][key])
+    return shortening_span(repres["long"][key], repres["short"][key])
 
 
 def shortening_span(text, short):
@@ -21,14 +21,16 @@ def shortening_span(text, short):
 
     For example used in column headers.
     """
-    return '''<span class="d-none d-xl-block">{longtext}</span>
+    return """<span class="d-none d-xl-block">{longtext}</span>
     <span class="d-block d-xl-none" title="{longtext}">{shorttext}</span>
-    '''.format(longtext=text, shorttext=short)
+    """.format(longtext=text, shorttext=short)
 
 
 def get_link(href, text, length=30, end=10):
     """Get a link with shortened text to href and full text as title."""
-    link = '<a href="{}" title="{}">{}</a>'.format(href, text, shorten_str(text, length, end))
+    link = '<a href="{}" title="{}">{}</a>'.format(
+        href, text, shorten_str(text, length, end)
+    )
     return link
 
 
@@ -39,7 +41,7 @@ def shorten_str(string, length=30, end=10):
     if len(string) <= length:
         return string
     else:
-        return "{}...{}".format(string[:length - end], string[- end:])
+        return "{}...{}".format(string[: length - end], string[-end:])
 
 
 def get_letters_list(quantity):
@@ -93,7 +95,11 @@ def get_rbid_representation(testrun, mode="extended"):
     ts = ""
     ts_time = ""
     if testrun.git_commit_timestamp:
-        ts = "(" + datetime.strftime(testrun.git_commit_timestamp, FORMAT_DATETIME_SHORT) + ")"
+        ts = (
+            "("
+            + datetime.strftime(testrun.git_commit_timestamp, FORMAT_DATETIME_SHORT)
+            + ")"
+        )
         ts_time = datetime.strftime(testrun.git_commit_timestamp, "%Y%m%d%H%M%S")
 
     if mode == "readable":
@@ -130,7 +136,11 @@ def setup_testruns_subst_dict(testruns):
     for tr in testruns:
         # add representation for githash: timestamp of commit
         if tr.git_commit_timestamp:
-            ts = "(" + datetime.strftime(tr.git_commit_timestamp, FORMAT_DATETIME_LONG) + ")"
+            ts = (
+                "("
+                + datetime.strftime(tr.git_commit_timestamp, FORMAT_DATETIME_LONG)
+                + ")"
+            )
             repres["all"][tr.git_hash] = ts
 
         extended_rbid = get_rbid_representation(tr, "extended")
@@ -169,4 +179,6 @@ def rb_join_arg(li=[], identif="default", pos=0):
         letter = "?"
     else:
         letter = "&"
-    return "{letter}{ident}={arg}".format(letter=letter, ident=identif, arg=','.join(li))
+    return "{letter}{ident}={arg}".format(
+        letter=letter, ident=identif, arg=",".join(li)
+    )

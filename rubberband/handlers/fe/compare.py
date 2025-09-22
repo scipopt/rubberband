@@ -1,4 +1,5 @@
 """Contains CompareView."""
+
 from .base import BaseHandler
 from tornado.web import HTTPError
 
@@ -31,10 +32,14 @@ class CompareView(BaseHandler):
 
         base = self.get_argument("base", None)
         if base is not None and len(compares) == 1:
-            raise HTTPError(status_code=400, msg="Please select at least 1 Testrun to compare to.")
+            raise HTTPError(
+                status_code=400, msg="Please select at least 1 Testrun to compare to."
+            )
         elif base is None and len(compares) <= 1:
-            raise HTTPError(status_code=400,
-                    log_message="Please select at least 2 Testruns to compare.")
+            raise HTTPError(
+                status_code=400,
+                log_message="Please select at least 2 Testruns to compare.",
+            )
 
         # base is identified via meta id as one of the comparison TestSets
         if base:
@@ -45,5 +50,7 @@ class CompareView(BaseHandler):
             base = compares.pop(0)
 
         cmp_string = ",".join(compares)
-        next_url = "{}/result/{}?compare={}".format(self.application.base_url, base, cmp_string)
+        next_url = "{}/result/{}?compare={}".format(
+            self.application.base_url, base, cmp_string
+        )
         self.redirect(next_url)

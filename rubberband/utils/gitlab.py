@@ -1,7 +1,7 @@
 """Methods to use for the communication with gitlab."""
+
 from tornado.options import options
 from gitlab import Gitlab
-import logging
 
 
 def get_commit_data(project_id, git_hash):
@@ -47,23 +47,13 @@ def get_user_access_level(user_mail):
     group_id = "integer"
     group_users = client.groups.get(group_id).members.list(query=user_mail)
     project_users = client.projects.get(
-            options.gitlab_project_ids["scip"]).members.list(query=user_mail)
+        options.gitlab_project_ids["scip"]
+    ).members.list(query=user_mail)
     min_access = 20
-    # logging.info(msg="GROUP LIST LENGTH IS {}".format(len(group_users)))
-    # logging.info(msg="PROJECT LIST LENGTH IS {}".format(len(project_users)))
-    # for i in project_users:
-    #     i.username -> user name in gitlab
-    #     i.access_level -> user access level in gitlab
-    #     logging.info(msg="PROJECT USERNAME IS {}".format(i.username))
-    # for i in group_users:
-    #     logging.info(msg="GROUP USERNAME IS {}".format(i.username))
-
-    # if
-    # - both lists are empty then user does not have permissions
-    # - one of the two lists contains more than one entry then mail is not unique
     # so something is wrong, return 0
-    if ((len(group_users) > 1 or len(project_users) > 1) or (
-          len(group_users) == 0 and len(project_users) == 0)):
+    if (len(group_users) > 1 or len(project_users) > 1) or (
+        len(group_users) == 0 and len(project_users) == 0
+    ):
         return min_access
     if len(group_users + project_users) == 2:
         group_id = group_users[0].id
@@ -76,12 +66,9 @@ def get_user_access_level(user_mail):
     else:
         if len(group_users) == 1:
             access_level = group_users[0].access_level
-        else:  # if len(project_users) = 1:
+        else:
             access_level = project_users[0].access_level
-    # logging.info(msg="ACCESS LEVEL IS {}".format(access_level))
-    # logging.info(msg="MAX ACCESS LEVEL IS {}".format(max(20,access_level)))
     return max(min_access, access_level)
-
 
 
 def get_username(query_string):

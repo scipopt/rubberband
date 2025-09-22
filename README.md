@@ -1,7 +1,5 @@
 # Rubberband
 
-[![Build Status](https://travis-ci.org/xmunoz/rubberband.svg?branch=master)](https://travis-ci.org/xmunoz/rubberband)
-
 A flexible web view and analysis platform for solver log files of mathematical optimization software, backed by Elasticsearch.
 
 - [Development](#development)
@@ -20,49 +18,47 @@ A flexible web view and analysis platform for solver log files of mathematical o
 
 This is a detailed description of how to set up Rubberband.
 
+### Install system requirements
+
+```
+sudo apt install git curl libffi-dev libssl-dev libsqlite3-dev libbz2-dev libncurses-dev libreadline-dev liblzma-dev zlib1g-dev tk-dev libxml2-dev libxslt1-dev
+```
+
 ### Installing Elasticsearch
 
-Java 8 is [required](https://www.elastic.co/guide/en/elasticsearch/reference/2.4/setup.html#jvm-version) to run Elasticsearch. For Ubuntu, you can install Java 8 this way.
-```
-sudo apt-get install python-software-properties
-sudo add-apt-repository ppa:webupd8team/java
-sudo apt-get update
-sudo apt-get install oracle-java8-installer
-```
-
-To confirm that Java is properly installed, check the version.
-```
-$ java -version
-java version "1.8.0_101"
-Java(TM) SE Runtime Environment (build 1.8.0_101-b13)
-Java HotSpot(TM) 64-Bit Server VM (build 25.101-b13, mixed mode)
-```
-
-Now you're ready to install Elasticsearch. NOTE: Elasticsearch is rapidly developing software. Only 2.x versions of Elasticsearch are supported by Rubberband. Sadly, Elasticsearch is neither backwards- nor forwards-compatible. Here are the most current instructions for installing Elasticsearch with `apt` on Ubuntu.
+Download the .deb package and install it manually. Elasticsearch [comes bundled](https://www.elastic.co/guide/en/elasticsearch/reference/7.17/setup.html#jvm-version) with the version of Java that it needs to run.
 
 ```
-wget -qO - https://packages.elastic.co/GPG-KEY-elasticsearch | sudo apt-key add -
-echo "deb http://packages.elastic.co/elasticsearch/2.x/debian stable main" | sudo tee -a /etc/apt/sources.list.d/elasticsearch-2.x.list
-sudo apt-get update && sudo apt-get install elasticsearch
+wget https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-7.17.17-amd64.deb
+sudo dpkg -i elasticsearch-7.17.17-amd64.deb
 ```
 
-General instructions for installing Elasticsearch can be found in the [offical Elasticsearch documentation](https://www.elastic.co/guide/en/elasticsearch/reference/2.4/_installation.html).
-
-More information about running Elasticsearch as a service can be found [here](https://www.elastic.co/guide/en/elasticsearch/reference/2.4/setup-repositories.html), though this shouldn't be required for a development setup.
+This version of Elasticsearch comes with various security configurations enabled. For local development, you can turn all of these off. To do that, open up `/etc/elasticsearch/elasticsearch.yml` and change the following configuration options to `false`:
+ - `xpack.security.enabled`
+ - `xpack.security.enrollment.enabled`
+ - `xpack.security.http.ssl.enabled`
+ - `xpack.security.transport.ssl.enabled`
 
 ### Setting up Rubberband
 
-Rubberband is built on [tornado](http://www.tornadoweb.org/en/stable/) and [IPET](https://github.com/gregorCH/ipet), an interactive performance evaluation tool that comes with a parsing library for benchmark files. To get Rubberband running locally, make sure you first have Elasticsearch installed and running.
+Rubberband is built on [tornado](http://www.tornadoweb.org/en/stable/) and [IPET](https://github.com/scipopt/ipet), an interactive performance evaluation tool that comes with a parsing library for benchmark files. To get Rubberband running locally, make sure you first have Elasticsearch installed and running.
 
 ```
 sudo service elasticsearch start
 ```
 
-Now clone this repository and set up a virtual environment.
+Now install [pyenv](https://github.com/pyenv/pyenv).
 
 ```
-virtualenv -p python3 --no-site-packages venv
-source venv/bin/activate
+curl -fsSL https://pyenv.run | bash
+```
+
+Then clone this repository, install the correct python version and set up a virtual environment.
+
+```
+pyenv install
+pyenv virtualenv venv
+pyenv activate venv
 pip install -r requirements.txt
 pip install -r requirements-dev.txt
 ```
@@ -77,33 +73,43 @@ NOTE: If you install Rubberband as a developer version, you don't need to do thi
 To populate the database or run unit tests, first install Rubberband inside the virtualenv.
 
 ```
-pip install -e .
+python -m pip install .
 ```
 
-Now take a look at the control script in `bin/rubberband-ctl`. Running the control script with no options will show the help. For first-time, create the index, and populate that index with data. This can be accomplished with the following two commands.
+Now take a look at the control script in `bin/rubberband-ctl`. Running the control script with no options will show the help. For first-time, create the indices, and populate the indices with data. This can be accomplished with the following two commands.
 
 ```
-bin/rubberband-ctl create-index
-bin/rubberband-ctl populate-index
+bin/rubberband-ctl create-indices
+bin/rubberband-ctl populate-indices
 ```
 
 The second command will need a few minutes to finish. If the commands complete sucessfully, stdout should look something like this:
 
 ```
-WARNING:elasticsearch:HEAD /solver-results [status:404 request:0.005s]
-INFO:elasticsearch:PUT http://127.0.01:9200/solver-results [status:200 request:0.107s]
-INFO:elasticsearch:HEAD http://127.0.01:9200/solver-results [status:200 request:0.002s]
-INFO:elasticsearch:PUT http://127.0.01:9200/solver-results/_mapping/file [status:200 request:0.041s]
-INFO:elasticsearch:HEAD http://127.0.01:9200/solver-results [status:200 request:0.002s]
-INFO:elasticsearch:PUT http://127.0.01:9200/solver-results/_mapping/testset [status:200 request:0.019s]
-INFO:root:Loading additional configuration from /etc/rubberband/app.cfg
-INFO:root:Setting up Elasticsearch connection.
-INFO:rubberband.utils.importer:debug opened a connection to elasticsearch with the ResultClient
-INFO:rubberband.utils.importer:Found 4 files. Beginning to parse.
-INFO:urllib3.connectionpool:Starting new HTTP connection (1): 127.0.01
-INFO:elasticsearch:GET http://127.0.01:9200/solver-results/testset/_search [status:200 request:0.057s]
-INFO:rubberband.utils.importer:Adding SoluFile.
 ...
+16-09-2025 12:19:29 - 488 INFO  elastic_transport.transport POST http://127.0.0.1:9200/testset/_doc [status:201 duration:0.030s]
+16-09-2025 12:19:29 - 500 INFO  elastic_transport.transport POST http://127.0.0.1:9200/settings/_doc [status:201 duration:0.005s]
+16-09-2025 12:19:29 - 512 INFO  elastic_transport.transport POST http://127.0.0.1:9200/settings/_doc [status:201 duration:0.007s]
+16-09-2025 12:19:29 - 521 INFO  elastic_transport.transport POST http://127.0.0.1:9200/testset/_update/4o1SU5kBKuV0IQ9c9FAz?if_primary_term=1&if_seq_no=15&refresh=false [status:200 duration:0.009s]
+16-09-2025 12:19:29 - 529 INFO  elastic_transport.transport POST http://127.0.0.1:9200/result/_doc [status:201 duration:0.004s]
+16-09-2025 12:19:29 - 537 INFO  elastic_transport.transport POST http://127.0.0.1:9200/result/_doc [status:201 duration:0.004s]
+16-09-2025 12:19:29 - 548 INFO  elastic_transport.transport POST http://127.0.0.1:9200/result/_doc [status:201 duration:0.008s]
+16-09-2025 12:19:29 - 556 INFO  elastic_transport.transport POST http://127.0.0.1:9200/result/_doc [status:201 duration:0.004s]
+16-09-2025 12:19:29 - 563 INFO  elastic_transport.transport POST http://127.0.0.1:9200/result/_doc [status:201 duration:0.004s]
+16-09-2025 12:19:29 - 571 INFO  elastic_transport.transport POST http://127.0.0.1:9200/result/_doc [status:201 duration:0.004s]
+16-09-2025 12:19:29 - 580 INFO  elastic_transport.transport POST http://127.0.0.1:9200/result/_doc [status:201 duration:0.006s]
+16-09-2025 12:19:29 - 584 INFO  elastic_transport.transport POST http://127.0.0.1:9200/testset/_update/4o1SU5kBKuV0IQ9c9FAz?if_primary_term=1&if_seq_no=16&refresh=false [status:200 duration:0.003s]
+16-09-2025 12:19:29 - 584 INFO  rubberband.utils.importer Data for file /home/user/workspace/r/tests/data/check.IP_1s_1m.scip-3.2.1.linux.x86_64.gnu.dbg.cpx.opt-low.default.out was successfully imported and archived
+16-09-2025 12:19:29 - 587 INFO  rubberband.utils.importer Backing up /home/user/workspace/r/tests/data/check.IP_1s_1m.scip-3.2.1.linux.x86_64.gnu.dbg.cpx.opt-low.default.out in Elasticsearch
+16-09-2025 12:19:29 - 594 INFO  elastic_transport.transport POST http://127.0.0.1:9200/file/_doc [status:201 duration:0.006s]
+16-09-2025 12:19:29 - 595 INFO  rubberband.utils.importer Backing up /home/user/workspace/r/tests/data/check.IP_1s_1m.scip-3.2.1.linux.x86_64.gnu.dbg.cpx.opt-low.default.set in Elasticsearch
+16-09-2025 12:19:29 - 602 INFO  elastic_transport.transport POST http://127.0.0.1:9200/file/_doc [status:201 duration:0.005s]
+16-09-2025 12:19:29 - 602 INFO  rubberband.utils.importer Backing up /home/user/workspace/r/tests/data/check.IP_1s_1m.scip-3.2.1.linux.x86_64.gnu.dbg.cpx.opt-low.default.meta in Elasticsearch
+16-09-2025 12:19:29 - 608 INFO  elastic_transport.transport POST http://127.0.0.1:9200/file/_doc [status:201 duration:0.003s]
+16-09-2025 12:19:29 - 609 INFO  rubberband.utils.importer Backing up /home/user/workspace/r/tests/data/check.IP_1s_1m.scip-3.2.1.linux.x86_64.gnu.dbg.cpx.opt-low.default.err in Elasticsearch
+16-09-2025 12:19:29 - 614 INFO  elastic_transport.transport POST http://127.0.0.1:9200/file/_doc [status:201 duration:0.005s]
+16-09-2025 12:19:29 - 615 INFO  rubberband.utils.importer /home/user/workspace/r/tests/data/check.IP_1s_1m.scip-3.2.1.linux.x86_64.gnu.dbg.cpx.opt-low.default.out file bundle backed up in Elasticsearch.
+16-09-2025 12:19:29 - 615 INFO  rubberband.utils.importer Finished!
 ```
 
 ### Start the server
@@ -118,6 +124,10 @@ If everything went well, you should be able to open [http://127.0.0.1:8888/](htt
 
 ![rubberband screenshot](https://raw.githubusercontent.com/xmunoz/rubberband/master/rubberband-screenshot.png)
 
+## CI
+
+Continuous integration is configured with [Github Actions](https://github.com/features/actions), and is run on every pull request. For more information about the CI workflow, please see [here](./.github/workflows/ci.yaml).
+
 ## Documentation
 
 To build the documentation run the following commands from inside the virtualenvironment:
@@ -131,17 +141,23 @@ Now you can view the documentation by opening `doc/build/html/index.html` in you
 
 ## Testing
 
-Run the test suite.
+First, install Rubberband locally:
 
 ```
-py.test -v tests/
+python -m pip install .
 ```
 
-Tests will fail if Elasticsearch is not running, or if the index is empty or if you didn't configure authentication correctly.
+Then, run the test suite.
+
+```
+pytest
+```
+
+Tests will fail if Elasticsearch is not running, or if the indices are empty or if you didn't configure authentication correctly.
 
 ## Deployment
 
-Rubberband currently requires a connection to an [Elasticsearch 2.x](https://www.elastic.co/guide/en/elasticsearch/reference/2.4/index.html) instance and (optionally) a [Gitlab](https://about.gitlab.com/) instance to run. To configure a Gitlab connection, edit the configuration variables in `/etc/rubberband/app.cfg` beginning with `gitlab_`. The Gitlab connection is used to look up information from the code base that your test set log is linked to. Examples of this type of information are git commit date and last committer. The visualize tab is disabled if no Gitlab connection information is provided.
+Rubberband currently requires a connection to an [Elasticsearch 9.x](https://www.elastic.co/docs/solutions/search/get-started) instance and (optionally) a [Gitlab](https://about.gitlab.com/) instance to run. To configure a Gitlab connection, edit the configuration variables in `/etc/rubberband/app.cfg` beginning with `gitlab_`. The Gitlab connection is used to look up information from the code base that your test set log is linked to. Examples of this type of information are git commit date and last committer. The visualize tab is disabled if no Gitlab connection information is provided.
 
 ### Authentication
 

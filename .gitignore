@@ -1,6 +1,4 @@
 # app specific
-all.solu
-*.solu
 *.out
 *.res
 *.meta
@@ -55,3 +53,6 @@ doc/source/_modules
 
 # pytests
 .pytest_cache/
+
+# ruff cache
+.ruff_cache/

@@ -1,4 +1,0 @@
-flake8 tests
-flake8 rubberband
-pep257 rubberband
-pep257 tests

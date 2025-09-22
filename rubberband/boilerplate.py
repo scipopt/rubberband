@@ -1,4 +1,5 @@
 """Define variables and setup rubberband app."""
+
 import os
 import logging
 from urllib.parse import urlparse
@@ -7,7 +8,7 @@ from tornado.options import define, options
 from tornado.web import Application
 from tornado.routing import HostMatches
 from elasticsearch import Elasticsearch
-from elasticsearch_dsl.connections import connections
+from elasticsearch.dsl.connections import connections
 
 from rubberband.routes import routes
 from rubberband.handlers.fe import ErrorView
@@ -15,28 +16,43 @@ from rubberband.handlers.fe import ErrorView
 # define options that server.py can read from
 define("port", default=8888, help="Port to run tornado on.")
 define("num_processes", default=1, help="Number of processes to run app in.")
-define("prod_url", default="https://rubberband.example.com",
-       help="The external url for this app.")
+define(
+    "prod_url",
+    default="https://rubberband.example.com",
+    help="The external url for this app.",
+)
 define("cookie_secret", default="RANDOMCOOKIESECRET", help="The cookie secret.")
-define("api_token", default="SECUREAPITOKEN",
-       help="The token that /api/ endpoints authorize against.")
+define(
+    "api_token",
+    default="SECUREAPITOKEN",
+    help="The token that /api/ endpoints authorize against.",
+)
 
-define("gitlab_private_token", default="",
-       help="Private token for gitlab user that Rubberband will make requests as.")
+define(
+    "gitlab_private_token",
+    default="",
+    help="Private token for gitlab user that Rubberband will make requests as.",
+)
 define("gitlab_url", default="", help="The gitlab url.")
-define("gitlab_project_ids", default={},
-       help="key-value pairs of gitlab project names and their IDs.")
+define(
+    "gitlab_project_ids",
+    default={},
+    help="key-value pairs of gitlab project names and their IDs.",
+)
 
-define("elasticsearch_url", default="http://127.0.0.1:9200",
-       help="The Elasticsearch url.")
-define("elasticsearch_use_ssl", default=False, help="Use ssl? No for dev.")
+define(
+    "elasticsearch_url", default="http://127.0.0.1:9200", help="The Elasticsearch url."
+)
 define("elasticsearch_verify_certs", default=False, help="Verify certs? No for dev.")
 define("elasticsearch_ca_certs", default=None, help="Path to CA certs.")
 
 define("smtp_host", default="", help="The FQDN of the SMTP host.")
 define("smtp_port", default="", help="The listening port of SMTP host.")
-define("smtp_from_address", default="",
-       help="The default `from` email address for emails that this app sends.")
+define(
+    "smtp_from_address",
+    default="",
+    help="The default `from` email address for emails that this app sends.",
+)
 define("smtp_username", default="", help="The username for SMTP authentication.")
 define("smtp_password", default="", help="The password for SMTP authentication.")
 
@@ -58,9 +74,11 @@ def make_app(project_root):
         the rubberband app
     """
     # init logger
-    logging.basicConfig(level=logging.DEBUG,
-            format='%(asctime)s%(msecs)03d %(levelname)-5s %(name)-15s %(message)s',
-            datefmt='%d-%m-%Y %H:%M:%S - ')
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format="%(asctime)s%(msecs)03d %(levelname)-5s %(name)-15s %(message)s",
+        datefmt="%d-%m-%Y %H:%M:%S - ",
+    )
     loggr = logging.getLogger()
     loggr.setLevel(level=logging.INFO)
     # Load options from environment
@@ -89,18 +107,29 @@ def make_app(project_root):
     # these patterns are defined in routes.py
     # default:  app = Application(routes, **settings)
     app = Application(
-            [(HostMatches(r'(localhost|127\.0\.0\.1|{}|)'.format(
-                urlparse(options.prod_url).hostname)), routes)],
-            **settings)
+        [
+            (
+                HostMatches(
+                    r"(localhost|127\.0\.0\.1|{}|)".format(
+                        urlparse(options.prod_url).hostname
+                    )
+                ),
+                routes,
+            )
+        ],
+        **settings,
+    )
 
     logging.info("Setting up Elasticsearch connection.")
     # set up elasticsearch
     # create connection instance
-    # the timeout argument is needed when you upload big files
-    conn = Elasticsearch([options.elasticsearch_url], use_ssl=options.elasticsearch_use_ssl,
-                         verify_certs=options.elasticsearch_verify_certs,
-                         ca_certs=options.elasticsearch_ca_certs,
-                         timeout=100)
+    # the request_timeout argument is needed when you upload big files
+    conn = Elasticsearch(
+        [options.elasticsearch_url],
+        verify_certs=options.elasticsearch_verify_certs,
+        ca_certs=options.elasticsearch_ca_certs,
+        request_timeout=100,
+    )
     # connect connection to pool
     connections.add_connection("default", conn)
 

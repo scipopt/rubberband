@@ -13,9 +13,11 @@ class GetTest(TestHandlerBase):
         self.assertIn(b"Search", response.body)
 
     def test_search_query(self):
-        response = self.fetch("/search?test_set=&mode=&run_initiator=&settings_short_name=default&"
-                              "solver=&solver_version=&git_hash=&lp_solver=&lp_solver_version=&"
-                              "tags=")
+        response = self.fetch(
+            "/search?test_set=&mode=&run_initiator=&settings_short_name=default&"
+            "solver=&solver_version=&git_hash=&lp_solver=&lp_solver_version=&"
+            "tags="
+        )
         self.assertEqual(response.code, 200)
         self.assertIn(b"Compare selected Testruns?", response.body)
 
@@ -32,5 +34,7 @@ class GetTest(TestHandlerBase):
     def test_notfound(self):
         response = self.fetch("/dsnbhjfsb")
         self.assertEqual(response.code, 404)
-        self.assertIn(b"Something went wrong, we couldn't find the page you requested.",
-                response.body)
+        self.assertIn(
+            b"Something went wrong, we couldn't find the page you requested.",
+            response.body,
+        )

@@ -1,10 +1,16 @@
 """Contains EvaluationView."""
+
 from datetime import datetime
 from tornado.web import HTTPError
 
 from .base import BaseHandler, authenticated
-from rubberband.constants import ALL_SOLU, FORMAT_DATE
-from rubberband.handlers.fe.evaluation import setup_experiment, get_testruns, set_defaultgroup
+from rubberband.constants import FORMAT_DATE
+from rubberband.utils import ALL_SOLU
+from rubberband.handlers.fe.evaluation import (
+    setup_experiment,
+    get_testruns,
+    set_defaultgroup,
+)
 
 from ipet.evaluation import IPETEvaluation
 
@@ -19,8 +25,8 @@ class ComparisonEndpoint(BaseHandler):
 
         Parameters
         ----------
-        parent_id
-            Rubberband id of parent
+        base_id
+            ID of the base TestSet
 
         Compare TestRuns with IPET
         """
@@ -42,8 +48,10 @@ class ComparisonEndpoint(BaseHandler):
 
         # timestamps
         basehash = baserun.git_hash
-        times = {t.git_hash: datetime.strftime(t.git_commit_timestamp, FORMAT_DATE)
-                for t in testruns + [baserun]}
+        times = {
+            t.git_hash: datetime.strftime(t.git_commit_timestamp, FORMAT_DATE)
+            for t in testruns + [baserun]
+        }
         hashes = set([t.git_hash for t in testruns + [baserun]])
         if len(hashes) > 2:
             raise HTTPError(404)
@@ -108,15 +116,25 @@ class ComparisonEndpoint(BaseHandler):
         cleansolved = aggtable["_solved_"][cleanindex]
         cleantime = aggtable["T_sgm(1.0)"][cleanindex]
 
-        self.write(",".join(list(map(str, [
-            commithash,
-            committime,
-            allcount,
-            allsolved,
-            alltime,
-            cleancount,
-            cleansolved,
-            cleantime]))))
+        self.write(
+            ",".join(
+                list(
+                    map(
+                        str,
+                        [
+                            commithash,
+                            committime,
+                            allcount,
+                            allsolved,
+                            alltime,
+                            cleancount,
+                            cleansolved,
+                            cleantime,
+                        ],
+                    )
+                )
+            )
+        )
 
     def check_xsrf_cookie(self):
         """Turn off the xsrf cookie for upload api endpoint, since we check the user differently."""

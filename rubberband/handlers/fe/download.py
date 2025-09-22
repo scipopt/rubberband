@@ -1,4 +1,5 @@
 """Contains DownloadView."""
+
 from tornado.web import HTTPError
 import zipfile
 from io import BytesIO
@@ -34,18 +35,25 @@ class DownloadView(BaseHandler):
 
             zipname = "rubberband_testsets.zip"
             with BytesIO() as byteio:
-
                 with zipfile.ZipFile(byteio, "w", zipfile.ZIP_DEFLATED) as archive:
                     for ts in ts_list:
                         for ftype in EXPORT_FILE_TYPES:
                             try:
-                                archive.writestr("{}/{}{}".format(ts.meta.id,
-                                    os.path.splitext(ts.filename)[0], ftype), ts.raw(ftype))
+                                archive.writestr(
+                                    "{}/{}{}".format(
+                                        ts.meta.id,
+                                        os.path.splitext(ts.filename)[0],
+                                        ftype,
+                                    ),
+                                    ts.raw(ftype),
+                                )
                             except TypeError:
                                 pass
 
-                self.set_header('Content-Type', 'application/zip')
-                self.set_header("Content-Disposition", "attachment; filename=%s" % zipname)
+                self.set_header("Content-Type", "application/zip")
+                self.set_header(
+                    "Content-Disposition", "attachment; filename=%s" % zipname
+                )
                 self.write(byteio.getvalue())
             self.finish()
         elif evaluation != "" and testsets == "":
@@ -57,10 +65,12 @@ class DownloadView(BaseHandler):
             evalfilename = os.path.basename(evalfile)
 
             buf_size = 1024
-            self.set_header('Content-Type', 'text/plain')
-            self.set_header("Content-Disposition", "attachment; filename=%s" % evalfilename)
+            self.set_header("Content-Type", "text/plain")
+            self.set_header(
+                "Content-Disposition", "attachment; filename=%s" % evalfilename
+            )
 
-            with open(evalfile, 'r') as f:
+            with open(evalfile, "r") as f:
                 while True:
                     data = f.read(buf_size)
                     if not data:
