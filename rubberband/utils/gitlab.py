@@ -44,11 +44,13 @@ def get_user_access_level(user_mail):
         integer corresponding to gitlab access level (0: no, < 15: read, > 15: write, > 45: delete)
     """
     client = Gitlab(options.gitlab_url, options.gitlab_private_token)
-    group_id = "integer"
-    group_users = client.groups.get(group_id).members.list(query=user_mail)
-    project_users = client.projects.get(
-        options.gitlab_project_ids["scip"]
-    ).members.list(query=user_mail)
+    group_users = client.groups.get(options.gitlab_group_name).members.list(
+        query=user_mail
+    )
+    principal_gitlab_project = next(iter(options.gitlab_project_ids.values()))
+    project_users = client.projects.get(principal_gitlab_project).members.list(
+        query=user_mail
+    )
     min_access = 20
     # so something is wrong, return 0
     if (len(group_users) > 1 or len(project_users) > 1) or (
