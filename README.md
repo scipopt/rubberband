@@ -21,7 +21,7 @@ This is a detailed description of how to set up Rubberband.
 ### Install system requirements
 
 ```
-sudo apt install git curl libffi-dev libssl-dev libsqlite3-dev libbz2-dev libncurses-dev libreadline-dev liblzma-dev zlib1g-dev tk-dev libxml2-dev libxslt1-dev
+sudo apt install gcc git curl libffi-dev libssl-dev libsqlite3-dev libbz2-dev libncurses-dev libreadline-dev liblzma-dev zlib1g-dev tk-dev libxml2-dev libxslt1-dev
 ```
 
 ### Installing Elasticsearch
