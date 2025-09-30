@@ -29,6 +29,11 @@ define(
 )
 
 define(
+    "gitlab_group_name",
+    default="integer",
+    help="The Gitlab group name that Rubberband users belong to.",
+)
+define(
     "gitlab_private_token",
     default="",
     help="Private token for gitlab user that Rubberband will make requests as.",
