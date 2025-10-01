@@ -38,7 +38,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.githubpages",
     "sphinx.ext.napoleon",
-    "myst_parser"
+    "myst_parser",
 ]
 
 # Include Python objects as they appear in source files
@@ -221,7 +221,5 @@ texinfo_documents = [
 
 
 def setup(app):
-    app.add_css_file(
-        "css/custom.css"
-    )  # may also be an URL, files found in _static/css
+    app.add_css_file("css/custom.css")  # may also be an URL, files found in _static/css
     # app.add_javascript('file.js') # may also be an URL, files found in _static/

@@ -50,6 +50,16 @@ define(
 )
 define("elasticsearch_verify_certs", default=False, help="Verify certs? No for dev.")
 define("elasticsearch_ca_certs", default=None, help="Path to CA certs.")
+define(
+    "elasticsearch_user",
+    default=None,
+    help="If security is enabled, the Elasticsearch user to log in as.",
+)
+define(
+    "elasticsearch_password",
+    default=None,
+    help="If security is enabled, the password for the Elasticsearch user.",
+)
 
 define("smtp_host", default="", help="The FQDN of the SMTP host.")
 define("smtp_port", default="", help="The listening port of SMTP host.")
@@ -129,12 +139,20 @@ def make_app(project_root):
     # set up elasticsearch
     # create connection instance
     # the request_timeout argument is needed when you upload big files
-    conn = Elasticsearch(
-        [options.elasticsearch_url],
-        verify_certs=options.elasticsearch_verify_certs,
-        ca_certs=options.elasticsearch_ca_certs,
-        request_timeout=100,
-    )
+    elasticsearch_options = {
+        "hosts": options.elasticsearch_url,
+        "verify_certs": options.elasticsearch_verify_certs,
+        "ca_certs": options.elasticsearch_ca_certs,
+        "request_timeout": 100,
+    }
+
+    if options.elasticsearch_user and options.elasticsearch_password:
+        elasticsearch_options["basic_auth"] = (
+            options.elasticsearch_user,
+            options.elasticsearch_password,
+        )
+
+    conn = Elasticsearch(**elasticsearch_options)
     # connect connection to pool
     connections.add_connection("default", conn)
 
