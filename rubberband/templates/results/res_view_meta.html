@@ -67,7 +67,7 @@
           {% for f in [file] + compare %}
             <td>
               {% if options.gitlab_url %}
-              {% raw get_link("{}/integer/{}/commit/{}".format(options.gitlab_url, f.solver, f.git_hash), f.git_hash, 10, 3) %}
+              {% raw get_link("{}/{}/{}/commit/{}".format(options.gitlab_url, options.gitlab_group_name, f.solver, f.git_hash), f.git_hash, 10, 3) %}
               {% else %}
               {{ format_attr(file, "git_hash") }}
               {% end %}
