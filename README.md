@@ -21,7 +21,7 @@ This is a detailed description of how to set up Rubberband.
 ### Install system requirements
 
 ```
-sudo apt install git curl libffi-dev libssl-dev libsqlite3-dev libbz2-dev libncurses-dev libreadline-dev liblzma-dev zlib1g-dev tk-dev libxml2-dev libxslt1-dev
+sudo apt install gcc git curl libffi-dev libssl-dev libsqlite3-dev libbz2-dev libncurses-dev libreadline-dev liblzma-dev zlib1g-dev tk-dev libxml2-dev libxslt1-dev
 ```
 
 ### Installing Elasticsearch
@@ -163,7 +163,7 @@ Rubberband currently requires a connection to an [Elasticsearch 9.x](https://www
 
 ### Authentication
 
-There is no authentication built into Rubberband, though rubberband will authorize requests to the frontend using the `X-Forwarded-Email` header. Request made to the API require this header, as well as an `X-Api-Token` header. This is to say that authentication and setting the appropriate headers is the responsibility of the user/deployer. [oauth2_proxy](https://github.com/bitly/oauth2_proxy) is a convenient proxy that, when properly hooked up to an OAuth provider, will set this header for you.
+There is no authentication built into Rubberband, though rubberband will authorize requests to the frontend using the `X-Forwarded-Email` header. Request made to the API require this header, as well as an `X-Api-Token` header. This is to say that authentication and setting the appropriate headers is the responsibility of the user/deployer. [oauth2_proxy](https://github.com/oauth2-proxy/oauth2-proxy) is a convenient proxy that, when properly hooked up to an OAuth provider, will set this header for you. See [config/oauth2-proxy.cfg](config/oauth2-proxy.cfg) for a sample configuration when deployed behind nginx.
 
 ### Web Server
 
