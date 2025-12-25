@@ -41,7 +41,7 @@ class Importer(object):
             current user
         """
         if not user:
-            raise Exception("Missing user when initiliazing client.")
+            raise Exception("Missing user when initializing client.")
 
         self.current_user = user
         self.logger = logging.getLogger(__name__)
