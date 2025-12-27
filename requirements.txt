@@ -1,4 +1,4 @@
-ipet @ git+https://github.com/scipopt/ipet.git
+ipet @ git+https://github.com/scipopt/ipet.git@v1.1.1
 Click==8.2.1
 elasticsearch==9.2.1
 lxml==6.0.2
