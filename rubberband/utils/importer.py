@@ -21,12 +21,10 @@ from .hasher import generate_sha256_hash
 
 REQUIRED_FILES = set([".out"])
 OPTIONAL_FILES = set([".solu", ".err", ".set", ".meta"])
-ALL_SOLU = (
-    SOLU_DIR + "instancedb.sqlite3"
-    if os.path.isfile(SOLU_DIR + "instancedb.sqlite3")
-    else SOLU_DIR + "allpublic.solu"
-)
-
+for allsolucand in ["instancedb.sqlite3", "all.solu", "allpublic.solu"]:
+    if os.path.isfile(SOLU_DIR + allsolucand):
+        ALL_SOLU = (SOLU_DIR + allsolucand)
+        break
 
 class Importer(object):
     """Organize and process retrieved files."""
