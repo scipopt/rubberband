@@ -62,20 +62,22 @@ def main():
     project_root = os.path.join(os.path.dirname(__file__), "rubberband")
     app = make_app(project_root)
 
-    # cron job to delete expired documents every day
-    periodic_callback = tornado.ioloop.PeriodicCallback(
-        delete_expired_documents, ONE_DAY
-    )
-    periodic_callback.start()
-
     # create an HTTPServer
     server = tornado.httpserver.HTTPServer(
         app, max_body_size=2 * GB, max_buffer_size=2 * GB
     )
     # bind it to a port specified in 'options'
     server.bind(options.port)
-    # start server and ioloop as main event loop
+    # start server
     server.start(options.num_processes)
+
+    # job to delete expired documents every day
+    periodic_callback = tornado.ioloop.PeriodicCallback(
+        delete_expired_documents, ONE_DAY
+    )
+    periodic_callback.start()
+
+    # start ioloop as main event loop
     tornado.ioloop.IOLoop.current().start()
 
 
