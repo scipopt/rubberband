@@ -22,7 +22,7 @@ def delete_expired_documents():
     s = TestSet.search()
     s = s.filter("range", expirationdate={"lte": date.today()})
     response = s.execute()
-    logging.info(f"Found {response.hits.total.value} expired testsets to delete.")
+    logging.info(f"Found {response.hits.total.value} expired testsets to delete (PID {os.getpid()}).")
     for hit in response.hits:
         testset_id = hit.meta.id
         logging.info(f"Deleting testset {testset_id} associated data.")
@@ -74,14 +74,15 @@ def main():
     server.start(options.num_processes)
 
     # job to delete expired documents every day
-    # because this code is called for each fork (num_processes many), we do this for only one process (assuming the forks have consecutive PIDs)
-    num_processes = options.num_processes if options.num_processes >= 1 else multiprocessing.cpu_count()
-    if os.getpid() % num_processes == 0:
+    ## because this code is called for each fork (num_processes many), we do this for only one process (assuming the forks have consecutive PIDs)
+    #num_processes = options.num_processes if options.num_processes >= 1 else multiprocessing.cpu_count()
+    #if os.getpid() % num_processes == 0:
+    if True:
        periodic_callback = tornado.ioloop.PeriodicCallback(
-           delete_expired_documents, ONE_DAY
+           delete_expired_documents, ONE_DAY, 0.5
        )
        periodic_callback.start()
-       logging.info(f"Started delete_expired_documents() periodic callback in PID {os.getpid()}.")
+       logging.info(f"Started delete_expired_documents() periodic callback in PID {os.getpid()}: Running: {periodic_callback.is_running()}.")
 
     # start ioloop as main event loop
     tornado.ioloop.IOLoop.current().start()
