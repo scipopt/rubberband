@@ -116,6 +116,28 @@ class ComparisonEndpoint(BaseHandler):
         cleansolved = aggtable["_solved_"][cleanindex]
         cleantime = aggtable["T_sgm(1.0)"][cleanindex]
 
+        # if we did not evaluate base only, then include also the numbers for base
+        if comparehash is not None:
+            basecleanindex = ("clean", basehash)
+            baseallindex = ("all", basehash)
+            basecommithash = basehash
+            basecommittime = times[basehash]
+            baseallcount = aggtable["_count_"][baseallindex]
+            baseallsolved = aggtable["_solved_"][baseallindex]
+            basealltime = aggtable["T_sgm(1.0)"][baseallindex]
+            basecleancount = aggtable["_count_"][basecleanindex]
+            basecleansolved = aggtable["_solved_"][basecleanindex]
+            basecleantime = aggtable["T_sgm(1.0)"][basecleanindex]
+        else:
+            basecommithash = 0
+            basecommittime = 0
+            baseallcount = 0
+            baseallsolved = 0
+            basealltime = 0
+            basecleancount = 0
+            basecleansolved = 0
+            basecleantime = 0
+
         self.write(
             ",".join(
                 list(
@@ -130,6 +152,14 @@ class ComparisonEndpoint(BaseHandler):
                             cleancount,
                             cleansolved,
                             cleantime,
+                            basecommithash,
+                            basecommittime,
+                            baseallcount,
+                            baseallsolved,
+                            basealltime,
+                            basecleancount,
+                            basecleansolved,
+                            basecleantime,
                         ],
                     )
                 )
