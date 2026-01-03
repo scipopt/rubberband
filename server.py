@@ -5,6 +5,7 @@ import tornado.ioloop
 import tornado.httpserver
 from datetime import date
 import logging
+import multiprocessing
 
 from rubberband.boilerplate import make_app, options
 from rubberband.constants import FILES_DIR
@@ -62,20 +63,27 @@ def main():
     project_root = os.path.join(os.path.dirname(__file__), "rubberband")
     app = make_app(project_root)
 
-    # cron job to delete expired documents every day
-    periodic_callback = tornado.ioloop.PeriodicCallback(
-        delete_expired_documents, ONE_DAY
-    )
-    periodic_callback.start()
-
     # create an HTTPServer
     server = tornado.httpserver.HTTPServer(
         app, max_body_size=2 * GB, max_buffer_size=2 * GB
     )
     # bind it to a port specified in 'options'
     server.bind(options.port)
-    # start server and ioloop as main event loop
+    # start server
+    # TODO https://www.tornadoweb.org/en/stable/httpserver.html says that this is deprecated
     server.start(options.num_processes)
+
+    # job to delete expired documents every day
+    # because this code is called for each fork (num_processes many), we do this for only one process (assuming the forks have consecutive PIDs)
+    num_processes = options.num_processes if options.num_processes >= 1 else multiprocessing.cpu_count()
+    if os.getpid() % num_processes == 0:
+       periodic_callback = tornado.ioloop.PeriodicCallback(
+           delete_expired_documents, ONE_DAY
+       )
+       periodic_callback.start()
+       logging.info(f"Started delete_expired_documents() periodic callback in PID {os.getpid()}.")
+
+    # start ioloop as main event loop
     tornado.ioloop.IOLoop.current().start()
 
 
