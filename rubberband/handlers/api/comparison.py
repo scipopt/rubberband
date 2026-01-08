@@ -87,6 +87,11 @@ class ComparisonEndpoint(BaseHandler):
         <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
         <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
     </FilterGroup>
+    <FilterGroup name="all-optimal">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_solved_" expression2="1" operator="eq"/>
+    </FilterGroup>
 </Evaluation>
         """.format(tl=baserun.time_limit)
         ev = IPETEvaluation.fromXML(evalstring)
@@ -103,10 +108,12 @@ class ComparisonEndpoint(BaseHandler):
         if comparehash is not None:
             cleanindex = ("clean", comparehash)
             allindex = ("all", comparehash)
+            alloptindex = ("all-optimal", comparehash)
             commithash = comparehash
         else:
             cleanindex = ("clean", basehash)
             allindex = ("all", basehash)
+            alloptindex = ("all-optimal", basehash)
             commithash = basehash
 
         allcount = aggtable["_count_"][allindex]
@@ -115,11 +122,14 @@ class ComparisonEndpoint(BaseHandler):
         cleancount = aggtable["_count_"][cleanindex]
         cleansolved = aggtable["_solved_"][cleanindex]
         cleantime = aggtable["T_sgm(1.0)"][cleanindex]
+        alloptcount = aggtable["_count_"][alloptindex]
+        allopttime = aggtable["T_sgm(1.0)"][alloptindex]
 
         # if we did not evaluate base only, then include also the numbers for base
         if comparehash is not None:
             basecleanindex = ("clean", basehash)
             baseallindex = ("all", basehash)
+            basealloptindex = ("all-optimal", basehash)
             basecommithash = basehash
             basecommittime = times[basehash]
             baseallcount = aggtable["_count_"][baseallindex]
@@ -128,6 +138,8 @@ class ComparisonEndpoint(BaseHandler):
             basecleancount = aggtable["_count_"][basecleanindex]
             basecleansolved = aggtable["_solved_"][basecleanindex]
             basecleantime = aggtable["T_sgm(1.0)"][basecleanindex]
+            basealloptcount = aggtable["_count_"][basealloptindex]
+            baseallopttime = aggtable["T_sgm(1.0)"][basealloptindex]
         else:
             basecommithash = 0
             basecommittime = 0
@@ -137,6 +149,8 @@ class ComparisonEndpoint(BaseHandler):
             basecleancount = 0
             basecleansolved = 0
             basecleantime = 0
+            basealloptcount = 0
+            baseallopttime = 0
 
         self.write(
             ",".join(
@@ -152,6 +166,8 @@ class ComparisonEndpoint(BaseHandler):
                             cleancount,
                             cleansolved,
                             cleantime,
+                            alloptcount,
+                            allopttime,
                             basecommithash,
                             basecommittime,
                             baseallcount,
@@ -160,6 +176,8 @@ class ComparisonEndpoint(BaseHandler):
                             basecleancount,
                             basecleansolved,
                             basecleantime,
+                            basealloptcount,
+                            baseallopttime
                         ],
                     )
                 )
