@@ -396,7 +396,7 @@ class TestSet(Document):
             f.delete()
 
     def delete_all_settings(self):
-        """Delete all File objects associated with a TestSet object."""
+        """Delete all Setting objects associated with a TestSet object."""
         self.load_settings()
         for ft in self.settings:
             f = self.settings[ft]
