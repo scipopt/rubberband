@@ -3,6 +3,7 @@
 import gzip
 import json
 import datetime
+import logging
 from elasticsearch.dsl import Boolean, Document, Text, Keyword, Date, Nested, Integer
 from ipet import Key
 
@@ -400,6 +401,9 @@ class TestSet(Document):
         self.load_settings()
         for ft in self.settings:
             f = self.settings[ft]
+            if type(f) is not Settings:
+               logging.error("settings[{}] is not of Settings type: {}".format(ft, str(f)))
+               continue
             f.delete()
 
     def load_results(self):
