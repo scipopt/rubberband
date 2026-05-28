@@ -17,6 +17,7 @@
   {"name": "Nodes", "short": "Nodes", "type": "number"},
   {"name": "Solving Time", "short": "Time", "type": "number"},
   {"name": "Total Time", "short": "TTime", "type": "number"},
+  {"name": "Norm Time", "short": "NTime", "type": "number"},
   ] %}
 <table id="details-table" class="{{rb_dt_compact}} {{rb_dt_borderless}} rb-table rb-table-data" width="100%">
   <thead>
@@ -45,7 +46,7 @@
 
       {% set objsen = get_objsen(compare + [file], name) %}
 
-      {% for i in ["instance_type", "OriginalProblem_InitialNCons", "OriginalProblem_Vars", "PresolvedProblem_InitialNCons", "PresolvedProblem_Vars", "DualBound", "PrimalBound", "Gap", "Iterations", "Nodes", "TotalTime_solving", "SolvingTime"] %}
+      {% for i in ["instance_type", "OriginalProblem_InitialNCons", "OriginalProblem_Vars", "PresolvedProblem_InitialNCons", "PresolvedProblem_Vars", "DualBound", "PrimalBound", "Gap", "Iterations", "Nodes", "TotalTime_solving", "SolvingTime", "NormalizedTime"] %}
 
         {% if compare %}
           <td title="{{ format_attrs(compare, i, name) }}"{% if (i == "DualBound" and objsen > 0) or (i == "PrimalBound" and objsen < 0) %} invert="yes"{% end %} class="{{ format_type(r, i) }} {{ i }}"{% if (i == "DualBound") %} compare="{{ format_attrs(compare + [file], "PrimalBound", name) }}"{% end %}{% if (i == "PrimalBound") %} compare="{{ format_attrs(compare + [file], "DualBound", name) }}"{% end %}>{{ format_attr(r, i) }}</td>
