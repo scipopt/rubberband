@@ -74,8 +74,15 @@ define("smtp_password", default="", help="The password for SMTP authentication."
 define(
     "loganalyzer_url",
     default="",
-    help="Base URL of a LogAnalyzer instance to hand runs off to for analysis. "
-    "When empty, the 'Open in LogAnalyzer' button is hidden.",
+    help="Internal base URL of a LogAnalyzer instance that Rubberband uploads runs "
+    "to (server-to-server). When empty, the 'Open in LogAnalyzer' button is hidden.",
+)
+define(
+    "loganalyzer_public_url",
+    default="",
+    help="Browser-facing base URL of LogAnalyzer used for the redirect after upload. "
+    "Set this when LogAnalyzer is behind a reverse proxy on a different host/path "
+    "than loganalyzer_url. Falls back to loganalyzer_url when empty.",
 )
 
 

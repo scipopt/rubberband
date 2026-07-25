@@ -69,7 +69,10 @@ class AnalyzeExternalView(BaseHandler):
         testsets : str
             comma-separated TestSet ids
         """
+        # internal URL for the server-to-server upload; public URL for the
+        # browser redirect (behind a reverse proxy these differ)
         base = options.loganalyzer_url.rstrip("/")
+        public_base = (options.loganalyzer_public_url or options.loganalyzer_url).rstrip("/")
         if not base:
             raise HTTPError(404, reason="LogAnalyzer integration is not configured.")
 
@@ -131,8 +134,8 @@ class AnalyzeExternalView(BaseHandler):
         # poll until the runs complete and then create the comparison via
         # /api/compare, redirecting straight to /comparison-instances/<id>.)
         if payload.get("run_id"):
-            self.redirect("{}/instances/{}".format(base, payload["run_id"]))
+            self.redirect("{}/instances/{}".format(public_base, payload["run_id"]))
         elif payload.get("runs"):
-            self.redirect("{}/".format(base))
+            self.redirect("{}/".format(public_base))
         else:
             raise HTTPError(502, reason="Unexpected response from LogAnalyzer.")
