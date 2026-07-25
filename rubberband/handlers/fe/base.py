@@ -73,6 +73,17 @@ class BaseHandler(RequestHandler):
         """
         return self.request.protocol + "://" + self.request.host
 
+    def get_loganalyzer_url(self):
+        """
+        Base URL of the configured LogAnalyzer instance, or an empty string.
+
+        Returns
+        -------
+        str
+            the LogAnalyzer url ("" disables the integration)
+        """
+        return options.loganalyzer_url
+
     def get_rb_url(self):
         """
         Url where the rubberband instance lives.

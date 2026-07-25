@@ -11,6 +11,7 @@ from .main import MainView  # noqa
 from .search import SearchView  # noqa
 from .upload import UploadView  # noqa
 from .download import DownloadView  # noqa
+from .analyze import AnalyzeExternalView  # noqa
 from .visualize import VisualizeView  # noqa
 from .evaluation import EvaluationView  # noqa
 from .display import DisplayView  # noqa

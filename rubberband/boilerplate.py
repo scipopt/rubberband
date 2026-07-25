@@ -71,6 +71,13 @@ define(
 define("smtp_username", default="", help="The username for SMTP authentication.")
 define("smtp_password", default="", help="The password for SMTP authentication.")
 
+define(
+    "loganalyzer_url",
+    default="",
+    help="Base URL of a LogAnalyzer instance to hand runs off to for analysis. "
+    "When empty, the 'Open in LogAnalyzer' button is hidden.",
+)
+
 
 def make_app(project_root):
     """
