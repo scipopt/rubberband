@@ -122,8 +122,12 @@ class ComparisonEndpoint(BaseHandler):
         cleancount = aggtable["_count_"][cleanindex]
         cleansolved = aggtable["_solved_"][cleanindex]
         cleantime = aggtable["T_sgm(1.0)"][cleanindex]
-        alloptcount = aggtable["_count_"][alloptindex]
-        allopttime = aggtable["T_sgm(1.0)"][alloptindex]
+        if alloptindex in aggtable["_count_"] :
+            alloptcount = aggtable["_count_"][alloptindex]
+            allopttime = aggtable["T_sgm(1.0)"][alloptindex]
+        else :
+            alloptcount = 0
+            allopttime = 0.0
 
         # if we did not evaluate base only, then include also the numbers for base
         if comparehash is not None:
@@ -138,8 +142,12 @@ class ComparisonEndpoint(BaseHandler):
             basecleancount = aggtable["_count_"][basecleanindex]
             basecleansolved = aggtable["_solved_"][basecleanindex]
             basecleantime = aggtable["T_sgm(1.0)"][basecleanindex]
-            basealloptcount = aggtable["_count_"][basealloptindex]
-            baseallopttime = aggtable["T_sgm(1.0)"][basealloptindex]
+            if basealloptindex in aggtable["_count_"] :
+                basealloptcount = aggtable["_count_"][basealloptindex]
+                baseallopttime = aggtable["T_sgm(1.0)"][basealloptindex]
+            else :
+                basealloptcount = 0
+                baseallopttime = 0.0
         else:
             basecommithash = 0
             basecommittime = 0
