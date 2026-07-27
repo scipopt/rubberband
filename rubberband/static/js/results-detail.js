@@ -13,6 +13,7 @@ var modal = document.getElementById("info-modal");
 var ipetlongtable;
 var ipetaggtable;
 var detailstable;
+var detailsperftable;
 
 // ####################################### functions
 function format_dt_searchfield(tableident) {
@@ -199,7 +200,7 @@ function initSimpleTable(tableident) {
 
 function initDetailsTable(tablename) {
   var tableident = "#"+tablename;
-  detailstable = $(tableident).DataTable({
+  var table = $(tableident).DataTable({
     scrollY: '80vh', scrollX: true, scroller: true, scrollCollapse: true,
     paging: false,
     columnDefs: [
@@ -217,13 +218,15 @@ function initDetailsTable(tablename) {
   construct_columns_toggle(tablename);
   /* we need to do this for tables with fixed columns by hand */
   $(document).on('mouseenter mouseleave', 'table#'+tablename+' tbody tr', hoverTable(1, tablename));
+  
+  return table;
 }
 
 /*
  * Colorate the details table cells for the compare view
  */
-function colorateCells() {
-  detailstable.cells().every( function () {
+function colorateCells(table) {
+  table.cells().every( function () {
     // determine if tooltip is string or number
     var element = $(this.node())[0];
     if (element.attributes["title"] !== undefined) {
@@ -449,10 +452,11 @@ function construct_row_toggle(toggleident) {
 
 $(document).ready(function(){
   /* init datatables */
-  initDetailsTable('details-table');
+  detailstable = initDetailsTable('details-table');
+  detailsperftable = initDetailsTable('details-perf-table');
 
   // if compare is in query string, then we are in the compare view
-  if (window.location.search.indexOf("compare") >= 0) { colorateCells(); }
+  if (window.location.search.indexOf("compare") >= 0) { colorateCells(detailstable); colorateCells(detailsperftable); }
 
   initSimpleTable('.meta-table, #settings-table');
   format_dt_searchfield(".dataTables");

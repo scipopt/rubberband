@@ -1,0 +1,65 @@
+{% set cols = [
+  {"name": "Status", "short": "Status", "type": "text", "key": "Status"},
+  {"name": "Solving Time", "short": "Time", "type": "number", "key": "SolvingTime"},
+  {"name": "Norm Time", "short": "NTime", "type": "number", "key": "NormalizedTime"},
+  {"name": "Norm Freq", "short": "NFreq", "type": "number", "key": "NormalizedFreq"},
+  {"name": "Task Clock", "short": "TaskClock", "type": "number", "key": "perf:task-clock"},
+  {"name": "Instructions U", "short": "InstrU", "type": "number", "key": "perf:instructions:u"},
+  {"name": "Instructions K", "short": "InstrK", "type": "number", "key": "perf:instructions:k"},
+  {"name": "CPU Cycles U", "short": "CyclesU", "type": "number", "key": "perf:cpu-cycles:u"},
+  {"name": "CPU Cycles K", "short": "CyclesK", "type": "number", "key": "perf:cpu-cycles:k"},
+  {"name": "Cache Refs", "short": "CacheRef", "type": "number", "key": "perf:cache-references:u"},
+  {"name": "Cache Misses", "short": "CacheMiss", "type": "number", "key": "perf:cache-misses:u"},
+  {"name": "Branch Instr U", "short": "BranchInstrU", "type": "number", "key": "perf:branch-instructions:u"},
+  {"name": "Branch Misses U", "short": "BranchMissU", "type": "number", "key": "perf:branch-misses:u"},
+  {"name": "Minor Faults U", "short": "MinorFaultU", "type": "number", "key": "perf:minor-faults:u"},
+  {"name": "Minor Faults K", "short": "MinorFaultU", "type": "number", "key": "perf:minor-faults:k"},
+  {"name": "Major Faults U", "short": "MajorFaultU", "type": "number", "key": "perf:major-faults:u"},
+  {"name": "Major Faults K", "short": "MajorFaultU", "type": "number", "key": "perf:major-faults:k"},
+  {"name": "Context Switches", "short": "ContextSwitch", "type": "number", "key": "perf:context-switches"},
+  {"name": "Cycles Mem Any", "short": "CycleMemAny", "type": "number", "key": "perf:cycle-activity-cycles-mem-any"},
+  {"name": "Stalls Mem Any", "short": "StallsMemAny", "type": "number", "key": "perf:cycle-activity-stalls-mem-any"},
+  {"name": "Stalls Total", "short": "StallsTotal", "type": "number", "key": "perf:cycle-activity-stalls-total"},
+  ] %}
+<table id="details-perf-table" class="{{rb_dt_compact}} {{rb_dt_borderless}} rb-table rb-table-data" width="100%">
+  <thead>
+    <tr>
+    <th class="text">{% raw shortening_span("Instance Name", "Inst") %}</th>
+    {% for i in cols %}
+      <th class="{{ i["type"] }}">{% raw shortening_span(i["short"], i["short"]) %}</th>
+    {% end %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for name, r in file.results.to_dict().items() %}
+    {% if not compare or name in sets["intersection"] %}
+    <tr>
+
+      {% if compare %}
+        <td>
+          {% set href="/instance/{rid}?compare={compare}".format(rid=r.meta.id, compare=','.join([c.meta.id for c in compare])) %}
+          {% raw get_link(href, r.instance_name, 20, 7) %}
+        </td>
+      {% else %}
+        <td>
+          {% set href="/instance/{rid}".format(rid=r.meta.id, compare=','.join([c.meta.id for c in compare])) %}
+          {% raw get_link(href, r.instance_name, 20, 7) %}
+        </td>
+      {% end %}
+
+      {% for i in cols %}
+
+          {% if compare %}
+            <td title="{{ format_attrs(compare, i["key"], name) }}" class="{{ format_type(r, i["key"]) }} {{ i["key"] }}">{{ format_attr(r, i["key"]) }}</td>
+          {% else %}
+            <td class="{{ format_type(r, i["key"]) }}">{{ format_attr(r, i["key"]) }}</td>
+          {% end %}
+
+      {% end %}
+
+    </tr>
+    {% end %}
+    {% end %}
+  </tbody>
+</table>
+
