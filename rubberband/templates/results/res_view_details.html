@@ -45,8 +45,9 @@
     </div>
   {% end %}
 
-  <h2 class="rb-details-tab-title">Detailed perf data</h2>
-  <div class="datatables-content">
+  <h2 class="rb-collapser" href="#details-perf-table-div" data-toggle="collapse" role="button">Detailed perf data
+    <span class="fa fa-angle-down small float-right p-2"></span></h2>
+  <div class="collapse" id="details-perf-table-div">
     {% include "details_perf_table.html" %}
   </div>
 
