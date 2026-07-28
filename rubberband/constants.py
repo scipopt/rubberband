@@ -57,14 +57,22 @@ IPET_EVALUATIONS = {
         "name": "detailed view - group githash, exclude",
     },
     9: {
+        "path": STATIC_FILES_DIR + "evalperf_groupsettings_exclude_detailed.xml",
+        "name": "perf analysis - detailed, group settings, exclude",
+    },
+    10: {
+        "path": STATIC_FILES_DIR + "evalperf_groupgithash_exclude_detailed.xml",
+        "name": "perf analysis - detailed, group githash, exclude",
+    },
+    11: {
         "path": STATIC_FILES_DIR + "papilo_evaluation.xml",
         "name": "evaluation papilo",
     },
-    10: {
+    12: {
         "path": STATIC_FILES_DIR + "papilo_evaluation_solver_specific.xml",
         "name": "evaluation papilo solver specific",
     },
-    11: {
+    13: {
         "path": STATIC_FILES_DIR + "papilo_evaluation_groupsettings.xml",
         "name": "evaluation papilo group settings",
     },

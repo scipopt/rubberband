@@ -1,0 +1,130 @@
+<?xml version="1.0" ?>
+<!-- group by settings - exclude fails & aborts - detailed, perf statistics -->
+<Evaluation comparecolformat="%.3f" index="ProblemName Seed Permutation Settings" indexsplit="3">
+    <Column formatstr="%.2f" name="T" origcolname="SolvingTime" minval="0.5" comp="quot shift. by 1" maxval="TimeLimit" alternative="TimeLimit" reduction="shmean shift. by 1">
+        <Aggregation aggregation="shmean" name="sgm" shiftby="1.0"/>
+    </Column>
+    <Column formatstr="%.2f" name="NrmT" origcolname="NormalizedTime" minval="0.5" comp="quot shift. by 1" maxval="TimeLimit" alternative="TimeLimit" reduction="shmean shift. by 1">
+        <Aggregation aggregation="shmean" name="sgm" shiftby="1.0"/>
+    </Column>
+    <Column name="St" origcolname="Status"/>
+    <Column origcolname="perf:cpu-cycles:u" minval="1" name="CyclesU" comp="quot shift. by 1000">
+        <Aggregation aggregation="shmean" name="shmean" shiftby="1000.0"/>
+    </Column>
+    <Column origcolname="perf:cpu-cycles:k" minval="1" name="CyclesK" comp="quot shift. by 1000">
+        <Aggregation aggregation="shmean" name="shmean" shiftby="1000.0"/>
+    </Column>
+    <Column origcolname="perf:instructions:u" minval="1" name="InstrU" comp="quot shift. by 1000">
+        <Aggregation aggregation="shmean" name="shmean" shiftby="1000.0"/>
+    </Column>
+    <Column origcolname="perf:instructions:k" minval="1" name="InstrK" comp="quot shift. by 1000">
+        <Aggregation aggregation="shmean" name="shmean" shiftby="1000.0"/>
+    </Column>
+    <Column origcolname="perf:cache-references:u" minval="1" name="CacheRefU" comp="quot shift. by 1000">
+        <Aggregation aggregation="shmean" name="shmean" shiftby="1000.0"/>
+    </Column>
+    <Column origcolname="perf:cache-misses:u" minval="1" name="CacheMissU" comp="quot shift. by 1000">
+        <Aggregation aggregation="shmean" name="shmean" shiftby="1000.0"/>
+    </Column>
+    <Column origcolname="perf:branch-instructions:u" minval="1" name="BranchInstrU" comp="quot shift. by 1000">
+        <Aggregation aggregation="shmean" name="shmean" shiftby="1000.0"/>
+    </Column>
+    <Column origcolname="perf:branch-misses:u" minval="1" name="BranchMissU" comp="quot shift. by 1000">
+        <Aggregation aggregation="shmean" name="shmean" shiftby="1000.0"/>
+    </Column>
+    <Column origcolname="perf:minor-faults:u" minval="0" name="MinorFaultU">
+        <Aggregation aggregation="mean" name="mean"/>
+    </Column>
+    <Column origcolname="perf:minor-faults:k" minval="0" name="MinorFaultK">
+        <Aggregation aggregation="mean" name="mean"/>
+    </Column>
+    <Column origcolname="perf:major-faults:u" minval="0" name="MajorFaultU">
+        <Aggregation aggregation="mean" name="mean"/>
+    </Column>
+    <Column origcolname="perf:major-faults:k" minval="0" name="MajorFaultK">
+        <Aggregation aggregation="mean" name="mean"/>
+    </Column>
+    <Column origcolname="perf:context-switches" minval="0" name="ContextSwitch">
+        <Aggregation aggregation="mean" name="mean"/>
+    </Column>
+    <Column origcolname="perf:cycle-activity-cycles-mem-any" minval="1" name="CycleMemAny" comp="quot shift. by 1000">
+        <Aggregation aggregation="shmean" name="shmean" shiftby="1000.0"/>
+    </Column>
+    <Column origcolname="perf:cycle-activity-stalls-mem-any" minval="1" name="StallMemAny" comp="quot shift. by 1000">
+        <Aggregation aggregation="shmean" name="shmean" shiftby="1000.0"/>
+    </Column>
+    <Column origcolname="perf:cycle-activity-stalls-total" minval="1" name="StallTotal" comp="quot shift. by 1000">
+        <Aggregation aggregation="shmean" name="shmean" shiftby="1000.0"/>
+    </Column>
+    <Column origcolname="perf:task-clock" minval="1" name="TaskClock">
+        <Aggregation aggregation="mean" name="mean"/>
+    </Column>
+    <FilterGroup name="all"/>
+    <FilterGroup name="clean">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+    </FilterGroup>
+    <FilterGroup active="True" filtertype="intersection" name="affected">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter active="True" anytestrun="one" datakey="LP_Iterations_dualLP" operator="diff"/>
+        <Filter active="True" anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
+    </FilterGroup>
+    <FilterGroup active="True" filtertype="intersection" name="unaffected">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter active="True" anytestrun="all" datakey="LP_Iterations_dualLP" operator="equal"/>
+    </FilterGroup>
+    <FilterGroup name="[0,tilim]">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
+    </FilterGroup>
+    <FilterGroup name="[1,tilim]">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
+        <Filter anytestrun="one" expression1="T" expression2="1" operator="ge"/>
+    </FilterGroup>
+    <FilterGroup name="[10,tilim]">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
+        <Filter anytestrun="one" expression1="T" expression2="10" operator="ge"/>
+    </FilterGroup>
+    <FilterGroup name="[100,tilim]">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
+        <Filter anytestrun="one" expression1="T" expression2="100" operator="ge"/>
+    </FilterGroup>
+    <FilterGroup name="[1000,tilim]">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
+        <Filter anytestrun="one" expression1="T" expression2="1000" operator="ge"/>
+    </FilterGroup>
+    <FilterGroup name="[0,10)">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
+        <Filter anytestrun="all" expression1="T" expression2="10" operator="lt"/>
+    </FilterGroup>
+    <FilterGroup name="[0,100)">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
+        <Filter anytestrun="all" expression1="T" expression2="100" operator="lt"/>
+    </FilterGroup>
+    <FilterGroup name="all-optimal">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_solved_" expression2="1" operator="eq"/>
+    </FilterGroup>
+    <FilterGroup name="diff-timeouts">
+        <Filter anytestrun="all" expression1="_abort_" expression2="0" operator="eq"/>
+        <Filter anytestrun="all" expression1="_fail_" expression2="0" operator="eq"/>
+        <Filter anytestrun="one" expression1="_solved_" expression2="1" operator="eq"/>
+        <Filter anytestrun="one" expression1="_solved_" expression2="0" operator="eq"/>
+    </FilterGroup>
+</Evaluation>
