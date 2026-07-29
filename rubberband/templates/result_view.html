@@ -29,7 +29,7 @@
 
     {% if handler.get_loganalyzer_url() %}
     <a class="bs-tooltip ml-2 mr-2" data-toggle="tooltip" data-placement="top" href="/analyze/{{ ','.join([file.meta.id] + [c.meta.id for c in compare]) }}" title="open in LogAnalyzer" target="_blank">
-      <span class="fa fa-external-link"></span></a>
+      <span class="fa fa-chart-bar"></span></a>
     {% end %}
 
   </div>
