@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install lxml dev packages
-        run: sudo apt install -y libxml2-dev libxslt1-dev
+        run: sudo apt-get install -y libxml2-dev libxslt1-dev
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
