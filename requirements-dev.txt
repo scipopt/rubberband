@@ -1,5 +1,5 @@
-pypandoc==1.15
+pypandoc==1.17
 pytest==9.0.3
-myst-parser==4.0.1
+myst-parser==5.1.0
 ruff==0.12.12
-Sphinx==8.2.3
+Sphinx==9.1.0
