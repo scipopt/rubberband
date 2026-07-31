@@ -1,7 +1,4 @@
-.. Rubberband documentation master file, created by
-   sphinx-quickstart on Thu Nov 16 11:15:57 2017.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. Rubberband documentation master file
 
 Welcome to Rubberband's documentation!
 ======================================
@@ -11,7 +8,7 @@ Its main purpose is the organization and evaluation of logfiles of Solvers durin
 Rubberband consists of a python `tornado <http://www.tornadoweb.org/en/stable/>`_ application running on a webserver (like nginx or apache) and can authenticate users via `oauth2_proxy <http://github.com/bitly/oauth2_proxy>`_.
 There is an optional `gitlab <http://gitlab.com/>`_ connection for linkage of users and commits.
 All of the data is stored in an `elasticsearch <http://www.elastic.co/products/elasticsearch>`_ database, including the logfiles themselves.
-As a tool for parsing the logfiles, rubberband utilizes `IPET <http://github.com/GregorCH/ipet>`_.
+As a tool for parsing the logfiles, rubberband utilizes `IPET <http://github.com/scipopt/ipet>`_.
 
 .. figure:: static/img/overview.svg
     :align: center

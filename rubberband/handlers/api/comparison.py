@@ -104,7 +104,8 @@ class ComparisonEndpoint(BaseHandler):
 </Evaluation>
         """.format(tl=baserun.time_limit)
         ev = IPETEvaluation.fromXML(evalstring)
-        ev.set_validate(ALL_SOLU)
+        if ALL_SOLU:
+            ev.set_validate(ALL_SOLU)
         ev.set_feastol(tolerance)
 
         set_defaultgroup(ev, ex, base_id)

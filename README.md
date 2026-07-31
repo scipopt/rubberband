@@ -2,18 +2,6 @@
 
 A flexible web view and analysis platform for solver log files of mathematical optimization software, backed by Elasticsearch.
 
-- [Development](#development)
-  - [Install Elasticsearch](#install-elasticsearch)
-  - [Set up Rubberband](#set-up-rubberband)
-  - [Populate Elasticsearch](#populate-elasticsearch)
-  - [Start the server](#start-the-server)
-- [Testing](#testing)
-- [Deployment](#deployment)
-  - [Authentication](#authentication)
-  - [Web Server](#web-server)
-  - [Process Management](#process-management)
-- [Contributing](#contributing)
-
 ## Development
 
 This is a detailed description of how to set up Rubberband.
@@ -167,7 +155,7 @@ There is no authentication built into Rubberband, though rubberband will authori
 
 ### Web Server
 
-Rubberband is meant to be deployed behind a production webserver, such as a [nginx](https://www.nginx.com/) or [apache](https://httpd.apache.org/). See [config/rubberband-oauth](config/rubberband-oauth) for a sample nginx configuration. This example shows an HTTPS deployment configured with [Let's Encrypt](and://letsencrypt.org/).
+Rubberband is meant to be deployed behind a production webserver, such as a [nginx](https://www.nginx.com/) or [apache](https://httpd.apache.org/). See [config/rubberband-oauth](config/rubberband-oauth) for a sample nginx configuration. This example shows an HTTPS deployment configured with [Let's Encrypt](https://letsencrypt.org/).
 
 ### Process Management
 

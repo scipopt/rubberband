@@ -576,7 +576,8 @@ def setup_evaluation(evalfile, solufile, tolerance, evalstring=False):
         evaluation = IPETEvaluation.fromXMLFile(evalfile["path"])
 
     evaluation.set_grouptags(True)
-    evaluation.set_validate(solufile)
+    if solufile:
+        evaluation.set_validate(solufile)
     evaluation.set_feastol(tolerance)
     return evaluation
 
