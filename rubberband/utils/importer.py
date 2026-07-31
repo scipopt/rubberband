@@ -21,6 +21,7 @@ from .hasher import generate_sha256_hash
 
 REQUIRED_FILES = set([".out"])
 OPTIONAL_FILES = set([".solu", ".err", ".set", ".meta"])
+ALL_SOLU = None
 for allsolucand in ["instancedb.sqlite3", "all.solu", "allpublic.solu"]:
     if os.path.isfile(SOLU_DIR + allsolucand):
         ALL_SOLU = (SOLU_DIR + allsolucand)
@@ -174,7 +175,7 @@ class Importer(object):
         # clean up filesystem if remove flag set
         if self.remove_files:
             for t, f in self.files.items():
-                if f and not f == ALL_SOLU:
+                if f and ALL_SOLU and not f == ALL_SOLU:
                     os.remove(f)
 
         self._log_info("Finished!")
@@ -587,7 +588,7 @@ class Importer(object):
             if self.files[".solu"] is None:
                 msg = "No solu file found."
                 path = ALL_SOLU
-                if os.path.isfile(path):
+                if path and os.path.isfile(path):
                     msg = "Adding SoluFile."
                     self.files[".solu"] = path
             else:
