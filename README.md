@@ -2,18 +2,6 @@
 
 A flexible web view and analysis platform for solver log files of mathematical optimization software, backed by Elasticsearch.
 
-- [Development](#development)
-  - [Install Elasticsearch](#install-elasticsearch)
-  - [Set up Rubberband](#set-up-rubberband)
-  - [Populate Elasticsearch](#populate-elasticsearch)
-  - [Start the server](#start-the-server)
-- [Testing](#testing)
-- [Deployment](#deployment)
-  - [Authentication](#authentication)
-  - [Web Server](#web-server)
-  - [Process Management](#process-management)
-- [Contributing](#contributing)
-
 ## Development
 
 This is a detailed description of how to set up Rubberband.
