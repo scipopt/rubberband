@@ -10,6 +10,7 @@ routes = [
     (r"/compare", fe.CompareView),
     (r"/display/(?P<mode>[^\/]+)/(?P<id>[^\/]+)", fe.DisplayView),
     (r"/download?(?P<arg>[^\/]+)", fe.DownloadView),
+    (r"/analyze/(?P<testsets>[^\/]+)", fe.AnalyzeExternalView),
     (r"/eval/(?P<eval_id>[^\/]+)", fe.EvaluationView),
     (r"/file/(?P<file_id>[^\/]+)", fe.FileView),
     (r"/help", fe.HelpView),

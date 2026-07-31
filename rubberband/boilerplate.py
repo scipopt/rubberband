@@ -71,6 +71,20 @@ define(
 define("smtp_username", default="", help="The username for SMTP authentication.")
 define("smtp_password", default="", help="The password for SMTP authentication.")
 
+define(
+    "loganalyzer_url",
+    default="http://127.0.0.1:7831/loganalyzer",
+    help="Internal base URL of a LogAnalyzer instance that Rubberband uploads runs "
+    "to (server-to-server). When empty, the 'Open in LogAnalyzer' button is hidden.",
+)
+define(
+    "loganalyzer_public_url",
+    default="http://127.0.0.1:8080/loganalyzer",
+    help="Browser-facing base URL of LogAnalyzer used for the redirect after upload. "
+    "Set this when LogAnalyzer is behind a reverse proxy on a different host/path "
+    "than loganalyzer_url. Falls back to loganalyzer_url when empty.",
+)
+
 
 def make_app(project_root):
     """
@@ -103,6 +117,15 @@ def make_app(project_root):
         options.parse_config_file(config)
     else:
         logging.info("Using default config.")
+
+    # Override options from RUBBERBAND_<UPPER_CASE_NAME> environment variables.
+    # Highest priority: env var > config file > code defaults.
+    for name in options:
+        env_key = "RUBBERBAND_{}".format(name.upper())
+        env_val = os.environ.get(env_key)
+        if env_val is not None:
+            logging.info("Overriding %s from env var %s", name, env_key)
+            setattr(options, name, env_val)
 
     # settings for tornado
     settings = {
