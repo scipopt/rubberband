@@ -1,27 +1,23 @@
-{% if file.solver == "GENIOS" %}
-{% set add_cols = [{"name": "Status", "short": "Stat", "type": "text"}] %}
-{% else %}
-{% set add_cols = [{"name": "Status", "short": "Stat", "type": "text"}] %}
-{% end %}
 {% set cols = [
-  {"name": "Instance Name", "short": "Inst", "type": "text"},
-  {"name": "Type", "short": "Type", "type": "text"},
-  {"name": "Original Cons", "short": "OCons", "type": "number"},
-  {"name": "Original Vars", "short": "OVars", "type": "number"},
-  {"name": "Presolved Cons", "short": "PCons", "type": "number"},
-  {"name": "Presolved Vars", "short": "PVars", "type": "number"},
-  {"name": "Dual Bound", "short": "DB", "type": "number"},
-  {"name": "Primal Bound", "short": "PB", "type": "number"},
-  {"name": "Gap", "short": "Gap", "type": "number"},
-  {"name": "Iterations", "short": "Iter", "type": "number"},
-  {"name": "Nodes", "short": "Nodes", "type": "number"},
-  {"name": "Solving Time", "short": "Time", "type": "number"},
-  {"name": "Total Time", "short": "TTime", "type": "number"},
+  {"name": "Status", "short": "Stat", "type": "text", "key": "Status"},
+  {"name": "Nodes", "short": "Nodes", "type": "number", "key": "Nodes"},
+  {"name": "Solving Time", "short": "Time", "type": "number", "key": "SolvingTime"},
+  {"name": "Norm Time", "short": "NTime", "type": "number", "key": "NormalizedTime"},
+  {"name": "Iterations", "short": "Iter", "type": "number", "key": "Iterations"},
+  {"name": "Gap", "short": "Gap", "type": "number", "key": "Gap"},
+  {"name": "Dual Bound", "short": "DB", "type": "number", "key": "DualBound"},
+  {"name": "Primal Bound", "short": "PB", "type": "number", "key": "PrimalBound"},
+  {"name": "Total Time", "short": "TTime", "type": "number", "key": "TotalTime_solving"},
+  {"name": "Original Cons", "short": "OCons", "type": "number", "key": "OriginalProblem_InitialNCons"},
+  {"name": "Original Vars", "short": "OVars", "type": "number", "key": "OriginalProblem_Vars"},
+  {"name": "Presolved Cons", "short": "PCons", "type": "number", "key": "PresolvedProblem_InitialNCons"},
+  {"name": "Presolved Vars", "short": "PVars", "type": "number", "key": "PresolvedProblem_Vars"},
   ] %}
 <table id="details-table" class="{{rb_dt_compact}} {{rb_dt_borderless}} rb-table rb-table-data" width="100%">
   <thead>
     <tr>
-    {% for i in cols + add_cols %}
+    <th class="text">{% raw shortening_span("Instance Name", "Inst") %}</th>
+    {% for i in cols %}
       <th class="{{ i["type"] }}">{% raw shortening_span(i["name"], i["short"]) %}</th>
     {% end %}
     </tr>
@@ -45,22 +41,12 @@
 
       {% set objsen = get_objsen(compare + [file], name) %}
 
-      {% for i in ["instance_type", "OriginalProblem_InitialNCons", "OriginalProblem_Vars", "PresolvedProblem_InitialNCons", "PresolvedProblem_Vars", "DualBound", "PrimalBound", "Gap", "Iterations", "Nodes", "TotalTime_solving", "SolvingTime"] %}
+      {% for i in cols %}
 
         {% if compare %}
-          <td title="{{ format_attrs(compare, i, name) }}"{% if (i == "DualBound" and objsen > 0) or (i == "PrimalBound" and objsen < 0) %} invert="yes"{% end %} class="{{ format_type(r, i) }} {{ i }}"{% if (i == "DualBound") %} compare="{{ format_attrs(compare + [file], "PrimalBound", name) }}"{% end %}{% if (i == "PrimalBound") %} compare="{{ format_attrs(compare + [file], "DualBound", name) }}"{% end %}>{{ format_attr(r, i) }}</td>
+          <td title="{{ format_attrs(compare, i["key"], name) }}"{% if (i["key"] == "DualBound" and objsen > 0) or (i["key"] == "PrimalBound" and objsen < 0) %} invert="yes"{% end %} class="{{ format_type(r, i["key"]) }} {{ i["key"] }}"{% if (i["key"] == "DualBound") %} compare="{{ format_attrs(compare + [file], "PrimalBound", name) }}"{% end %}{% if (i["key"] == "PrimalBound") %} compare="{{ format_attrs(compare + [file], "DualBound", name) }}"{% end %}>{{ format_attr(r, i["key"]) }}</td>
         {% else %}
-          <td class="{{ format_type(r, i) }}">{{ format_attr(r, i) }}</td>
-        {% end %}
-
-      {% end %}
-
-      {% for i in add_cols %}
-
-        {% if compare %}
-          <td title="{{ format_attrs(compare, i["name"], name) }}" class="{{ format_type(r, i["name"]) }} {{ i["name"] }}">{{ format_attr(r, i["name"]) }}</td>
-        {% else %}
-          <td class="{{ format_type(r, i["name"]) }}">{{ format_attr(r, i["name"]) }}</td>
+          <td class="{{ format_type(r, i["key"]) }}">{{ format_attr(r, i["key"]) }}</td>
         {% end %}
 
       {% end %}

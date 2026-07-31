@@ -21,50 +21,58 @@ STATIC_FILES_DIR = FILES_DIR + "xml/"
 ADD_READERS = STATIC_FILES_DIR + "additional_readers.xml"
 IPET_EVALUATIONS = {
     0: {
-        "path": STATIC_FILES_DIR + "eval_singleruns_exclude.xml",
-        "name": "single runs - exclude fails & aborts (standard)",
-    },
-    1: {
-        "path": STATIC_FILES_DIR + "eval_singleruns_include.xml",
-        "name": "single runs - include fails & aborts (standard)",
-    },
-    2: {
-        "path": STATIC_FILES_DIR + "eval_singleruns_punish.xml",
-        "name": "single runs - punish fails & aborts (standard)",
-    },
-    3: {
-        "path": STATIC_FILES_DIR + "eval_groupgithash_exclude.xml",
-        "name": "group by githash - exclude fails & aborts",
-    },
-    4: {
-        "path": STATIC_FILES_DIR + "eval_groupsettings_exclude.xml",
-        "name": "group by settings - exclude fails & aborts",
-    },
-    5: {
-        "path": STATIC_FILES_DIR + "eval_grouplpsolver_exclude.xml",
-        "name": "group by LP solver - exclude fails & aborts",
-    },
-    6: {
-        "path": STATIC_FILES_DIR + "eval_groupsettings_exclude_detailed.xml",
-        "name": "detailed view - group settings, exclude",
-    },
-    7: {
-        "path": STATIC_FILES_DIR + "eval_groupsettings_include_detailed.xml",
-        "name": "detailed view - group settings, include",
-    },
-    8: {
         "path": STATIC_FILES_DIR + "eval_groupgithash_exclude_detailed.xml",
         "name": "detailed view - group githash, exclude",
     },
+    1: {
+        "path": STATIC_FILES_DIR + "eval_groupsettings_exclude_detailed.xml",
+        "name": "detailed view - group settings, exclude",
+    },
+    2: {
+        "path": STATIC_FILES_DIR + "eval_groupsettings_include_detailed.xml",
+        "name": "detailed view - group settings, include",
+    },
+    3: {
+        "path": STATIC_FILES_DIR + "eval_singleruns_exclude.xml",
+        "name": "single runs - exclude fails & aborts (standard)",
+    },
+    4: {
+        "path": STATIC_FILES_DIR + "eval_singleruns_include.xml",
+        "name": "single runs - include fails & aborts (standard)",
+    },
+    5: {
+        "path": STATIC_FILES_DIR + "eval_singleruns_punish.xml",
+        "name": "single runs - punish fails & aborts (standard)",
+    },
+    6: {
+        "path": STATIC_FILES_DIR + "eval_groupgithash_exclude.xml",
+        "name": "group by githash - exclude fails & aborts",
+    },
+    7: {
+        "path": STATIC_FILES_DIR + "eval_groupsettings_exclude.xml",
+        "name": "group by settings - exclude fails & aborts",
+    },
+    8: {
+        "path": STATIC_FILES_DIR + "eval_grouplpsolver_exclude.xml",
+        "name": "group by LP solver - exclude fails & aborts",
+    },
     9: {
+        "path": STATIC_FILES_DIR + "evalperf_groupgithash_exclude_detailed.xml",
+        "name": "perf analysis - detailed, group githash, exclude",
+    },
+    10: {
+        "path": STATIC_FILES_DIR + "evalperf_groupsettings_exclude_detailed.xml",
+        "name": "perf analysis - detailed, group settings, exclude",
+    },
+    11: {
         "path": STATIC_FILES_DIR + "papilo_evaluation.xml",
         "name": "evaluation papilo",
     },
-    10: {
+    12: {
         "path": STATIC_FILES_DIR + "papilo_evaluation_solver_specific.xml",
         "name": "evaluation papilo solver specific",
     },
-    11: {
+    13: {
         "path": STATIC_FILES_DIR + "papilo_evaluation_groupsettings.xml",
         "name": "evaluation papilo group settings",
     },
