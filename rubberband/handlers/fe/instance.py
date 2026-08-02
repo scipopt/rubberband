@@ -2,8 +2,10 @@
 
 import json
 from elasticsearch.dsl import A
+from elasticsearch.dsl.connections import connections
 
-from rubberband.models import TestSet, Result
+from rubberband.constants import RESULT_INDEX
+from rubberband.models import TestSet, Result, ResultHit
 from .base import BaseHandler
 
 
@@ -23,7 +25,10 @@ class InstanceView(BaseHandler):
 
         Renders `instance_detail_view.html`.
         """
-        r = Result.get(id=result_id)
+        # a ResultHit, like the compared runs below, so every column of the
+        # table is rendered from the same raw representation
+        client = connections.get_connection()
+        r = ResultHit(client.get(index=RESULT_INDEX, id=result_id))
         count = Result.search().filter("term", instance_name=r.instance_name).count()
 
         compare = self.get_argument("compare", default=[])

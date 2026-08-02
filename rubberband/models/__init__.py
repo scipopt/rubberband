@@ -5,6 +5,9 @@ import json
 import datetime
 import logging
 from elasticsearch.dsl import Boolean, Document, Text, Keyword, Date, Nested, Integer
+from elasticsearch.dsl.connections import connections
+from elasticsearch.dsl.utils import AttrDict
+from elasticsearch.helpers import scan as es_scan
 from ipet import Key
 
 from rubberband.constants import (
@@ -16,6 +19,27 @@ from rubberband.constants import (
     TESTSET_INDEX,
     SETTINGS_INDEX,
 )
+
+
+class ResultHit(AttrDict):
+    """
+    Lightweight, read-only view over a raw ``result`` document.
+
+    Wraps an Elasticsearch ``_source`` dict and exposes attribute access, item
+    access and ``to_dict()`` (all provided by :class:`AttrDict`), plus a ``meta``
+    holder carrying the document id. It is used instead of hydrating full
+    :class:`Result` Documents when loading the many results of a TestSet: result
+    docs are very wide (~1.7k fields), and DSL Document hydration of all those
+    fields is roughly 6x slower and dominates the comparison/evaluation views.
+
+    ``meta`` is set with ``object.__setattr__`` to bypass ``AttrDict.__setattr__``,
+    which would store it as a source field: that would leak it into ``to_dict()``
+    (which feeds the IPET evaluation) and overwrite a document's own ``meta``.
+    """
+
+    def __init__(self, doc):
+        super().__init__(doc["_source"])
+        object.__setattr__(self, "meta", AttrDict({"id": doc["_id"]}))
 
 
 class File(Document):
@@ -243,7 +267,9 @@ class TestSet(Document):
             instances = self.results.to_dict().keys()
             count = 0
             for i in instances:
-                all_instances[i] = self.results[i].to_dict()
+                # copy: AttrDict.to_dict() returns the underlying dict itself,
+                # and the keys added below must not land in the cached results
+                all_instances[i] = dict(self.results[i].to_dict())
                 if "instance_id" not in all_instances[i].keys():
                     all_instances[i]["instance_id"] = count
                     count = count + 1
@@ -385,9 +411,7 @@ class TestSet(Document):
 
     def delete_all_results(self):
         """Delete all Result objects associated with a TestSet object."""
-        self.load_results()
-        for k, v in self.results.to_dict().items():
-            v.delete()
+        Result.search().filter("term", testset_id=self.meta.id).delete()
 
     def delete_all_files(self):
         """Delete all File objects associated with a TestSet object."""
@@ -414,16 +438,17 @@ class TestSet(Document):
         except AttributeError:
             pass
 
-        s = Result.search()
-        # it's generally discouraged to return a large number of elements from a search query
-        s = s.filter("term", testset_id=self.meta.id)
+        # scan the raw _source dicts instead of hydrating Documents, see ResultHit
         self.results = {}
+        client = connections.get_connection()
+        query = {"query": {"term": {"testset_id": self.meta.id}}}
 
         results = {}
         results["ids"] = {}
         results["names"] = {}
         # this uses pagination/scroll
-        for hit in s.scan():
+        for doc in es_scan(client, index=RESULT_INDEX, query=query, size=1000):
+            hit = ResultHit(doc)
             results["ids"]["{} ({})".format(hit.instance_name, hit.instance_id)] = hit
             results["names"]["{}".format(hit.instance_name)] = hit
 
