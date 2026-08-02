@@ -82,6 +82,10 @@ class EvaluationView(BaseHandler):
         # do evaluation
         longtable, aggtable = ev.evaluate(ex)
 
+        # ipet only applies the evaluation's suppressions when it streams a table
+        # to a file, so drop the suppressed columns here as well
+        aggtable = ev.suppressColumns(aggtable)
+
         # None style is default
         if style is None:
             # add filtergroup buttons to ipet long table
