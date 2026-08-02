@@ -32,16 +32,14 @@ class ResultHit(AttrDict):
     docs are very wide (~1.7k fields), and DSL Document hydration of all those
     fields is roughly 6x slower and dominates the comparison/evaluation views.
 
-    Declaring ``meta`` at class level makes ``AttrDict.__setattr__`` store the
-    assigned ``meta`` as a real attribute rather than as a source field, so it
-    does not leak into ``to_dict()`` (which feeds the IPET evaluation).
+    ``meta`` is set with ``object.__setattr__`` to bypass ``AttrDict.__setattr__``,
+    which would store it as a source field: that would leak it into ``to_dict()``
+    (which feeds the IPET evaluation) and overwrite a document's own ``meta``.
     """
-
-    meta = None
 
     def __init__(self, doc):
         super().__init__(doc["_source"])
-        self.meta = AttrDict({"id": doc["_id"]})
+        object.__setattr__(self, "meta", AttrDict({"id": doc["_id"]}))
 
 
 class File(Document):
@@ -269,7 +267,9 @@ class TestSet(Document):
             instances = self.results.to_dict().keys()
             count = 0
             for i in instances:
-                all_instances[i] = self.results[i].to_dict()
+                # copy: AttrDict.to_dict() returns the underlying dict itself,
+                # and the keys added below must not land in the cached results
+                all_instances[i] = dict(self.results[i].to_dict())
                 if "instance_id" not in all_instances[i].keys():
                     all_instances[i]["instance_id"] = count
                     count = count + 1
