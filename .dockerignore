@@ -1,0 +1,22 @@
+.git
+.github
+.venv
+venv*
+build
+dist
+*.egg-info
+__pycache__
+*.py[cod]
+.pytest_cache
+.ruff_cache
+doc/build
+doc/source/_modules
+
+# Log bundles imported into a local instance; the image ships only the xml/
+# and instancedata/ directories under staticfiles/.
+staticfiles/*.out
+staticfiles/*.set
+staticfiles/*.err
+staticfiles/*.meta
+staticfiles/*.res
+staticfiles/readmodel
