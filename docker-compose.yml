@@ -1,0 +1,72 @@
+# Development stack: Elasticsearch plus Rubberband.
+#
+#     docker compose up --build
+#
+# then open http://127.0.0.1:8888/. The source tree is bind-mounted into the
+# application container, so edits on the host are picked up by tornado's
+# autoreload without a rebuild.
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.4.4
+    environment:
+      # Everything the README asks you to switch off by hand in
+      # /etc/elasticsearch/elasticsearch.yml.
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+      - xpack.security.http.ssl.enabled=false
+      - xpack.security.transport.ssl.enabled=false
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    # The cluster is reachable as http://elasticsearch:9200 from the other
+    # services, and is deliberately not published to the host: developers
+    # following the manual setup below often already have an Elasticsearch on
+    # port 9200. Uncomment to query it directly from the host.
+    # ports:
+    #   - "127.0.0.1:9200:9200"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs 'http://localhost:9200/_cluster/health?wait_for_status=yellow&timeout=5s' -o /dev/null || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 30
+      start_period: 30s
+
+  rubberband:
+    build: .
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      - RUBBERBAND_ELASTICSEARCH_URL=http://elasticsearch:9200
+      # num_processes = 1 puts tornado in debug mode, which enables autoreload
+      # and lets the frontend skip the X-Forwarded-Email check that a
+      # production deployment expects from its auth proxy. Do not do this in
+      # production; see the Deployment section of the README.
+      - RUBBERBAND_NUM_PROCESSES=1
+      - RUBBERBAND_COOKIE_SECRET=dev-cookie-secret
+      - RUBBERBAND_API_TOKEN=dev-api-token
+    ports:
+      - "127.0.0.1:8888:8888"
+    volumes:
+      # Live source, so that tornado's autoreload picks up edits on the host.
+      - .:/app
+      # Uploads are written to staticfiles/ (constants.FILES_DIR) on their way
+      # into Elasticsearch, which is what everything is served from afterwards,
+      # so this is scratch space and an anonymous volume is enough. It exists
+      # only because the container runs as a non-root user, which generally
+      # cannot write to a bind mount owned by the host user.
+      - /app/staticfiles
+      # The evaluation definitions and instance data under staticfiles/ are
+      # source, not state, so they keep coming from the repository.
+      - ./staticfiles/xml:/app/staticfiles/xml:ro
+      - ./staticfiles/instancedata:/app/staticfiles/instancedata:ro
+
+volumes:
+  elasticsearch-data:

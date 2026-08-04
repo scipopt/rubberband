@@ -1,3 +1,7 @@
+#!/bin/sh
+# Set up the Elasticsearch indices the tests expect, then run the suite.
+set -e
+
 bin/rubberband-ctl create-indices
 bin/rubberband-ctl populate-indices
 pytest

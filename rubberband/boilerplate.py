@@ -86,6 +86,34 @@ define(
 )
 
 
+def _coerce_option(name, value):
+    """
+    Convert an environment variable string to the type of the option it sets.
+
+    Tornado type checks on assignment, so handing a string to an int or bool
+    option (num_processes, port, elasticsearch_verify_certs) raises.
+
+    Parameters
+    ----------
+    name : str
+        the option name
+    value : str
+        the raw environment variable value
+
+    Returns
+    -------
+    the value converted to the option's type
+    """
+    current = getattr(options, name)
+    if isinstance(current, bool):
+        return value.lower() not in ("false", "0", "f", "no", "off", "")
+    if isinstance(current, int):
+        return int(value)
+    if isinstance(current, float):
+        return float(value)
+    return value
+
+
 def make_app(project_root):
     """
     Construct the rubberband app.
@@ -125,7 +153,7 @@ def make_app(project_root):
         env_val = os.environ.get(env_key)
         if env_val is not None:
             logging.info("Overriding %s from env var %s", name, env_key)
-            setattr(options, name, env_val)
+            setattr(options, name, _coerce_option(name, env_val))
 
     # settings for tornado
     settings = {

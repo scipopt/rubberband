@@ -46,22 +46,33 @@ def delete_indices():
 def create_indices():
     '''
     Create indices for the Result, File, TestSet objects.
+
+    Indices that already exist are left alone, so this is safe to run on every
+    start (the docker entrypoint does exactly that).
     '''
     logging.info('Creating indices')
-    TestSet.init()
-    File.init()
-    Result.init()
-    Settings.init()
-    settings_index = Index(SETTINGS_INDEX)
-    result_index= Index(RESULT_INDEX)
-    # Need to close the index before modifying the settings
-    settings_index.close()
-    result_index.close()
-    settings_index.put_settings(body={"index.mapping.ignore_malformed": True})
-    settings_index.put_settings(body={"index.mapping.total_fields.limit": 5000})
-    result_index.put_settings(body={"index.mapping.total_fields.limit": 5000})
-    settings_index.open()
-    result_index.open()
+    created = []
+    for index_name, document in ((TESTSET_INDEX, TestSet), (FILE_INDEX, File),
+                                 (RESULT_INDEX, Result), (SETTINGS_INDEX, Settings)):
+        if Index(index_name).exists():
+            logging.info('Index %s already exists, skipping', index_name)
+            continue
+        document.init()
+        created.append(index_name)
+
+    if SETTINGS_INDEX in created:
+        settings_index = Index(SETTINGS_INDEX)
+        # Need to close the index before modifying the settings
+        settings_index.close()
+        settings_index.put_settings(body={"index.mapping.ignore_malformed": True})
+        settings_index.put_settings(body={"index.mapping.total_fields.limit": 5000})
+        settings_index.open()
+
+    if RESULT_INDEX in created:
+        result_index = Index(RESULT_INDEX)
+        result_index.close()
+        result_index.put_settings(body={"index.mapping.total_fields.limit": 5000})
+        result_index.open()
 
 @main.command()
 def populate_indices():

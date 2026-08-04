@@ -1,0 +1,13 @@
+# Overrides for continuous integration:
+#
+#     docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d --wait
+#
+# The source tree is not bind-mounted, so the checks run against the copy of the
+# source inside the image, and steps that generate files (sphinx-apidoc, the
+# pytest cache) write to a location the container user owns.
+
+services:
+  rubberband:
+    volumes: !override
+      - /app/staticfiles
+    ports: !override []

@@ -2,9 +2,60 @@
 
 A flexible web view and analysis platform for solver log files of mathematical optimization software, backed by Elasticsearch.
 
+## Quickstart with Docker
+
+The fastest way to get a working instance is the bundled compose stack, which
+runs Elasticsearch and Rubberband together and needs no local Python or
+Elasticsearch installation. It requires [Docker](https://docs.docker.com/get-started/get-docker/)
+with the [compose plugin](https://docs.docker.com/compose/install/), and about
+4GB of memory available to the Docker VM.
+
+```
+docker compose up --build
+```
+
+The first build takes a few minutes. Once the log settles, open
+[http://127.0.0.1:8888/](http://127.0.0.1:8888/). The Elasticsearch indices are
+created automatically on startup; to load the sample test runs from `tests/data`
+into a fresh instance, run
+
+```
+docker compose run --rm rubberband bin/rubberband-ctl populate-indices
+```
+
+The repository is bind-mounted into the container, so edits to the source are
+picked up by tornado's autoreload without rebuilding. Rebuild the image
+(`docker compose build`) after changing `requirements.txt`. To start over from
+an empty database, run `docker compose down -v`.
+
+Other useful commands:
+
+```
+docker compose run --rm rubberband pytest            # run the test suite
+docker compose run --rm rubberband bin/rubberband-ctl  # see all ctl commands
+docker compose logs -f rubberband                    # follow the server log
+```
+
+The stack sets `num_processes` to 1, which puts tornado in debug mode. Besides
+autoreload, this makes the frontend skip the `X-Forwarded-Email` check described
+under [Authentication](#authentication), so that the app is usable without an
+auth proxy in front of it. It is a development setup and should not be exposed
+as-is; see [Deployment](#deployment) for what a real deployment needs.
+
+Configuration follows the usual precedence `RUBBERBAND_*` environment variable >
+`/etc/rubberband/app.cfg` > built-in default. Every option in
+[config/app.cfg](config/app.cfg) has an environment variable counterpart, so for
+example `elasticsearch_url` is set with `RUBBERBAND_ELASTICSEARCH_URL`. Add
+these to the `rubberband` service in
+[docker-compose.yml](docker-compose.yml) to connect a Gitlab instance, an SMTP
+server or a LogAnalyzer instance.
+
 ## Development
 
-This is a detailed description of how to set up Rubberband.
+The instructions below install everything directly on the host, for developing
+against a system Elasticsearch. To get a working instance without installing
+Elasticsearch or a Python environment, use the
+[Docker quickstart](#quickstart-with-docker) instead.
 
 ### Install system requirements
 
