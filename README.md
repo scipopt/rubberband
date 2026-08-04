@@ -24,10 +24,9 @@ docker compose run --rm rubberband bin/rubberband-ctl populate-indices
 ```
 
 The repository is bind-mounted into the container, so edits to the source are
-picked up by tornado's autoreload without rebuilding, and log bundles you import
-land in `staticfiles/` on the host. Rebuild the image (`docker compose build`)
-after changing `requirements.txt`. To start over from an empty database, run
-`docker compose down -v`.
+picked up by tornado's autoreload without rebuilding. Rebuild the image
+(`docker compose build`) after changing `requirements.txt`. To start over from
+an empty database, run `docker compose down -v`.
 
 Other useful commands:
 
@@ -53,10 +52,10 @@ server or a LogAnalyzer instance.
 
 ## Development
 
-The instructions below install everything directly on the host, which is what
-you want when developing against a system Elasticsearch. For a working instance
-with the least effort, use the [Docker quickstart](#quickstart-with-docker)
-instead.
+The instructions below install everything directly on the host, for developing
+against a system Elasticsearch. To get a working instance without installing
+Elasticsearch or a Python environment, use the
+[Docker quickstart](#quickstart-with-docker) instead.
 
 ### Install system requirements
 
