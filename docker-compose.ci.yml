@@ -9,5 +9,5 @@
 services:
   rubberband:
     volumes: !override
-      - rubberband-staticfiles:/app/staticfiles
+      - /app/staticfiles
     ports: !override []

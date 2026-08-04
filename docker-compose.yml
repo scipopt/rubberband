@@ -57,16 +57,16 @@ services:
     volumes:
       # Live source, so that tornado's autoreload picks up edits on the host.
       - .:/app
-      # Imported log bundles are written to staticfiles/ (constants.FILES_DIR).
-      # They live in a volume rather than in the bind-mounted tree because the
-      # container runs as a non-root user, which generally cannot write to a
-      # bind mount owned by the host user.
-      - rubberband-staticfiles:/app/staticfiles
-      # ... but the evaluation definitions and instance data under staticfiles/
-      # are source, not state, so they keep coming from the repository.
+      # Uploads are written to staticfiles/ (constants.FILES_DIR) on their way
+      # into Elasticsearch, which is what everything is served from afterwards,
+      # so this is scratch space and an anonymous volume is enough. It exists
+      # only because the container runs as a non-root user, which generally
+      # cannot write to a bind mount owned by the host user.
+      - /app/staticfiles
+      # The evaluation definitions and instance data under staticfiles/ are
+      # source, not state, so they keep coming from the repository.
       - ./staticfiles/xml:/app/staticfiles/xml:ro
       - ./staticfiles/instancedata:/app/staticfiles/instancedata:ro
 
 volumes:
   elasticsearch-data:
-  rubberband-staticfiles:

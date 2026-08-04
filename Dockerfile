@@ -53,11 +53,6 @@ ENV PATH="/opt/venv/bin:$PATH" \
 WORKDIR /app
 COPY . /app
 
-# Uploaded logs land in staticfiles/ (constants.FILES_DIR), next to the xml/ and
-# instancedata/ directories that ship with the repository, so the whole tree is
-# what needs to survive a container restart.
-VOLUME ["/app/staticfiles"]
-
 # The application runs as this user; the entrypoint switches to it after it has
 # adjusted the ownership of anything mounted into the container. Pass
 # `--user <uid>` (or `user:` in compose) to run as somebody else instead, in
