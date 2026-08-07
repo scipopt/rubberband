@@ -83,6 +83,29 @@ function init_all_stars() {
   });
 }
 
+function build_members(key) {
+  // the testrun checkboxes of one build, across all tables on the page
+  return $('tr.rb-testrun[data-build="' + key + '"] input.rb-tr-checkbox');
+}
+
+function sync_build_checkboxes() {
+  // a build is checked when all of its seeds are, and indeterminate when only
+  // some of them are
+  var keys = {};
+  $('input.rb-tr-buildcheckbox').each(function () {
+    keys[$(this).attr("data-build")] = true;
+  });
+
+  for (var key in keys) {
+    var members = build_members(key);
+    var checked = members.filter(":checked").length;
+    $('input.rb-tr-buildcheckbox[data-build="' + key + '"]').each(function () {
+      this.checked = members.length > 0 && checked == members.length;
+      this.indeterminate = checked > 0 && checked < members.length;
+    });
+  }
+}
+
 function select_all_compares() {
   $('#rb-compares-table input.rb-tr-checkbox').each(function(index) {
     name = this.attributes["name"].value;
@@ -183,6 +206,16 @@ $('form#compare').on('change', 'input.rb-tr-checkbox', function (e) {
   name = e.target.attributes["name"].value;
   checked_val = this.checked;
   process_checkbox_to(name, checked_val);
+  sync_build_checkboxes();
+});
+
+// one checkbox per build ticks all the seeds belonging to it
+$('form#compare').on('change', 'input.rb-tr-buildcheckbox', function () {
+  var checkval = this.checked;
+  build_members($(this).attr("data-build")).each(function () {
+    process_checkbox_to(this.attributes["name"].value, checkval);
+  });
+  sync_build_checkboxes();
 });
 
 // ======================================================
@@ -191,4 +224,5 @@ $(document).ready(function(){
   color_tablerows();
   init_all_stars();
   select_all_compares();
+  sync_build_checkboxes();
 });

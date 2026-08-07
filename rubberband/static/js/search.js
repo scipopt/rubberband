@@ -61,6 +61,7 @@ function fillResultTable(data) {
   color_tablerows();
   init_all_stars();
   select_all_compares();
+  sync_build_checkboxes();
 }
 
 // on click on search-button, update the resultstable according to the search fields

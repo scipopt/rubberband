@@ -21,6 +21,8 @@ from rubberband.utils.helpers import (
     shortening_span,
     shortening_repres_id,
     rb_join_arg,
+    build_groups,
+    group_testruns,
 )
 
 
@@ -223,6 +225,8 @@ class BaseHandler(RequestHandler):
             shorten_str=shorten_str,
             shortening_span=shortening_span,
             shortening_repres_id=shortening_repres_id,
+            build_groups=build_groups,
+            group_testruns=group_testruns,
             rb_join_arg=rb_join_arg,
             get_link=get_link,
             options=options,

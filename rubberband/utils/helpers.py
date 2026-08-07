@@ -1,9 +1,15 @@
 """Collection of helper functions."""
 
 from datetime import datetime
+import os
+import re
 import string
 
 from rubberband.constants import FORMAT_DATETIME_SHORT, FORMAT_DATETIME_LONG
+
+# the -s<seed> appendix of a testrun filename, the only part that differs
+# between the seeds of one build
+SEED_APPENDIX = re.compile(r"-s\d+$")
 
 
 def shortening_repres_id(repres, key):
@@ -169,6 +175,101 @@ def setup_testruns_subst_dict(testruns):
         # count through the letters of the alphabet
         count = count + 1
     return repres
+
+
+def build_group_key(testrun):
+    """
+    Identify the build a testrun belongs to, so its seeds can be grouped.
+
+    Testruns of one build differ only in their seed, and their filenames only in
+    the ``-s<seed>`` appendix of
+    ``check.<testset>.<binary>.<queue>.<setting>-s<seed>.out``. The binary
+    carries the build date, so testruns built on different days keep different
+    keys; the upload date is part of the key as well, both to separate reruns of
+    the same build and because the older naming has no seed in the filename at
+    all.
+
+    Parameters
+    ----------
+    testrun : TestSet
+        the testrun to place in a group
+
+    Returns
+    -------
+    str
+        key shared by exactly the testruns of one build
+    """
+    filename = getattr(testrun, "filename", "") or ""
+    stem = SEED_APPENDIX.sub("", os.path.splitext(filename)[0])
+    uploaded = str(getattr(testrun, "upload_timestamp", "") or "")[:10]
+
+    return "{}|{}".format(stem, uploaded)
+
+
+def build_groups(testruns):
+    """
+    Group testruns by build, for the seed grouping in the testrun tables.
+
+    Parameters
+    ----------
+    testruns : list
+        the testruns of one table, in the order they are rendered
+
+    Returns
+    -------
+    dict
+        testrun id -> {"key", "size", "parity"}, where size is the number of
+        seeds in the group and parity alternates between neighbouring groups so
+        they can be told apart visually
+    """
+    keys = {}
+    sizes = {}
+    for testrun in testruns or []:
+        key = build_group_key(testrun)
+        keys[testrun.meta.id] = key
+        sizes[key] = sizes.get(key, 0) + 1
+
+    parities = {}
+    for key in keys.values():
+        if key not in parities:
+            parities[key] = len(parities) % 2
+
+    return {
+        tid: {"key": key, "size": sizes[key], "parity": parities[key]}
+        for tid, key in keys.items()
+    }
+
+
+def group_testruns(testruns):
+    """
+    Order testruns so that the seeds of one build sit next to each other.
+
+    Builds keep the order they already had - the search sorts by date, so the
+    most recent build stays on top - and within a build the seeds are ordered by
+    seed number. Without this the seeds of two builds uploaded in the same batch
+    end up interleaved and the group is impossible to see.
+
+    Parameters
+    ----------
+    testruns : list
+        the testruns of one table
+
+    Returns
+    -------
+    list
+        the same testruns, grouped by build
+    """
+    if not testruns:
+        return testruns
+
+    order = {}
+    for testrun in testruns:
+        order.setdefault(build_group_key(testrun), len(order))
+
+    return sorted(
+        testruns,
+        key=lambda t: (order[build_group_key(t)], getattr(t, "seed", None) or 0),
+    )
 
 
 def rb_join_arg(li=[], identif="default", pos=0):

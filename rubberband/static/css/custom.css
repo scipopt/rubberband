@@ -170,3 +170,23 @@ div.ipet-long-toolbar { /* in evaluated long table datatable*/
 table.dataTable.compact thead td, table.dataTable.compact thead th {
   text-align: right;
 }
+
+/* ---- build groups ---------------- */
+/* The seeds of one build are marked by a coloured bar in the group column, and
+   neighbouring builds alternate colour so each block is visible at a glance.
+   The bar sits in its own column rather than on the row background, which
+   color_tablerows() paints from the testrun's tags. */
+th.rb-table-buildcheck, td.rb-table-buildcheck {
+  text-align: center;
+  border-left: 3px solid transparent;
+}
+tr.rb-build-grouped.rb-build-0 td.rb-table-buildcheck {
+  border-left-color: #2eb3b3;
+}
+tr.rb-build-grouped.rb-build-1 td.rb-table-buildcheck {
+  border-left-color: #e8a33d;
+}
+input.rb-tr-buildcheckbox {
+  cursor: pointer;
+}
+/* ---- end build groups ------------ */
