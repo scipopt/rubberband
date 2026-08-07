@@ -7,9 +7,22 @@ import string
 
 from rubberband.constants import FORMAT_DATETIME_SHORT, FORMAT_DATETIME_LONG
 
-# the -s<seed> appendix of a testrun filename, the only part that differs
-# between the seeds of one build
-SEED_APPENDIX = re.compile(r"-s\d+$")
+
+def _strip_run_appendices(stem, testrun):
+    """
+    Drop the -p<permutation> and -s<seed> appendices from a filename stem.
+
+    The values of the testrun itself are used rather than a generic pattern, so
+    a setting that happens to end in something like "-p1" is left alone. Both
+    orders are handled, since only the check scripts decide which comes last.
+    """
+    for _ in range(2):
+        for letter, attr in (("s", "seed"), ("p", "permutation")):
+            value = getattr(testrun, attr, None)
+            if value:
+                stem = re.sub(r"-{}{}$".format(letter, int(value)), "", stem)
+
+    return stem
 
 
 def shortening_repres_id(repres, key):
@@ -179,15 +192,15 @@ def setup_testruns_subst_dict(testruns):
 
 def build_group_key(testrun):
     """
-    Identify the build a testrun belongs to, so its seeds can be grouped.
+    Identify the build a testrun belongs to, so its runs can be grouped.
 
-    Testruns of one build differ only in their seed, and their filenames only in
-    the ``-s<seed>`` appendix of
-    ``check.<testset>.<binary>.<queue>.<setting>-s<seed>.out``. The binary
-    carries the build date, so testruns built on different days keep different
-    keys; the upload date is part of the key as well, both to separate reruns of
-    the same build and because the older naming has no seed in the filename at
-    all.
+    The runs of one build differ only in seed and permutation, and their
+    filenames only in the ``-p<permutation>`` and ``-s<seed>`` appendices of
+    ``check.<testset>.<binary>.<queue>.<setting>-p<perm>-s<seed>.out``. The
+    binary carries the build date, so testruns built on different days keep
+    different keys; the upload date is part of the key as well, both to separate
+    reruns of the same build and because the older naming has neither appendix
+    in the filename at all.
 
     Parameters
     ----------
@@ -200,7 +213,7 @@ def build_group_key(testrun):
         key shared by exactly the testruns of one build
     """
     filename = getattr(testrun, "filename", "") or ""
-    stem = SEED_APPENDIX.sub("", os.path.splitext(filename)[0])
+    stem = _strip_run_appendices(os.path.splitext(filename)[0], testrun)
     uploaded = str(getattr(testrun, "upload_timestamp", "") or "")[:10]
 
     return "{}|{}".format(stem, uploaded)
@@ -208,7 +221,7 @@ def build_group_key(testrun):
 
 def build_groups(testruns):
     """
-    Group testruns by build, for the seed grouping in the testrun tables.
+    Group testruns by build, for the grouping in the testrun tables.
 
     Parameters
     ----------
@@ -219,7 +232,7 @@ def build_groups(testruns):
     -------
     dict
         testrun id -> {"key", "size", "parity"}, where size is the number of
-        seeds in the group and parity alternates between neighbouring groups so
+        runs in the group and parity alternates between neighbouring groups so
         they can be told apart visually
     """
     keys = {}
@@ -255,12 +268,12 @@ def build_groups(testruns):
 
 def group_testruns(testruns):
     """
-    Order testruns so that the seeds of one build sit next to each other.
+    Order testruns so that the runs of one build sit next to each other.
 
     Builds keep the order they already had - the search sorts by date, so the
-    most recent build stays on top - and within a build the seeds are ordered by
-    seed number. Without this the seeds of two builds uploaded in the same batch
-    end up interleaved and the group is impossible to see.
+    most recent build stays on top - and within a build the runs are ordered by
+    permutation and seed. Without this the runs of two builds uploaded in the
+    same batch end up interleaved and the group is impossible to see.
 
     Parameters
     ----------
@@ -281,7 +294,11 @@ def group_testruns(testruns):
 
     return sorted(
         testruns,
-        key=lambda t: (order[build_group_key(t)], getattr(t, "seed", None) or 0),
+        key=lambda t: (
+            order[build_group_key(t)],
+            getattr(t, "permutation", None) or 0,
+            getattr(t, "seed", None) or 0,
+        ),
     )
 
 
