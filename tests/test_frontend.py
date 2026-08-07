@@ -19,7 +19,8 @@ class GetTest(TestHandlerBase):
             "tags="
         )
         self.assertEqual(response.code, 200)
-        self.assertIn(b"Compare selected Testruns?", response.body)
+        self.assertIn(b'<form id="compare"', response.body)
+        self.assertIn(b">Compare</button>", response.body)
 
     def test_visualize(self):
         response = self.fetch("/visualize")
