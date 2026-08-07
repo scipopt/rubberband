@@ -1,7 +1,8 @@
 """Contains AnalyzeExternalView: hand a run/comparison off to LogAnalyzer."""
 
-import os
 import json
+import logging
+import os
 import uuid
 import zipfile
 from io import BytesIO
@@ -13,6 +14,8 @@ from tornado.httpclient import AsyncHTTPClient, HTTPRequest
 from .base import BaseHandler
 from .result import load_testsets
 from rubberband.constants import EXPORT_FILE_TYPES
+
+logger = logging.getLogger(__name__)
 
 
 def _encode_multipart(fields, files):
@@ -102,6 +105,11 @@ class AnalyzeExternalView(BaseHandler):
                             pass
             zip_bytes = byteio.getvalue()
 
+        logger.info(
+            "Analyze handoff: base=%s zip_bytes=%d for %s",
+            base, len(zip_bytes), ",".join(ts_ids),
+        )
+
         label = (", ".join(ts.filename for ts in ts_list))[:120] or "Rubberband run"
         body, content_type = _encode_multipart(
             fields={"name": label, "description": "Imported from Rubberband"},
@@ -118,6 +126,11 @@ class AnalyzeExternalView(BaseHandler):
         try:
             response = await AsyncHTTPClient().fetch(request)
         except Exception as e:  # noqa: BLE001 - surface any transport/HTTP error
+            logger.error("Analyze upload failed: %r", e)
+            if getattr(e, "response", None) is not None:
+                logger.error(
+                    "Analyze upload response body: %s", e.response.body[:1000]
+                )
             raise HTTPError(502, reason="Could not reach LogAnalyzer: {}".format(e))
 
         try:
@@ -128,14 +141,20 @@ class AnalyzeExternalView(BaseHandler):
         # A single run lands directly on its instances page. When LogAnalyzer
         # splits a Rubberband comparison into several runs (it groups by setting),
         # it returns {"multiple_runs": true, "runs": [...]} with no top-level
-        # run_id; the runs still need to finish processing before they can be
-        # compared, so we drop the user on LogAnalyzer's dashboard where the
-        # freshly-created runs appear and can be compared. (A future step could
-        # poll until the runs complete and then create the comparison via
-        # /api/compare, redirecting straight to /comparison-instances/<id>.)
+        # run_id. For a two-run comparison we hand the run ids straight to
+        # LogAnalyzer's /compare route, which skips the dashboard, creates (or
+        # reuses a cached) comparison and lands the user on the comparison page.
+        # LogAnalyzer currently only renders two-run comparisons, so anything
+        # larger falls back to the dashboard where the fresh runs appear.
         if payload.get("run_id"):
             self.redirect("{}/instances/{}".format(public_base, payload["run_id"]))
         elif payload.get("runs"):
-            self.redirect("{}/".format(public_base))
+            run_ids = [r["run_id"] for r in payload["runs"] if r.get("run_id")]
+            if len(run_ids) == 2:
+                self.redirect(
+                    "{}/compare?runs={}".format(public_base, ",".join(run_ids))
+                )
+            else:
+                self.redirect("{}/".format(public_base))
         else:
             raise HTTPError(502, reason="Unexpected response from LogAnalyzer.")
