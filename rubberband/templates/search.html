@@ -117,21 +117,14 @@
 {% module xsrf_form_html() %}
 
 <div class="alert alert-info">
-  <div class="row">
-    <label class="col-form-label col">Compare selected Testruns?</label>
-    <div class="col">
-      <div class="float-right">
-        <button type="submit" class="btn btn-primary bs-tooltip" data-toggle="tooltip"
-                data-placement="top" title="compare the selected testruns in Rubberband">Compare</button>
-        {% if handler.get_loganalyzer_url() %}
-        <button type="submit" name="target" value="loganalyzer" formtarget="_blank"
-                class="btn btn-outline-primary ml-2 bs-tooltip" data-toggle="tooltip" data-placement="top"
-                title="compare the selected testruns in LogAnalyzer">
-          <span class="fa fa-chart-bar"></span></button>
-        {% end %}
-      </div>
-    </div>
-  </div>
+  <button type="submit" class="btn btn-primary bs-tooltip" data-toggle="tooltip"
+          data-placement="top" title="compare the selected testruns in Rubberband">Compare</button>
+  {% if handler.get_loganalyzer_url() %}
+  <button type="submit" name="target" value="loganalyzer" formtarget="_blank"
+          class="btn btn-outline-primary ml-2 bs-tooltip" data-toggle="tooltip" data-placement="top"
+          title="compare the selected testruns in LogAnalyzer">
+    <span class="fa fa-chart-bar"></span></button>
+  {% end %}
 </div>
 
 {% if compare_table %}
