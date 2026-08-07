@@ -191,8 +191,8 @@ th.rb-table-buildcheck, td.rb-table-buildcheck {
 td.rb-table-buildcheck {
   position: relative;
   padding: 0 !important;
-  width: 1.2rem;
-  min-width: 1.2rem;
+  width: 0.8rem;
+  min-width: 0.8rem;
 }
 td.rb-build-tree {
   cursor: pointer;
@@ -206,7 +206,7 @@ th.rb-table-check, td.rb-table-check {
 tr.rb-build-grouped td.rb-build-tree::before {
   content: "";
   position: absolute;
-  left: 0.45rem;
+  left: 0.28rem;
   top: 0;
   bottom: 0;
   width: 2px;
@@ -223,9 +223,9 @@ tr.rb-build-last td.rb-build-tree::before {
 tr.rb-build-grouped td.rb-build-tree::after {
   content: "";
   position: absolute;
-  left: 0.45rem;
+  left: 0.28rem;
   top: 50%;
-  right: 0.1rem;
+  right: 0.05rem;
   height: 2px;
 }
 
@@ -241,19 +241,19 @@ tr.rb-build-1 td.rb-build-tree::after {
 /* fully selected builds draw a heavier tree */
 tr.rb-build-grouped td.rb-build-tree.rb-build-selected::before,
 tr.rb-build-grouped td.rb-build-tree.rb-build-selected::after {
-  width: 4px;
-  height: 4px;
+  width: 3px;
+  height: 3px;
 }
 tr.rb-build-grouped td.rb-build-tree.rb-build-selected::before {
   height: auto;
-  width: 4px;
+  width: 3px;
 }
 tr.rb-build-lead td.rb-build-tree.rb-build-selected::before,
 tr.rb-build-last td.rb-build-tree.rb-build-selected::before {
   height: 50%;
 }
 tr.rb-build-grouped td.rb-build-tree.rb-build-selected::after {
-  height: 4px;
+  height: 3px;
   width: auto;
 }
 
