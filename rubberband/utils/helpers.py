@@ -230,12 +230,21 @@ def build_groups(testruns):
         sizes[key] = sizes.get(key, 0) + 1
 
     parities = {}
-    for key in keys.values():
+    leaders = {}
+    for tid, key in keys.items():
         if key not in parities:
             parities[key] = len(parities) % 2
+            leaders[key] = tid
 
     return {
-        tid: {"key": key, "size": sizes[key], "parity": parities[key]}
+        tid: {
+            "key": key,
+            "size": sizes[key],
+            "parity": parities[key],
+            # only the first testrun of a group carries the group checkbox, so
+            # there is never a second, ambiguous checkbox on a row
+            "leads": leaders[key] == tid,
+        }
         for tid, key in keys.items()
     }
 

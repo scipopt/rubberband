@@ -172,21 +172,32 @@ table.dataTable.compact thead td, table.dataTable.compact thead th {
 }
 
 /* ---- build groups ---------------- */
-/* The seeds of one build are marked by a coloured bar in the group column, and
-   neighbouring builds alternate colour so each block is visible at a glance.
-   The bar sits in its own column rather than on the row background, which
+/* The seeds of one build are bracketed by a coloured bar down the left edge of
+   the row, and neighbouring builds alternate colour so each block is visible at
+   a glance. The bar is a border rather than a row background, which
    color_tablerows() paints from the testrun's tags. */
-th.rb-table-buildcheck, td.rb-table-buildcheck {
-  text-align: center;
-  border-left: 3px solid transparent;
+tr.rb-testrun td.rb-table-check {
+  border-left: 4px solid transparent;
 }
-tr.rb-build-grouped.rb-build-0 td.rb-table-buildcheck {
+tr.rb-build-grouped.rb-build-0 td.rb-table-check {
   border-left-color: #2eb3b3;
 }
-tr.rb-build-grouped.rb-build-1 td.rb-table-buildcheck {
+tr.rb-build-grouped.rb-build-1 td.rb-table-check {
   border-left-color: #e8a33d;
 }
-input.rb-tr-buildcheckbox {
+th.rb-table-buildcheck, td.rb-table-buildcheck {
+  text-align: center;
+}
+/* the group checkbox sits on the first row of a group only, labelled with the
+   number of seeds it selects */
+label.rb-build-select {
   cursor: pointer;
+  white-space: nowrap;
+}
+span.rb-build-count {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-left: 0.2rem;
+  vertical-align: middle;
 }
 /* ---- end build groups ------------ */

@@ -45,10 +45,12 @@
     {% if checkboxes %}
     <td class="rb-table-check"><input class="rb-tr-checkbox" type="checkbox" name="{{ r.meta.id }}"></td>
     <td class="rb-table-buildcheck">
-      {% if group["size"] > 1 %}
-      <input class="rb-tr-buildcheckbox bs-tooltip" type="checkbox" data-build="{{ group["key"] }}"
-             data-toggle="tooltip" data-placement="right"
+      {% if group["size"] > 1 and group["leads"] %}
+      <label class="rb-build-select bs-tooltip mb-0" data-toggle="tooltip" data-placement="right"
              title="select all {{ group["size"] }} seeds of this build">
+        <input class="rb-tr-buildcheckbox" type="checkbox" data-build="{{ group["key"] }}"><span
+          class="rb-build-count">{{ group["size"] }}</span>
+      </label>
       {% end %}
     </td>
     {% end %}
