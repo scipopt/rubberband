@@ -8,8 +8,8 @@
       <th class="rb-table-radio"></th>
       {% end %}
       {% if checkboxes %}
-      <th class="rb-table-check"></th>
       <th class="rb-table-buildcheck bs-tooltip" data-toggle="tooltip" data-placement="top" title="select every seed of a build"><span class="fa fa-layer-group"></span></th>
+      <th class="rb-table-check"></th>
       {% end %}
       {% if representation is not None %}
       <th class="rb-table-repr">Repr.</th>
@@ -43,7 +43,6 @@
     ><input name="{{ r.meta.id }}" hidden></td>
     {% end %}
     {% if checkboxes %}
-    <td class="rb-table-check"><input class="rb-tr-checkbox" type="checkbox" name="{{ r.meta.id }}"></td>
     <td class="rb-table-buildcheck">
       {% if group["size"] > 1 and group["leads"] %}
       <label class="rb-build-select bs-tooltip mb-0" data-toggle="tooltip" data-placement="right"
@@ -53,6 +52,7 @@
       </label>
       {% end %}
     </td>
+    <td class="rb-table-check"><input class="rb-tr-checkbox" type="checkbox" name="{{ r.meta.id }}"></td>
     {% end %}
     {% if representation is not None %}
       <td class="rb-table-repr">{% raw shortening_repres_id(representation, r.id) %}</td>

@@ -172,33 +172,35 @@ table.dataTable.compact thead td, table.dataTable.compact thead th {
 }
 
 /* ---- build groups ---------------- */
-/* The seeds of one build are bracketed by a coloured bar down the left edge of
-   the row, and neighbouring builds alternate colour so each block is visible at
-   a glance. The bar is a border rather than a row background, which
-   color_tablerows() paints from the testrun's tags. */
-tr.rb-testrun td.rb-table-check {
+/* A build heads its seeds: its checkbox sits in the leftmost column and the
+   seed checkboxes are indented underneath it. A coloured bar down the left edge
+   brackets the block, alternating between neighbouring builds. The bar is a
+   border rather than a row background, which color_tablerows() paints from the
+   testrun's tags. */
+tr.rb-testrun td.rb-table-buildcheck {
   border-left: 4px solid transparent;
 }
-tr.rb-build-grouped.rb-build-0 td.rb-table-check {
+tr.rb-build-grouped.rb-build-0 td.rb-table-buildcheck {
   border-left-color: #2eb3b3;
 }
-tr.rb-build-grouped.rb-build-1 td.rb-table-check {
+tr.rb-build-grouped.rb-build-1 td.rb-table-buildcheck {
   border-left-color: #e8a33d;
 }
-/* the two checkbox columns are as narrow as their contents, so the run and the
-   build checkbox sit next to each other instead of drifting apart */
+/* both checkbox columns are as narrow as their contents */
 th.rb-table-check, td.rb-table-check,
 th.rb-table-buildcheck, td.rb-table-buildcheck {
   width: 1px;
   white-space: nowrap;
-  padding-left: 0.3rem !important;
   padding-right: 0.3rem !important;
 }
 th.rb-table-buildcheck, td.rb-table-buildcheck {
   text-align: left;
+  padding-left: 0.3rem !important;
 }
-/* the group checkbox sits on the first row of a group only, labelled with the
-   number of seeds it selects */
+/* the indent that puts a seed underneath its build */
+th.rb-table-check, td.rb-table-check {
+  padding-left: 1.1rem !important;
+}
 label.rb-build-select {
   cursor: pointer;
   white-space: nowrap;
