@@ -188,11 +188,16 @@ th.rb-table-buildcheck, td.rb-table-buildcheck {
   width: 1px;
   white-space: nowrap;
 }
+/* DataTables measures every column and writes an inline width, so the tree
+   column has to insist on staying narrow */
+th.rb-table-buildcheck, td.rb-table-buildcheck {
+  width: 0.75rem !important;
+  min-width: 0.75rem !important;
+  max-width: 0.75rem !important;
+  padding: 0 !important;
+}
 td.rb-table-buildcheck {
   position: relative;
-  padding: 0 !important;
-  width: 0.8rem;
-  min-width: 0.8rem;
 }
 td.rb-build-tree {
   cursor: pointer;
