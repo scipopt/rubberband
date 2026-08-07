@@ -185,8 +185,17 @@ tr.rb-build-grouped.rb-build-0 td.rb-table-check {
 tr.rb-build-grouped.rb-build-1 td.rb-table-check {
   border-left-color: #e8a33d;
 }
+/* the two checkbox columns are as narrow as their contents, so the run and the
+   build checkbox sit next to each other instead of drifting apart */
+th.rb-table-check, td.rb-table-check,
 th.rb-table-buildcheck, td.rb-table-buildcheck {
-  text-align: center;
+  width: 1px;
+  white-space: nowrap;
+  padding-left: 0.3rem !important;
+  padding-right: 0.3rem !important;
+}
+th.rb-table-buildcheck, td.rb-table-buildcheck {
+  text-align: left;
 }
 /* the group checkbox sits on the first row of a group only, labelled with the
    number of seeds it selects */

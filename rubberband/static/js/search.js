@@ -53,6 +53,13 @@ function fillResultTable(data) {
       scrollCollapse: true,
       paging: false,
       searching: false,
+      // nothing to sort by in the checkbox, info and star columns, and dropping
+      // the sort arrows takes the width they reserve with them
+      columnDefs: [{
+        orderable: false,
+        targets: ['.rb-table-radio', '.rb-table-check', '.rb-table-buildcheck',
+                  '.rb-table-info', '.rb-table-star'],
+      }],
     });
     align_table_columns_to("search-table", ["starred-table","compares-table"]);
   }
