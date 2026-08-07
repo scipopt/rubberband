@@ -21,7 +21,8 @@ class CompareView(BaseHandler):
 
         Gets called when the user clicks on "change comparison base".
         Organizes instances and constructs url.
-        Redirects to CompareView.get().
+        Redirects to CompareView.get(), or to AnalyzeExternalView when the
+        LogAnalyzer button was used ("target" is "loganalyzer" then).
         """
         # compares contains the meta ids of all TestSets that should be compared, base among these
         compares = list(self.request.arguments.keys())
@@ -29,6 +30,11 @@ class CompareView(BaseHandler):
             compares.remove("_xsrf")
         if "compare" in compares:
             compares.remove("compare")
+
+        # sent by the "Compare in LogAnalyzer" submit button only
+        target = self.get_argument("target", None)
+        if "target" in compares:
+            compares.remove("target")
 
         base = self.get_argument("base", None)
         if base is not None and len(compares) == 1:
@@ -49,8 +55,13 @@ class CompareView(BaseHandler):
         else:
             base = compares.pop(0)
 
-        cmp_string = ",".join(compares)
-        next_url = "{}/result/{}?compare={}".format(
-            self.application.base_url, base, cmp_string
-        )
+        if target == "loganalyzer":
+            next_url = "{}/analyze/{}".format(
+                self.application.base_url, ",".join([base] + compares)
+            )
+        else:
+            cmp_string = ",".join(compares)
+            next_url = "{}/result/{}?compare={}".format(
+                self.application.base_url, base, cmp_string
+            )
         self.redirect(next_url)
