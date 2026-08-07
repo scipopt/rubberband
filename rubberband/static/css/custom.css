@@ -172,33 +172,38 @@ table.dataTable.compact thead td, table.dataTable.compact thead th {
 }
 
 /* ---- build groups ---------------- */
-/* A build heads its seeds as a little tree: the build checkbox sits in the
-   leftmost column and each of its seeds hangs off a trunk drawn down the
-   column next to it, so the block reads as one build with its runs.
+/* A build heads its seeds as a little tree, drawn in its own column. Clicking
+   anywhere on the tree selects or deselects every seed of that build, and
+   hovering it highlights the rows the click would hit.
 
-      [x]2 --+-- [ ]  seed 0
-             +-- [ ]  seed 1
-             '-- [ ]  seed 2
+      +-- [ ]  seed 0
+      +-- [ ]  seed 1
+      '-- [ ]  seed 2
 
-   Neighbouring builds alternate colour. The lines are drawn on the cell rather
-   than the row background, which color_tablerows() paints from the tags. */
+   Neighbouring builds alternate colour, and the lines thicken while all seeds
+   of the build are selected. They are drawn on the cell rather than the row
+   background, which color_tablerows() paints from the testrun's tags. */
 th.rb-table-check, td.rb-table-check,
 th.rb-table-buildcheck, td.rb-table-buildcheck {
   width: 1px;
   white-space: nowrap;
+}
+td.rb-table-buildcheck {
+  position: relative;
+  padding: 0 !important;
+  width: 1.2rem;
+  min-width: 1.2rem;
+}
+td.rb-build-tree {
+  cursor: pointer;
+}
+th.rb-table-check, td.rb-table-check {
+  padding-left: 0.2rem !important;
   padding-right: 0.3rem !important;
 }
-th.rb-table-buildcheck, td.rb-table-buildcheck {
-  text-align: left;
-  padding-left: 0.3rem !important;
-}
-td.rb-table-check {
-  position: relative;
-  padding-left: 1.3rem !important;  /* room for the trunk and the branch */
-}
 
-/* the trunk: full height in the middle of a group, half height at its ends */
-tr.rb-build-grouped td.rb-table-check::before {
+/* the trunk: full height inside a group, half height at either end */
+tr.rb-build-grouped td.rb-build-tree::before {
   content: "";
   position: absolute;
   left: 0.45rem;
@@ -206,41 +211,54 @@ tr.rb-build-grouped td.rb-table-check::before {
   bottom: 0;
   width: 2px;
 }
-tr.rb-build-grouped.rb-build-lead td.rb-table-check::before {
+tr.rb-build-lead td.rb-build-tree::before {
   top: 50%;
 }
-tr.rb-build-grouped.rb-build-last td.rb-table-check::before {
+tr.rb-build-last td.rb-build-tree::before {
   bottom: auto;
   height: 50%;
 }
 
-/* the branch into each seed's checkbox */
-tr.rb-build-grouped td.rb-table-check::after {
+/* the branch reaching towards each seed's checkbox */
+tr.rb-build-grouped td.rb-build-tree::after {
   content: "";
   position: absolute;
   left: 0.45rem;
   top: 50%;
-  width: 0.45rem;
+  right: 0.1rem;
   height: 2px;
 }
 
-tr.rb-build-grouped.rb-build-0 td.rb-table-check::before,
-tr.rb-build-grouped.rb-build-0 td.rb-table-check::after {
+tr.rb-build-0 td.rb-build-tree::before,
+tr.rb-build-0 td.rb-build-tree::after {
   background-color: #2eb3b3;
 }
-tr.rb-build-grouped.rb-build-1 td.rb-table-check::before,
-tr.rb-build-grouped.rb-build-1 td.rb-table-check::after {
+tr.rb-build-1 td.rb-build-tree::before,
+tr.rb-build-1 td.rb-build-tree::after {
   background-color: #e8a33d;
 }
 
-label.rb-build-select {
-  cursor: pointer;
-  white-space: nowrap;
+/* fully selected builds draw a heavier tree */
+tr.rb-build-grouped td.rb-build-tree.rb-build-selected::before,
+tr.rb-build-grouped td.rb-build-tree.rb-build-selected::after {
+  width: 4px;
+  height: 4px;
 }
-span.rb-build-count {
-  font-size: 0.75rem;
-  color: #6c757d;
-  margin-left: 0.2rem;
-  vertical-align: middle;
+tr.rb-build-grouped td.rb-build-tree.rb-build-selected::before {
+  height: auto;
+  width: 4px;
+}
+tr.rb-build-lead td.rb-build-tree.rb-build-selected::before,
+tr.rb-build-last td.rb-build-tree.rb-build-selected::before {
+  height: 50%;
+}
+tr.rb-build-grouped td.rb-build-tree.rb-build-selected::after {
+  height: 4px;
+  width: auto;
+}
+
+/* hovering the tree previews which rows the click would select */
+table.rb-table tbody tr.rb-build-hover td {
+  background-color: #d8f0f2 !important;
 }
 /* ---- end build groups ------------ */
