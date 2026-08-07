@@ -231,10 +231,12 @@ def build_groups(testruns):
 
     parities = {}
     leaders = {}
+    last = {}
     for tid, key in keys.items():
         if key not in parities:
             parities[key] = len(parities) % 2
             leaders[key] = tid
+        last[key] = tid
 
     return {
         tid: {
@@ -244,6 +246,8 @@ def build_groups(testruns):
             # only the first testrun of a group carries the group checkbox, so
             # there is never a second, ambiguous checkbox on a row
             "leads": leaders[key] == tid,
+            # first and last are drawn with the corners of the tree
+            "last": last[key] == tid,
         }
         for tid, key in keys.items()
     }

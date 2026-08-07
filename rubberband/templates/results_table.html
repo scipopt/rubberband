@@ -34,7 +34,7 @@
   <tbody>
   {% for r in grouped_results %}
   {% set group = groups.get(r.meta.id, {"key": "", "size": 1, "parity": 0}) %}
-  <tr class="rb-testrun rb-build-{{ group["parity"] }}{% if group["size"] > 1 %} rb-build-grouped{% end %}" data-name="{{ r.meta.id }}" data-build="{{ group["key"] }}">
+  <tr class="rb-testrun rb-build-{{ group["parity"] }}{% if group["size"] > 1 %} rb-build-grouped{% if group["leads"] %} rb-build-lead{% end %}{% if group["last"] %} rb-build-last{% end %}{% end %}" data-name="{{ r.meta.id }}" data-build="{{ group["key"] }}">
     {% if radiobuttons %}
     <td class="rb-table-radio"><input class="rb-tr-radiobutton" type="radio" name="base" value="{{ r.meta.id }}"
     {% if r.meta.id == checked %}

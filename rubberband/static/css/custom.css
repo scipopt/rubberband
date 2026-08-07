@@ -172,21 +172,16 @@ table.dataTable.compact thead td, table.dataTable.compact thead th {
 }
 
 /* ---- build groups ---------------- */
-/* A build heads its seeds: its checkbox sits in the leftmost column and the
-   seed checkboxes are indented underneath it. A coloured bar down the left edge
-   brackets the block, alternating between neighbouring builds. The bar is a
-   border rather than a row background, which color_tablerows() paints from the
-   testrun's tags. */
-tr.rb-testrun td.rb-table-buildcheck {
-  border-left: 4px solid transparent;
-}
-tr.rb-build-grouped.rb-build-0 td.rb-table-buildcheck {
-  border-left-color: #2eb3b3;
-}
-tr.rb-build-grouped.rb-build-1 td.rb-table-buildcheck {
-  border-left-color: #e8a33d;
-}
-/* both checkbox columns are as narrow as their contents */
+/* A build heads its seeds as a little tree: the build checkbox sits in the
+   leftmost column and each of its seeds hangs off a trunk drawn down the
+   column next to it, so the block reads as one build with its runs.
+
+      [x]2 --+-- [ ]  seed 0
+             +-- [ ]  seed 1
+             '-- [ ]  seed 2
+
+   Neighbouring builds alternate colour. The lines are drawn on the cell rather
+   than the row background, which color_tablerows() paints from the tags. */
 th.rb-table-check, td.rb-table-check,
 th.rb-table-buildcheck, td.rb-table-buildcheck {
   width: 1px;
@@ -197,10 +192,47 @@ th.rb-table-buildcheck, td.rb-table-buildcheck {
   text-align: left;
   padding-left: 0.3rem !important;
 }
-/* the indent that puts a seed underneath its build */
-th.rb-table-check, td.rb-table-check {
-  padding-left: 1.1rem !important;
+td.rb-table-check {
+  position: relative;
+  padding-left: 1.3rem !important;  /* room for the trunk and the branch */
 }
+
+/* the trunk: full height in the middle of a group, half height at its ends */
+tr.rb-build-grouped td.rb-table-check::before {
+  content: "";
+  position: absolute;
+  left: 0.45rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+}
+tr.rb-build-grouped.rb-build-lead td.rb-table-check::before {
+  top: 50%;
+}
+tr.rb-build-grouped.rb-build-last td.rb-table-check::before {
+  bottom: auto;
+  height: 50%;
+}
+
+/* the branch into each seed's checkbox */
+tr.rb-build-grouped td.rb-table-check::after {
+  content: "";
+  position: absolute;
+  left: 0.45rem;
+  top: 50%;
+  width: 0.45rem;
+  height: 2px;
+}
+
+tr.rb-build-grouped.rb-build-0 td.rb-table-check::before,
+tr.rb-build-grouped.rb-build-0 td.rb-table-check::after {
+  background-color: #2eb3b3;
+}
+tr.rb-build-grouped.rb-build-1 td.rb-table-check::before,
+tr.rb-build-grouped.rb-build-1 td.rb-table-check::after {
+  background-color: #e8a33d;
+}
+
 label.rb-build-select {
   cursor: pointer;
   white-space: nowrap;
