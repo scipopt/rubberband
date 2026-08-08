@@ -126,10 +126,10 @@ class AnalyzeExternalView(BaseHandler):
         try:
             response = await AsyncHTTPClient().fetch(request)
         except Exception as e:  # noqa: BLE001 - surface any transport/HTTP error
-            logger.error("Analyze upload failed: %r", e)
+            logger.error("LogAnalyzer upload failed: %r", e)
             if getattr(e, "response", None) is not None:
                 logger.error(
-                    "Analyze upload response body: %s", e.response.body[:1000]
+                    "LogAnalyzer upload response body: %s", e.response.body[:1000]
                 )
             raise HTTPError(502, reason="Could not reach LogAnalyzer: {}".format(e))
 
