@@ -106,7 +106,7 @@ class AnalyzeExternalView(BaseHandler):
             zip_bytes = byteio.getvalue()
 
         logger.info(
-            "Analyze handoff: base=%s zip_bytes=%d for %s",
+            "LogAnalyzer handoff: base=%s zip_bytes=%d for %s",
             base, len(zip_bytes), ",".join(ts_ids),
         )
 
