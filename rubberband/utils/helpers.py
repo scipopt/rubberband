@@ -197,7 +197,7 @@ def build_group_key(testrun):
     The runs of one build differ only in seed and permutation, and their
     filenames only in the ``-p<permutation>`` and ``-s<seed>`` appendices of
     ``check.<testset>.<binary>.<queue>.<setting>-p<perm>-s<seed>.out``. The
-    binary carries the build date, so testruns built on different days keep
+    binary carries the build date and time, so testruns built on different days or minutes keep
     different keys; the upload date is part of the key as well, both to separate
     reruns of the same build and because the older naming has neither appendix
     in the filename at all.
