@@ -172,17 +172,17 @@ table.dataTable.compact thead td, table.dataTable.compact thead th {
 }
 
 /* ---- build groups ---------------- */
-/* A build heads its seeds as a little tree, drawn in its own column. Clicking
-   anywhere on the tree selects or deselects every seed (and permutation) of that build, and
-   hovering it highlights the rows the click would hit.
+/* A build heads its runs as a little tree, drawn in its own column. Clicking
+   anywhere on the tree selects or deselects every seed (and permutation) of
+   that build, and hovering it highlights the rows the click would hit.
 
       +-- [ ]  seed 0
       +-- [ ]  seed 1
       '-- [ ]  seed 2
 
-   Neighbouring builds alternate colour, and the lines thicken while all seeds and permutations
-   of the build are selected. They are drawn on the cell rather than the row
-   background, which color_tablerows() paints from the testrun's tags. */
+   Neighbouring builds alternate colour, and the lines thicken while all seeds
+   and permutations of the build are selected. They are drawn on the cell rather
+   than the row background, which color_tablerows() paints from the tags. */
 th.rb-table-check, td.rb-table-check,
 th.rb-table-buildcheck, td.rb-table-buildcheck {
   width: 1px;

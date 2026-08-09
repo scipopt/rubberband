@@ -53,8 +53,9 @@ function fillResultTable(data) {
       scrollCollapse: true,
       paging: false,
       searching: false,
-      // keep the order the server rendered, which groups the seeds and permutations of a build
-      // together; sorting by the first column would tear those groups apart
+      // keep the order the server rendered, which groups the seeds and
+      // permutations of a build together; sorting by the first column would
+      // tear those groups apart
       order: [],
       // nothing to sort by in the checkbox, info and star columns, and dropping
       // the sort arrows takes the width they reserve with them

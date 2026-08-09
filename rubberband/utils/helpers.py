@@ -7,6 +7,25 @@ import string
 
 from rubberband.constants import FORMAT_DATETIME_SHORT, FORMAT_DATETIME_LONG
 
+# what the runs of one build differ in; everything else a run was uploaded with
+# describes the build itself
+GROUP_VARYING_METADATA = ("Seed", "Permutation", "uploader", "upload_timestamp")
+
+
+def _run_metadata(testrun):
+    """Return the uploaded metadata of a testrun as a plain dict."""
+    metadata = getattr(testrun, "metadata", None)
+    if metadata is None:
+        return {}
+
+    if hasattr(metadata, "to_dict"):
+        metadata = metadata.to_dict()
+
+    try:
+        return dict(metadata)
+    except (TypeError, ValueError):
+        return {}
+
 
 def _strip_run_appendices(stem, testrun):
     """
@@ -194,13 +213,16 @@ def build_group_key(testrun):
     """
     Identify the build a testrun belongs to, so its runs can be grouped.
 
-    The runs of one build differ only in seed and permutation, and their
-    filenames only in the ``-p<permutation>`` and ``-s<seed>`` appendices of
-    ``check.<testset>.<binary>.<queue>.<setting>-p<perm>-s<seed>.out``. The
-    binary carries the build date and time, so testruns built on different days or minutes keep
-    different keys; the upload date is part of the key as well, both to separate
-    reruns of the same build and because the older naming has neither appendix
-    in the filename at all.
+    A run is uploaded with the metadata of the check script - ``TstName``,
+    ``BinName``, ``Settings``, ``Queue``, the limits, and so on - of which only
+    ``Seed`` and ``Permutation`` differ between the runs of one build. Everything
+    else taken together is the build, so that is the key. ``BinName`` carries the
+    date and time the binary was built, which keeps separate builds apart on its
+    own.
+
+    Testruns uploaded without a meta file have no such metadata; they fall back
+    to their filename with the ``-p<permutation>`` and ``-s<seed>`` appendices
+    removed, plus the upload date to keep separate uploads apart.
 
     Parameters
     ----------
@@ -212,6 +234,16 @@ def build_group_key(testrun):
     str
         key shared by exactly the testruns of one build
     """
+    metadata = _run_metadata(testrun)
+    build = {k: v for k, v in metadata.items() if k not in GROUP_VARYING_METADATA}
+
+    if build:
+        # the same binary is referred to both as "<build>/bin/scip" and
+        # "../<build>/bin/scip", depending on where the check ran from
+        if build.get("BinName"):
+            build["BinName"] = re.sub(r"^(\.\.?/)+", "", str(build["BinName"]))
+        return "|".join("{}={}".format(key, build[key]) for key in sorted(build))
+
     filename = getattr(testrun, "filename", "") or ""
     stem = _strip_run_appendices(os.path.splitext(filename)[0], testrun)
     uploaded = str(getattr(testrun, "upload_timestamp", "") or "")[:10]
