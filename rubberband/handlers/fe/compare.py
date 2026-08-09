@@ -60,8 +60,7 @@ class CompareView(BaseHandler):
                 self.application.base_url, ",".join([base] + compares)
             )
         else:
-            cmp_string = ",".join(compares)
             next_url = "{}/result/{}?compare={}".format(
-                self.application.base_url, base, cmp_string
+                self.application.base_url, base, ",".join(compares)
             )
         self.redirect(next_url)
