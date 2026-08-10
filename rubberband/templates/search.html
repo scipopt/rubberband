@@ -105,9 +105,9 @@
     </fieldset>
 
     <!-- submit buttons ==================================================================== -->
-    <div class="btn-group" role="group">
+    <div>
       <button type="button" class="btn btn-primary" id="search-button">Search</button>
-      <button type="button" class="btn btn-danger" id="reset-search-button">Reset</button>
+      <button type="button" class="btn btn-danger ml-2" id="reset-search-button">Reset</button>
     </div>
   </form>
 </div>
@@ -117,10 +117,16 @@
 {% module xsrf_form_html() %}
 
 <div class="alert alert-info">
-  <div class="row">
-    <label class="col-form-label col">Compare selected Testruns?</label>
-    <div class="col">
-      <button type="submit" class="btn btn-primary float-right">Compare</button>
+  <div class="row align-items-center">
+    <label class="col-form-label col-auto mb-0">Compare selected runs in</label>
+    <div class="col-auto px-0">
+      <button type="submit" class="btn btn-primary ml-2 bs-tooltip" data-toggle="tooltip"
+          data-placement="top" title="compare in Rubberband">Rubberband</button>
+  {% if handler.get_loganalyzer_url() %}
+      <button type="submit" name="target" value="loganalyzer" formtarget="_blank"
+          class="btn btn-outline-primary ml-2 bs-tooltip" data-toggle="tooltip" data-placement="top"
+          title="compare in LogAnalyzer"><span class="fa fa-chart-bar"></span>&nbsp;LogAnalyzer</button>
+  {% end %}
     </div>
   </div>
 </div>
