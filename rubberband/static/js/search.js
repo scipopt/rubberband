@@ -53,6 +53,17 @@ function fillResultTable(data) {
       scrollCollapse: true,
       paging: false,
       searching: false,
+      // keep the order the server rendered, which groups the seeds and
+      // permutations of a build together; sorting by the first column would
+      // tear those groups apart
+      order: [],
+      // nothing to sort by in the checkbox, info and star columns, and dropping
+      // the sort arrows takes the width they reserve with them
+      columnDefs: [{
+        orderable: false,
+        targets: ['.rb-table-radio', '.rb-table-check', '.rb-table-buildcheck',
+                  '.rb-table-info', '.rb-table-star'],
+      }],
     });
     align_table_columns_to("search-table", ["starred-table","compares-table"]);
   }
@@ -61,6 +72,7 @@ function fillResultTable(data) {
   color_tablerows();
   init_all_stars();
   select_all_compares();
+  sync_build_checkboxes();
 }
 
 // on click on search-button, update the resultstable according to the search fields

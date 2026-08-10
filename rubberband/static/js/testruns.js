@@ -83,6 +83,30 @@ function init_all_stars() {
   });
 }
 
+function build_rows(key) {
+  // the rows of one build, across all tables on the page
+  return $('tr.rb-testrun[data-build="' + key + '"]');
+}
+
+function build_members(key) {
+  // the testrun checkboxes of one build
+  return build_rows(key).find("input.rb-tr-checkbox");
+}
+
+function sync_build_checkboxes() {
+  // a build whose seeds are all selected draws a heavier tree
+  var keys = {};
+  $("td.rb-build-tree").each(function () {
+    keys[$(this).attr("data-build")] = true;
+  });
+
+  for (var key in keys) {
+    var members = build_members(key);
+    var all = members.length > 0 && members.filter(":checked").length == members.length;
+    $('td.rb-build-tree[data-build="' + key + '"]').toggleClass("rb-build-selected", all);
+  }
+}
+
 function select_all_compares() {
   $('#rb-compares-table input.rb-tr-checkbox').each(function(index) {
     name = this.attributes["name"].value;
@@ -183,6 +207,26 @@ $('form#compare').on('change', 'input.rb-tr-checkbox', function (e) {
   name = e.target.attributes["name"].value;
   checked_val = this.checked;
   process_checkbox_to(name, checked_val);
+  sync_build_checkboxes();
+});
+
+// clicking the tree of a build selects all of its seeds, and deselects them
+// again once they are all selected
+$('form#compare').on('click', 'td.rb-build-tree', function () {
+  var members = build_members($(this).attr("data-build"));
+  var checkval = members.filter(":checked").length < members.length;
+  members.each(function () {
+    process_checkbox_to(this.attributes["name"].value, checkval);
+  });
+  sync_build_checkboxes();
+});
+
+// hovering the tree shows which rows that click would take
+$('form#compare').on('mouseenter', 'td.rb-build-tree', function () {
+  build_rows($(this).attr("data-build")).addClass("rb-build-hover");
+});
+$('form#compare').on('mouseleave', 'td.rb-build-tree', function () {
+  $("tr.rb-build-hover").removeClass("rb-build-hover");
 });
 
 // ======================================================
@@ -191,4 +235,5 @@ $(document).ready(function(){
   color_tablerows();
   init_all_stars();
   select_all_compares();
+  sync_build_checkboxes();
 });

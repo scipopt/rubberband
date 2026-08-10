@@ -1,4 +1,6 @@
 {% if results or get_empty_header %}
+{% set grouped_results = group_testruns(results) %}
+{% set groups = build_groups(grouped_results) %}
 <table {% if tablename %}id="{{ tablename }}"{% end %} class="nowrap rb-table {{rb_dt_compact}} {{rb_dt_borderless}} rb-table-data" width="100%">
   <thead>
     <tr>
@@ -6,6 +8,7 @@
       <th class="rb-table-radio"></th>
       {% end %}
       {% if checkboxes %}
+      <th class="rb-table-buildcheck"></th>
       <th class="rb-table-check"></th>
       {% end %}
       {% if representation is not None %}
@@ -29,8 +32,9 @@
     </tr>
   </thead>
   <tbody>
-  {% for r in results %}
-  <tr class="rb-testrun" data-name="{{ r.meta.id }}">
+  {% for r in grouped_results %}
+  {% set group = groups.get(r.meta.id, {"key": "", "size": 1, "parity": 0}) %}
+  <tr class="rb-testrun rb-build-{{ group["parity"] }}{% if group["size"] > 1 %} rb-build-grouped{% if group["leads"] %} rb-build-lead{% end %}{% if group["last"] %} rb-build-last{% end %}{% end %}" data-name="{{ r.meta.id }}" data-build="{{ group["key"] }}">
     {% if radiobuttons %}
     <td class="rb-table-radio"><input class="rb-tr-radiobutton" type="radio" name="base" value="{{ r.meta.id }}"
     {% if r.meta.id == checked %}
@@ -39,6 +43,13 @@
     ><input name="{{ r.meta.id }}" hidden></td>
     {% end %}
     {% if checkboxes %}
+    {% if group["size"] > 1 %}
+    <td class="rb-table-buildcheck rb-build-tree bs-tooltip" data-build="{{ group["key"] }}"
+        data-toggle="tooltip" data-placement="right"
+        title="select all {{ group["size"] }} seeds/perms of this build"></td>
+    {% else %}
+    <td class="rb-table-buildcheck"></td>
+    {% end %}
     <td class="rb-table-check"><input class="rb-tr-checkbox" type="checkbox" name="{{ r.meta.id }}"></td>
     {% end %}
     {% if representation is not None %}

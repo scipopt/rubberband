@@ -1,9 +1,47 @@
 """Collection of helper functions."""
 
 from datetime import datetime
+import os
+import re
 import string
 
 from rubberband.constants import FORMAT_DATETIME_SHORT, FORMAT_DATETIME_LONG
+
+# what the runs of one build differ in; everything else a run was uploaded with
+# describes the build itself
+GROUP_VARYING_METADATA = ("Seed", "Permutation", "uploader", "upload_timestamp")
+
+
+def _run_metadata(testrun):
+    """Return the uploaded metadata of a testrun as a plain dict."""
+    metadata = getattr(testrun, "metadata", None)
+    if metadata is None:
+        return {}
+
+    if hasattr(metadata, "to_dict"):
+        metadata = metadata.to_dict()
+
+    try:
+        return dict(metadata)
+    except (TypeError, ValueError):
+        return {}
+
+
+def _strip_run_appendices(stem, testrun):
+    """
+    Drop the -p<permutation> and -s<seed> appendices from a filename stem.
+
+    The values of the testrun itself are used rather than a generic pattern, so
+    a setting that happens to end in something like "-p1" is left alone. Both
+    orders are handled, since only the check scripts decide which comes last.
+    """
+    for _ in range(2):
+        for letter, attr in (("s", "seed"), ("p", "permutation")):
+            value = getattr(testrun, attr, None)
+            if value:
+                stem = re.sub(r"-{}{}$".format(letter, int(value)), "", stem)
+
+    return stem
 
 
 def shortening_repres_id(repres, key):
@@ -169,6 +207,131 @@ def setup_testruns_subst_dict(testruns):
         # count through the letters of the alphabet
         count = count + 1
     return repres
+
+
+def build_group_key(testrun):
+    """
+    Identify the build a testrun belongs to, so its runs can be grouped.
+
+    A run is uploaded with the metadata of the check script - ``TstName``,
+    ``BinName``, ``Settings``, ``Queue``, the limits, and so on - of which only
+    ``Seed`` and ``Permutation`` differ between the runs of one build. Everything
+    else taken together is the build, so that is the key. ``BinName`` carries the
+    date and time the binary was built, which keeps separate builds apart on its
+    own.
+
+    Testruns uploaded without a meta file have no such metadata; they fall back
+    to their filename with the ``-p<permutation>`` and ``-s<seed>`` appendices
+    removed, plus the upload date to keep separate uploads apart.
+
+    Parameters
+    ----------
+    testrun : TestSet
+        the testrun to place in a group
+
+    Returns
+    -------
+    str
+        key shared by exactly the testruns of one build
+    """
+    metadata = _run_metadata(testrun)
+    build = {k: v for k, v in metadata.items() if k not in GROUP_VARYING_METADATA}
+
+    if build:
+        # the same binary is referred to both as "<build>/bin/scip" and
+        # "../<build>/bin/scip", depending on where the check ran from
+        if build.get("BinName"):
+            build["BinName"] = re.sub(r"^(\.\.?/)+", "", str(build["BinName"]))
+        return "|".join("{}={}".format(key, build[key]) for key in sorted(build))
+
+    filename = getattr(testrun, "filename", "") or ""
+    stem = _strip_run_appendices(os.path.splitext(filename)[0], testrun)
+    uploaded = str(getattr(testrun, "upload_timestamp", "") or "")[:10]
+
+    return "{}|{}".format(stem, uploaded)
+
+
+def build_groups(testruns):
+    """
+    Group testruns by build, for the grouping in the testrun tables.
+
+    Parameters
+    ----------
+    testruns : list
+        the testruns of one table, in the order they are rendered
+
+    Returns
+    -------
+    dict
+        testrun id -> {"key", "size", "parity"}, where size is the number of
+        runs in the group and parity alternates between neighbouring groups so
+        they can be told apart visually
+    """
+    keys = {}
+    sizes = {}
+    for testrun in testruns or []:
+        key = build_group_key(testrun)
+        keys[testrun.meta.id] = key
+        sizes[key] = sizes.get(key, 0) + 1
+
+    parities = {}
+    leaders = {}
+    last = {}
+    for tid, key in keys.items():
+        if key not in parities:
+            parities[key] = len(parities) % 2
+            leaders[key] = tid
+        last[key] = tid
+
+    return {
+        tid: {
+            "key": key,
+            "size": sizes[key],
+            "parity": parities[key],
+            # only the first testrun of a group carries the group checkbox, so
+            # there is never a second, ambiguous checkbox on a row
+            "leads": leaders[key] == tid,
+            # first and last are drawn with the corners of the tree
+            "last": last[key] == tid,
+        }
+        for tid, key in keys.items()
+    }
+
+
+def group_testruns(testruns):
+    """
+    Order testruns so that the runs of one build sit next to each other.
+
+    Builds keep the order they already had - the search sorts by date, so the
+    most recent build stays on top - and within a build the runs are ordered by
+    permutation and seed. Without this the runs of two builds uploaded in the
+    same batch end up interleaved and the group is impossible to see.
+
+    Parameters
+    ----------
+    testruns : list
+        the testruns of one table
+
+    Returns
+    -------
+    list
+        the same testruns, grouped by build
+    """
+    if not testruns:
+        return testruns
+
+    order = {}
+    for testrun in testruns:
+        order.setdefault(build_group_key(testrun), len(order))
+
+    return sorted(
+        testruns,
+        key=lambda t: (
+            order[build_group_key(t)],
+            getattr(t, "permutation", None) or 0,
+            getattr(t, "seed", None) or 0,
+        ),
+    )
 
 
 def rb_join_arg(li=[], identif="default", pos=0):
