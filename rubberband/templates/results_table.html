@@ -15,6 +15,9 @@
       <th class="rb-table-repr">Repr.</th>
       {% end %}
       <th class="rb-table-info"></th>
+      {% if getattr(options, "loganalyzer_url", "") %}
+      <th class="rb-table-loganalyzer"></th>
+      {% end %}
       <!-- <th><span class="fa fa-star-half-alt"></span></th> -->
       <th class="rb-table-star"></th>
       <th class="rb-table-solver">Solver</th>
@@ -56,6 +59,9 @@
       <td class="rb-table-repr">{% raw shortening_repres_id(representation, r.id) %}</td>
     {% end %}
     <td class="rb-table-info bs-tooltip" data-toggle="tooltip" data-placement="right" title="Tags: {{ ", ".join(r.tags) }}"><a href="/result/{{ r.meta.id }}"><span class="fa fa-info-circle"></span></a></td>
+    {% if getattr(options, "loganalyzer_url", "") %}
+    <td class="rb-table-loganalyzer bs-tooltip" data-toggle="tooltip" data-placement="right" title="open in LogAnalyzer"><a href="/analyze/{{ r.meta.id }}" target="_blank" rel="noopener"><span class="fa fa-chart-bar"></span></a></td>
+    {% end %}
     <td class="rb-table-star"><span class="far fa-star rb-tr-star" name="{{ r.meta.id }}"></span></td>
     <td class="rb-table-solver">{{ format_attr(r, "solver") }} {{ format_attr(r, "solver_version") }}</td>
     <td class="rb-table-lps">{{ format_attr(r, "lp_solver") }} {{ format_attr(r, "lp_solver_version") }}</td>
