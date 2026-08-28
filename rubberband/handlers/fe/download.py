@@ -50,7 +50,7 @@ class DownloadView(BaseHandler):
 
                 self.set_header("Content-Type", "application/zip")
                 self.set_header(
-                    "Content-Disposition", "attachment; filename=%s" % zipname
+                    "Content-Disposition", f"attachment; filename={zipname}"
                 )
                 self.write(byteio.getvalue())
             self.finish()
@@ -65,7 +65,7 @@ class DownloadView(BaseHandler):
             buf_size = 1024
             self.set_header("Content-Type", "text/plain")
             self.set_header(
-                "Content-Disposition", "attachment; filename=%s" % evalfilename
+                "Content-Disposition", f"attachment; filename={evalfilename}"
             )
 
             with open(evalfile, "r") as f:

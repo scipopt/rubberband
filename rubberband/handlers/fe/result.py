@@ -143,7 +143,7 @@ class ResultView(BaseHandler):
             )
 
         t.load_files()
-        if "out" not in t.files.to_dict().keys():
+        if "out" not in t.files.to_dict():
             raise HTTPError(404)
             return
         t.delete_all_results()
@@ -228,7 +228,7 @@ def get_same_status(runs):
         list of names of instances whose status is the same in all TestSets.
     """
     instances = runs[0].results.to_dict()
-    final_instances = set([])
+    final_instances = set()
     for i in instances:
         statuses = []
         for r in runs:

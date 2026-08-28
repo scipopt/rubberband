@@ -332,9 +332,9 @@ def group_testruns(testruns):
     )
 
 
-def rb_join_arg(li=[], identif="default", pos=0):
+def rb_join_arg(li=None, identif="default", pos=0):
     """Construct url argument with identifier and li as list."""
-    if li == []:
+    if li is None or li == []:
         return ""
     if pos == 0:
         letter = "?"

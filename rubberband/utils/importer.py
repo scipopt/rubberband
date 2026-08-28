@@ -21,8 +21,8 @@ from rubberband.utils import gitlab as gl
 from .hasher import generate_sha256_hash
 from .stats import ImportStats
 
-REQUIRED_FILES = set([".out"])
-OPTIONAL_FILES = set([".solu", ".err", ".set", ".meta"])
+REQUIRED_FILES = {".out"}
+OPTIONAL_FILES = {".solu", ".err", ".set", ".meta"}
 ALL_SOLU = None
 for allsolucand in ["instancedb.sqlite3", "all.solu", "allpublic.solu"]:
     if os.path.isfile(SOLU_DIR + allsolucand):
@@ -72,7 +72,7 @@ class Importer:
 
         return self.importstats
 
-    def process_files(self, paths, tags=[], remove=True, expirationdate=None):
+    def process_files(self, paths, tags=None, remove=True, expirationdate=None):
         """
         Process filebundle and import to rubberband.
 
@@ -81,13 +81,15 @@ class Importer:
         paths : list str
             list of filenames
         tags : list
-            tags to add to TestSet (default [])
+            tags to add to TestSet (default None)
         remove : bool
             remove raw uploaded files from server (default True)
         expirationdate : str in date form
             Date after which data can be purged from elasticsearch (default: None)
         """
         # This gets called by both the apiupload and the webupload
+        if tags is None:
+            tags = []
         total_files = len(paths)
         basename = ""
         if total_files > 0:
@@ -172,8 +174,8 @@ class Importer:
 
         # clean up filesystem if remove flag set
         if self.remove_files:
-            for t, f in self.files.items():
-                if f and ALL_SOLU and not f == ALL_SOLU:
+            for f in self.files.values():
+                if f and ALL_SOLU and f != ALL_SOLU:
                     os.remove(f)
 
         self._log_info("Finished!")
@@ -247,7 +249,7 @@ class Importer:
         self.logger.info(message)
         self.importstats.logMessage(self.files[".out"], message)
 
-    def get_file_data(self, data, settings=None, expirationdate=None, metadata={}):
+    def get_file_data(self, data, settings=None, expirationdate=None, metadata=None):
         """
         Get data about file.
 
@@ -260,8 +262,10 @@ class Importer:
         expirationdate : str in date form
             Date after which data can be purged from elasticsearch (default: None)
         metadata
-            Metadata dictionary from IPET (default: {})
+            Metadata dictionary from IPET (default: None)
         """
+        if metadata is None:
+            metadata = {}
         # settings is a tuple
         file_data = {
             "id": self.file_id,
@@ -300,7 +304,7 @@ class Importer:
         }
         # by this time we dropped all metadata that is not equal or empty for all data rows
         for key, tag in metamapping.items():
-            if tag in metadata.keys():
+            if tag in metadata:
                 file_data[key] = metadata[tag]
         # it can be an old file if there is no meta file. then try to read info from filename
         if self.files[".meta"] is None:
@@ -658,7 +662,7 @@ class Importer:
         -------
         value
         """
-        if key not in data.keys():
+        if key not in data:
             if throwex:
                 msg = "Missing key {} in data.".format("key")
                 self._log_failure(msg)

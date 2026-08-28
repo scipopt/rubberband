@@ -157,7 +157,7 @@ def make_app(project_root):
 
     # settings for tornado
     settings = {
-        "debug": True if options.num_processes == 1 else False,
+        "debug": options.num_processes == 1,
         "static_path": os.path.join(project_root, "static"),
         "template_path": os.path.join(project_root, "templates"),
         "cookie_secret": options.cookie_secret,

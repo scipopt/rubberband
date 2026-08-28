@@ -53,7 +53,7 @@ class ComparisonEndpoint(BaseHandler):
             t.git_hash: datetime.strftime(t.git_commit_timestamp, FORMAT_DATE)
             for t in testruns + [baserun]
         }
-        hashes = set([t.git_hash for t in testruns + [baserun]])
+        hashes = {t.git_hash for t in testruns + [baserun]}
         if len(hashes) > 2:
             raise HTTPError(404)
         hashes.remove(basehash)
@@ -112,7 +112,7 @@ class ComparisonEndpoint(BaseHandler):
         set_defaultgroup(ev, ex, base_id)
 
         # do evaluation
-        longtable, aggtable = ev.evaluate(ex)
+        _longtable, aggtable = ev.evaluate(ex)
 
         # df = aggtable[["_count_","_solved_","T_sgm(1.0)Q","T_sgm(1.0)"]]
 

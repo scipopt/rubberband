@@ -271,14 +271,14 @@ class TestSet(Document):
                 # copy: AttrDict.to_dict() returns the underlying dict itself,
                 # and the keys added below must not land in the cached results
                 all_instances[i] = dict(self.results[i].to_dict())
-                if "instance_id" not in all_instances[i].keys():
+                if "instance_id" not in all_instances[i]:
                     all_instances[i]["instance_id"] = count
                     count = count + 1
-                if "ProblemName" not in all_instances[i].keys():
+                if "ProblemName" not in all_instances[i]:
                     all_instances[i]["ProblemName"] = all_instances[i]["instance_name"]
-                if "TimeLimit" not in all_instances[i].keys():
+                if "TimeLimit" not in all_instances[i]:
                     all_instances[i]["TimeLimit"] = self.get_data("TimeLimit")
-                if "TimeFactor" not in all_instances[i].keys():
+                if "TimeFactor" not in all_instances[i]:
                     all_instances[i]["TimeFactor"] = self.get_data("TimeFactor")
                 if self.lp_solver_githash:
                     all_instances[i]["SpxGitHash"] = self.lp_solver_githash
@@ -523,9 +523,8 @@ class Settings(Document):
         for i in INFINITY_KEYS:
             if getattr(self, i, None) == INFINITY_FLOAT:
                 setattr(self, i, INFINITY_MASK)
-            if kwargs != {} and i in kwargs:
-                if kwargs[i] == INFINITY_FLOAT:
-                    kwargs[i] = INFINITY_MASK
+            if kwargs != {} and i in kwargs and kwargs[i] == INFINITY_FLOAT:
+                kwargs[i] = INFINITY_MASK
 
         key = "conflict/uselocalrows"
         if getattr(self, key, None):
@@ -542,6 +541,6 @@ class Settings(Document):
 
 date_handler = lambda obj: (
     obj.isoformat()
-    if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date)
+    if isinstance(obj, (datetime.datetime, datetime.date))
     else None
 )

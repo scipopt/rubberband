@@ -206,48 +206,48 @@ class BaseHandler(RequestHandler):
         """
         namespace = super().get_template_namespace()
 
-        name_space = dict(
-            handler=self,
-            request=self.request,
-            current_user=self.current_user,
-            has_permission=self.has_permission,
-            locale=self.locale,
-            _=self.locale.translate,
-            pgettext=self.locale.pgettext,
-            static_url=self.static_url,
-            xsrf_form_html=self.xsrf_form_html,
-            reverse_url=self.reverse_url,
-            clusterbench=self.clusterbench,
-            format_attr=self.format_attr,
-            format_type=self.format_type,
-            format_attrs=self.format_attrs,
-            get_objsen=self.get_objsen,
-            are_equivalent=self.are_equivalent,
-            shorten_str=shorten_str,
-            shortening_span=shortening_span,
-            shortening_repres_id=shortening_repres_id,
-            build_groups=build_groups,
-            group_testruns=group_testruns,
-            rb_join_arg=rb_join_arg,
-            get_link=get_link,
-            options=options,
-            page_title=None,
-            status_code="404",  # error code
-            checkboxes=False,
-            radiobuttons=False,
-            tablename="results-table",
-            modalheading=None,
-            modalbody=None,
-            modalfooter=None,
-            representation=None,
-            ipet_long_table=None,
-            ipet_aggregated_table=None,
-            get_empty_header=False,
-            rb_dt_compact=self.rb_dt_compact,
-            rb_dt_borderless=self.rb_dt_borderless,
-            rb_dt_bordered=self.rb_dt_bordered,
-            rb_dt_table=self.rb_dt_table,
-        )
+        name_space = {
+            "handler": self,
+            "request": self.request,
+            "current_user": self.current_user,
+            "has_permission": self.has_permission,
+            "locale": self.locale,
+            "_": self.locale.translate,
+            "pgettext": self.locale.pgettext,
+            "static_url": self.static_url,
+            "xsrf_form_html": self.xsrf_form_html,
+            "reverse_url": self.reverse_url,
+            "clusterbench": self.clusterbench,
+            "format_attr": self.format_attr,
+            "format_type": self.format_type,
+            "format_attrs": self.format_attrs,
+            "get_objsen": self.get_objsen,
+            "are_equivalent": self.are_equivalent,
+            "shorten_str": shorten_str,
+            "shortening_span": shortening_span,
+            "shortening_repres_id": shortening_repres_id,
+            "build_groups": build_groups,
+            "group_testruns": group_testruns,
+            "rb_join_arg": rb_join_arg,
+            "get_link": get_link,
+            "options": options,
+            "page_title": None,
+            "status_code": "404",  # error code
+            "checkboxes": False,
+            "radiobuttons": False,
+            "tablename": "results-table",
+            "modalheading": None,
+            "modalbody": None,
+            "modalfooter": None,
+            "representation": None,
+            "ipet_long_table": None,
+            "ipet_aggregated_table": None,
+            "get_empty_header": False,
+            "rb_dt_compact": self.rb_dt_compact,
+            "rb_dt_borderless": self.rb_dt_borderless,
+            "rb_dt_bordered": self.rb_dt_bordered,
+            "rb_dt_table": self.rb_dt_table,
+        }
 
         # additional ui modules
         namespace.update(self.ui)
@@ -287,7 +287,7 @@ class BaseHandler(RequestHandler):
         value = getattr(obj, attr, None)
         if isinstance(value, str):
             return "text"
-        if isinstance(value, float) or isinstance(value, int):
+        if isinstance(value, (float, int)):
             return "number"
         return ""
 
@@ -344,12 +344,12 @@ class BaseHandler(RequestHandler):
                 if type(value) is int or type(value) is float:
                     return value
                 if attr in ["DualBound", "PrimalBound"]:
-                    return "%.4f" % value
+                    return f"{value:.4f}"
                 if attr in ["SolvingTime", "TotalTime_solving", "Gap"]:
-                    return "%.2f" % value
+                    return f"{value:.2f}"
                 if attr in ["Iterations"]:
                     return int(value)
-                if attr.endswith("_timestamp") or attr.endswith("expirationdate"):
+                if attr.endswith(("_timestamp", "expirationdate")):
                     return datetime.strftime(value, FORMAT_DATETIME_LONG)
                 if isinstance(value, str):
                     return value

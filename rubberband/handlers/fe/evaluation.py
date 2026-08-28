@@ -106,9 +106,7 @@ class EvaluationView(BaseHandler):
             longtable = longtable.drop(delcols, axis=1)
 
             # convert to html and get style
-            add_classes = " ".join(
-                [self.rb_dt_borderless, self.rb_dt_compact]
-            )  # style for table
+            add_classes = f"{self.rb_dt_borderless} {self.rb_dt_compact}"  # style for table
             html_long = table_to_html(
                 longtable, ev, html_id="ipet-long-table", add_class=add_classes
             )
@@ -130,7 +128,7 @@ class EvaluationView(BaseHandler):
                 html_agg, {**repres["long"], **repres["all"]}, add_ind=True, swap=False
             )
 
-            message = ", ".join(sorted(list(set(excluded_inst))))
+            message = ", ".join(sorted(set(excluded_inst)))
             print(message)
             # render to strings
             html_tables = self.render_string(
@@ -172,9 +170,7 @@ class EvaluationView(BaseHandler):
                 c
                 for c in df.columns
                 if (
-                    c in ["Group", colindex, "_solved_"]
-                    or c.startswith("N_")
-                    or c.startswith("T_")
+                    c in ["Group", colindex, "_solved_"] or c.startswith(("N_", "T_"))
                 )
                 and not c.endswith(")p")
             ]
@@ -225,8 +221,8 @@ class EvaluationView(BaseHandler):
             for key in df_abs.columns:
                 df[key] = df_abs[key]
             for key in df_rel.columns:
-                if not df_rel[key].mean() == 1.0:
-                    (a, b) = key
+                if df_rel[key].mean() != 1.0:
+                    (_a, b) = key
                     df["relative", b] = df_rel[key]
 
             df = df.loc[df.index.intersection(rows)].reindex(rows)
@@ -282,13 +278,13 @@ def get_column_formatters(df):
     """
     formatters = {}
     for p in df.columns:
-        (a, b) = p
+        (_a, b) = p
         if b.endswith("Q"):
-            formatters[p] = lambda x: "%.2f" % x
+            formatters[p] = lambda x: f"{x:.2f}"
         elif b.startswith("T_"):
-            formatters[p] = lambda x: "%.1f" % x
+            formatters[p] = lambda x: f"{x:.1f}"
         else:
-            formatters[p] = lambda x: "%.0f" % x
+            formatters[p] = lambda x: f"{x:.0f}"
     return formatters
 
 
@@ -402,7 +398,7 @@ def setup_experiment(testruns, droplist=""):
         tr_raw_data = t.get_data(add_data=additional_data)
 
         tr_data = {}
-        for i in tr_raw_data.keys():
+        for i in tr_raw_data:
             for r in regexlist:
                 if r.match(i):
                     excluded_inst.append(i)
@@ -623,7 +619,7 @@ def generate_filtergroup_selector(table, evaluation):
         selector and additional column
     """
     table = table.copy()
-    gtindex = [c for c in table.columns if c[-1] == "groupTags"][0]
+    gtindex = next(c for c in table.columns if c[-1] == "groupTags")
     table["Filtergroups"] = list(map("|{}|".format, table[gtindex]))
 
     out = '<div id="ipet-long-table-filter col"><label class="col-form-label text-left">Select filtergroups:<select id="ipet-long-filter-select" class="custom-select">'
