@@ -3,7 +3,7 @@
 import logging
 import multiprocessing
 import os
-from datetime import date
+from datetime import datetime
 
 import tornado.httpserver
 import tornado.ioloop
@@ -22,7 +22,7 @@ logger = logging.getLogger()
 
 def delete_expired_documents():
     s = TestSet.search()
-    s = s.filter("range", expirationdate={"lte": date.today()})
+    s = s.filter("range", expirationdate={"lte": datetime.now().date()})
     response = s.execute()
     logger.info(f"Found {response.hits.total.value} expired testsets to delete.")
     for hit in response.hits:
