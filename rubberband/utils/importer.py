@@ -16,6 +16,7 @@ from rubberband.constants import ADD_READERS, FORMAT_DATETIME, SOLU_DIR
 
 # package imports
 from rubberband.models import File, Result, Settings, TestSet
+from rubberband.utils import RBException
 from rubberband.utils import gitlab as gl
 
 from .hasher import generate_sha256_hash
@@ -42,7 +43,7 @@ class Importer:
             current user
         """
         if not user:
-            raise Exception("Missing user when initializing client.")
+            raise RBException("Missing user when initializing client.")
 
         self.current_user = user
         self.logger = logging.getLogger(__name__)
@@ -403,12 +404,12 @@ class Importer:
             if os.path.islink(f):
                 msg = "Cannot parse results from a symlink. Please input an absolute path."
                 self._log_failure(msg)
-                raise Exception(msg)
+                raise RBException(msg)
 
             if os.path.isdir(f):
                 msg = "Cannot parse results from a directory. Please input a file path."
                 self._log_failure(msg)
-                raise Exception(msg)
+                raise RBException(msg)
 
             filename, file_extension = os.path.splitext(f)
             if file_extension not in all_file_ext:
@@ -422,7 +423,7 @@ class Importer:
                     if not os.path.exists(f):
                         msg = "Cannot parse results from a file that doesn't exist."
                         self._log_failure(msg)
-                        raise Exception(msg)
+                        raise RBException(msg)
                     required_files[r] = f
                     break
 
@@ -436,7 +437,7 @@ class Importer:
         if missing:
             msg = "Missing required files: {}".format(", ".join(missing))
             self._log_failure(msg)
-            raise Exception(msg)
+            raise RBException(msg)
 
         self.logger.info("Parsing {}.".format(required_files[".out"]))
         required_files.update(optional_files)
@@ -620,7 +621,7 @@ class Importer:
         if len(testruns) != 1:
             msg = f"Unexpected number of testruns. Expected 1, got: {len(testruns)}"
             self._log_failure(msg)
-            raise Exception(msg)
+            raise RBException(msg)
 
         return testruns[0]
 
@@ -645,7 +646,7 @@ class Importer:
 
         # this should not happen
         else:
-            raise Exception("file_id not yet set. Lookup failed.")
+            raise RBException("file_id not yet set. Lookup failed.")
 
     def most_frequent_value(self, data, key, throwex=False):
         """
@@ -666,7 +667,7 @@ class Importer:
             if throwex:
                 msg = "Missing key {} in data.".format("key")
                 self._log_failure(msg)
-                raise Exception(msg)
+                raise RBException(msg)
             else:
                 return None
 
