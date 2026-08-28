@@ -48,13 +48,11 @@ def generate_sha256_hash(filepath):
     sha_result = hashlib.sha256()
 
     try:
-        file_object = open(filepath, "rb")
-    except OSError:
-        return None
+        with open(filepath, "rb") as file_object:
+            for chunk in read_in_chunks(file_object):
+                sha_result.update(chunk)
+            return sha_result.hexdigest()
+    except Exception:  # noqa
+        pass
 
-    for chunk in read_in_chunks(file_object):
-        sha_result.update(chunk)
-
-    file_object.close()
-
-    return sha_result.hexdigest()
+    return None
