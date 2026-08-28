@@ -27,8 +27,9 @@ OPTIONAL_FILES = {".solu", ".err", ".set", ".meta"}
 ALL_SOLU = None
 for allsolucand in ["instancedb.sqlite3", "all.solu", "allpublic.solu"]:
     if os.path.isfile(SOLU_DIR + allsolucand):
-        ALL_SOLU = (SOLU_DIR + allsolucand)
+        ALL_SOLU = SOLU_DIR + allsolucand
         break
+
 
 class Importer:
     """Organize and process retrieved files."""
@@ -141,9 +142,7 @@ class Importer:
             if found:
                 self.importstats.status = "found"
                 self.importstats.setUrl("/result/" + found.meta.id)
-                msg = (
-                    f"File was previously uploaded by {found.get_uploader} on {found.index_timestamp}. Upload aborted."
-                )
+                msg = f"File was previously uploaded by {found.get_uploader} on {found.index_timestamp}. Upload aborted."
                 self._log_info(msg)
                 return
 

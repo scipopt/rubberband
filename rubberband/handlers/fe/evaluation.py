@@ -106,7 +106,9 @@ class EvaluationView(BaseHandler):
             longtable = longtable.drop(delcols, axis=1)
 
             # convert to html and get style
-            add_classes = f"{self.rb_dt_borderless} {self.rb_dt_compact}"  # style for table
+            add_classes = (
+                f"{self.rb_dt_borderless} {self.rb_dt_compact}"  # style for table
+            )
             html_long = table_to_html(
                 longtable, ev, html_id="ipet-long-table", add_class=add_classes
             )
@@ -169,9 +171,7 @@ class EvaluationView(BaseHandler):
             cols = [
                 c
                 for c in df.columns
-                if (
-                    c in ["Group", colindex, "_solved_"] or c.startswith(("N_", "T_"))
-                )
+                if (c in ["Group", colindex, "_solved_"] or c.startswith(("N_", "T_")))
                 and not c.endswith(")p")
             ]
 
@@ -255,7 +255,9 @@ class EvaluationView(BaseHandler):
 
             tridstr = ",".join([tr for tr in testrunids if tr != default_id])
             baseurl = self.get_rb_base_url()
-            evaluation_url = f"{baseurl}/result/{default_id}?compare={tridstr}#evaluation"
+            evaluation_url = (
+                f"{baseurl}/result/{default_id}?compare={tridstr}#evaluation"
+            )
             out = insert_into_latex(out, evaluation_url)
 
             # send reply
@@ -385,7 +387,9 @@ def setup_experiment(testruns, droplist=""):
             y = re.compile(x)
             regexlist.append(y)
         except re.PatternError:
-            logging.getLogger().info(f"Could not compile regular expression {x}. Ignored.")
+            logging.getLogger().info(
+                f"Could not compile regular expression {x}. Ignored."
+            )
 
     excluded_inst = []
     # get data

@@ -139,29 +139,28 @@ class ComparisonEndpoint(BaseHandler):
         cleantime = aggtable["T_sgm(1.0)"][cleanindex]
         cleannrmtime = aggtable["NrmT_sgm(1.0)"][cleanindex]
         cleannodes = aggtable["N_sgm(100.0)"][cleanindex]
-        if alloptindex in aggtable["_count_"] :
+        if alloptindex in aggtable["_count_"]:
             alloptcount = aggtable["_count_"][alloptindex]
             allopttime = aggtable["T_sgm(1.0)"][alloptindex]
             alloptnrmtime = aggtable["NrmT_sgm(1.0)"][alloptindex]
             alloptnodes = aggtable["N_sgm(100.0)"][alloptindex]
-        else :
+        else:
             alloptcount = 0
             allopttime = 0.0
             alloptnrmtime = 0.0
             alloptnodes = 0
-        if affindex in aggtable["_count_"] :
+        if affindex in aggtable["_count_"]:
             affcount = aggtable["_count_"][affindex]
             affsolved = aggtable["_solved_"][affindex]
             afftime = aggtable["T_sgm(1.0)"][affindex]
             affnrmtime = aggtable["NrmT_sgm(1.0)"][affindex]
             affnodes = aggtable["N_sgm(100.0)"][affindex]
-        else :
+        else:
             affcount = 0
             affsolved = 0
             afftime = 0.0
             affnrmtime = 0.0
             affnodes = 0
-
 
         # if we did not evaluate base only, then include also the numbers for base
         if comparehash is not None:
@@ -181,23 +180,23 @@ class ComparisonEndpoint(BaseHandler):
             basecleantime = aggtable["T_sgm(1.0)"][basecleanindex]
             basecleannrmtime = aggtable["NrmT_sgm(1.0)"][basecleanindex]
             basecleannodes = aggtable["N_sgm(100.0)"][basecleanindex]
-            if basealloptindex in aggtable["_count_"] :
+            if basealloptindex in aggtable["_count_"]:
                 basealloptcount = aggtable["_count_"][basealloptindex]
                 baseallopttime = aggtable["T_sgm(1.0)"][basealloptindex]
                 basealloptnrmtime = aggtable["NrmT_sgm(1.0)"][basealloptindex]
-                basealloptnodes  = aggtable["N_sgm(100.0)"][basealloptindex]
-            else :
+                basealloptnodes = aggtable["N_sgm(100.0)"][basealloptindex]
+            else:
                 basealloptcount = 0
                 baseallopttime = 0.0
                 basealloptnrmtime = 0.0
                 basealloptnodes = 0
-            if baseaffindex in aggtable["_count_"] :
+            if baseaffindex in aggtable["_count_"]:
                 baseaffcount = aggtable["_count_"][baseaffindex]
                 baseaffsolved = aggtable["_solved_"][baseaffindex]
                 baseafftime = aggtable["T_sgm(1.0)"][baseaffindex]
                 baseaffnrmtime = aggtable["NrmT_sgm(1.0)"][baseaffindex]
-                baseaffnodes  = aggtable["N_sgm(100.0)"][baseaffindex]
-            else :
+                baseaffnodes = aggtable["N_sgm(100.0)"][baseaffindex]
+            else:
                 baseaffcount = 0
                 baseaffsolved = 0
                 baseafftime = 0.0
@@ -273,7 +272,7 @@ class ComparisonEndpoint(BaseHandler):
                             baseaffsolved,
                             baseafftime,
                             baseaffnrmtime,
-                            baseaffnodes
+                            baseaffnodes,
                         ],
                     )
                 )

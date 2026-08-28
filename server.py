@@ -20,6 +20,7 @@ ONE_DAY = 86400000  # in milliseconds
 
 logger = logging.getLogger()
 
+
 def delete_expired_documents():
     s = TestSet.search()
     s = s.filter("range", expirationdate={"lte": datetime.now().date()})
@@ -77,13 +78,19 @@ def main():
 
     # job to delete expired documents every day
     # because this code is called for each fork (num_processes many), we do this for only one process (assuming the forks have consecutive PIDs)
-    num_processes = options.num_processes if options.num_processes >= 1 else multiprocessing.cpu_count()
+    num_processes = (
+        options.num_processes
+        if options.num_processes >= 1
+        else multiprocessing.cpu_count()
+    )
     if os.getpid() % num_processes == 0:
-       periodic_callback = tornado.ioloop.PeriodicCallback(
-           delete_expired_documents, ONE_DAY
-       )
-       periodic_callback.start()
-       logger.info(f"Started delete_expired_documents() periodic callback in PID {os.getpid()}.")
+        periodic_callback = tornado.ioloop.PeriodicCallback(
+            delete_expired_documents, ONE_DAY
+        )
+        periodic_callback.start()
+        logger.info(
+            f"Started delete_expired_documents() periodic callback in PID {os.getpid()}."
+        )
 
     # start ioloop as main event loop
     tornado.ioloop.IOLoop.current().start()

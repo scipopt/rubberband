@@ -74,7 +74,9 @@ class AnalyzeExternalView(BaseHandler):
         # internal URL for the server-to-server upload; public URL for the
         # browser redirect (behind a reverse proxy these differ)
         base = options.loganalyzer_url.rstrip("/")
-        public_base = (options.loganalyzer_public_url or options.loganalyzer_url).rstrip("/")
+        public_base = (
+            options.loganalyzer_public_url or options.loganalyzer_url
+        ).rstrip("/")
         if not base:
             raise HTTPError(404, reason="LogAnalyzer integration is not configured.")
 
@@ -102,7 +104,9 @@ class AnalyzeExternalView(BaseHandler):
 
         logger.info(
             "LogAnalyzer handoff: base=%s zip_bytes=%d for %s",
-            base, len(zip_bytes), ",".join(ts_ids),
+            base,
+            len(zip_bytes),
+            ",".join(ts_ids),
         )
 
         label = (", ".join(ts.filename for ts in ts_list))[:120] or "Rubberband run"

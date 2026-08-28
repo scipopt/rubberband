@@ -422,8 +422,10 @@ class TestSet(Document):
         for ft in self.settings:
             f = self.settings[ft]
             if type(f) is not Settings:
-               logging.getLogger().error(f"settings[{ft}] is not of Settings type: {f!s}")
-               continue
+                logging.getLogger().error(
+                    f"settings[{ft}] is not of Settings type: {f!s}"
+                )
+                continue
             f.delete()
 
     def load_results(self):
@@ -540,7 +542,5 @@ class Settings(Document):
 
 
 date_handler = lambda obj: (
-    obj.isoformat()
-    if isinstance(obj, (datetime.datetime, datetime.date))
-    else None
+    obj.isoformat() if isinstance(obj, (datetime.datetime, datetime.date)) else None
 )

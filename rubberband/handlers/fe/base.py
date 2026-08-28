@@ -393,7 +393,9 @@ class BaseHandler(RequestHandler):
                     # maximize
                     return -1
             except ValueError:
-                logging.getLogger().info(f"Failure converting primal bound {pb} or dual bound {db} to float for instance {inst_name}. Cannot derive objective sense.")
+                logging.getLogger().info(
+                    f"Failure converting primal bound {pb} or dual bound {db} to float for instance {inst_name}. Cannot derive objective sense."
+                )
         return 0
 
     def format_attrs(self, objs, attr, inst_name):
@@ -481,7 +483,9 @@ class BaseHandler(RequestHandler):
             try:
                 testruns.append(TestSet.get(id=i))
             except Exception:  # noqa  TODO use more specific exception
-                logging.getLogger().error(f"Could not get or append testrun with id={i!s}. Skipped")
+                logging.getLogger().error(
+                    f"Could not get or append testrun with id={i!s}. Skipped"
+                )
         return testruns
 
     def get_testrun_table(

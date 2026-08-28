@@ -164,7 +164,7 @@ def make_app(project_root):
         "xsrf_cookies": True,
         "default_handler_class": ErrorView,
         "logger": loggr,
-        "compress_response": True
+        "compress_response": True,
     }
 
     # set up tornado application

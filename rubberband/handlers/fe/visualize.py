@@ -84,8 +84,7 @@ class VisualizeView(BaseHandler):
                 components.update(testset.to_dict())
                 components["testset_id"] = r.testset_id
                 final_components = {
-                    k: components.get(k, v)
-                    for k, v in datakeys.items()
+                    k: components.get(k, v) for k, v in datakeys.items()
                 }
                 final_data.append(final_components)
 
@@ -106,7 +105,5 @@ class VisualizeView(BaseHandler):
 
 
 date_handler = lambda obj: (
-    obj.isoformat()
-    if isinstance(obj, (datetime.datetime, datetime.date))
-    else None
+    obj.isoformat() if isinstance(obj, (datetime.datetime, datetime.date)) else None
 )
