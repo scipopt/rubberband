@@ -380,16 +380,20 @@ class BaseHandler(RequestHandler):
                 return float(objsen)
         for o in objs:
             try:
-                pb = float(getattr(o.results[inst_name], "PrimalBound", None))
-                db = float(getattr(o.results[inst_name], "DualBound", None))
+                pb = getattr(o.results[inst_name], "PrimalBound", None)
+                db = getattr(o.results[inst_name], "DualBound", None)
+                if not pb or not db:
+                    return 0
+                pb = float(pb)
+                db = float(db)
                 if pb > db:
                     # minimize
                     return 1
-                elif pb < db:
+                if pb < db:
                     # maximize
                     return -1
-            except Exception:
-                logging.getLogger().info(f"Failure retrieving primal or dual bound for instance {inst_name}. Cannot derive objective sense.")
+            except ValueError:
+                logging.getLogger().info(f"Failure converting primal bound {pb} or dual bound {db} to float for instance {inst_name}. Cannot derive objective sense.")
         return 0
 
     def format_attrs(self, objs, attr, inst_name):
