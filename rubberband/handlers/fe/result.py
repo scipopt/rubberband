@@ -158,7 +158,7 @@ class ResultView(BaseHandler):
         c.reimport_files(paths, t)
 
         msg = f"{t.meta.id} updated by {self.current_user}"
-        logging.info(msg)
+        logging.getLogger().info(msg)
 
     def delete(self, testset_id):
         """
@@ -183,7 +183,7 @@ class ResultView(BaseHandler):
         t.delete()
 
         msg = f"{self.current_user} deleted {t.meta.id}"
-        logging.info(msg)
+        logging.getLogger().info(msg)
 
 
 def load_testsets(ids):

@@ -422,7 +422,7 @@ class TestSet(Document):
         for ft in self.settings:
             f = self.settings[ft]
             if type(f) is not Settings:
-               logging.error(f"settings[{ft}] is not of Settings type: {f!s}")
+               logging.getLogger().error(f"settings[{ft}] is not of Settings type: {f!s}")
                continue
             f.delete()
 

@@ -141,10 +141,10 @@ def make_app(project_root):
     # Load options from environment
     config = "/etc/rubberband/app.cfg"
     if os.path.isfile(config):
-        logging.info("Loading additional configuration from /etc/rubberband/app.cfg")
+        loggr.info("Loading additional configuration from /etc/rubberband/app.cfg")
         options.parse_config_file(config)
     else:
-        logging.info("Using default config.")
+        loggr.info("Using default config.")
 
     # Override options from RUBBERBAND_<UPPER_CASE_NAME> environment variables.
     # Highest priority: env var > config file > code defaults.
@@ -152,7 +152,7 @@ def make_app(project_root):
         env_key = f"RUBBERBAND_{name.upper()}"
         env_val = os.environ.get(env_key)
         if env_val is not None:
-            logging.info("Overriding %s from env var %s", name, env_key)
+            loggr.info("Overriding %s from env var %s", name, env_key)
             setattr(options, name, _coerce_option(name, env_val))
 
     # settings for tornado
@@ -185,7 +185,7 @@ def make_app(project_root):
         **settings,
     )
 
-    logging.info("Setting up Elasticsearch connection.")
+    loggr.info("Setting up Elasticsearch connection.")
     # set up elasticsearch
     # create connection instance
     # the request_timeout argument is needed when you upload big files
