@@ -1,17 +1,17 @@
 """Define variables and setup rubberband app."""
 
-import os
 import logging
+import os
 from urllib.parse import urlparse
 
-from tornado.options import define, options
-from tornado.web import Application
-from tornado.routing import HostMatches
 from elasticsearch import Elasticsearch
 from elasticsearch.dsl.connections import connections
+from tornado.options import define, options
+from tornado.routing import HostMatches
+from tornado.web import Application
 
-from rubberband.routes import routes
 from rubberband.handlers.fe import ErrorView
+from rubberband.routes import routes
 
 # define options that server.py can read from
 define("port", default=8888, help="Port to run tornado on.")
@@ -149,7 +149,7 @@ def make_app(project_root):
     # Override options from RUBBERBAND_<UPPER_CASE_NAME> environment variables.
     # Highest priority: env var > config file > code defaults.
     for name in options:
-        env_key = "RUBBERBAND_{}".format(name.upper())
+        env_key = f"RUBBERBAND_{name.upper()}"
         env_val = os.environ.get(env_key)
         if env_val is not None:
             logging.info("Overriding %s from env var %s", name, env_key)
@@ -177,9 +177,7 @@ def make_app(project_root):
         [
             (
                 HostMatches(
-                    r"(localhost|127\.0\.0\.1|{}|)".format(
-                        urlparse(options.prod_url).hostname
-                    )
+                    rf"(localhost|127\.0\.0\.1|{urlparse(options.prod_url).hostname}|)"
                 ),
                 routes,
             )
@@ -210,7 +208,7 @@ def make_app(project_root):
 
     # settings of tornado app
     if app.settings["debug"]:
-        app.base_url = "http://127.0.0.1:{}".format(options.port)
+        app.base_url = f"http://127.0.0.1:{options.port}"
     else:
         app.base_url = options.prod_url
 

@@ -1,12 +1,14 @@
 """Contains VisualizeView."""
 
 import datetime
-from elasticsearch.dsl import Q
 import json
 
-from .base import BaseHandler
-from rubberband.models import TestSet, Result
+from elasticsearch.dsl import Q
+
 from rubberband.constants import FORMAT_DATE
+from rubberband.models import Result, TestSet
+
+from .base import BaseHandler
 
 
 class VisualizeView(BaseHandler):
@@ -105,7 +107,7 @@ class VisualizeView(BaseHandler):
         return self.write(json.dumps(final_data, default=date_handler))
 
 
-date_handler = lambda obj: (  # noqa
+date_handler = lambda obj: (
     obj.isoformat()
     if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date)
     else None

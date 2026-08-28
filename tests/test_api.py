@@ -1,6 +1,7 @@
-from base import TestHandlerBase
 import json
 import os.path
+
+from base import TestHandlerBase
 
 DATADIR = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data")
 

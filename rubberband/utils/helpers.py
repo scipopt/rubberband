@@ -1,11 +1,11 @@
 """Collection of helper functions."""
 
-from datetime import datetime
 import os
 import re
 import string
+from datetime import datetime
 
-from rubberband.constants import FORMAT_DATETIME_SHORT, FORMAT_DATETIME_LONG
+from rubberband.constants import FORMAT_DATETIME_LONG, FORMAT_DATETIME_SHORT
 
 # what the runs of one build differ in; everything else a run was uploaded with
 # describes the build itself
@@ -39,7 +39,7 @@ def _strip_run_appendices(stem, testrun):
         for letter, attr in (("s", "seed"), ("p", "permutation")):
             value = getattr(testrun, attr, None)
             if value:
-                stem = re.sub(r"-{}{}$".format(letter, int(value)), "", stem)
+                stem = re.sub(rf"-{letter}{int(value)}$", "", stem)
 
     return stem
 
@@ -59,16 +59,14 @@ def shortening_span(text, short):
 
     For example used in column headers.
     """
-    return """<span class="d-none d-xl-block">{longtext}</span>
-    <span class="d-block d-xl-none" title="{longtext}">{shorttext}</span>
-    """.format(longtext=text, shorttext=short)
+    return f"""<span class="d-none d-xl-block">{text}</span>
+    <span class="d-block d-xl-none" title="{text}">{short}</span>
+    """
 
 
 def get_link(href, text, length=30, end=10):
     """Get a link with shortened text to href and full text as title."""
-    link = '<a href="{}" title="{}">{}</a>'.format(
-        href, text, shorten_str(text, length, end)
-    )
+    link = f'<a href="{href}" title="{text}">{shorten_str(text, length, end)}</a>'
     return link
 
 
@@ -79,7 +77,7 @@ def shorten_str(string, length=30, end=10):
     if len(string) <= length:
         return string
     else:
-        return "{}...{}".format(string[: length - end], string[-end:])
+        return f"{string[: length - end]}...{string[-end:]}"
 
 
 def get_letters_list(quantity):
@@ -242,13 +240,13 @@ def build_group_key(testrun):
         # "../<build>/bin/scip", depending on where the check ran from
         if build.get("BinName"):
             build["BinName"] = re.sub(r"^(\.\.?/)+", "", str(build["BinName"]))
-        return "|".join("{}={}".format(key, build[key]) for key in sorted(build))
+        return "|".join(f"{key}={build[key]}" for key in sorted(build))
 
     filename = getattr(testrun, "filename", "") or ""
     stem = _strip_run_appendices(os.path.splitext(filename)[0], testrun)
     uploaded = str(getattr(testrun, "upload_timestamp", "") or "")[:10]
 
-    return "{}|{}".format(stem, uploaded)
+    return f"{stem}|{uploaded}"
 
 
 def build_groups(testruns):

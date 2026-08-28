@@ -1,7 +1,7 @@
 """Methods to use for the communication with gitlab."""
 
-from tornado.options import options
 from gitlab import Gitlab
+from tornado.options import options
 
 
 def get_commit_data(project_id, git_hash):

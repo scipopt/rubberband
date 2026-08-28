@@ -1,7 +1,6 @@
 """URL routes for rubberband tornado app."""
 
-import rubberband.handlers.fe as fe
-import rubberband.handlers.api as api
+from rubberband.handlers import api, fe
 
 routes = [
     # The following Views all inherit from BaseHandler (in base.py)

@@ -1,13 +1,15 @@
 """Contains ResultView."""
 
-from tornado.web import HTTPError
 import logging
 
-from .base import BaseHandler
+from tornado.web import HTTPError
+
+from rubberband.constants import EXPORT_FILE_TYPES, IPET_EVALUATIONS
 from rubberband.models import TestSet
 from rubberband.utils import Importer, write_file
-from rubberband.utils.helpers import setup_testruns_subst_dict, get_rbid_representation
-from rubberband.constants import EXPORT_FILE_TYPES, IPET_EVALUATIONS
+from rubberband.utils.helpers import get_rbid_representation, setup_testruns_subst_dict
+
+from .base import BaseHandler
 
 
 class ResultView(BaseHandler):
@@ -65,7 +67,7 @@ class ResultView(BaseHandler):
         fileoptions = {}
         for ftype in EXPORT_FILE_TYPES:
             obj = TestSet.get(id=testset_id)
-            file_contents = getattr(obj, "raw")(ftype=ftype)
+            file_contents = obj.raw(ftype=ftype)
             fileoptions[ftype] = file_contents is not None
 
         # sort testruns by their representation and render table
@@ -113,7 +115,7 @@ class ResultView(BaseHandler):
                 status=403, msg="Sorry, you do not have permission to edit this run."
             )
 
-        next_url = "{}/result/{}".format(self.application.base_url, t.meta.id)
+        next_url = f"{self.application.base_url}/result/{t.meta.id}"
         tags = self.get_argument("tags-input", default=None)
 
         if tags is not None:
@@ -155,7 +157,7 @@ class ResultView(BaseHandler):
         c = Importer(user=self.current_user)
         c.reimport_files(paths, t)
 
-        msg = "{} updated by {}".format(t.meta.id, self.current_user)
+        msg = f"{t.meta.id} updated by {self.current_user}"
         logging.info(msg)
 
     def delete(self, testset_id):
@@ -180,7 +182,7 @@ class ResultView(BaseHandler):
         t.delete_all_associations()
         t.delete()
 
-        msg = "{} deleted {}".format(self.current_user, t.meta.id)
+        msg = f"{self.current_user} deleted {t.meta.id}"
         logging.info(msg)
 
 

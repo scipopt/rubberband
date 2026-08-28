@@ -1,13 +1,15 @@
 """Contains UploadApiEndpoint."""
 
 import logging
+
 from tornado.escape import json_encode
-from tornado.ioloop import IOLoop
 from tornado.gen import coroutine
+from tornado.ioloop import IOLoop
+
+from rubberband.utils import Importer, sendmail, write_file
+from rubberband.utils.importer import bundle_files
 
 from .base import BaseHandler, authenticated
-from rubberband.utils import Importer, write_file, sendmail
-from rubberband.utils.importer import bundle_files
 
 
 class UploadAsyncEndpoint(BaseHandler):
@@ -37,7 +39,6 @@ class UploadAsyncEndpoint(BaseHandler):
 
     def check_xsrf_cookie(self):
         """Turn off the xsrf cookie for upload api endpoint, since we check the user differently."""
-        pass
 
 
 class UploadEndpoint(BaseHandler):
@@ -76,7 +77,7 @@ class UploadEndpoint(BaseHandler):
                     )
                 )
             else:
-                url = "{}{}".format(self.application.base_url, result.getUrl())
+                url = self.application.base_url + result.getUrl()
                 response.append(
                     make_response(result.status, url, basename=result.basename)
                 )
@@ -85,7 +86,6 @@ class UploadEndpoint(BaseHandler):
 
     def check_xsrf_cookie(self):
         """Turn off the xsrf cookie for upload api endpoint, since we check the user differently."""
-        pass
 
 
 @coroutine
@@ -122,12 +122,12 @@ def import_files(paths, tags, user, url_base, expirationdate=None):
                 )
             )
         else:
-            url = "{}{}".format(url_base, result.getUrl())
+            url = url_base + result.getUrl()
             response.append(
                 make_response(result.status, url=url, basename=result.basename)
             )
 
-    logging.info("Sending emails to {}".format(user))
+    logging.info(f"Sending emails to {user}")
     for r in response:
         sendmail(r, user)
 

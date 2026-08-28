@@ -1,15 +1,16 @@
 # starting from this file
 
-import os
-import tornado.ioloop
-import tornado.httpserver
-from datetime import date
 import logging
 import multiprocessing
+import os
+from datetime import date
+
+import tornado.httpserver
+import tornado.ioloop
 
 from rubberband.boilerplate import make_app, options
 from rubberband.constants import FILES_DIR
-from rubberband.models import TestSet, Settings, File, Result
+from rubberband.models import File, Result, Settings, TestSet
 
 KB = 1024
 MB = 1024 * KB

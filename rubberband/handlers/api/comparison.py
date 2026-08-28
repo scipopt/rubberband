@@ -1,18 +1,19 @@
 """Contains EvaluationView."""
 
 from datetime import datetime
-from tornado.web import HTTPError
-
-from .base import BaseHandler, authenticated
-from rubberband.constants import FORMAT_DATE
-from rubberband.utils import ALL_SOLU
-from rubberband.handlers.fe.evaluation import (
-    setup_experiment,
-    get_testruns,
-    set_defaultgroup,
-)
 
 from ipet.evaluation import IPETEvaluation
+from tornado.web import HTTPError
+
+from rubberband.constants import FORMAT_DATE
+from rubberband.handlers.fe.evaluation import (
+    get_testruns,
+    set_defaultgroup,
+    setup_experiment,
+)
+from rubberband.utils import ALL_SOLU
+
+from .base import BaseHandler, authenticated
 
 
 class ComparisonEndpoint(BaseHandler):
@@ -71,7 +72,7 @@ class ComparisonEndpoint(BaseHandler):
 
         # evaluate with ipet
         ex, _ = setup_experiment(testruns + [baserun], "")
-        evalstring = """<?xml version="1.0" ?>
+        evalstring = f"""<?xml version="1.0" ?>
 <Evaluation comparecolformat="%.3f" index="ProblemName Seed Permutation GitHash" indexsplit="-1" fillin="True">
     <Column formatstr="%.2f" name="T" origcolname="SolvingTime" minval="0.5" comp="quot shift. by 1" maxval="TimeLimit" alternative="TimeLimit" reduction="shmean shift. by 1">
         <Aggregation aggregation="shmean" name="sgm" shiftby="1.0"/>
@@ -82,7 +83,7 @@ class ComparisonEndpoint(BaseHandler):
     <Column formatstr="%.0f" name="N" origcolname="Nodes" comp="quot shift. by 100" reduction="shmean shift. by 100">
         <Aggregation aggregation="shmean" name="sgm" shiftby="100.0" />
     </Column>
-    <Column formatstr="%.2f" origcolname="TimeLimit" alternative="{tl}"
+    <Column formatstr="%.2f" origcolname="TimeLimit" alternative="{baserun.time_limit}"
         reduction="mean">
     </Column>
     <FilterGroup name="all"/>
@@ -102,7 +103,7 @@ class ComparisonEndpoint(BaseHandler):
         <Filter anytestrun="all" expression1="_solved_" expression2="1" operator="eq"/>
     </FilterGroup>
 </Evaluation>
-        """.format(tl=baserun.time_limit)
+        """
         ev = IPETEvaluation.fromXML(evalstring)
         if ALL_SOLU:
             ev.set_validate(ALL_SOLU)
@@ -281,4 +282,3 @@ class ComparisonEndpoint(BaseHandler):
 
     def check_xsrf_cookie(self):
         """Turn off the xsrf cookie for upload api endpoint, since we check the user differently."""
-        pass

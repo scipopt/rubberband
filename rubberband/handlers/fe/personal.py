@@ -30,5 +30,5 @@ class PersonalView(BaseHandler):
         Renders `personal.html`.
         """
         self.clear_all_cookies()
-        next_url = "{}/personal".format(self.application.base_url)
+        next_url = self.application.base_url + "/personal"
         self.redirect(next_url)

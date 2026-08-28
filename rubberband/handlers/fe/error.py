@@ -1,7 +1,8 @@
 """Contains ErrorView."""
 
-from .base import BaseHandler
 from tornado.web import HTTPError
+
+from .base import BaseHandler
 
 
 class ErrorView(BaseHandler):

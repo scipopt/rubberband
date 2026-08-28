@@ -1,20 +1,20 @@
 """Contains EvaluationView."""
 
-from lxml import html
-import pandas as pd
-
-import re
 import json
 import logging
+import re
 
-from .base import BaseHandler
-from rubberband.constants import IPET_EVALUATIONS, NONE_DISPLAY, EVAL_FILE
-from rubberband.models import TestSet
-from rubberband.utils import RBLogHandler, ALL_SOLU
-from rubberband.utils.helpers import get_rbid_representation, setup_testruns_subst_dict
-
+import pandas as pd
 from ipet import Experiment, TestRun
 from ipet.evaluation import IPETEvaluation
+from lxml import html
+
+from rubberband.constants import EVAL_FILE, IPET_EVALUATIONS, NONE_DISPLAY
+from rubberband.models import TestSet
+from rubberband.utils import ALL_SOLU, RBLogHandler
+from rubberband.utils.helpers import get_rbid_representation, setup_testruns_subst_dict
+
+from .base import BaseHandler
 
 
 class EvaluationView(BaseHandler):
@@ -259,9 +259,7 @@ class EvaluationView(BaseHandler):
 
             tridstr = ",".join([tr for tr in testrunids if tr != default_id])
             baseurl = self.get_rb_base_url()
-            evaluation_url = "{}/result/{}?compare={}#evaluation".format(
-                baseurl, default_id, tridstr
-            )
+            evaluation_url = f"{baseurl}/result/{default_id}?compare={tridstr}#evaluation"
             out = insert_into_latex(out, evaluation_url)
 
             # send reply
@@ -450,7 +448,7 @@ def process_ipet_table(table, repres, add_ind=False, swap=False):
         cellcount = 0
         for cell in row.iter():
             if add_ind and cellcount == 1 and cell.tag == "th" and cell.text != oldtext:
-                cell.text = "{:0>2d}. {}".format(groupcount, cell.text)
+                cell.text = f"{groupcount:0>2d}. {cell.text}"
                 oldtext = cell.text
                 groupcount = groupcount + 1
             rowspan = cell.get("rowspan")
@@ -517,7 +515,7 @@ def table_to_html(df, ev, html_id="", add_class=""):
     # apply sortlevel
     df = ev.sortDataFrame(df)
 
-    tableclasses = 'ipet-table rb-table-data {}" width="100%'.format(add_class)
+    tableclasses = f'ipet-table rb-table-data {add_class}" width="100%'
 
     htmlstr = df.to_html(
         border=0,
@@ -628,7 +626,7 @@ def generate_filtergroup_selector(table, evaluation):
     gtindex = [c for c in table.columns if c[-1] == "groupTags"][0]
     table["Filtergroups"] = list(map("|{}|".format, table[gtindex]))
 
-    out = '<div id="ipet-long-table-filter col"><label class="col-form-label text-left">Select filtergroups:<select id="ipet-long-filter-select" class="custom-select">'  # noqa
+    out = '<div id="ipet-long-table-filter col"><label class="col-form-label text-left">Select filtergroups:<select id="ipet-long-filter-select" class="custom-select">'
 
     for fg in evaluation.getActiveFilterGroups():
         fg_name = fg.getName()
@@ -639,13 +637,13 @@ def generate_filtergroup_selector(table, evaluation):
             continue
 
         # construct new option string
-        newoption = '<option value="' + fg_name + '">' + fg_name + "</option>"  # noqa
+        newoption = '<option value="' + fg_name + '">' + fg_name + "</option>"
 
         # update selector strin
         out = out + newoption
 
     maxfgstr = ",".join(
-        ["|{}|".format(fg.getName()) for fg in evaluation.getActiveFilterGroups()]
+        [f"|{fg.getName()}|" for fg in evaluation.getActiveFilterGroups()]
     )
     maxlen = len(maxfgstr)
 

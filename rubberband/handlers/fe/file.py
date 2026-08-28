@@ -2,8 +2,9 @@
 
 from tornado.web import HTTPError
 
-from rubberband.models import TestSet, Result
 from rubberband.constants import EXPORT_DATA_FORMATS, EXPORT_FILE_TYPES
+from rubberband.models import Result, TestSet
+
 from .base import BaseHandler
 
 

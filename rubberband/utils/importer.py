@@ -1,23 +1,25 @@
 """Methods for importing a TestSet from logfiles."""
 
-import os
 import json
 import logging
+import os
 import traceback
-import dateutil.parser
-from elasticsearch import TransportError
 from datetime import datetime
 
+import dateutil.parser
+from elasticsearch import TransportError
 from ipet import Experiment, Key
 from ipet.misc import loader
 from tornado.options import options
 
-# package imports
-from rubberband.models import TestSet, Result, File, Settings
 from rubberband.constants import ADD_READERS, FORMAT_DATETIME, SOLU_DIR
+
+# package imports
+from rubberband.models import File, Result, Settings, TestSet
 from rubberband.utils import gitlab as gl
-from .stats import ImportStats
+
 from .hasher import generate_sha256_hash
+from .stats import ImportStats
 
 REQUIRED_FILES = set([".out"])
 OPTIONAL_FILES = set([".solu", ".err", ".set", ".meta"])
@@ -27,7 +29,7 @@ for allsolucand in ["instancedb.sqlite3", "all.solu", "allpublic.solu"]:
         ALL_SOLU = (SOLU_DIR + allsolucand)
         break
 
-class Importer(object):
+class Importer:
     """Organize and process retrieved files."""
 
     def __init__(self, user):
@@ -45,9 +47,7 @@ class Importer(object):
         self.current_user = user
         self.logger = logging.getLogger(__name__)
         self.logger.info(
-            "{} opened a connection to Elasticsearch with the {}".format(
-                self.current_user, type(self).__name__
-            )
+            f"{self.current_user} opened a connection to Elasticsearch with the {type(self).__name__}"
         )
         self.tags = []
 
@@ -95,7 +95,7 @@ class Importer(object):
         self.importstats = ImportStats("results", basename=basename)
         self.tags = tags
         self.remove_files = remove
-        self.logger.info("Found {} files. Beginning to parse.".format(total_files))
+        self.logger.info(f"Found {total_files} files. Beginning to parse.")
         try:
             # parsing all locally saved files
             self.parse_file_bundle(paths, expirationdate=expirationdate)
@@ -137,11 +137,9 @@ class Importer(object):
             found = self.file_lookup()
             if found:
                 self.importstats.status = "found"
-                self.importstats.setUrl("/result/{}".format(found.meta.id))
+                self.importstats.setUrl("/result/" + found.meta.id)
                 msg = (
-                    "File was previously uploaded by {} on {}. Upload aborted.".format(
-                        found.get_uploader, found.index_timestamp
-                    )
+                    f"File was previously uploaded by {found.get_uploader} on {found.index_timestamp}. Upload aborted."
                 )
                 self._log_info(msg)
                 return
@@ -209,9 +207,9 @@ class Importer(object):
         for k, v in results.items():
             results[k]["instance_type"] = _determine_type(v)
             iteration_values = [
-                results[k].get("LP_Iterations_barrierLP"),
-                results[k].get("LP_Iterations_dualLP"),
-                results[k].get("LP_Iterations_primalLP"),
+                v.get("LP_Iterations_barrierLP"),
+                v.get("LP_Iterations_dualLP"),
+                v.get("LP_Iterations_primalLP"),
             ]
 
             if None in set(iteration_values):
@@ -319,7 +317,7 @@ class Importer(object):
             file_data["settings_default"] = settings[1]
 
         # get git data if it is available
-        if "GitHash" in data and data["GitHash"]:
+        if data.get("GitHash"):
             git_hash = file_data["git_hash"]
             file_data["git_hash_dirty"] = git_hash.endswith("-dirty")
             if file_data["git_hash_dirty"]:
@@ -344,9 +342,7 @@ class Importer(object):
                         commit.author_email
                     )
                 except Exception:
-                    msg = "Couldn't find commit {} in Gitlab. Aborting...".format(
-                        git_hash
-                    )
+                    msg = f"Couldn't find commit {git_hash} in Gitlab. Aborting..."
                     self._log_failure(msg)
 
         return file_data
@@ -526,7 +522,7 @@ class Importer(object):
         )
         self.logger.info(msg)
         self.importstats.status = "success"
-        self.importstats.setUrl("/result/{}".format(self.testset_meta_id))
+        self.importstats.setUrl("/result/" + self.testset_meta_id)
 
     def backup_files(self):
         """Save all file contents in Elasticsearch."""
@@ -544,7 +540,7 @@ class Importer(object):
                 "testset_id": self.testset_meta_id,
             }
             with open(f) as f_in:
-                self._log_info("Backing up {} in Elasticsearch".format(f))
+                self._log_info(f"Backing up {f} in Elasticsearch")
 
                 data["text"] = f_in.read()
                 try:
@@ -618,9 +614,7 @@ class Importer(object):
 
         testruns = c.getTestRuns()
         if len(testruns) != 1:
-            msg = "Unexpected number of testruns. Expected 1, got: {}".format(
-                len(testruns)
-            )
+            msg = f"Unexpected number of testruns. Expected 1, got: {len(testruns)}"
             self._log_failure(msg)
             raise Exception(msg)
 

@@ -7,13 +7,14 @@ import uuid
 import zipfile
 from io import BytesIO
 
-from tornado.web import HTTPError
-from tornado.options import options
 from tornado.httpclient import AsyncHTTPClient, HTTPRequest
+from tornado.options import options
+from tornado.web import HTTPError
+
+from rubberband.constants import EXPORT_FILE_TYPES
 
 from .base import BaseHandler
 from .result import load_testsets
-from rubberband.constants import EXPORT_FILE_TYPES
 
 logger = logging.getLogger(__name__)
 
@@ -40,23 +41,21 @@ def _encode_multipart(fields, files):
     for name, value in fields.items():
         lines += [
             marker,
-            'Content-Disposition: form-data; name="{}"'.format(name).encode(),
+            f'Content-Disposition: form-data; name="{name}"'.encode(),
             b"",
             value.encode(),
         ]
     for name, filename, content_type, data in files:
         lines += [
             marker,
-            'Content-Disposition: form-data; name="{}"; filename="{}"'.format(
-                name, filename
-            ).encode(),
-            "Content-Type: {}".format(content_type).encode(),
+            f'Content-Disposition: form-data; name="{name}"; filename="{filename}"'.encode(),
+            f"Content-Type: {content_type}".encode(),
             b"",
             data,
         ]
     lines += [("--" + boundary + "--").encode(), b""]
     body = b"\r\n".join(lines)
-    return body, "multipart/form-data; boundary={}".format(boundary)
+    return body, f"multipart/form-data; boundary={boundary}"
 
 
 class AnalyzeExternalView(BaseHandler):
@@ -93,11 +92,7 @@ class AnalyzeExternalView(BaseHandler):
                     for ftype in EXPORT_FILE_TYPES:
                         try:
                             archive.writestr(
-                                "{}/{}{}".format(
-                                    ts.meta.id,
-                                    os.path.splitext(ts.filename)[0],
-                                    ftype,
-                                ),
+                                f"{ts.meta.id}/{os.path.splitext(ts.filename)[0]}{ftype}",
                                 ts.raw(ftype),
                             )
                         except TypeError:
@@ -117,7 +112,7 @@ class AnalyzeExternalView(BaseHandler):
         )
 
         request = HTTPRequest(
-            url="{}/api/upload".format(base),
+            url=f"{base}/api/upload",
             method="POST",
             body=body,
             headers={"Content-Type": content_type},
@@ -131,7 +126,7 @@ class AnalyzeExternalView(BaseHandler):
                 logger.error(
                     "LogAnalyzer upload response body: %s", e.response.body[:1000]
                 )
-            raise HTTPError(502, reason="Could not reach LogAnalyzer: {}".format(e))
+            raise HTTPError(502, reason="Could not reach LogAnalyzer: " + e)
 
         try:
             payload = json.loads(response.body)
@@ -151,10 +146,8 @@ class AnalyzeExternalView(BaseHandler):
         elif payload.get("runs"):
             run_ids = [r["run_id"] for r in payload["runs"] if r.get("run_id")]
             if len(run_ids) == 2:
-                self.redirect(
-                    "{}/compare?runs={}".format(public_base, ",".join(run_ids))
-                )
+                self.redirect(public_base + "/compare?runs=" + ",".join(run_ids))
             else:
-                self.redirect("{}/".format(public_base))
+                self.redirect(public_base + "/")
         else:
             raise HTTPError(502, reason="Unexpected response from LogAnalyzer.")

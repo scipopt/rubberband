@@ -49,7 +49,7 @@ def generate_sha256_hash(filepath):
 
     try:
         file_object = open(filepath, "rb")
-    except IOError:
+    except OSError:
         return None
 
     for chunk in read_in_chunks(file_object):

@@ -1,6 +1,7 @@
 """Baseclass for tests."""
 
 import os
+
 from tornado.testing import AsyncHTTPTestCase
 
 from rubberband.boilerplate import make_app

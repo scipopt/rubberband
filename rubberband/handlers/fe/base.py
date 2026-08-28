@@ -1,28 +1,29 @@
 """Common class to derive all rubberband web request handlers from."""
 
+import traceback
 from collections.abc import Iterable
 from datetime import datetime
-from tornado.web import RequestHandler
-from tornado.options import options
-from rubberband.utils.gitlab import get_user_access_level, get_username
-import traceback
 
-from rubberband.models import TestSet
+from tornado.options import options
+from tornado.web import RequestHandler
+
 from rubberband.constants import (
-    NONE_DISPLAY,
+    FORMAT_DATETIME_LONG,
+    INFINITY_DISPLAY,
     INFINITY_KEYS,
     INFINITY_MASK,
-    INFINITY_DISPLAY,
-    FORMAT_DATETIME_LONG,
+    NONE_DISPLAY,
 )
+from rubberband.models import TestSet
+from rubberband.utils.gitlab import get_user_access_level, get_username
 from rubberband.utils.helpers import (
-    shorten_str,
-    get_link,
-    shortening_span,
-    shortening_repres_id,
-    rb_join_arg,
     build_groups,
+    get_link,
     group_testruns,
+    rb_join_arg,
+    shorten_str,
+    shortening_repres_id,
+    shortening_span,
 )
 
 
@@ -203,7 +204,7 @@ class BaseHandler(RequestHandler):
 
         Define default values for templates.
         """
-        namespace = super(BaseHandler, self).get_template_namespace()
+        namespace = super().get_template_namespace()
 
         name_space = dict(
             handler=self,
@@ -293,7 +294,7 @@ class BaseHandler(RequestHandler):
     def clusterbench(self, obj):
         """Format ClusterBenchmarkID to a date."""
         cbid = self.format_attr(obj.metadata, "ClusterBenchmarkID")
-        return "({}.{}.{})".format(cbid[6:8], cbid[4:6], cbid[0:4])
+        return f"({cbid[6:8]}.{cbid[4:6]}.{cbid[0:4]})"
 
     def format_attr(self, obj, attr):
         """
@@ -327,9 +328,9 @@ class BaseHandler(RequestHandler):
                 val_tlim = getattr(obj, "time_limit", None)
                 val_tfac = getattr(obj, "time_factor", None)
                 if val_tfac is not None:
-                    return "x {}".format(val_tfac)
+                    return f"x {val_tfac}"
                 elif val_tlim is not None:
-                    return "{}s".format(val_tlim)
+                    return f"{val_tlim}s"
                 else:
                     return ""
 

@@ -1,11 +1,13 @@
 """Contains DownloadView."""
 
-from tornado.web import HTTPError
+import os
 import zipfile
 from io import BytesIO
-import os
 
-from rubberband.constants import IPET_EVALUATIONS, EXPORT_FILE_TYPES
+from tornado.web import HTTPError
+
+from rubberband.constants import EXPORT_FILE_TYPES, IPET_EVALUATIONS
+
 from .base import BaseHandler
 from .result import load_testsets
 
@@ -40,11 +42,7 @@ class DownloadView(BaseHandler):
                         for ftype in EXPORT_FILE_TYPES:
                             try:
                                 archive.writestr(
-                                    "{}/{}{}".format(
-                                        ts.meta.id,
-                                        os.path.splitext(ts.filename)[0],
-                                        ftype,
-                                    ),
+                                    f"{ts.meta.id}/{os.path.splitext(ts.filename)[0]}{ftype}",
                                     ts.raw(ftype),
                                 )
                             except TypeError:
