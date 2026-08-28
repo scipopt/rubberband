@@ -66,7 +66,7 @@ class Importer:
         self.remove_files = True
         try:
             self.parse_file_bundle(paths, initial=False, testset=testset)
-        except Exception:
+        except Exception:  # noqa
             self.importstats.status = "fail"
             traceback.print_exc()
 
@@ -101,7 +101,7 @@ class Importer:
         try:
             # parsing all locally saved files
             self.parse_file_bundle(paths, expirationdate=expirationdate)
-        except Exception:
+        except Exception:  # noqa
             self.importstats.status = "fail"
             traceback.print_exc()
 
@@ -345,7 +345,7 @@ class Importer:
                     file_data["git_commit_author"] = gl.get_username(
                         commit.author_email
                     )
-                except Exception:
+                except Exception:  # noqa
                     msg = f"Couldn't find commit {git_hash} in Gitlab. Aborting..."
                     self._log_failure(msg)
 

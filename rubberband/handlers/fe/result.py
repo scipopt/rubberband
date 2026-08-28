@@ -207,7 +207,7 @@ def load_testsets(ids):
             t.load_results()
             t.load_settings()
             tss.append(t)
-    except Exception:
+    except Exception:  # noqa  TODO catch more specific exception and error message
         raise HTTPError(404)
 
     return tss

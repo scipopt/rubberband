@@ -480,7 +480,7 @@ class BaseHandler(RequestHandler):
         for i in starred:
             try:
                 testruns.append(TestSet.get(id=i))
-            except Exception:
+            except Exception:  # noqa  TODO use more specific exception
                 logging.getLogger().error(f"Could not get or append testrun with id={i!s}. Skipped")
         return testruns
 
