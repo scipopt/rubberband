@@ -127,8 +127,9 @@ def import_files(paths, tags, user, url_base, expirationdate=None):
                 make_response(result.status, url=url, basename=result.basename)
             )
 
-    logging.info("Sending an email to {}".format(user))
-    sendmail(response, user)
+    logging.info("Sending emails to {}".format(user))
+    for r in response:
+        sendmail(r, user)
 
 
 def perform_import(files, tags, user, expirationdate=None):
