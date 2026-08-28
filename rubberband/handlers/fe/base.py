@@ -1,5 +1,6 @@
 """Common class to derive all rubberband web request handlers from."""
 
+import logging
 import traceback
 from collections.abc import Iterable
 from datetime import datetime
@@ -388,7 +389,7 @@ class BaseHandler(RequestHandler):
                     # maximize
                     return -1
             except Exception:
-                pass
+                logging.getLogger().info(f"Failure retrieving primal or dual bound for instance {inst_name}. Cannot derive objective sense.")
         return 0
 
     def format_attrs(self, objs, attr, inst_name):
@@ -476,7 +477,7 @@ class BaseHandler(RequestHandler):
             try:
                 testruns.append(TestSet.get(id=i))
             except Exception:
-                pass
+                logging.getLogger().error(f"Could not get or append testrun with id={i!s}. Skipped")
         return testruns
 
     def get_testrun_table(

@@ -385,7 +385,7 @@ def setup_experiment(testruns, droplist=""):
             y = re.compile(x)
             regexlist.append(y)
         except Exception:
-            pass
+            logging.getLogger().info(f"Could not compile regular expression {x}. Ignored.")
 
     excluded_inst = []
     # get data
