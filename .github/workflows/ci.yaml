@@ -17,10 +17,8 @@ jobs:
       # is up and Rubberband answers on its port.
       - name: Start the stack
         run: docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d --build --wait
-      - name: Run linter and formatter
-        run: |
-          docker compose exec -T rubberband ruff check rubberband
-          docker compose exec -T rubberband ruff check tests
+      - name: Run linter
+        run: docker compose exec -T rubberband ruff check rubberband tests server.py setup.py
       - name: Build documentation
         run: docker compose exec -T --workdir /app/doc rubberband make doc
       - name: Run tests
