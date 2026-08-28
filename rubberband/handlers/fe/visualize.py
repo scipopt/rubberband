@@ -97,10 +97,8 @@ class VisualizeView(BaseHandler):
             s = s.filter("and", Q("range", **range_params))
             s = s.filter(Q("term", test_set=query))
 
-            res = []
             # this uses pagination/scroll
-            for hit in s.scan():
-                res.append(hit)
+            res = [hit for hit in s.scan()]
 
             final_data.append(res)
 
