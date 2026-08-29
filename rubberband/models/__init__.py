@@ -1,23 +1,24 @@
 """Define data models and methods."""
 
+import datetime
 import gzip
 import json
-import datetime
 import logging
-from elasticsearch.dsl import Boolean, Document, Text, Keyword, Date, Nested, Integer
+
+from elasticsearch.dsl import Boolean, Date, Document, Integer, Keyword, Nested, Text
 from elasticsearch.dsl.connections import connections
 from elasticsearch.dsl.utils import AttrDict
 from elasticsearch.helpers import scan as es_scan
 from ipet import Key
 
 from rubberband.constants import (
+    FILE_INDEX,
+    INFINITY_FLOAT,
     INFINITY_KEYS,
     INFINITY_MASK,
-    INFINITY_FLOAT,
-    FILE_INDEX,
     RESULT_INDEX,
-    TESTSET_INDEX,
     SETTINGS_INDEX,
+    TESTSET_INDEX,
 )
 
 
@@ -58,7 +59,7 @@ class File(Document):
 
     def __str__(self):
         """Return a string description of the file object."""
-        return "File {} {}".format(self.filename, self.type)
+        return f"File {self.filename} {self.type}"
 
 
 class Result(Document):
@@ -95,7 +96,7 @@ class Result(Document):
 
     def __str__(self):
         """Return a string description of the result object."""
-        return "Result {}({})".format(self.instance_name, self.instance_id)
+        return f"Result {self.instance_name}({self.instance_id})"
 
     def raw(self, ftype=".out"):
         """
@@ -195,7 +196,7 @@ class TestSet(Document):
 
     def __str__(self):
         """Return a string description of the testset object."""
-        return "TestSet {}".format(self.filename)
+        return "TestSet " + self.filename
 
     @property
     def get_uploader(self):
@@ -270,14 +271,14 @@ class TestSet(Document):
                 # copy: AttrDict.to_dict() returns the underlying dict itself,
                 # and the keys added below must not land in the cached results
                 all_instances[i] = dict(self.results[i].to_dict())
-                if "instance_id" not in all_instances[i].keys():
+                if "instance_id" not in all_instances[i]:
                     all_instances[i]["instance_id"] = count
                     count = count + 1
-                if "ProblemName" not in all_instances[i].keys():
+                if "ProblemName" not in all_instances[i]:
                     all_instances[i]["ProblemName"] = all_instances[i]["instance_name"]
-                if "TimeLimit" not in all_instances[i].keys():
+                if "TimeLimit" not in all_instances[i]:
                     all_instances[i]["TimeLimit"] = self.get_data("TimeLimit")
-                if "TimeFactor" not in all_instances[i].keys():
+                if "TimeFactor" not in all_instances[i]:
                     all_instances[i]["TimeFactor"] = self.get_data("TimeFactor")
                 if self.lp_solver_githash:
                     all_instances[i]["SpxGitHash"] = self.lp_solver_githash
@@ -333,16 +334,11 @@ class TestSet(Document):
         if key == "ReportVersion":
             if self.lp_solver is None:
                 if self.solver_version is None:
-                    return "\\{}".format(str.lower(self.solver))
+                    return f"\\{str.lower(self.solver)}"
                 else:
-                    return "\\{}~{}".format(str.lower(self.solver), self.solver_version)
+                    return f"\\{str.lower(self.solver)}~{self.solver_version}"
             else:
-                return "\\{}~{}+\\{}~{}".format(
-                    str.lower(self.solver),
-                    self.solver_version,
-                    str.lower(self.lp_solver),
-                    self.lp_solver_version,
-                )
+                return f"\\{str.lower(self.solver)}~{self.solver_version}+\\{str.lower(self.lp_solver)}~{self.lp_solver_version}"
 
     def json(self, ftype=".out"):
         """
@@ -426,8 +422,10 @@ class TestSet(Document):
         for ft in self.settings:
             f = self.settings[ft]
             if type(f) is not Settings:
-               logging.error("settings[{}] is not of Settings type: {}".format(ft, str(f)))
-               continue
+                logging.getLogger().error(
+                    f"settings[{ft}] is not of Settings type: {f!s}"
+                )
+                continue
             f.delete()
 
     def load_results(self):
@@ -449,8 +447,8 @@ class TestSet(Document):
         # this uses pagination/scroll
         for doc in es_scan(client, index=RESULT_INDEX, query=query, size=1000):
             hit = ResultHit(doc)
-            results["ids"]["{} ({})".format(hit.instance_name, hit.instance_id)] = hit
-            results["names"]["{}".format(hit.instance_name)] = hit
+            results["ids"][f"{hit.instance_name} ({hit.instance_id})"] = hit
+            results["names"][f"{hit.instance_name}"] = hit
 
         if len(results["ids"].keys()) == len(results["names"].keys()):
             self.results = results["names"]
@@ -527,9 +525,8 @@ class Settings(Document):
         for i in INFINITY_KEYS:
             if getattr(self, i, None) == INFINITY_FLOAT:
                 setattr(self, i, INFINITY_MASK)
-            if kwargs != {} and i in kwargs.keys():
-                if kwargs[i] == INFINITY_FLOAT:
-                    kwargs[i] = INFINITY_MASK
+            if kwargs != {} and i in kwargs and kwargs[i] == INFINITY_FLOAT:
+                kwargs[i] = INFINITY_MASK
 
         key = "conflict/uselocalrows"
         if getattr(self, key, None):
@@ -537,15 +534,13 @@ class Settings(Document):
         else:
             setattr(self, key, 1)
 
-        if kwargs != {} and key in kwargs.keys():
+        if kwargs != {} and key in kwargs:
             if kwargs[key]:
                 kwargs[key] = 0
             else:
                 kwargs[key] = 1
 
 
-date_handler = lambda obj: (  # noqa
-    obj.isoformat()
-    if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date)
-    else None
+date_handler = lambda obj: (
+    obj.isoformat() if isinstance(obj, (datetime.datetime, datetime.date)) else None
 )

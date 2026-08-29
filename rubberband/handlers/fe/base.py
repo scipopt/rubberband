@@ -1,28 +1,30 @@
 """Common class to derive all rubberband web request handlers from."""
 
+import logging
+import traceback
 from collections.abc import Iterable
 from datetime import datetime
-from tornado.web import RequestHandler
-from tornado.options import options
-from rubberband.utils.gitlab import get_user_access_level, get_username
-import traceback
 
-from rubberband.models import TestSet
+from tornado.options import options
+from tornado.web import RequestHandler
+
 from rubberband.constants import (
-    NONE_DISPLAY,
+    FORMAT_DATETIME_LONG,
+    INFINITY_DISPLAY,
     INFINITY_KEYS,
     INFINITY_MASK,
-    INFINITY_DISPLAY,
-    FORMAT_DATETIME_LONG,
+    NONE_DISPLAY,
 )
+from rubberband.models import TestSet
+from rubberband.utils.gitlab import get_user_access_level, get_username
 from rubberband.utils.helpers import (
-    shorten_str,
-    get_link,
-    shortening_span,
-    shortening_repres_id,
-    rb_join_arg,
     build_groups,
+    get_link,
     group_testruns,
+    rb_join_arg,
+    shorten_str,
+    shortening_repres_id,
+    shortening_span,
 )
 
 
@@ -203,50 +205,50 @@ class BaseHandler(RequestHandler):
 
         Define default values for templates.
         """
-        namespace = super(BaseHandler, self).get_template_namespace()
+        namespace = super().get_template_namespace()
 
-        name_space = dict(
-            handler=self,
-            request=self.request,
-            current_user=self.current_user,
-            has_permission=self.has_permission,
-            locale=self.locale,
-            _=self.locale.translate,
-            pgettext=self.locale.pgettext,
-            static_url=self.static_url,
-            xsrf_form_html=self.xsrf_form_html,
-            reverse_url=self.reverse_url,
-            clusterbench=self.clusterbench,
-            format_attr=self.format_attr,
-            format_type=self.format_type,
-            format_attrs=self.format_attrs,
-            get_objsen=self.get_objsen,
-            are_equivalent=self.are_equivalent,
-            shorten_str=shorten_str,
-            shortening_span=shortening_span,
-            shortening_repres_id=shortening_repres_id,
-            build_groups=build_groups,
-            group_testruns=group_testruns,
-            rb_join_arg=rb_join_arg,
-            get_link=get_link,
-            options=options,
-            page_title=None,
-            status_code="404",  # error code
-            checkboxes=False,
-            radiobuttons=False,
-            tablename="results-table",
-            modalheading=None,
-            modalbody=None,
-            modalfooter=None,
-            representation=None,
-            ipet_long_table=None,
-            ipet_aggregated_table=None,
-            get_empty_header=False,
-            rb_dt_compact=self.rb_dt_compact,
-            rb_dt_borderless=self.rb_dt_borderless,
-            rb_dt_bordered=self.rb_dt_bordered,
-            rb_dt_table=self.rb_dt_table,
-        )
+        name_space = {
+            "handler": self,
+            "request": self.request,
+            "current_user": self.current_user,
+            "has_permission": self.has_permission,
+            "locale": self.locale,
+            "_": self.locale.translate,
+            "pgettext": self.locale.pgettext,
+            "static_url": self.static_url,
+            "xsrf_form_html": self.xsrf_form_html,
+            "reverse_url": self.reverse_url,
+            "clusterbench": self.clusterbench,
+            "format_attr": self.format_attr,
+            "format_type": self.format_type,
+            "format_attrs": self.format_attrs,
+            "get_objsen": self.get_objsen,
+            "are_equivalent": self.are_equivalent,
+            "shorten_str": shorten_str,
+            "shortening_span": shortening_span,
+            "shortening_repres_id": shortening_repres_id,
+            "build_groups": build_groups,
+            "group_testruns": group_testruns,
+            "rb_join_arg": rb_join_arg,
+            "get_link": get_link,
+            "options": options,
+            "page_title": None,
+            "status_code": "404",  # error code
+            "checkboxes": False,
+            "radiobuttons": False,
+            "tablename": "results-table",
+            "modalheading": None,
+            "modalbody": None,
+            "modalfooter": None,
+            "representation": None,
+            "ipet_long_table": None,
+            "ipet_aggregated_table": None,
+            "get_empty_header": False,
+            "rb_dt_compact": self.rb_dt_compact,
+            "rb_dt_borderless": self.rb_dt_borderless,
+            "rb_dt_bordered": self.rb_dt_bordered,
+            "rb_dt_table": self.rb_dt_table,
+        }
 
         # additional ui modules
         namespace.update(self.ui)
@@ -286,14 +288,14 @@ class BaseHandler(RequestHandler):
         value = getattr(obj, attr, None)
         if isinstance(value, str):
             return "text"
-        if isinstance(value, float) or isinstance(value, int):
+        if isinstance(value, (float, int)):
             return "number"
         return ""
 
     def clusterbench(self, obj):
         """Format ClusterBenchmarkID to a date."""
         cbid = self.format_attr(obj.metadata, "ClusterBenchmarkID")
-        return "({}.{}.{})".format(cbid[6:8], cbid[4:6], cbid[0:4])
+        return f"({cbid[6:8]}.{cbid[4:6]}.{cbid[0:4]})"
 
     def format_attr(self, obj, attr):
         """
@@ -327,9 +329,9 @@ class BaseHandler(RequestHandler):
                 val_tlim = getattr(obj, "time_limit", None)
                 val_tfac = getattr(obj, "time_factor", None)
                 if val_tfac is not None:
-                    return "x {}".format(val_tfac)
+                    return f"x {val_tfac}"
                 elif val_tlim is not None:
-                    return "{}s".format(val_tlim)
+                    return f"{val_tlim}s"
                 else:
                     return ""
 
@@ -343,12 +345,12 @@ class BaseHandler(RequestHandler):
                 if type(value) is int or type(value) is float:
                     return value
                 if attr in ["DualBound", "PrimalBound"]:
-                    return "%.4f" % value
+                    return f"{value:.4f}"
                 if attr in ["SolvingTime", "TotalTime_solving", "Gap"]:
-                    return "%.2f" % value
+                    return f"{value:.2f}"
                 if attr in ["Iterations"]:
                     return int(value)
-                if attr.endswith("_timestamp") or attr.endswith("expirationdate"):
+                if attr.endswith(("_timestamp", "expirationdate")):
                     return datetime.strftime(value, FORMAT_DATETIME_LONG)
                 if isinstance(value, str):
                     return value
@@ -378,16 +380,22 @@ class BaseHandler(RequestHandler):
                 return float(objsen)
         for o in objs:
             try:
-                pb = float(getattr(o.results[inst_name], "PrimalBound", None))
-                db = float(getattr(o.results[inst_name], "DualBound", None))
+                pb = getattr(o.results[inst_name], "PrimalBound", None)
+                db = getattr(o.results[inst_name], "DualBound", None)
+                if not pb or not db:
+                    return 0
+                pb = float(pb)
+                db = float(db)
                 if pb > db:
                     # minimize
                     return 1
-                elif pb < db:
+                if pb < db:
                     # maximize
                     return -1
-            except Exception:
-                pass
+            except ValueError:
+                logging.getLogger().info(
+                    f"Failure converting primal bound {pb} or dual bound {db} to float for instance {inst_name}. Cannot derive objective sense."
+                )
         return 0
 
     def format_attrs(self, objs, attr, inst_name):
@@ -474,8 +482,10 @@ class BaseHandler(RequestHandler):
         for i in starred:
             try:
                 testruns.append(TestSet.get(id=i))
-            except Exception:
-                pass
+            except Exception:  # noqa  TODO use more specific exception
+                logging.getLogger().error(
+                    f"Could not get or append testrun with id={i!s}. Skipped"
+                )
         return testruns
 
     def get_testrun_table(

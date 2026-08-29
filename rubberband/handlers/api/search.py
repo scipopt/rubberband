@@ -4,6 +4,7 @@ import json
 
 from rubberband.handlers.common import search
 from rubberband.models import date_handler
+
 from .base import BaseHandler, authenticated
 
 

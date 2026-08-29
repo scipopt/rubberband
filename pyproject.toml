@@ -32,3 +32,6 @@ classifiers = [
 dependencies = {file = ["requirements.txt"]}
 optional-dependencies.dev = {file = ["requirements-dev.txt"]}
 
+[tool.ruff]
+# ignore that we don't pass a timezone to datetime functions
+lint.ignore = ["DTZ005", "DTZ006"]

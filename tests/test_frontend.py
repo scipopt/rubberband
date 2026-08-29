@@ -11,7 +11,7 @@ class GetTest(TestHandlerBase):
         response = self.fetch("/search")
         self.assertEqual(response.code, 200)
         self.assertIn(b"Search", response.body)
-        self.assertIn(b'rb-table-loganalyzer', response.body)
+        self.assertIn(b"rb-table-loganalyzer", response.body)
 
     def test_search_query(self):
         response = self.fetch(

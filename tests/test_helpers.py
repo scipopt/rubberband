@@ -21,7 +21,15 @@ METADATA = {
 class FakeTestRun:
     """Stands in for a TestSet document, with the fields the grouping reads."""
 
-    def __init__(self, filename, seed=0, permutation=0, metadata=None, uploaded="2026-07-24T19:53:00", **overrides):
+    def __init__(
+        self,
+        filename,
+        seed=0,
+        permutation=0,
+        metadata=None,
+        uploaded="2026-07-24T19:53:00",
+        **overrides,
+    ):
         self.filename = filename
         self.seed = seed
         self.permutation = permutation
@@ -29,7 +37,9 @@ class FakeTestRun:
         self.meta = type("meta", (), {"id": filename})
 
         if metadata is None:
-            metadata = dict(METADATA, Seed=str(seed), Permutation=str(permutation), **overrides)
+            metadata = dict(
+                METADATA, Seed=str(seed), Permutation=str(permutation), **overrides
+            )
         self.metadata = metadata
 
 
@@ -51,7 +61,9 @@ def test_permutations_of_one_build_share_a_key():
 
 def test_the_key_ignores_how_the_binary_was_reached():
     run = FakeTestRun(BINARY + ".out")
-    from_elsewhere = FakeTestRun(BINARY + "-s1.out", seed=1, BinName="../scipoptspx_master_20260620/bin/scip")
+    from_elsewhere = FakeTestRun(
+        BINARY + "-s1.out", seed=1, BinName="../scipoptspx_master_20260620/bin/scip"
+    )
 
     assert build_group_key(run) == build_group_key(from_elsewhere)
 
@@ -75,7 +87,9 @@ def test_runs_without_a_meta_file_fall_back_to_the_filename():
     # historical uploads have no metadata at all
     plain = FakeTestRun(BINARY + ".out", metadata={})
     seeded = FakeTestRun(BINARY + "-s2.out", seed=2, metadata={})
-    other_day = FakeTestRun(BINARY + ".out", metadata={}, uploaded="2026-07-25T08:00:00")
+    other_day = FakeTestRun(
+        BINARY + ".out", metadata={}, uploaded="2026-07-25T08:00:00"
+    )
 
     assert build_group_key(plain) == build_group_key(seeded)
     assert build_group_key(plain) != build_group_key(other_day)

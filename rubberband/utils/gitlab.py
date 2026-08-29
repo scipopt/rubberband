@@ -1,7 +1,7 @@
 """Methods to use for the communication with gitlab."""
 
-from tornado.options import options
 from gitlab import Gitlab
+from tornado.options import options
 
 
 def get_commit_data(project_id, git_hash):
@@ -60,7 +60,7 @@ def get_user_access_level(user_mail):
     if len(group_users + project_users) == 2:
         group_id = group_users[0].id
         project_id = project_users[0].id
-        if not group_id == project_id:
+        if group_id != project_id:
             return min_access
         access_level = group_users[0].access_level
         project_access_level = project_users[0].access_level

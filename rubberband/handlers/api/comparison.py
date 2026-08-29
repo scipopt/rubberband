@@ -1,18 +1,19 @@
 """Contains EvaluationView."""
 
 from datetime import datetime
-from tornado.web import HTTPError
-
-from .base import BaseHandler, authenticated
-from rubberband.constants import FORMAT_DATE
-from rubberband.utils import ALL_SOLU
-from rubberband.handlers.fe.evaluation import (
-    setup_experiment,
-    get_testruns,
-    set_defaultgroup,
-)
 
 from ipet.evaluation import IPETEvaluation
+from tornado.web import HTTPError
+
+from rubberband.constants import FORMAT_DATE
+from rubberband.handlers.fe.evaluation import (
+    get_testruns,
+    set_defaultgroup,
+    setup_experiment,
+)
+from rubberband.utils import ALL_SOLU
+
+from .base import BaseHandler, authenticated
 
 
 class ComparisonEndpoint(BaseHandler):
@@ -52,7 +53,7 @@ class ComparisonEndpoint(BaseHandler):
             t.git_hash: datetime.strftime(t.git_commit_timestamp, FORMAT_DATE)
             for t in testruns + [baserun]
         }
-        hashes = set([t.git_hash for t in testruns + [baserun]])
+        hashes = {t.git_hash for t in testruns + [baserun]}
         if len(hashes) > 2:
             raise HTTPError(404)
         hashes.remove(basehash)
@@ -71,7 +72,7 @@ class ComparisonEndpoint(BaseHandler):
 
         # evaluate with ipet
         ex, _ = setup_experiment(testruns + [baserun], "")
-        evalstring = """<?xml version="1.0" ?>
+        evalstring = f"""<?xml version="1.0" ?>
 <Evaluation comparecolformat="%.3f" index="ProblemName Seed Permutation GitHash" indexsplit="-1" fillin="True">
     <Column formatstr="%.2f" name="T" origcolname="SolvingTime" minval="0.5" comp="quot shift. by 1" maxval="TimeLimit" alternative="TimeLimit" reduction="shmean shift. by 1">
         <Aggregation aggregation="shmean" name="sgm" shiftby="1.0"/>
@@ -82,7 +83,7 @@ class ComparisonEndpoint(BaseHandler):
     <Column formatstr="%.0f" name="N" origcolname="Nodes" comp="quot shift. by 100" reduction="shmean shift. by 100">
         <Aggregation aggregation="shmean" name="sgm" shiftby="100.0" />
     </Column>
-    <Column formatstr="%.2f" origcolname="TimeLimit" alternative="{tl}"
+    <Column formatstr="%.2f" origcolname="TimeLimit" alternative="{baserun.time_limit}"
         reduction="mean">
     </Column>
     <FilterGroup name="all"/>
@@ -102,7 +103,7 @@ class ComparisonEndpoint(BaseHandler):
         <Filter anytestrun="all" expression1="_solved_" expression2="1" operator="eq"/>
     </FilterGroup>
 </Evaluation>
-        """.format(tl=baserun.time_limit)
+        """
         ev = IPETEvaluation.fromXML(evalstring)
         if ALL_SOLU:
             ev.set_validate(ALL_SOLU)
@@ -111,7 +112,7 @@ class ComparisonEndpoint(BaseHandler):
         set_defaultgroup(ev, ex, base_id)
 
         # do evaluation
-        longtable, aggtable = ev.evaluate(ex)
+        _longtable, aggtable = ev.evaluate(ex)
 
         # df = aggtable[["_count_","_solved_","T_sgm(1.0)Q","T_sgm(1.0)"]]
 
@@ -138,29 +139,28 @@ class ComparisonEndpoint(BaseHandler):
         cleantime = aggtable["T_sgm(1.0)"][cleanindex]
         cleannrmtime = aggtable["NrmT_sgm(1.0)"][cleanindex]
         cleannodes = aggtable["N_sgm(100.0)"][cleanindex]
-        if alloptindex in aggtable["_count_"] :
+        if alloptindex in aggtable["_count_"]:
             alloptcount = aggtable["_count_"][alloptindex]
             allopttime = aggtable["T_sgm(1.0)"][alloptindex]
             alloptnrmtime = aggtable["NrmT_sgm(1.0)"][alloptindex]
             alloptnodes = aggtable["N_sgm(100.0)"][alloptindex]
-        else :
+        else:
             alloptcount = 0
             allopttime = 0.0
             alloptnrmtime = 0.0
             alloptnodes = 0
-        if affindex in aggtable["_count_"] :
+        if affindex in aggtable["_count_"]:
             affcount = aggtable["_count_"][affindex]
             affsolved = aggtable["_solved_"][affindex]
             afftime = aggtable["T_sgm(1.0)"][affindex]
             affnrmtime = aggtable["NrmT_sgm(1.0)"][affindex]
             affnodes = aggtable["N_sgm(100.0)"][affindex]
-        else :
+        else:
             affcount = 0
             affsolved = 0
             afftime = 0.0
             affnrmtime = 0.0
             affnodes = 0
-
 
         # if we did not evaluate base only, then include also the numbers for base
         if comparehash is not None:
@@ -180,23 +180,23 @@ class ComparisonEndpoint(BaseHandler):
             basecleantime = aggtable["T_sgm(1.0)"][basecleanindex]
             basecleannrmtime = aggtable["NrmT_sgm(1.0)"][basecleanindex]
             basecleannodes = aggtable["N_sgm(100.0)"][basecleanindex]
-            if basealloptindex in aggtable["_count_"] :
+            if basealloptindex in aggtable["_count_"]:
                 basealloptcount = aggtable["_count_"][basealloptindex]
                 baseallopttime = aggtable["T_sgm(1.0)"][basealloptindex]
                 basealloptnrmtime = aggtable["NrmT_sgm(1.0)"][basealloptindex]
-                basealloptnodes  = aggtable["N_sgm(100.0)"][basealloptindex]
-            else :
+                basealloptnodes = aggtable["N_sgm(100.0)"][basealloptindex]
+            else:
                 basealloptcount = 0
                 baseallopttime = 0.0
                 basealloptnrmtime = 0.0
                 basealloptnodes = 0
-            if baseaffindex in aggtable["_count_"] :
+            if baseaffindex in aggtable["_count_"]:
                 baseaffcount = aggtable["_count_"][baseaffindex]
                 baseaffsolved = aggtable["_solved_"][baseaffindex]
                 baseafftime = aggtable["T_sgm(1.0)"][baseaffindex]
                 baseaffnrmtime = aggtable["NrmT_sgm(1.0)"][baseaffindex]
-                baseaffnodes  = aggtable["N_sgm(100.0)"][baseaffindex]
-            else :
+                baseaffnodes = aggtable["N_sgm(100.0)"][baseaffindex]
+            else:
                 baseaffcount = 0
                 baseaffsolved = 0
                 baseafftime = 0.0
@@ -272,7 +272,7 @@ class ComparisonEndpoint(BaseHandler):
                             baseaffsolved,
                             baseafftime,
                             baseaffnrmtime,
-                            baseaffnodes
+                            baseaffnodes,
                         ],
                     )
                 )
@@ -281,4 +281,3 @@ class ComparisonEndpoint(BaseHandler):
 
     def check_xsrf_cookie(self):
         """Turn off the xsrf cookie for upload api endpoint, since we check the user differently."""
-        pass

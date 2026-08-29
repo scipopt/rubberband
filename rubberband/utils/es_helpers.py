@@ -19,7 +19,7 @@ def get_uniques(model, field):
         all possible values and the 5 most common ones.
     """
     body = {"aggs": {"counts": {"terms": {"field": field}}}, "size": 0}
-    response = getattr(model, "search")().from_dict(body).execute()
+    response = model.search().from_dict(body).execute()
     values = [i.key for i in response.aggregations.counts.buckets]
     today = datetime.now()
     threemonthsago = (today + timedelta(days=-100)).strftime("%Y-%m-%d")
@@ -32,7 +32,7 @@ def get_uniques(model, field):
         "aggs": {"hot_counts": {"terms": {"field": field}}},
         "size": 5,
     }
-    response = getattr(model, "search")().from_dict(body).execute()
+    response = model.search().from_dict(body).execute()
     hot_values = [i.key for i in response.aggregations.hot_counts.buckets]
     values = [v for v in values if v not in hot_values]
     return values, hot_values

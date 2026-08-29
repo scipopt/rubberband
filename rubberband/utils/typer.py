@@ -14,7 +14,7 @@ def boolify(value):
         return True
     elif value.lower() == "false":
         return False
-    raise ValueError("{} is not a bool".format(value))
+    raise ValueError(f"{value} is not a bool")
 
 
 def estimate_type(var):

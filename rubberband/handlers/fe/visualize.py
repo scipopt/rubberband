@@ -1,12 +1,14 @@
 """Contains VisualizeView."""
 
 import datetime
-from elasticsearch.dsl import Q
 import json
 
-from .base import BaseHandler
-from rubberband.models import TestSet, Result
+from elasticsearch.dsl import Q
+
 from rubberband.constants import FORMAT_DATE
+from rubberband.models import Result, TestSet
+
+from .base import BaseHandler
 
 
 class VisualizeView(BaseHandler):
@@ -82,8 +84,7 @@ class VisualizeView(BaseHandler):
                 components.update(testset.to_dict())
                 components["testset_id"] = r.testset_id
                 final_components = {
-                    k: components[k] if k in components.keys() else v
-                    for k, v in datakeys.items()
+                    k: components.get(k, v) for k, v in datakeys.items()
                 }
                 final_data.append(final_components)
 
@@ -95,18 +96,14 @@ class VisualizeView(BaseHandler):
             s = s.filter("and", Q("range", **range_params))
             s = s.filter(Q("term", test_set=query))
 
-            res = []
             # this uses pagination/scroll
-            for hit in s.scan():
-                res.append(hit)
+            res = [hit for hit in s.scan()]
 
             final_data.append(res)
 
         return self.write(json.dumps(final_data, default=date_handler))
 
 
-date_handler = lambda obj: (  # noqa
-    obj.isoformat()
-    if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date)
-    else None
+date_handler = lambda obj: (
+    obj.isoformat() if isinstance(obj, (datetime.datetime, datetime.date)) else None
 )

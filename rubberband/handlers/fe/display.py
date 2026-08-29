@@ -1,7 +1,8 @@
 """Contains DisplayView."""
 
-from .base import BaseHandler
 from rubberband.constants import IPET_EVALUATIONS
+
+from .base import BaseHandler
 
 
 class DisplayView(BaseHandler):

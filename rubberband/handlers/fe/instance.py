@@ -1,11 +1,13 @@
 """Contains InstanceView."""
 
 import json
+
 from elasticsearch.dsl import A
 from elasticsearch.dsl.connections import connections
 
 from rubberband.constants import RESULT_INDEX
-from rubberband.models import TestSet, Result, ResultHit
+from rubberband.models import Result, ResultHit, TestSet
+
 from .base import BaseHandler
 
 

@@ -3,7 +3,7 @@
 from collections import defaultdict
 
 
-class ImportStats(object):
+class ImportStats:
     """Class to hold information about import status."""
 
     def __init__(self, collection, basename):

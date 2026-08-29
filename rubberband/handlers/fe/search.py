@@ -1,8 +1,9 @@
 """Contains SearchView."""
 
+from rubberband.handlers.common import search
 from rubberband.models import TestSet
 from rubberband.utils import get_uniques
-from rubberband.handlers.common import search
+
 from .base import BaseHandler
 
 

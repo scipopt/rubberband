@@ -1,10 +1,11 @@
 """Common class to derive all rubberband api request handlers from."""
 
-from tornado.web import RequestHandler, HTTPError
-from tornado.options import options
-import traceback
 import functools
 import logging
+import traceback
+
+from tornado.options import options
+from tornado.web import HTTPError, RequestHandler
 
 
 class BaseHandler(RequestHandler):
@@ -44,7 +45,7 @@ class BaseHandler(RequestHandler):
             for line in traceback.format_exception(*kwargs["exc_info"]):
                 self.write(line)
         else:
-            self.write({"message": "{} {}".format(status_code, self._reason)})
+            self.write({"message": f"{status_code} {self._reason}"})
 
         self.finish()
 
@@ -62,7 +63,7 @@ def authenticated(method):
     @functools.wraps(method)
     def wrapper(self, *args, **kwargs):
         if not self.current_user:
-            logging.error("User not authorized: {}".format(self.current_user))
+            logging.getLogger().error(f"User not authorized: {self.current_user}")
             raise HTTPError(401)
         return method(self, *args, **kwargs)
 

@@ -1,33 +1,37 @@
 """Methods for importing a TestSet from logfiles."""
 
-import os
 import json
 import logging
+import os
 import traceback
-import dateutil.parser
-from elasticsearch import TransportError
 from datetime import datetime
 
+import dateutil.parser
+from elasticsearch import TransportError
 from ipet import Experiment, Key
 from ipet.misc import loader
 from tornado.options import options
 
-# package imports
-from rubberband.models import TestSet, Result, File, Settings
 from rubberband.constants import ADD_READERS, FORMAT_DATETIME, SOLU_DIR
-from rubberband.utils import gitlab as gl
-from .stats import ImportStats
-from .hasher import generate_sha256_hash
 
-REQUIRED_FILES = set([".out"])
-OPTIONAL_FILES = set([".solu", ".err", ".set", ".meta"])
+# package imports
+from rubberband.models import File, Result, Settings, TestSet
+from rubberband.utils import RBException
+from rubberband.utils import gitlab as gl
+
+from .hasher import generate_sha256_hash
+from .stats import ImportStats
+
+REQUIRED_FILES = {".out"}
+OPTIONAL_FILES = {".solu", ".err", ".set", ".meta"}
 ALL_SOLU = None
 for allsolucand in ["instancedb.sqlite3", "all.solu", "allpublic.solu"]:
     if os.path.isfile(SOLU_DIR + allsolucand):
-        ALL_SOLU = (SOLU_DIR + allsolucand)
+        ALL_SOLU = SOLU_DIR + allsolucand
         break
 
-class Importer(object):
+
+class Importer:
     """Organize and process retrieved files."""
 
     def __init__(self, user):
@@ -40,14 +44,12 @@ class Importer(object):
             current user
         """
         if not user:
-            raise Exception("Missing user when initializing client.")
+            raise RBException("Missing user when initializing client.")
 
         self.current_user = user
         self.logger = logging.getLogger(__name__)
         self.logger.info(
-            "{} opened a connection to Elasticsearch with the {}".format(
-                self.current_user, type(self).__name__
-            )
+            f"{self.current_user} opened a connection to Elasticsearch with the {type(self).__name__}"
         )
         self.tags = []
 
@@ -66,13 +68,13 @@ class Importer(object):
         self.remove_files = True
         try:
             self.parse_file_bundle(paths, initial=False, testset=testset)
-        except Exception:
+        except Exception:  # noqa
             self.importstats.status = "fail"
             traceback.print_exc()
 
         return self.importstats
 
-    def process_files(self, paths, tags=[], remove=True, expirationdate=None):
+    def process_files(self, paths, tags=None, remove=True, expirationdate=None):
         """
         Process filebundle and import to rubberband.
 
@@ -81,13 +83,15 @@ class Importer(object):
         paths : list str
             list of filenames
         tags : list
-            tags to add to TestSet (default [])
+            tags to add to TestSet (default None)
         remove : bool
             remove raw uploaded files from server (default True)
         expirationdate : str in date form
             Date after which data can be purged from elasticsearch (default: None)
         """
         # This gets called by both the apiupload and the webupload
+        if tags is None:
+            tags = []
         total_files = len(paths)
         basename = ""
         if total_files > 0:
@@ -95,11 +99,11 @@ class Importer(object):
         self.importstats = ImportStats("results", basename=basename)
         self.tags = tags
         self.remove_files = remove
-        self.logger.info("Found {} files. Beginning to parse.".format(total_files))
+        self.logger.info(f"Found {total_files} files. Beginning to parse.")
         try:
             # parsing all locally saved files
             self.parse_file_bundle(paths, expirationdate=expirationdate)
-        except Exception:
+        except Exception:  # noqa
             self.importstats.status = "fail"
             traceback.print_exc()
 
@@ -137,12 +141,8 @@ class Importer(object):
             found = self.file_lookup()
             if found:
                 self.importstats.status = "found"
-                self.importstats.setUrl("/result/{}".format(found.meta.id))
-                msg = (
-                    "File was previously uploaded by {} on {}. Upload aborted.".format(
-                        found.get_uploader, found.index_timestamp
-                    )
-                )
+                self.importstats.setUrl("/result/" + found.meta.id)
+                msg = f"File was previously uploaded by {found.get_uploader} on {found.index_timestamp}. Upload aborted."
                 self._log_info(msg)
                 return
 
@@ -174,8 +174,8 @@ class Importer(object):
 
         # clean up filesystem if remove flag set
         if self.remove_files:
-            for t, f in self.files.items():
-                if f and ALL_SOLU and not f == ALL_SOLU:
+            for f in self.files.values():
+                if f and ALL_SOLU and f != ALL_SOLU:
                     os.remove(f)
 
         self._log_info("Finished!")
@@ -209,9 +209,9 @@ class Importer(object):
         for k, v in results.items():
             results[k]["instance_type"] = _determine_type(v)
             iteration_values = [
-                results[k].get("LP_Iterations_barrierLP"),
-                results[k].get("LP_Iterations_dualLP"),
-                results[k].get("LP_Iterations_primalLP"),
+                v.get("LP_Iterations_barrierLP"),
+                v.get("LP_Iterations_dualLP"),
+                v.get("LP_Iterations_primalLP"),
             ]
 
             if None in set(iteration_values):
@@ -249,7 +249,7 @@ class Importer(object):
         self.logger.info(message)
         self.importstats.logMessage(self.files[".out"], message)
 
-    def get_file_data(self, data, settings=None, expirationdate=None, metadata={}):
+    def get_file_data(self, data, settings=None, expirationdate=None, metadata=None):
         """
         Get data about file.
 
@@ -262,8 +262,10 @@ class Importer(object):
         expirationdate : str in date form
             Date after which data can be purged from elasticsearch (default: None)
         metadata
-            Metadata dictionary from IPET (default: {})
+            Metadata dictionary from IPET (default: None)
         """
+        if metadata is None:
+            metadata = {}
         # settings is a tuple
         file_data = {
             "id": self.file_id,
@@ -302,7 +304,7 @@ class Importer(object):
         }
         # by this time we dropped all metadata that is not equal or empty for all data rows
         for key, tag in metamapping.items():
-            if tag in metadata.keys():
+            if tag in metadata:
                 file_data[key] = metadata[tag]
         # it can be an old file if there is no meta file. then try to read info from filename
         if self.files[".meta"] is None:
@@ -319,7 +321,7 @@ class Importer(object):
             file_data["settings_default"] = settings[1]
 
         # get git data if it is available
-        if "GitHash" in data and data["GitHash"]:
+        if data.get("GitHash"):
             git_hash = file_data["git_hash"]
             file_data["git_hash_dirty"] = git_hash.endswith("-dirty")
             if file_data["git_hash_dirty"]:
@@ -343,10 +345,8 @@ class Importer(object):
                     file_data["git_commit_author"] = gl.get_username(
                         commit.author_email
                     )
-                except Exception:
-                    msg = "Couldn't find commit {} in Gitlab. Aborting...".format(
-                        git_hash
-                    )
+                except Exception:  # noqa
+                    msg = f"Couldn't find commit {git_hash} in Gitlab. Aborting..."
                     self._log_failure(msg)
 
         return file_data
@@ -403,12 +403,12 @@ class Importer(object):
             if os.path.islink(f):
                 msg = "Cannot parse results from a symlink. Please input an absolute path."
                 self._log_failure(msg)
-                raise Exception(msg)
+                raise RBException(msg)
 
             if os.path.isdir(f):
                 msg = "Cannot parse results from a directory. Please input a file path."
                 self._log_failure(msg)
-                raise Exception(msg)
+                raise RBException(msg)
 
             filename, file_extension = os.path.splitext(f)
             if file_extension not in all_file_ext:
@@ -422,7 +422,7 @@ class Importer(object):
                     if not os.path.exists(f):
                         msg = "Cannot parse results from a file that doesn't exist."
                         self._log_failure(msg)
-                        raise Exception(msg)
+                        raise RBException(msg)
                     required_files[r] = f
                     break
 
@@ -436,7 +436,7 @@ class Importer(object):
         if missing:
             msg = "Missing required files: {}".format(", ".join(missing))
             self._log_failure(msg)
-            raise Exception(msg)
+            raise RBException(msg)
 
         self.logger.info("Parsing {}.".format(required_files[".out"]))
         required_files.update(optional_files)
@@ -526,7 +526,7 @@ class Importer(object):
         )
         self.logger.info(msg)
         self.importstats.status = "success"
-        self.importstats.setUrl("/result/{}".format(self.testset_meta_id))
+        self.importstats.setUrl("/result/" + self.testset_meta_id)
 
     def backup_files(self):
         """Save all file contents in Elasticsearch."""
@@ -544,7 +544,7 @@ class Importer(object):
                 "testset_id": self.testset_meta_id,
             }
             with open(f) as f_in:
-                self._log_info("Backing up {} in Elasticsearch".format(f))
+                self._log_info(f"Backing up {f} in Elasticsearch")
 
                 data["text"] = f_in.read()
                 try:
@@ -618,11 +618,9 @@ class Importer(object):
 
         testruns = c.getTestRuns()
         if len(testruns) != 1:
-            msg = "Unexpected number of testruns. Expected 1, got: {}".format(
-                len(testruns)
-            )
+            msg = f"Unexpected number of testruns. Expected 1, got: {len(testruns)}"
             self._log_failure(msg)
-            raise Exception(msg)
+            raise RBException(msg)
 
         return testruns[0]
 
@@ -647,7 +645,7 @@ class Importer(object):
 
         # this should not happen
         else:
-            raise Exception("file_id not yet set. Lookup failed.")
+            raise RBException("file_id not yet set. Lookup failed.")
 
     def most_frequent_value(self, data, key, throwex=False):
         """
@@ -664,11 +662,11 @@ class Importer(object):
         -------
         value
         """
-        if key not in data.keys():
+        if key not in data:
             if throwex:
                 msg = "Missing key {} in data.".format("key")
                 self._log_failure(msg)
-                raise Exception(msg)
+                raise RBException(msg)
             else:
                 return None
 

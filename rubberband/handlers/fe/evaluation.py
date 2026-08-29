@@ -1,20 +1,20 @@
 """Contains EvaluationView."""
 
-from lxml import html
-import pandas as pd
-
-import re
 import json
 import logging
+import re
 
-from .base import BaseHandler
-from rubberband.constants import IPET_EVALUATIONS, NONE_DISPLAY, EVAL_FILE
-from rubberband.models import TestSet
-from rubberband.utils import RBLogHandler, ALL_SOLU
-from rubberband.utils.helpers import get_rbid_representation, setup_testruns_subst_dict
-
+import pandas as pd
 from ipet import Experiment, TestRun
 from ipet.evaluation import IPETEvaluation
+from lxml import html
+
+from rubberband.constants import EVAL_FILE, IPET_EVALUATIONS, NONE_DISPLAY
+from rubberband.models import TestSet
+from rubberband.utils import ALL_SOLU, RBLogHandler
+from rubberband.utils.helpers import get_rbid_representation, setup_testruns_subst_dict
+
+from .base import BaseHandler
 
 
 class EvaluationView(BaseHandler):
@@ -106,9 +106,9 @@ class EvaluationView(BaseHandler):
             longtable = longtable.drop(delcols, axis=1)
 
             # convert to html and get style
-            add_classes = " ".join(
-                [self.rb_dt_borderless, self.rb_dt_compact]
-            )  # style for table
+            add_classes = (
+                f"{self.rb_dt_borderless} {self.rb_dt_compact}"  # style for table
+            )
             html_long = table_to_html(
                 longtable, ev, html_id="ipet-long-table", add_class=add_classes
             )
@@ -130,7 +130,7 @@ class EvaluationView(BaseHandler):
                 html_agg, {**repres["long"], **repres["all"]}, add_ind=True, swap=False
             )
 
-            message = ", ".join(sorted(list(set(excluded_inst))))
+            message = ", ".join(sorted(set(excluded_inst)))
             print(message)
             # render to strings
             html_tables = self.render_string(
@@ -171,11 +171,7 @@ class EvaluationView(BaseHandler):
             cols = [
                 c
                 for c in df.columns
-                if (
-                    c in ["Group", colindex, "_solved_"]
-                    or c.startswith("N_")
-                    or c.startswith("T_")
-                )
+                if (c in ["Group", colindex, "_solved_"] or c.startswith(("N_", "T_")))
                 and not c.endswith(")p")
             ]
 
@@ -225,8 +221,8 @@ class EvaluationView(BaseHandler):
             for key in df_abs.columns:
                 df[key] = df_abs[key]
             for key in df_rel.columns:
-                if not df_rel[key].mean() == 1.0:
-                    (a, b) = key
+                if df_rel[key].mean() != 1.0:
+                    (_a, b) = key
                     df["relative", b] = df_rel[key]
 
             df = df.loc[df.index.intersection(rows)].reindex(rows)
@@ -259,8 +255,8 @@ class EvaluationView(BaseHandler):
 
             tridstr = ",".join([tr for tr in testrunids if tr != default_id])
             baseurl = self.get_rb_base_url()
-            evaluation_url = "{}/result/{}?compare={}#evaluation".format(
-                baseurl, default_id, tridstr
+            evaluation_url = (
+                f"{baseurl}/result/{default_id}?compare={tridstr}#evaluation"
             )
             out = insert_into_latex(out, evaluation_url)
 
@@ -284,13 +280,13 @@ def get_column_formatters(df):
     """
     formatters = {}
     for p in df.columns:
-        (a, b) = p
+        (_a, b) = p
         if b.endswith("Q"):
-            formatters[p] = lambda x: "%.2f" % x
+            formatters[p] = lambda x: f"{x:.2f}"
         elif b.startswith("T_"):
-            formatters[p] = lambda x: "%.1f" % x
+            formatters[p] = lambda x: f"{x:.1f}"
         else:
-            formatters[p] = lambda x: "%.0f" % x
+            formatters[p] = lambda x: f"{x:.0f}"
     return formatters
 
 
@@ -390,8 +386,10 @@ def setup_experiment(testruns, droplist=""):
         try:
             y = re.compile(x)
             regexlist.append(y)
-        except Exception:
-            pass
+        except re.PatternError:
+            logging.getLogger().info(
+                f"Could not compile regular expression {x}. Ignored."
+            )
 
     excluded_inst = []
     # get data
@@ -404,7 +402,7 @@ def setup_experiment(testruns, droplist=""):
         tr_raw_data = t.get_data(add_data=additional_data)
 
         tr_data = {}
-        for i in tr_raw_data.keys():
+        for i in tr_raw_data:
             for r in regexlist:
                 if r.match(i):
                     excluded_inst.append(i)
@@ -450,7 +448,7 @@ def process_ipet_table(table, repres, add_ind=False, swap=False):
         cellcount = 0
         for cell in row.iter():
             if add_ind and cellcount == 1 and cell.tag == "th" and cell.text != oldtext:
-                cell.text = "{:0>2d}. {}".format(groupcount, cell.text)
+                cell.text = f"{groupcount:0>2d}. {cell.text}"
                 oldtext = cell.text
                 groupcount = groupcount + 1
             rowspan = cell.get("rowspan")
@@ -517,7 +515,7 @@ def table_to_html(df, ev, html_id="", add_class=""):
     # apply sortlevel
     df = ev.sortDataFrame(df)
 
-    tableclasses = 'ipet-table rb-table-data {}" width="100%'.format(add_class)
+    tableclasses = f'ipet-table rb-table-data {add_class}" width="100%'
 
     htmlstr = df.to_html(
         border=0,
@@ -625,10 +623,10 @@ def generate_filtergroup_selector(table, evaluation):
         selector and additional column
     """
     table = table.copy()
-    gtindex = [c for c in table.columns if c[-1] == "groupTags"][0]
+    gtindex = next(c for c in table.columns if c[-1] == "groupTags")
     table["Filtergroups"] = list(map("|{}|".format, table[gtindex]))
 
-    out = '<div id="ipet-long-table-filter col"><label class="col-form-label text-left">Select filtergroups:<select id="ipet-long-filter-select" class="custom-select">'  # noqa
+    out = '<div id="ipet-long-table-filter col"><label class="col-form-label text-left">Select filtergroups:<select id="ipet-long-filter-select" class="custom-select">'
 
     for fg in evaluation.getActiveFilterGroups():
         fg_name = fg.getName()
@@ -639,13 +637,13 @@ def generate_filtergroup_selector(table, evaluation):
             continue
 
         # construct new option string
-        newoption = '<option value="' + fg_name + '">' + fg_name + "</option>"  # noqa
+        newoption = '<option value="' + fg_name + '">' + fg_name + "</option>"
 
         # update selector strin
         out = out + newoption
 
     maxfgstr = ",".join(
-        ["|{}|".format(fg.getName()) for fg in evaluation.getActiveFilterGroups()]
+        [f"|{fg.getName()}|" for fg in evaluation.getActiveFilterGroups()]
     )
     maxlen = len(maxfgstr)
 

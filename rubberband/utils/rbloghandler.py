@@ -1,8 +1,8 @@
 """Class for a RequestHandler to respond with logoutput from loggering module."""
 
-from logging import StreamHandler
 import hashlib
 import time
+from logging import StreamHandler
 
 
 class RBLogHandler(StreamHandler):
@@ -21,7 +21,7 @@ class RBLogHandler(StreamHandler):
             and flushing with obj.flush().
         """
         StreamHandler.__init__(self)
-        rawname = "rbhandler{}{}".format(time.time(), handle)
+        rawname = f"rbhandler{time.time()}{handle}"
         self.name = hashlib.md5(bytes(rawname, "utf-8")).hexdigest()
         self.rbhandle = handle
         self.rbhandle.write(self.name)
@@ -66,4 +66,4 @@ class RBLogHandler(StreamHandler):
 
     def __repr__(self):
         """Return an identification string."""
-        return "RBLogHandler ({}, {})".format(self.name, self.level)
+        return f"RBLogHandler ({self.name}, {self.level})"

@@ -1,4 +1,5 @@
 import os.path
+
 from rubberband.utils import generate_sha256_hash
 
 DATAFILES = (

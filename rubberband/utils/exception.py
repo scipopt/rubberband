@@ -1,0 +1,2 @@
+class RBException(Exception):
+    pass
