@@ -8,7 +8,7 @@
 
 services:
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:9.4.4
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.5.2
     environment:
       # Everything the README asks you to switch off by hand in
       # /etc/elasticsearch/elasticsearch.yml.
