@@ -1,6 +1,7 @@
 """Contains ResultView."""
 
 import logging
+from concurrent.futures import ThreadPoolExecutor
 
 from tornado.web import HTTPError
 
@@ -211,6 +212,47 @@ def load_testsets(ids):
         raise HTTPError(404)
 
     return tss
+
+
+def _load_testset_files(id):
+    """Fetch a single TestSet document and its File documents."""
+    t = TestSet.get(id=id)
+    t.load_files()
+    return t
+
+
+def load_testsets_files(ids):
+    """
+    Load TestSets and their associated File objects only.
+
+    Lightweight variant of :func:`load_testsets` for paths that only hand the
+    raw log files on to another tool (download/analyze): the TestSet document
+    and its File documents are all they need. It deliberately skips
+    ``load_results()``/``load_settings()``, which fetch every result (very wide
+    documents) and the settings and dominate the request time, so each TestSet
+    costs 2 Elasticsearch round-trips (one get + one file fetch) instead of a
+    result scroll plus ~6 extra queries.
+
+    The per-TestSet fetches run concurrently (elasticsearch-py is thread-safe), so
+    a comparison of N runs costs roughly one fetch latency instead of N.
+
+    Parameters
+    ----------
+    ids : list
+        List of ids of TestSets
+
+    Returns
+    -------
+    list
+        List of TestSets with their ``files`` loaded
+    """
+    try:
+        if len(ids) == 1:
+            return [_load_testset_files(ids[0])]
+        with ThreadPoolExecutor(max_workers=min(len(ids), 8)) as executor:
+            return list(executor.map(_load_testset_files, ids))
+    except Exception:  # noqa: BLE001 - mirror load_testsets behaviour
+        raise HTTPError(404)
 
 
 def get_same_status(runs):

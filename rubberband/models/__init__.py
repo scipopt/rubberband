@@ -467,8 +467,11 @@ class TestSet(Document):
         s = s.filter("term", testset_id=self.meta.id)
 
         self.files = {}
-        # this uses pagination/scroll
-        for hit in s.scan():
+        # A TestSet has at most a handful of File docs (one per type: out, set,
+        # err, meta, solu), so a plain execute() returns them all in a single
+        # query. Using a scroll here costs ~3 extra round-trips per TestSet for
+        # no benefit (it mattered in the LogAnalyzer/download handoffs).
+        for hit in s.execute():
             self.files[hit.type] = hit
 
     def load_settings(self):

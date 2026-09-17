@@ -9,7 +9,7 @@ from tornado.web import HTTPError
 from rubberband.constants import EXPORT_FILE_TYPES, IPET_EVALUATIONS
 
 from .base import BaseHandler
-from .result import load_testsets
+from .result import load_testsets_files
 
 
 class DownloadView(BaseHandler):
@@ -33,7 +33,9 @@ class DownloadView(BaseHandler):
 
         if testsets != "" and evaluation == "":
             ts_ids = testsets.split(",")
-            ts_list = load_testsets(ts_ids)
+            # Only the raw logs are needed here (results/settings are not), so use
+            # the lightweight loader that skips the expensive result scan.
+            ts_list = load_testsets_files(ts_ids)
 
             zipname = "rubberband_testsets.zip"
             with BytesIO() as byteio:
@@ -43,9 +45,9 @@ class DownloadView(BaseHandler):
                             try:
                                 archive.writestr(
                                     f"{ts.meta.id}/{os.path.splitext(ts.filename)[0]}{ftype}",
-                                    ts.raw(ftype),
+                                    ts.files[ftype.lstrip(".")].text,
                                 )
-                            except TypeError:
+                            except (AttributeError, KeyError):
                                 pass
 
                 self.set_header("Content-Type", "application/zip")

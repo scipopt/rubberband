@@ -1,5 +1,6 @@
 """Contains AnalyzeExternalView: hand a run/comparison off to LogAnalyzer."""
 
+import asyncio
 import json
 import logging
 import os
@@ -14,7 +15,7 @@ from tornado.web import HTTPError
 from rubberband.constants import EXPORT_FILE_TYPES
 
 from .base import BaseHandler
-from .result import load_testsets
+from .result import load_testsets_files
 
 logger = logging.getLogger(__name__)
 
@@ -83,22 +84,31 @@ class AnalyzeExternalView(BaseHandler):
         ts_ids = [t for t in testsets.split(",") if t]
         if not ts_ids:
             raise HTTPError(400, reason="No testsets given.")
-        ts_list = load_testsets(ts_ids)
+        # Only the raw logs are needed here (results/settings are not), so use
+        # the lightweight loader that skips the expensive result scan. It runs in
+        # a worker thread (off the event loop) and fetches the runs concurrently.
+        ts_list = await asyncio.to_thread(load_testsets_files, ts_ids)
 
         # Build the same raw-log archive the download button produces. LogAnalyzer
         # detects the Rubberband filename convention and re-parses with its own
         # parser, so we hand over the raw logs, not Rubberband's parsed data.
+        #
+        # Use ZIP_STORED (no deflate): LogAnalyzer runs on the same machine, so
+        # the larger archive costs nothing on the loopback link, and skipping
+        # compression avoids the deflate CPU here and the inflate CPU in
+        # LogAnalyzer. The download button below stays ZIP_DEFLATED because that
+        # archive goes to the user's browser over the network.
         with BytesIO() as byteio:
-            with zipfile.ZipFile(byteio, "w", zipfile.ZIP_DEFLATED) as archive:
+            with zipfile.ZipFile(byteio, "w", zipfile.ZIP_STORED) as archive:
                 for ts in ts_list:
                     for ftype in EXPORT_FILE_TYPES:
                         try:
                             archive.writestr(
                                 f"{ts.meta.id}/{os.path.splitext(ts.filename)[0]}{ftype}",
-                                ts.raw(ftype),
+                                ts.files[ftype.lstrip(".")].text,
                             )
-                        except TypeError:
-                            # ts.raw() returned None for a missing file type
+                        except (AttributeError, KeyError):
+                            # no file of this type for this testset
                             pass
             zip_bytes = byteio.getvalue()
 
