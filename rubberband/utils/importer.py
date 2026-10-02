@@ -214,8 +214,9 @@ class Importer:
                 v.get("LP_Iterations_primalLP"),
             ]
 
+            # keep the iterations reported by the solver (e.g. NLP solvers) if there are no LP iterations
             if None in set(iteration_values):
-                results[k]["Iterations"] = None
+                results[k]["Iterations"] = v.get("Iterations")
             else:
                 results[k]["Iterations"] = sum(iteration_values)
 
