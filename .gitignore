@@ -56,3 +56,6 @@ doc/source/_modules
 
 # ruff cache
 .ruff_cache/
+
+# runtime read-model parquet artifacts (regenerated on demand)
+staticfiles/readmodel/
