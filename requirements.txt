@@ -7,4 +7,4 @@ pandas==2.3.3
 python-dateutil==2.9.0
 python-gitlab==8.5.0
 scipy==1.16.3
-tornado==6.5.8
+tornado==6.5.9
