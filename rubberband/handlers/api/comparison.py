@@ -83,6 +83,9 @@ class ComparisonEndpoint(BaseHandler):
     <Column formatstr="%.0f" name="N" origcolname="Nodes" comp="quot shift. by 100" reduction="shmean shift. by 100">
         <Aggregation aggregation="shmean" name="sgm" shiftby="100.0" />
     </Column>
+    <Column formatstr="%.0f" name="I" origcolname="Iterations" comp="quot shift. by 100" reduction="shmean shift. by 100">
+        <Aggregation aggregation="shmean" name="sgm" shiftby="100.0" />
+    </Column>
     <Column formatstr="%.2f" origcolname="TimeLimit" alternative="{baserun.time_limit}"
         reduction="mean">
     </Column>
@@ -134,33 +137,39 @@ class ComparisonEndpoint(BaseHandler):
         alltime = aggtable["T_sgm(1.0)"][allindex]
         allnrmtime = aggtable["NrmT_sgm(1.0)"][allindex]
         allnodes = aggtable["N_sgm(100.0)"][allindex]
+        alliter = aggtable["I_sgm(100.0)"][allindex]
         cleancount = aggtable["_count_"][cleanindex]
         cleansolved = aggtable["_solved_"][cleanindex]
         cleantime = aggtable["T_sgm(1.0)"][cleanindex]
         cleannrmtime = aggtable["NrmT_sgm(1.0)"][cleanindex]
         cleannodes = aggtable["N_sgm(100.0)"][cleanindex]
+        cleaniter = aggtable["I_sgm(100.0)"][cleanindex]
         if alloptindex in aggtable["_count_"]:
             alloptcount = aggtable["_count_"][alloptindex]
             allopttime = aggtable["T_sgm(1.0)"][alloptindex]
             alloptnrmtime = aggtable["NrmT_sgm(1.0)"][alloptindex]
             alloptnodes = aggtable["N_sgm(100.0)"][alloptindex]
+            alloptiter = aggtable["I_sgm(100.0)"][alloptindex]
         else:
             alloptcount = 0
             allopttime = 0.0
             alloptnrmtime = 0.0
             alloptnodes = 0
+            alloptiter = 0
         if affindex in aggtable["_count_"]:
             affcount = aggtable["_count_"][affindex]
             affsolved = aggtable["_solved_"][affindex]
             afftime = aggtable["T_sgm(1.0)"][affindex]
             affnrmtime = aggtable["NrmT_sgm(1.0)"][affindex]
             affnodes = aggtable["N_sgm(100.0)"][affindex]
+            affiter = aggtable["I_sgm(100.0)"][affindex]
         else:
             affcount = 0
             affsolved = 0
             afftime = 0.0
             affnrmtime = 0.0
             affnodes = 0
+            affiter = 0
 
         # if we did not evaluate base only, then include also the numbers for base
         if comparehash is not None:
@@ -175,33 +184,39 @@ class ComparisonEndpoint(BaseHandler):
             basealltime = aggtable["T_sgm(1.0)"][baseallindex]
             baseallnrmtime = aggtable["NrmT_sgm(1.0)"][baseallindex]
             baseallnodes = aggtable["N_sgm(100.0)"][baseallindex]
+            basealliter = aggtable["I_sgm(100.0)"][baseallindex]
             basecleancount = aggtable["_count_"][basecleanindex]
             basecleansolved = aggtable["_solved_"][basecleanindex]
             basecleantime = aggtable["T_sgm(1.0)"][basecleanindex]
             basecleannrmtime = aggtable["NrmT_sgm(1.0)"][basecleanindex]
             basecleannodes = aggtable["N_sgm(100.0)"][basecleanindex]
+            basecleaniter = aggtable["I_sgm(100.0)"][basecleanindex]
             if basealloptindex in aggtable["_count_"]:
                 basealloptcount = aggtable["_count_"][basealloptindex]
                 baseallopttime = aggtable["T_sgm(1.0)"][basealloptindex]
                 basealloptnrmtime = aggtable["NrmT_sgm(1.0)"][basealloptindex]
                 basealloptnodes = aggtable["N_sgm(100.0)"][basealloptindex]
+                basealloptiter = aggtable["I_sgm(100.0)"][basealloptindex]
             else:
                 basealloptcount = 0
                 baseallopttime = 0.0
                 basealloptnrmtime = 0.0
                 basealloptnodes = 0
+                basealloptiter = 0
             if baseaffindex in aggtable["_count_"]:
                 baseaffcount = aggtable["_count_"][baseaffindex]
                 baseaffsolved = aggtable["_solved_"][baseaffindex]
                 baseafftime = aggtable["T_sgm(1.0)"][baseaffindex]
                 baseaffnrmtime = aggtable["NrmT_sgm(1.0)"][baseaffindex]
                 baseaffnodes = aggtable["N_sgm(100.0)"][baseaffindex]
+                baseaffiter = aggtable["I_sgm(100.0)"][baseaffindex]
             else:
                 baseaffcount = 0
                 baseaffsolved = 0
                 baseafftime = 0.0
                 baseaffnrmtime = 0.0
                 baseaffnodes = 0
+                baseaffiter = 0
         else:
             basecommithash = 0
             basecommittime = 0
@@ -210,20 +225,24 @@ class ComparisonEndpoint(BaseHandler):
             basealltime = 0
             baseallnrmtime = 0
             baseallnodes = 0
+            basealliter = 0
             basecleancount = 0
             basecleansolved = 0
             basecleantime = 0
             basecleannrmtime = 0
             basecleannodes = 0
+            basecleaniter = 0
             basealloptcount = 0
             baseallopttime = 0
             basealloptnrmtime = 0
             basealloptnodes = 0
+            basealloptiter = 0
             baseaffcount = 0
             baseaffsolved = 0
             baseafftime = 0
             baseaffnrmtime = 0
             baseaffnodes = 0
+            baseaffiter = 0
 
         self.write(
             ",".join(
@@ -238,20 +257,24 @@ class ComparisonEndpoint(BaseHandler):
                             alltime,
                             allnrmtime,
                             allnodes,
+                            alliter,
                             cleancount,
                             cleansolved,
                             cleantime,
                             cleannrmtime,
                             cleannodes,
+                            cleaniter,
                             alloptcount,
                             allopttime,
                             alloptnrmtime,
                             alloptnodes,
+                            alloptiter,
                             affcount,
                             affsolved,
                             afftime,
                             affnrmtime,
                             affnodes,
+                            affiter,
                             basecommithash,
                             basecommittime,
                             baseallcount,
@@ -259,20 +282,24 @@ class ComparisonEndpoint(BaseHandler):
                             basealltime,
                             baseallnrmtime,
                             baseallnodes,
+                            basealliter,
                             basecleancount,
                             basecleansolved,
                             basecleantime,
                             basecleannrmtime,
                             basecleannodes,
+                            basecleaniter,
                             basealloptcount,
                             baseallopttime,
                             basealloptnrmtime,
                             basealloptnodes,
+                            basealloptiter,
                             baseaffcount,
                             baseaffsolved,
                             baseafftime,
                             baseaffnrmtime,
                             baseaffnodes,
+                            baseaffiter,
                         ],
                     )
                 )
