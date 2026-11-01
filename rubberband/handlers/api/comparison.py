@@ -47,8 +47,9 @@ class ComparisonEndpoint(BaseHandler):
         if comparison_ids is not None:
             testruns = get_testruns(testrunids)
 
-        # timestamps
+        # timestamps, hashes, and settings
         basehash = baserun.git_hash
+        basesettings = baserun.settings_short_name
         times = {
             t.git_hash: datetime.strftime(t.git_commit_timestamp, FORMAT_DATE)
             for t in testruns + [baserun]
@@ -57,6 +58,10 @@ class ComparisonEndpoint(BaseHandler):
         if len(hashes) > 2:
             raise HTTPError(404)
         hashes.remove(basehash)
+        settings = {t.settings_short_name for t in testruns + [baserun]}
+        if len(hashes) == 0 and len(settings) > 2:
+            raise HTTPError(404)
+        settings.remove(basesettings)
 
         comparehash = None
         if len(hashes) == 1:
@@ -64,6 +69,20 @@ class ComparisonEndpoint(BaseHandler):
             committime = times[comparehash]
         else:  # len(hashes) == 0:
             committime = times[basehash]
+        comparesettings = None
+        if len(settings) == 1:
+            comparesettings = settings.pop()
+        else:
+            comparesettings = basesettings
+
+        if (comparehash is not None) and (basehash != comparehash):
+            indexname = "GitHash"
+            compareindex = comparehash
+            baseindex = basehash
+        else:
+            indexname = "Settings"
+            compareindex = comparesettings
+            baseindex = basesettings
 
         # tolerance
         tolerance = float(self.get_argument("tolerance", default=1e-6))
@@ -73,7 +92,7 @@ class ComparisonEndpoint(BaseHandler):
         # evaluate with ipet
         ex, _ = setup_experiment(testruns + [baserun], "")
         evalstring = f"""<?xml version="1.0" ?>
-<Evaluation comparecolformat="%.3f" index="ProblemName Seed Permutation GitHash" indexsplit="-1" fillin="True">
+<Evaluation comparecolformat="%.3f" index="ProblemName Seed Permutation {indexname}" indexsplit="-1" fillin="True">
     <Column formatstr="%.2f" name="T" origcolname="SolvingTime" minval="0.5" comp="quot shift. by 1" maxval="TimeLimit" alternative="TimeLimit" reduction="shmean shift. by 1">
         <Aggregation aggregation="shmean" name="sgm" shiftby="1.0"/>
     </Column>
@@ -119,17 +138,17 @@ class ComparisonEndpoint(BaseHandler):
 
         # df = aggtable[["_count_","_solved_","T_sgm(1.0)Q","T_sgm(1.0)"]]
 
-        if comparehash is not None:
-            cleanindex = ("clean", comparehash)
-            allindex = ("all", comparehash)
-            alloptindex = ("all-optimal", comparehash)
-            affindex = ("affected", comparehash)
+        if compareindex is not None:
+            cleanindex = ("clean", compareindex)
+            allindex = ("all", compareindex)
+            alloptindex = ("all-optimal", compareindex)
+            affindex = ("affected", compareindex)
             commithash = comparehash
         else:
-            cleanindex = ("clean", basehash)
-            allindex = ("all", basehash)
-            alloptindex = ("all-optimal", basehash)
-            affindex = ("affected", basehash)
+            cleanindex = ("clean", baseindex)
+            allindex = ("all", baseindex)
+            alloptindex = ("all-optimal", baseindex)
+            affindex = ("affected", baseindex)
             commithash = basehash
 
         allcount = aggtable["_count_"][allindex]
@@ -172,11 +191,11 @@ class ComparisonEndpoint(BaseHandler):
             affiter = 0
 
         # if we did not evaluate base only, then include also the numbers for base
-        if comparehash is not None:
-            basecleanindex = ("clean", basehash)
-            baseallindex = ("all", basehash)
-            basealloptindex = ("all-optimal", basehash)
-            baseaffindex = ("affected", basehash)
+        if compareindex is not None:
+            basecleanindex = ("clean", baseindex)
+            baseallindex = ("all", baseindex)
+            basealloptindex = ("all-optimal", baseindex)
+            baseaffindex = ("affected", baseindex)
             basecommithash = basehash
             basecommittime = times[basehash]
             baseallcount = aggtable["_count_"][baseallindex]
