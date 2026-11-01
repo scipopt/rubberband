@@ -1,6 +1,7 @@
 """Contains EvaluationView."""
 
 from datetime import datetime
+import logging
 
 from ipet.evaluation import IPETEvaluation
 from tornado.web import HTTPError
@@ -15,6 +16,7 @@ from rubberband.utils import ALL_SOLU
 
 from .base import BaseHandler, authenticated
 
+logger = logging.getLogger(__name__)
 
 class ComparisonEndpoint(BaseHandler):
     """Request handler caring about the comparison of sets of TestRuns."""
@@ -39,7 +41,7 @@ class ComparisonEndpoint(BaseHandler):
         if comparison_ids is not None:
             testrunids = list(set(comparison_ids.split(",")))
             if base_id in testrunids:
-                raise HTTPError(404)
+                raise HTTPError(502, reason="base id is part of comparison ids")
 
         # get testruns and default
         baserun = get_testruns(base_id)
@@ -56,11 +58,13 @@ class ComparisonEndpoint(BaseHandler):
         }
         hashes = {t.git_hash for t in testruns + [baserun]}
         if len(hashes) > 2:
-            raise HTTPError(404)
+            logger.error("Comparison: more than two githashes: %s", ','.join(hashes))
+            raise HTTPError(502, reason="more than two githashes: " + ','.join(hashes))
         hashes.remove(basehash)
         settings = {t.settings_short_name for t in testruns + [baserun]}
         if len(hashes) == 0 and len(settings) > 2:
-            raise HTTPError(404)
+            logger.error("Comparison: only one githash but more than two settings: %s", ','.join(settings))
+            raise HTTPError(502, reason="more than two settings: " + ','.join(settings))
         settings.remove(basesettings)
 
         comparehash = None
