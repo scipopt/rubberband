@@ -69,16 +69,28 @@ IPET_EVALUATIONS = {
         "name": "perf analysis - detailed, group settings, exclude",
     },
     12: {
-        "path": STATIC_FILES_DIR + "papilo_evaluation.xml",
-        "name": "evaluation papilo",
+        "path": STATIC_FILES_DIR + "lp_eval_groupgithash_exclude_detailed.xml",
+        "name": "LP: detailed view - group githash, exclude",
     },
     13: {
-        "path": STATIC_FILES_DIR + "papilo_evaluation_solver_specific.xml",
-        "name": "evaluation papilo solver specific",
+        "path": STATIC_FILES_DIR + "lp_eval_groupsettings_exclude_detailed.xml",
+        "name": "LP: detailed view - group settings, exclude",
     },
     14: {
+        "path": STATIC_FILES_DIR + "lp_eval_singleruns_include.xml",
+        "name": "LP: single runs - include fails & aborts",
+    },
+    15: {
+        "path": STATIC_FILES_DIR + "papilo_evaluation.xml",
+        "name": "PaPILO: evaluation",
+    },
+    16: {
+        "path": STATIC_FILES_DIR + "papilo_evaluation_solver_specific.xml",
+        "name": "PaPILO: evaluation solver specific",
+    },
+    17: {
         "path": STATIC_FILES_DIR + "papilo_evaluation_groupsettings.xml",
-        "name": "evaluation papilo group settings",
+        "name": "PaPILO: evaluation group settings",
     },
 }
 
